@@ -83,6 +83,16 @@ export interface EnemyDef {
   description?: string;
 }
 
+/** Группа врагов для узла карты */
+export interface EncounterDef {
+  id: string;
+  act: 1 | 2 | 3;
+  tier: 'normal' | 'elite' | 'boss';
+  enemies: string[]; // id врагов, порядок = слева направо
+  /** Только для первых 3 боёв акта (лёгкие) */
+  early?: boolean;
+}
+
 export type RelicTrigger =
   | 'combat_start'
   | 'turn_start'
