@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+tmp/
+!tmp/plans/
+test-results/
+playwright-report/
