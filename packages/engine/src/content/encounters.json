@@ -1,1 +1,294 @@
-[]
+[
+  {
+    "id": "a1_e_script_bot",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_script_bot"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_e_cultist",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_cultist"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_e_spam_bot",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_spam_bot"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_e_drones",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_drone",
+      "a1_drone"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_antivirus",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_antivirus"
+    ]
+  },
+  {
+    "id": "a1_drone_swarm",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_drone",
+      "a1_drone",
+      "a1_drone"
+    ]
+  },
+  {
+    "id": "a1_proxy_spam",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_proxy",
+      "a1_spam_bot"
+    ]
+  },
+  {
+    "id": "a1_antivirus_drone",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_drone",
+      "a1_antivirus"
+    ]
+  },
+  {
+    "id": "a1_proxy_net",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_proxy",
+      "a1_drone",
+      "a1_proxy"
+    ]
+  },
+  {
+    "id": "a1_bot_patrol",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_script_bot",
+      "a1_drone"
+    ]
+  },
+  {
+    "id": "a1_elite_sentinel",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_ice_sentinel"
+    ]
+  },
+  {
+    "id": "a1_elite_sentries",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_sentry_a",
+      "a1_sentry_b",
+      "a1_sentry_a"
+    ]
+  },
+  {
+    "id": "a1_boss",
+    "act": 1,
+    "tier": "boss",
+    "enemies": [
+      "boss_cerberus"
+    ]
+  },
+  {
+    "id": "a2_e_tracer",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_tracer"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_e_honeypot",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_honeypot"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_e_daemon",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_firewall_daemon"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_admin",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_admin_bot"
+    ]
+  },
+  {
+    "id": "a2_worm_nest",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_crypto_worm",
+      "a2_crypto_worm",
+      "a2_crypto_worm"
+    ]
+  },
+  {
+    "id": "a2_tracer_worm",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_tracer",
+      "a2_crypto_worm"
+    ]
+  },
+  {
+    "id": "a2_daemon_tracer",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_firewall_daemon",
+      "a2_tracer"
+    ]
+  },
+  {
+    "id": "a2_honey_worm",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_crypto_worm",
+      "a2_honeypot"
+    ]
+  },
+  {
+    "id": "a2_elite_hound",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_ice_hound"
+    ]
+  },
+  {
+    "id": "a2_boss",
+    "act": 2,
+    "tier": "boss",
+    "enemies": [
+      "boss_chimera"
+    ]
+  },
+  {
+    "id": "a3_e_replicator",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_replicator"
+    ],
+    "early": true
+  },
+  {
+    "id": "a3_e_killswitch",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_killswitch"
+    ],
+    "early": true
+  },
+  {
+    "id": "a3_e_netwatch",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_netwatch"
+    ],
+    "early": true
+  },
+  {
+    "id": "a3_black_ice",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_black_ice"
+    ]
+  },
+  {
+    "id": "a3_sec_daemon",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_sec_daemon"
+    ]
+  },
+  {
+    "id": "a3_replicators",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_replicator",
+      "a3_replicator"
+    ]
+  },
+  {
+    "id": "a3_watch_switch",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_netwatch",
+      "a3_killswitch"
+    ]
+  },
+  {
+    "id": "a3_ice_replicator",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_replicator",
+      "a3_black_ice"
+    ]
+  },
+  {
+    "id": "a3_elite_hunter",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_ai_hunter"
+    ]
+  },
+  {
+    "id": "a3_boss",
+    "act": 3,
+    "tier": "boss",
+    "enemies": [
+      "boss_omnis"
+    ]
+  }
+]

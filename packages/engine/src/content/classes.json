@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": "netrunner",
+    "name": "Нетраннер",
+    "description": "Классический взломщик: тяжёлые эксплойты, Разгон и броня. Лечится после каждого боя.",
+    "maxHp": 80,
+    "startingGold": 99,
+    "startingDeck": [
+      "nr_ping",
+      "nr_ping",
+      "nr_ping",
+      "nr_ping",
+      "nr_ping",
+      "nr_firewall",
+      "nr_firewall",
+      "nr_firewall",
+      "nr_firewall",
+      "nr_overload"
+    ],
+    "startingRelic": "r_neuroshunt"
+  },
+  {
+    "id": "phreaker",
+    "name": "Фрикер",
+    "description": "Мастер заразы: Вирусы, Лаг и Брешь. Убивает медленно, но наверняка.",
+    "maxHp": 70,
+    "startingGold": 99,
+    "startingDeck": [
+      "ph_ping",
+      "ph_ping",
+      "ph_ping",
+      "ph_ping",
+      "ph_ping",
+      "ph_firewall",
+      "ph_firewall",
+      "ph_firewall",
+      "ph_firewall",
+      "ph_trojan"
+    ],
+    "startingRelic": "r_infected_usb"
+  },
+  {
+    "id": "ghost",
+    "name": "Призрак",
+    "description": "Стелс-оператор: блок, Шифрование, дешёвые карты и постоянный добор.",
+    "maxHp": 74,
+    "startingGold": 99,
+    "startingDeck": [
+      "gh_ping",
+      "gh_ping",
+      "gh_ping",
+      "gh_ping",
+      "gh_ping",
+      "gh_firewall",
+      "gh_firewall",
+      "gh_firewall",
+      "gh_firewall",
+      "gh_fade"
+    ],
+    "startingRelic": "r_cloak_module"
+  }
+]

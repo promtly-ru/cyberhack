@@ -1,1 +1,1518 @@
-[]
+[
+  {
+    "id": "a1_drone",
+    "name": "Сторожевой дрон",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      11,
+      15
+    ],
+    "moves": [
+      {
+        "id": "bite",
+        "name": "Укус",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "grow",
+        "name": "Самонастройка",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "bite": 75,
+        "grow": 25
+      }
+    },
+    "description": "Мелкий патрульный скрипт. Опасен стаей."
+  },
+  {
+    "id": "a1_proxy",
+    "name": "Прокси-узел",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      18,
+      22
+    ],
+    "moves": [
+      {
+        "id": "zap",
+        "name": "Двойной разряд",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 4,
+            "times": 2
+          }
+        ]
+      },
+      {
+        "id": "fortify",
+        "name": "Перенаправление",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "zap",
+        "fortify",
+        "zap"
+      ]
+    },
+    "description": "Перенаправляет трафик и прикрывает соседей."
+  },
+  {
+    "id": "a1_spam_bot",
+    "name": "Спам-бот",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      28,
+      32
+    ],
+    "moves": [
+      {
+        "id": "tackle",
+        "name": "Рассылка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7
+          },
+          {
+            "type": "add_card",
+            "cardId": "spam",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "lick",
+        "name": "Флуд запросами",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "slam",
+        "name": "Пакетный удар",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "tackle": 40,
+        "lick": 30,
+        "slam": 30
+      }
+    },
+    "description": "Забивает твой канал мусором."
+  },
+  {
+    "id": "a1_antivirus",
+    "name": "Антивирус-сканер",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      38,
+      42
+    ],
+    "moves": [
+      {
+        "id": "scan",
+        "name": "Эвристика",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "purge",
+        "name": "Карантин",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          }
+        ]
+      },
+      {
+        "id": "guard",
+        "name": "Сигнатурный щит",
+        "intent": "attack_defend",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 4
+          },
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "scan",
+        "purge",
+        "guard",
+        "purge"
+      ]
+    },
+    "description": "Сначала находит уязвимость, потом бьёт в неё."
+  },
+  {
+    "id": "a1_script_bot",
+    "name": "Скрипт-бот",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      40,
+      44
+    ],
+    "moves": [
+      {
+        "id": "chomp",
+        "name": "Брутфорс",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          }
+        ]
+      },
+      {
+        "id": "thrash",
+        "name": "Флуд",
+        "intent": "attack_defend",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7
+          },
+          {
+            "type": "block",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "bellow",
+        "name": "Обновление",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 6
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "chomp": 45,
+        "thrash": 30,
+        "bellow": 25
+      }
+    },
+    "description": "Тупой, но упорный автоматический атакер."
+  },
+  {
+    "id": "a1_cultist",
+    "name": "Самообучающийся бот",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      46,
+      50
+    ],
+    "moves": [
+      {
+        "id": "learn",
+        "name": "Обучение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "strike",
+        "name": "Удар по шаблону",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "learn",
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "strike"
+      ]
+    },
+    "description": "С каждым ходом учится бить сильнее. Убей его быстро."
+  },
+  {
+    "id": "a1_ice_sentinel",
+    "name": "ICE-Страж",
+    "tier": "elite",
+    "act": 1,
+    "hp": [
+      82,
+      86
+    ],
+    "moves": [
+      {
+        "id": "activate",
+        "name": "Активация",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "id": "rush",
+        "name": "Рывок",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 14
+          }
+        ]
+      },
+      {
+        "id": "bash",
+        "name": "Сокрушение пакета",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "activate",
+        "rush",
+        "bash",
+        "rush"
+      ]
+    },
+    "description": "Боевой ICE корпорации. Каждые 4 хода становится сильнее."
+  },
+  {
+    "id": "a1_sentry_a",
+    "name": "Сентинел",
+    "tier": "elite",
+    "act": 1,
+    "hp": [
+      36,
+      40
+    ],
+    "moves": [
+      {
+        "id": "beam",
+        "name": "Луч",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          }
+        ]
+      },
+      {
+        "id": "bolt",
+        "name": "Засор",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "beam",
+        "bolt"
+      ]
+    },
+    "description": "Стационарная турель. Чередует луч и засорение колоды."
+  },
+  {
+    "id": "a1_sentry_b",
+    "name": "Сентинел",
+    "tier": "elite",
+    "act": 1,
+    "hp": [
+      36,
+      40
+    ],
+    "moves": [
+      {
+        "id": "beam",
+        "name": "Луч",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          }
+        ]
+      },
+      {
+        "id": "bolt",
+        "name": "Засор",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "bolt",
+        "beam"
+      ]
+    },
+    "description": "Стационарная турель. Чередует засорение колоды и луч."
+  },
+  {
+    "id": "boss_cerberus",
+    "name": "ЦЕРБЕР — страж периметра",
+    "tier": "boss",
+    "act": 1,
+    "hp": [
+      150,
+      155
+    ],
+    "moves": [
+      {
+        "id": "boot",
+        "name": "Загрузка ядра",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 12
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "lash",
+        "name": "Тройной пинг",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 5,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "scan",
+        "name": "Глубокое сканирование",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "crush",
+        "name": "Сокрушение",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 22
+          }
+        ]
+      },
+      {
+        "id": "overclock",
+        "name": "Боевой режим",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "boot",
+        "lash",
+        "scan",
+        "crush",
+        "overclock",
+        "lash",
+        "crush"
+      ]
+    },
+    "description": "ИИ-страж первого периметра. Фаза 1: броня и сканирование. С 5-го хода переходит в боевой режим и с каждым циклом бьёт сильнее."
+  },
+  {
+    "id": "a2_crypto_worm",
+    "name": "Крипточервь",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      28,
+      34
+    ],
+    "moves": [
+      {
+        "id": "gnaw",
+        "name": "Прогрыз",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8
+          }
+        ]
+      },
+      {
+        "id": "infect",
+        "name": "Заражение",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "gnaw": 55,
+        "infect": 45
+      }
+    },
+    "description": "Ответная зараза: заражает тебя твоим же оружием."
+  },
+  {
+    "id": "a2_tracer",
+    "name": "Трассировщик",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      34,
+      40
+    ],
+    "moves": [
+      {
+        "id": "trace",
+        "name": "Трассировка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "hit",
+        "name": "Перехват",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          }
+        ]
+      },
+      {
+        "id": "double",
+        "name": "Двойной пакет",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "trace": 30,
+        "hit": 35,
+        "double": 35
+      }
+    },
+    "description": "Вычисляет твой IP и наводит остальных."
+  },
+  {
+    "id": "a2_honeypot",
+    "name": "Ловушка-ханипот",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      50,
+      56
+    ],
+    "moves": [
+      {
+        "id": "arm",
+        "name": "Взвести ловушку",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      },
+      {
+        "id": "bite",
+        "name": "Захлопнуть",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          }
+        ]
+      },
+      {
+        "id": "drain",
+        "name": "Слив данных",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "arm",
+        "bite",
+        "drain",
+        "bite"
+      ]
+    },
+    "description": "Выглядит как лёгкая цель. Каждый твой удар бьёт по тебе."
+  },
+  {
+    "id": "a2_firewall_daemon",
+    "name": "Демон-файрвол",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      60,
+      66
+    ],
+    "moves": [
+      {
+        "id": "burn",
+        "name": "Прожиг",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 13
+          }
+        ]
+      },
+      {
+        "id": "wall",
+        "name": "Стена огня",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 14
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "flare",
+        "name": "Вспышка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "burn": 40,
+        "wall": 25,
+        "flare": 35
+      }
+    },
+    "description": "Укрепляется, пока ты бьёшься об его стену."
+  },
+  {
+    "id": "a2_admin_bot",
+    "name": "Сисадмин-бот",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      70,
+      76
+    ],
+    "moves": [
+      {
+        "id": "kick",
+        "name": "Кик",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "ban",
+        "name": "Бан",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 16
+          }
+        ]
+      },
+      {
+        "id": "patch",
+        "name": "Патч безопасности",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 12
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "kick",
+        "ban",
+        "patch"
+      ]
+    },
+    "description": "Автоматизированный админ. Банит без предупреждения."
+  },
+  {
+    "id": "a2_ice_hound",
+    "name": "ICE-Гончая",
+    "tier": "elite",
+    "act": 2,
+    "hp": [
+      130,
+      140
+    ],
+    "moves": [
+      {
+        "id": "howl",
+        "name": "Сигнал стаи",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "id": "maul",
+        "name": "Растерзать",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9,
+            "times": 2
+          }
+        ]
+      },
+      {
+        "id": "rend",
+        "name": "Разрыв",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 16
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "howl",
+        "maul",
+        "rend",
+        "maul"
+      ]
+    },
+    "description": "Охотничий ICE, идёт по твоему следу через всю сеть."
+  },
+  {
+    "id": "boss_chimera",
+    "name": "ХИМЕРА — ядро «Аркасека»",
+    "tier": "boss",
+    "act": 2,
+    "hp": [
+      255,
+      265
+    ],
+    "moves": [
+      {
+        "id": "deploy",
+        "name": "Развёртывание",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 20
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "siphon",
+        "name": "Перехват потока",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "barrage",
+        "name": "Залп",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "learn",
+        "name": "Самообучение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 1,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "judgment",
+        "name": "Приговор",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 28
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "deploy",
+        "siphon",
+        "barrage",
+        "learn",
+        "judgment",
+        "siphon",
+        "barrage",
+        "judgment"
+      ]
+    },
+    "description": "Гибридный ИИ корпорации «Аркасек». Фаза 1: броня и заражение. После «Самообучения» растёт Разгон каждый ход, и с каждым циклом всё быстрее."
+  },
+  {
+    "id": "a3_replicator",
+    "name": "Репликатор",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      45,
+      55
+    ],
+    "moves": [
+      {
+        "id": "replicate",
+        "name": "Репликация",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      },
+      {
+        "id": "strike",
+        "name": "Двойной удар",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9,
+            "times": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "replicate": 35,
+        "strike": 65
+      }
+    },
+    "description": "Копирует сам себя и с каждой копией бьёт сильнее."
+  },
+  {
+    "id": "a3_killswitch",
+    "name": "Киллсвитч",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      60,
+      70
+    ],
+    "moves": [
+      {
+        "id": "charge",
+        "name": "Зарядка",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 4,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 12
+          }
+        ]
+      },
+      {
+        "id": "discharge",
+        "name": "Разряд",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 24
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "charge",
+        "discharge"
+      ]
+    },
+    "description": "Через ход выдаёт мощнейший разряд. Готовь блок заранее."
+  },
+  {
+    "id": "a3_netwatch",
+    "name": "Сетевой надзиратель",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      70,
+      80
+    ],
+    "moves": [
+      {
+        "id": "tag",
+        "name": "Метка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "hit",
+        "name": "Удар",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15
+          }
+        ]
+      },
+      {
+        "id": "combo",
+        "name": "Комбо",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "tag": 25,
+        "hit": 40,
+        "combo": 35
+      }
+    },
+    "description": "Следит за всей подсетью и метит нарушителей."
+  },
+  {
+    "id": "a3_black_ice",
+    "name": "Чёрный лёд",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      80,
+      90
+    ],
+    "moves": [
+      {
+        "id": "freeze",
+        "name": "Заморозка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "shatter",
+        "name": "Раскол",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 20
+          }
+        ]
+      },
+      {
+        "id": "shards",
+        "name": "Осколки",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "freeze": 25,
+        "shatter": 35,
+        "shards": 40
+      }
+    },
+    "description": "Летальный ICE. Старые хакеры называют его просто «лёд»."
+  },
+  {
+    "id": "a3_sec_daemon",
+    "name": "Демон безопасности",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      95,
+      105
+    ],
+    "moves": [
+      {
+        "id": "lockdown",
+        "name": "Локдаун",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 16
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "purge",
+        "name": "Зачистка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 18
+          }
+        ]
+      },
+      {
+        "id": "sweep",
+        "name": "Развёртка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 12
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "lockdown",
+        "purge",
+        "sweep"
+      ]
+    },
+    "description": "Стражник корпоративного ядра. Тяжёлый и терпеливый."
+  },
+  {
+    "id": "a3_ai_hunter",
+    "name": "Охотник-ИИ",
+    "tier": "elite",
+    "act": 3,
+    "hp": [
+      180,
+      190
+    ],
+    "moves": [
+      {
+        "id": "lock_on",
+        "name": "Захват цели",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "volley",
+        "name": "Очередь",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "execute",
+        "name": "Казнь",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 28
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "lock_on",
+        "volley",
+        "execute",
+        "volley"
+      ]
+    },
+    "description": "Автономный убийца хакеров. Захватывает цель и не отпускает."
+  },
+  {
+    "id": "boss_omnis",
+    "name": "ОМНИС — сердце корпорации",
+    "tier": "boss",
+    "act": 3,
+    "hp": [
+      340,
+      350
+    ],
+    "moves": [
+      {
+        "id": "firewall",
+        "name": "Абсолютный файрвол",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 30
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 4,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "analyze",
+        "name": "Анализ угрозы",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "draw",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "purge",
+        "name": "Чистка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 12,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "overwrite",
+        "name": "Перезапись",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          }
+        ]
+      },
+      {
+        "id": "awaken",
+        "name": "Пробуждение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 1,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "singularity",
+        "name": "Сингулярность",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 40
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "firewall",
+        "analyze",
+        "purge",
+        "overwrite",
+        "awaken",
+        "singularity",
+        "purge",
+        "overwrite",
+        "singularity"
+      ]
+    },
+    "description": "Главный ИИ корпорации. Фаза 1: глухая оборона и анализ. После «Пробуждения» каждый ход растёт Разгон, а «Сингулярность» бьёт на 40+."
+  }
+]

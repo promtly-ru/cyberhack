@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "id": "vulnerable",
+    "name": "Брешь",
+    "kind": "debuff",
+    "stacking": "duration",
+    "description": "Получает на 50% больше урона от атак. Длительность уменьшается на 1 в конце хода."
+  },
+  {
+    "id": "weak",
+    "name": "Лаг",
+    "kind": "debuff",
+    "stacking": "duration",
+    "description": "Наносит на 25% меньше урона атаками. Длительность уменьшается на 1 в конце хода."
+  },
+  {
+    "id": "frail",
+    "name": "Фрагментация",
+    "kind": "debuff",
+    "stacking": "duration",
+    "description": "Получает на 25% меньше блока от карт. Длительность уменьшается на 1 в конце хода."
+  },
+  {
+    "id": "strength",
+    "name": "Разгон",
+    "kind": "buff",
+    "stacking": "intensity",
+    "description": "Каждый удар наносит на N урона больше."
+  },
+  {
+    "id": "dexterity",
+    "name": "Шифрование",
+    "kind": "buff",
+    "stacking": "intensity",
+    "description": "Карты блока дают на N блока больше."
+  },
+  {
+    "id": "virus",
+    "name": "Вирус",
+    "kind": "debuff",
+    "stacking": "duration",
+    "description": "В начале хода теряет N HP (игнорирует блок), затем Вирус уменьшается на 1."
+  },
+  {
+    "id": "thorns",
+    "name": "Контрудар",
+    "kind": "buff",
+    "stacking": "intensity",
+    "description": "Каждый раз, когда цель атакуют, атакующий получает N урона."
+  },
+  {
+    "id": "regen",
+    "name": "Самовосстановление",
+    "kind": "buff",
+    "stacking": "duration",
+    "description": "В конце хода восстанавливает N HP, затем Самовосстановление уменьшается на 1."
+  },
+  {
+    "id": "ritual",
+    "name": "Самообучение",
+    "kind": "buff",
+    "stacking": "intensity",
+    "description": "В конце хода получает N Разгона."
+  },
+  {
+    "id": "plating",
+    "name": "Броня-патч",
+    "kind": "buff",
+    "stacking": "intensity",
+    "description": "В конце хода получает N блока."
+  }
+]

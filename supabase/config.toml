@@ -1,0 +1,40 @@
+# Конфигурация Supabase CLI (локальный стек и деплой функций).
+# Значения не перечисленные здесь CLI берёт по умолчанию. Секретов в этом файле нет:
+# client_id/secret OAuth читаются из переменных окружения (supabase/.env, он в .gitignore).
+project_id = "cyberhack"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[auth]
+enabled = true
+# Локальный адрес Vite. В облаке Site URL и Redirect URLs задаются в Dashboard (см. README).
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/", "http://127.0.0.1:5173/"]
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+
+[auth.external.github]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET)"
+
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+
+[functions.submit-daily]
+# JWT проверяется внутри функции через auth.getUser(token) — это работает и со старыми
+# (JWT secret), и с новыми ключами (publishable/secret). Шлюз не дублирует проверку.
+verify_jwt = false

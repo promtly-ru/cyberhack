@@ -249,6 +249,17 @@ export interface RunState {
   status: 'active' | 'won' | 'lost';
   score: number;
   stats: { enemiesKilled: number; elitesKilled: number; bossesKilled: number; damageDealt: number; cardsPlayed: number };
+  // ---- Расширения движка (опциональные) ----
+  /** Награды, ожидающие на экране reward, пока открыт card_pick */
+  pendingRewards?: RewardItem[];
+  /** Товары магазина, пока открыт select_deck_card (удаление карты из магазина) */
+  savedShop?: ShopItem[];
+  /** Сколько раз удаляли карту в магазине (цена 75 + 25 × n) */
+  cardRemovals?: number;
+  /** Уже показанные события (не повторяются, пока есть другие) */
+  seenEvents?: string[];
+  /** Встреча с боссом текущего акта (известна заранее для UI) */
+  bossEncounterId?: string;
 }
 
 // ---------- Действия игрока ----------
@@ -282,7 +293,16 @@ export type GameEvent =
   | { type: 'turn_started'; turn: number }
   | { type: 'combat_won' }
   | { type: 'combat_lost' }
-  | { type: 'screen_changed'; screen: Screen['kind'] };
+  | { type: 'screen_changed'; screen: Screen['kind'] }
+  // ---- Расширения движка ----
+  | { type: 'deck_shuffled'; count: number }
+  | { type: 'card_exhausted'; cardUid: string }
+  | { type: 'gold_changed'; amount: number }
+  | { type: 'relic_obtained'; relicId: string }
+  | { type: 'card_obtained'; defId: string }
+  | { type: 'card_removed'; cardUid: string; defId: string }
+  | { type: 'card_upgraded'; cardUid: string; defId: string }
+  | { type: 'act_started'; act: 1 | 2 | 3 };
 
 export interface ActionResult {
   state: RunState;

@@ -1,0 +1,6 @@
+# Бандл движка генерируется перед деплоем: node supabase/scripts/bundle-engine.mjs
+functions/_shared/engine/
+# Локальные файлы Supabase CLI
+.branches
+.temp
+.env
