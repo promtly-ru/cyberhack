@@ -5,6 +5,27 @@
 
 **Играть:** https://promtly-ru.github.io/cyberhack/
 
+## Скачать
+
+Готовые сборки лежат в [Releases](https://github.com/promtly-ru/cyberhack/releases/latest):
+
+| Платформа | Файл |
+|---|---|
+| Windows | `CyberHack_*_x64-setup.exe` или `CyberHack_*_x64_en-US.msi` |
+| macOS (Apple Silicon) | `CyberHack_*_aarch64.dmg` |
+| Linux | `CyberHack_*_amd64.AppImage` или `CyberHack_*_amd64.deb` |
+| Android | `CyberHack-*-android-debug.apk` |
+| iOS | Нативной сборки нет: открой [игру](https://promtly-ru.github.io/cyberhack/) в Safari → «Поделиться» → «На экран Домой» (PWA, работает офлайн) |
+
+Сборки не подписаны, поэтому система предупредит при первом запуске:
+
+- **Windows (SmartScreen):** «Подробнее» → «Выполнить в любом случае».
+- **macOS (Gatekeeper):** правый клик по приложению → «Открыть» → «Открыть». Если macOS пишет, что приложение «повреждено», выполни `xattr -cr /Applications/CyberHack.app`.
+- **Linux:** для AppImage сделай `chmod +x CyberHack_*.AppImage`.
+- **Android:** разреши установку из неизвестных источников. APK подписан debug-ключом, поэтому новую версию иногда придётся ставить поверх удалённой старой.
+
+Десктоп собирается на Tauri 2 (`apps/desktop`), Android на Capacitor (`apps/mobile`). Обе сборки делает GitHub Actions (`.github/workflows/release.yml`) по тегу `v*` или вручную.
+
 ## Стек
 
 - **Движок** (`packages/engine`) — чистый TypeScript без зависимостей от UI: детерминированный RNG, бои, карта, награды, боты. Тесты на Vitest.
