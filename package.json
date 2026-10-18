@@ -15,6 +15,9 @@
     "sim": "npm run sim -w @cyberhack/engine"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "@playwright/test": "^1.64.1",
+    "@tauri-apps/cli": "^2.12.3",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.5",
     "tsx": "^4.23.15",
