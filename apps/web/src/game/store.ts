@@ -7,7 +7,7 @@ import { defaultProfile, getBackend, peekBackend } from './backend';
 import { sfx } from '../audio/sfx';
 import { animScale } from '../ui/settings';
 
-export type View = 'menu' | 'class_select' | 'run' | 'profile' | 'howto';
+export type View = 'menu' | 'class_select' | 'run' | 'profile' | 'howto' | 'download';
 
 export interface QueuedEvent {
   id: number;

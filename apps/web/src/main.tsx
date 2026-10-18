@@ -11,6 +11,7 @@ import './styles/combat.css';
 import './styles/screens.css';
 import './styles/tutorial.css';
 import './styles/accounts.css';
+import './styles/download.css';
 
 applyToDocument();
 void initBackend();

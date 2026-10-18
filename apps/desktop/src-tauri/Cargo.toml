@@ -1,6 +1,6 @@
 [package]
 name = "cyberhack"
-version = "0.1.0"
+version = "0.2.0"
 description = "CyberHack — roguelike-deckbuilder"
 authors = ["promtly-ru"]
 edition = "2021"

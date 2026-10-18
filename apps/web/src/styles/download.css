@@ -1,0 +1,11 @@
+.download { max-width: 720px; margin: 0 auto; padding-bottom: 32px; }
+.download__lead { margin: 0 0 16px; opacity: 0.8; }
+.download__tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.download__tab { padding: 10px 14px; min-height: 44px; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; background: rgba(255, 255, 255, 0.04); color: inherit; font: inherit; cursor: pointer; }
+.download__tab[aria-selected='true'] { border-color: #2ee6ff; color: #2ee6ff; background: rgba(46, 230, 255, 0.1); }
+.download__panel { margin-bottom: 14px; }
+.download__buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.download__btn { display: inline-flex; align-items: center; gap: 10px; text-align: left; }
+.download__btn small { display: block; opacity: 0.75; font-size: 0.78em; }
+.download__note { margin: 10px 0 0; font-size: 0.9em; opacity: 0.8; }
+.download__steps { margin: 8px 0 0; padding-left: 20px; line-height: 1.7; }

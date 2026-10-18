@@ -12,6 +12,7 @@ import { sfx, unlockAudio } from '../audio/sfx';
 import { AscensionInfo, CLASS_NAME, DailyBoard } from './MetaBits';
 import { AccountChip } from './ProfileScreen';
 import { startTutorial } from '../tutorial/Tutorial';
+import { isInstalledApp } from '../download/DownloadScreen';
 
 export function Logo({ small }: { small?: boolean }) {
   return (
@@ -98,6 +99,15 @@ export function MainMenu() {
               <small>Правила и словарь терминов</small>
             </span>
           </button>
+          {isInstalledApp() ? null : (
+            <button className="menu-btn" data-testid="menu-download" onClick={click(() => setView('download'))}>
+              <Icon name="upgrade" size={22} />
+              <span>
+                <b>Скачать игру</b>
+                <small>Windows, macOS, Linux, Android, iPhone</small>
+              </span>
+            </button>
+          )}
           <button className="menu-btn" data-testid="menu-profile" onClick={click(() => setView('profile'))}>
             <Icon name="user" size={22} />
             <span>

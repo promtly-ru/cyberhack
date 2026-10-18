@@ -6,6 +6,7 @@ import { TooltipLayer } from './components/Tooltip';
 import { MainMenu, ClassSelect } from './screens/MenuScreens';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { HowToPlay } from './tutorial/HowToPlay';
+import { DownloadScreen } from './download/DownloadScreen';
 import { TutorialLayer } from './tutorial/Tutorial';
 import { MapScreen } from './screens/MapScreen';
 import { CombatScreen } from './screens/CombatScreen';
@@ -62,7 +63,7 @@ export function App() {
     <>
       <FxHost />
       <main className="app">
-        {view === 'menu' ? <MainMenu /> : view === 'class_select' ? <ClassSelect /> : view === 'profile' ? <ProfileScreen /> : view === 'howto' ? <HowToPlay /> : <RunView />}
+        {view === 'menu' ? <MainMenu /> : view === 'class_select' ? <ClassSelect /> : view === 'profile' ? <ProfileScreen /> : view === 'howto' ? <HowToPlay /> : view === 'download' ? <DownloadScreen /> : <RunView />}
       </main>
       {error && view === 'run' ? (
         <div className="toast" role="alert" onClick={() => useGame.getState().clearError()}>
