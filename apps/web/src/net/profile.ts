@@ -2,7 +2,7 @@
  * Профиль метапрогрессии: значение по умолчанию, валидация «сырых» данных и слияние
  * (перенос гостевого прогресса в облако, конфликт двух устройств).
  */
-import type { ClassId } from '@cyberhack/engine';
+import type { ClassId, LifetimeStats } from '@cyberhack/engine';
 import type { Profile, SavedRun } from './types';
 import { isRecord } from './storage';
 
@@ -56,7 +56,41 @@ export function normalizeProfile(raw: unknown): Profile {
     achievements: stringList(raw.achievements),
     totalRuns: count(raw.totalRuns),
     totalWins: count(raw.totalWins),
+    ...optional(normalizeLifetime(raw.lifetime), typeof raw.dailyPlayed === 'string' && DAILY_RE.test(raw.dailyPlayed) ? raw.dailyPlayed : undefined),
   };
+}
+
+/** Опциональные поля добавляются только если есть (старые профили не меняют форму). */
+function optional(lifetime: LifetimeStats | undefined, dailyPlayed: string | undefined): Pick<Profile, 'lifetime' | 'dailyPlayed'> {
+  return { ...(lifetime ? { lifetime } : {}), ...(dailyPlayed ? { dailyPlayed } : {}) };
+}
+
+const DAILY_RE = /^daily-\d{4}-\d{2}-\d{2}$/;
+
+function normalizeLifetime(v: unknown): LifetimeStats | undefined {
+  if (!isRecord(v)) return undefined;
+  const out: Record<string, number> = {};
+  let n = 0;
+  for (const [k, x] of Object.entries(v)) {
+    if (k.length === 0 || k.length > 64 || typeof x !== 'number' || !Number.isFinite(x)) continue;
+    out[k] = count(x, 1_000_000_000);
+    if (++n >= 100) break;
+  }
+  return n > 0 ? (out as LifetimeStats) : undefined;
+}
+
+function mergeLifetime(a: LifetimeStats | undefined, b: LifetimeStats | undefined): LifetimeStats | undefined {
+  if (!a) return b ? { ...b } : undefined;
+  if (!b) return { ...a };
+  const out: Record<string, number> = { ...(a as Record<string, number>) };
+  for (const [k, v] of Object.entries(b as Record<string, number>)) out[k] = Math.max(out[k] ?? 0, v);
+  return out as LifetimeStats;
+}
+
+function maxDaily(a: string | undefined, b: string | undefined): string | undefined {
+  if (!a) return b;
+  if (!b) return a;
+  return a > b ? a : b;
 }
 
 function union<T>(a: readonly T[], b: readonly T[]): T[] {
@@ -76,6 +110,7 @@ export function mergeProfiles(a: Profile, b: Profile): Profile {
     achievements: sorted(union(a.achievements, b.achievements)),
     totalRuns: Math.max(a.totalRuns, b.totalRuns),
     totalWins: Math.max(a.totalWins, b.totalWins),
+    ...optional(mergeLifetime(a.lifetime, b.lifetime), maxDaily(a.dailyPlayed, b.dailyPlayed)),
   };
 }
 

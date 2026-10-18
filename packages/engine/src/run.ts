@@ -33,6 +33,7 @@ import {
   type RunState,
   type Screen,
 } from './types';
+import { lockedContent } from './unlocks';
 import { makeCard } from './util';
 
 function modsOf(s: RunState): AscensionMods {
@@ -77,6 +78,9 @@ export function newRun(opts: NewRunOptions): RunState {
     score: 0,
     stats: { enemiesKilled: 0, elitesKilled: 0, bossesKilled: 0, damageDealt: 0, cardsPlayed: 0 },
   };
+
+  if (opts.unlocked) s.locked = lockedContent(opts.unlocked);
+  s.stats.maxGold = s.gold;
 
   for (const id of cls.startingDeck) {
     if (!content.cards.has(id)) throw new Error(`Unknown card id in starting deck: ${id}`);
@@ -470,6 +474,7 @@ export function applyAction(state: RunState, action: Action): ActionResult {
   }
 
   if (s.gold !== prevGold) ev.push({ type: 'gold_changed', amount: s.gold - prevGold });
+  if (s.gold > (s.stats.maxGold ?? 0)) s.stats.maxGold = s.gold;
   if (s.screen.kind !== prevScreen) ev.push({ type: 'screen_changed', screen: s.screen.kind });
   s.score = computeScore(s);
   return { state: s, events: ev };
@@ -529,7 +534,7 @@ function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void 
       return;
     }
     case 'random_card': {
-      const pool = rewardCardPool(s.classId);
+      const pool = rewardCardPool(s.classId, s);
       if (pool.length > 0) addCardToDeck(s, rngOf(s, 'events').pick(pool).id, ev);
       goToMap(s);
       return;

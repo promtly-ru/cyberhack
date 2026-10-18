@@ -1,0 +1,39 @@
+/* Метапрогрессия: достижения, разблокировки, ascension, ежедневный забег */
+
+.panel--wide { grid-column: 1 / -1; }
+
+.ach-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.ach-list--compact { grid-template-columns: 1fr; }
+.ach { display: flex; gap: 10px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--radius); background: rgba(255, 255, 255, 0.02); min-width: 0; }
+.ach__icon { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: var(--text-dim); }
+.ach__body { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ach__name { font-family: var(--font-display); font-size: 15px; }
+.ach__desc { font-size: 13px; color: var(--text-dim); }
+.ach__reward { font-size: 12px; color: var(--cyan); overflow-wrap: anywhere; }
+.ach.is-done { border-color: rgba(232, 255, 58, 0.45); }
+.ach.is-done .ach__icon { background: rgba(232, 255, 58, 0.12); color: var(--acid); box-shadow: 0 0 12px rgba(232, 255, 58, 0.25); }
+.ach.is-new { animation: ach-pop calc(0.6s * var(--speed)) ease-out both; }
+@keyframes ach-pop { from { transform: scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ach.is-new { animation: none; } }
+
+.ach__bar { position: relative; display: block; width: 100%; align-self: stretch; height: 16px; margin-top: 4px; border-radius: 8px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }
+.ach__bar > span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, rgba(0, 240, 255, 0.35), rgba(0, 240, 255, 0.7)); }
+.ach__bar > em { position: relative; display: block; font-style: normal; font-size: 11px; line-height: 16px; text-align: center; color: var(--text); }
+
+.run-unlocks { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.run-unlocks .section-title { margin: 0; }
+.unlock-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.unlock-list li { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--radius); background: rgba(61, 255, 138, 0.08); border: 1px solid rgba(61, 255, 138, 0.35); color: var(--green); font-size: 14px; }
+
+.asc-info { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; font-size: 13px; color: var(--text-dim); }
+.asc-info li { display: flex; gap: 8px; }
+.asc-info li .mono { flex: none; width: 34px; color: var(--orange); }
+.asc-info li.is-current { color: var(--text); font-weight: 700; }
+
+.class-card__lock { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; }
+.class-card.is-locked .class-card__lock { background: rgba(5, 6, 15, 0.85); }
+.class-card__lock small { display: block; font-size: 13px; color: var(--text); max-width: 240px; }
+
+.daily-info { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
+.daily-board { width: min(520px, 100%); margin: 0 auto; }
+.gameover .daily-board { width: 100%; }

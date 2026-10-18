@@ -4,6 +4,7 @@
  */
 import { describeCard as describeCardImpl } from './cards';
 import { getContent } from './content';
+import { hashString } from './rng';
 import {
   applyAction as applyActionImpl,
   getLegalActions as getLegalActionsImpl,
@@ -34,6 +35,20 @@ export { computeScore } from './score';
 export { availableNodes, currentNode } from './run';
 export { calcAttackDamage, calcBlock, STATUS } from './statuses';
 export { hashString } from './rng';
+export {
+  ACHIEVEMENTS,
+  STARTING_CLASSES,
+  achievementProgress,
+  evaluateRunEnd,
+  getAchievement,
+  lockableCards,
+  lockableClasses,
+  lockableRelics,
+  lockedContent,
+  unlockSource,
+  unlockedOptions,
+} from './unlocks';
+export type { AchievementDef, LifetimeStats, MetaProfile, RunEndResult, Unlock } from './unlocks';
 
 /** Создать новый забег. Один seed + класс + ascension = всегда одинаковая карта и колода. */
 export function newRun(opts: NewRunOptions): RunState {
@@ -96,4 +111,11 @@ export function listClasses(): ClassDef[] {
 /** Ежедневный сид по дате UTC: 'daily-2026-10-18'. */
 export function dailySeed(date: Date): string {
   return `daily-${date.toISOString().slice(0, 10)}`;
+}
+
+/** Класс ежедневного забега: детерминированно по сиду дня, одинаковый у всех игроков. */
+export function dailyClassId(seed: string): ClassId {
+  const classes = getContent().data.classes;
+  if (classes.length === 0) throw new Error('Content has no classes');
+  return classes[hashString(`${seed}:class`) % classes.length]!.id;
 }

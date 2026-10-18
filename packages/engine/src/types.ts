@@ -225,6 +225,25 @@ export type Screen =
 
 // ---------- Забег ----------
 
+export interface RunStats {
+  enemiesKilled: number;
+  elitesKilled: number;
+  bossesKilled: number;
+  damageDealt: number;
+  cardsPlayed: number;
+  // ---- Расширения (опциональные, для достижений) ----
+  /** Всего вируса наложено на врагов за забег */
+  virusApplied?: number;
+  /** Максимум вируса, наложенного на врагов за один бой */
+  maxVirusInCombat?: number;
+  /** Самый сильный удар по врагу (урон после блока) */
+  maxHit?: number;
+  /** Максимум золота на руках */
+  maxGold?: number;
+  /** Максимум карт, сыгранных за один ход */
+  maxCardsInTurn?: number;
+}
+
 export interface RunState {
   version: typeof SAVE_VERSION;
   seed: string;
@@ -248,8 +267,10 @@ export interface RunState {
   uidCounter: number;
   status: 'active' | 'won' | 'lost';
   score: number;
-  stats: { enemiesKilled: number; elitesKilled: number; bossesKilled: number; damageDealt: number; cardsPlayed: number };
+  stats: RunStats;
   // ---- Расширения движка (опциональные) ----
+  /** Метапрогрессия: карты/реликвии, закрытые для этого забега (не выпадают в наградах и магазине) */
+  locked?: { cards: string[]; relics: string[] };
   /** Награды, ожидающие на экране reward, пока открыт card_pick */
   pendingRewards?: RewardItem[];
   /** Товары магазина, пока открыт select_deck_card (удаление карты из магазина) */
@@ -314,6 +335,11 @@ export interface NewRunOptions {
   classId: ClassId;
   ascension?: number;
   daily?: boolean;
+  /**
+   * Метапрогрессия: открытые игроком карты/реликвии из числа закрываемых (см. unlocks.ts).
+   * Не передано — открыто всё (тесты, симулятор, ежедневный забег).
+   */
+  unlocked?: { cards?: readonly string[]; relics?: readonly string[] };
 }
 
 export class InvalidActionError extends Error {

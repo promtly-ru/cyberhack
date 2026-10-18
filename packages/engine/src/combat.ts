@@ -26,6 +26,9 @@ import { makeCard, nextUid } from './util';
 export const BASE_ENERGY = 3;
 export const DRAW_PER_TURN = 5;
 export const HAND_LIMIT = 10;
+/** Служебные счётчики статистики в CombatState.counters (не id реликвий) */
+export const COUNTER_VIRUS = '$virus';
+export const COUNTER_TURN_CARDS = '$turnCards';
 
 export interface CombatCtx {
   s: RunState;
@@ -117,7 +120,8 @@ function attack(ctx: CombatCtx, source: Unit | null, target: Unit, base: number,
   const tState = unitState(ctx, target);
   if (tState.hp <= 0) return;
   const dmg = calcAttackDamage(base, source ? unitState(ctx, source) : null, applyDefender ? tState : null);
-  hit(ctx, target, dmg);
+  const lost = hit(ctx, target, dmg);
+  if (source === 'player' && target !== 'player' && lost > (ctx.s.stats.maxHit ?? 0)) ctx.s.stats.maxHit = lost;
   if (source) {
     const thorns = getStatus(tState, STATUS.thorns);
     if (thorns > 0 && unitState(ctx, source).hp > 0) hit(ctx, source, thorns);
@@ -137,6 +141,13 @@ export function applyStatus(ctx: CombatCtx, u: Unit, status: StatusId, amount: n
   if (t.hp <= 0 || amount === 0) return;
   addStatus(t, status, amount);
   ctx.ev.push({ type: 'status_applied', targetUid: unitUid(u), status, amount });
+  if (u !== 'player' && status === STATUS.virus && amount > 0) {
+    const st = ctx.s.stats;
+    st.virusApplied = (st.virusApplied ?? 0) + amount;
+    const inCombat = (ctx.c.counters[COUNTER_VIRUS] ?? 0) + amount;
+    ctx.c.counters[COUNTER_VIRUS] = inCombat;
+    if (inCombat > (st.maxVirusInCombat ?? 0)) st.maxVirusInCombat = inCombat;
+  }
 }
 
 export function heal(ctx: CombatCtx, u: Unit, amount: number): void {
@@ -440,6 +451,7 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
 export function startPlayerTurn(ctx: CombatCtx): void {
   const c = ctx.c;
   c.turn += 1;
+  c.counters[COUNTER_TURN_CARDS] = 0;
   ctx.ev.push({ type: 'turn_started', turn: c.turn });
   c.player.block = 0;
   tickVirus(ctx, 'player');
@@ -482,6 +494,9 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
 
   ctx.ev.push({ type: 'card_played', cardUid: inst.uid, defId: inst.defId });
   ctx.s.stats.cardsPlayed += 1;
+  const inTurn = (c.counters[COUNTER_TURN_CARDS] ?? 0) + 1;
+  c.counters[COUNTER_TURN_CARDS] = inTurn;
+  if (inTurn > (ctx.s.stats.maxCardsInTurn ?? 0)) ctx.s.stats.maxCardsInTurn = inTurn;
 
   for (let r = 0; r < repeats && !isOver(ctx); r++) {
     for (const eff of card.effects) {

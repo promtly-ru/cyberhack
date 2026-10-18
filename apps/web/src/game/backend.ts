@@ -11,7 +11,7 @@ const loaders = import.meta.glob<NetModule>('../net/index.ts');
 
 export function defaultProfile(): Profile {
   return {
-    unlockedClasses: ['netrunner', 'phreaker', 'ghost'] satisfies ClassId[],
+    unlockedClasses: ['netrunner'] satisfies ClassId[],
     unlockedCards: [],
     unlockedRelics: [],
     maxAscension: { netrunner: 0, phreaker: 0, ghost: 0 },

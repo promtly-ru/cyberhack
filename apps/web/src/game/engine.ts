@@ -8,6 +8,20 @@ import * as mock from '../dev/mock';
 
 export type * from '@cyberhack/engine';
 export { InvalidActionError, SAVE_VERSION } from '@cyberhack/engine';
+// Метапрогрессия и ascension — только настоящий движок (мока нет)
+export {
+  ACHIEVEMENTS,
+  STARTING_CLASSES,
+  achievementProgress,
+  dailyClassId,
+  evaluateRunEnd,
+  getAchievement,
+  getAscensionDescriptions,
+  lockableCards,
+  lockableRelics,
+  unlockSource,
+  unlockedOptions,
+} from '@cyberhack/engine';
 
 const mocked = new Set<string>();
 

@@ -2,7 +2,7 @@
  * КОНТРАКТ СЕТЕВОГО СЛОЯ. UI использует только этот интерфейс, реализация — в net/supabase.ts
  * и net/local.ts (гостевой режим без бэкенда / без env-переменных).
  */
-import type { Action, ClassId, NewRunOptions, RunState } from '@cyberhack/engine';
+import type { Action, ClassId, LifetimeStats, NewRunOptions, RunState } from '@cyberhack/engine';
 
 export interface User {
   id: string;
@@ -20,6 +20,11 @@ export interface Profile {
   achievements: string[];
   totalRuns: number;
   totalWins: number;
+  // ---- Расширения (опциональные) ----
+  /** Накопительная статистика и рекорды для достижений (слияние — максимум по ключу) */
+  lifetime?: LifetimeStats;
+  /** Сид последнего начатого ежедневного забега ('daily-YYYY-MM-DD'): одна попытка в день */
+  dailyPlayed?: string;
 }
 
 export interface SavedRun {

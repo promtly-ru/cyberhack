@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import type { Action, CombatState, GameEvent, NewRunOptions, RunState } from './engine';
-import { applyAction, newRun } from './engine';
+import type { Action, ClassId, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
+import { applyAction, evaluateRunEnd, newRun } from './engine';
+import { dailyRunOptions, hasPlayedDaily, markDailyLocal, regularRunOptions } from './meta';
 import type { Profile, SavedRun, User } from '../net/types';
 import { defaultProfile, getBackend } from './backend';
 import { sfx } from '../audio/sfx';
@@ -14,6 +15,9 @@ export interface QueuedEvent {
 }
 
 export const MAX_ASCENSION = 15;
+
+/** Итоги забега для экрана конца: новые ачивки и разблокировки */
+export type RunEndInfo = Omit<RunEndResult, 'profile'>;
 
 interface GameStore {
   view: View;
@@ -34,10 +38,15 @@ interface GameStore {
   savedRun: SavedRun | null;
   backendMode: 'supabase' | 'local' | 'loading';
   dailyResult: { accepted: boolean; rank?: number } | null;
+  runEnd: RunEndInfo | null;
 
   setView(v: View): void;
   openClassSelect(daily: boolean): void;
   startRun(opts: NewRunOptions): void;
+  /** Обычный забег с учётом разблокировок профиля */
+  startRegular(classId: ClassId, ascension: number): void;
+  /** Ежедневный забег (одна попытка в день). false — попытка уже использована */
+  startDaily(): boolean;
   /** Загрузить готовое состояние (продолжение или dev-сценарий) */
   loadRun(state: RunState, options: NewRunOptions, actions?: Action[]): void;
   dispatch(action: Action): boolean;
@@ -86,6 +95,7 @@ export const useGame = create<GameStore>((set, get) => ({
   savedRun: null,
   backendMode: 'loading',
   dailyResult: null,
+  runEnd: null,
 
   setView: (view) => set({ view }),
   openClassSelect: (daily) => set({ view: 'class_select', dailyMode: daily }),
@@ -100,9 +110,37 @@ export const useGame = create<GameStore>((set, get) => ({
     }
   },
 
+  startRegular(classId, ascension) {
+    const { profile } = get();
+    if (!profile.unlockedClasses.includes(classId)) {
+      set({ error: 'Класс ещё не открыт' });
+      return;
+    }
+    const max = Math.min(MAX_ASCENSION, profile.maxAscension[classId] ?? 0);
+    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max))));
+  },
+
+  startDaily() {
+    const opts = dailyRunOptions(new Date());
+    const { profile } = get();
+    if (hasPlayedDaily(profile, opts.seed)) {
+      set({ error: 'Ежедневный взлом уже сыгран сегодня' });
+      return false;
+    }
+    get().startRun(opts);
+    if (get().run?.seed !== opts.seed) return false;
+    const next: Profile = { ...get().profile, dailyPlayed: opts.seed };
+    markDailyLocal(opts.seed);
+    set({ profile: next });
+    void getBackend()
+      .then((b) => b.saves.saveProfile(next))
+      .catch(() => undefined);
+    return true;
+  },
+
   loadRun(state, options, actions = []) {
     clearTimeout(holdTimer);
-    set({ run: state, options, actions, events: [], heldCombat: null, view: 'run', dailyResult: null, error: null });
+    set({ run: state, options, actions, events: [], heldCombat: null, view: 'run', dailyResult: null, runEnd: null, error: null });
   },
 
   dispatch(action) {
@@ -146,7 +184,8 @@ export const useGame = create<GameStore>((set, get) => ({
     set({ run: null, options: null, actions: [], events: [], heldCombat: null, view: 'menu', savedRun: null });
     if (run && run.status === 'active') {
       const b = await getBackend();
-      const p = { ...get().profile, totalRuns: get().profile.totalRuns + 1 };
+      // Брошенный забег = поражение: счётчики и рекорды всё равно идут в зачёт
+      const p = applyRunEnd(get().profile, run).profile;
       set({ profile: p });
       await Promise.allSettled([b.saves.clearRun(), b.saves.saveProfile(p)]);
     }
@@ -166,16 +205,17 @@ function scheduleSave(): void {
   }, 400);
 }
 
+/** Итоги забега → новый профиль (с сохранением полей, о которых движок не знает). */
+function applyRunEnd(profile: Profile, state: RunState): { profile: Profile; info: RunEndInfo } {
+  const { profile: meta, ...info } = evaluateRunEnd(profile, state);
+  return { profile: { ...profile, ...meta }, info };
+}
+
 async function onRunEnded(state: RunState): Promise<void> {
   const b = await getBackend();
   const { profile, options, actions } = useGame.getState();
-  const victory = state.status === 'won';
-  const maxAscension = { ...profile.maxAscension };
-  if (victory && state.ascension >= (maxAscension[state.classId] ?? 0)) {
-    maxAscension[state.classId] = Math.min(MAX_ASCENSION, state.ascension + 1);
-  }
-  const next: Profile = { ...profile, maxAscension, totalRuns: profile.totalRuns + 1, totalWins: profile.totalWins + (victory ? 1 : 0) };
-  useGame.setState({ profile: next, savedRun: null });
+  const { profile: next, info } = applyRunEnd(profile, state);
+  useGame.setState({ profile: next, savedRun: null, runEnd: info });
   await Promise.allSettled([b.saves.clearRun(), b.saves.saveProfile(next)]);
   if (state.daily && options) {
     try {

@@ -8,6 +8,7 @@ import { RelicGlyph } from '../components/Bits';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
+import { DailyBoard, RunEndUnlocks } from './MetaBits';
 
 function Shell({ run, className, eyebrow, title, children, glitch }: { run: RunState; className: string; eyebrow: string; title: string; children: ReactNode; glitch?: boolean }) {
   return (
@@ -380,6 +381,7 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
   const toMenu = useGame((s) => s.toMenu);
   const openClassSelect = useGame((s) => s.openClassSelect);
   const dailyResult = useGame((s) => s.dailyResult);
+  const runEnd = useGame((s) => s.runEnd);
   const st = run.stats;
   const rows: [string, string | number][] = [
     ['Класс', CLASS_NAME[run.classId] ?? run.classId],
@@ -409,6 +411,7 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
             {dailyResult === null ? 'Отправка в таблицу лидеров…' : dailyResult.accepted ? `Ежедневный рейтинг: место ${dailyResult.rank ?? '—'}` : 'Результат сохранён локально (сервер недоступен)'}
           </p>
         ) : null}
+        {runEnd ? <RunEndUnlocks info={runEnd} /> : null}
         <dl className="stats">
           {rows.map(([k, v]) => (
             <div key={k}>
@@ -417,6 +420,12 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
             </div>
           ))}
         </dl>
+        {run.daily ? (
+          <section className="daily-board" aria-label="Лидеры дня">
+            <h2 className="section-title">Лидеры дня</h2>
+            {dailyResult === null ? <p className="muted">Ожидание результата…</p> : <DailyBoard seed={run.seed} reloadKey={dailyResult} />}
+          </section>
+        ) : null}
         <div className="actions">
           <button
             className="btn btn--ghost"

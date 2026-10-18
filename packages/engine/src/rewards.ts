@@ -45,9 +45,16 @@ function isRewardRarity(r: string): r is RewardRarity {
   return r === 'common' || r === 'uncommon' || r === 'rare';
 }
 
-export function rewardCardPool(classId: ClassId | 'neutral'): CardDef[] {
+/** Пул карт-наград класса. s — забег: карты из s.locked (метапрогрессия) исключаются. */
+export function rewardCardPool(classId: ClassId | 'neutral', s?: Pick<RunState, 'locked'>): CardDef[] {
+  const locked = s?.locked?.cards;
   return getContent().data.cards.filter(
-    (c) => c.classId === classId && isRewardRarity(c.rarity) && c.type !== 'curse' && c.type !== 'status',
+    (c) =>
+      c.classId === classId &&
+      isRewardRarity(c.rarity) &&
+      c.type !== 'curse' &&
+      c.type !== 'status' &&
+      !(locked && locked.includes(c.id)),
   );
 }
 
@@ -81,11 +88,15 @@ export function rollCards(
 }
 
 export function rollCardChoice(s: RunState, rng: Rng, tier: CombatTier, mods: AscensionMods): string[] {
-  return rollCards(rng, rewardCardPool(s.classId), 3, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult).map((c) => c.id);
+  return rollCards(rng, rewardCardPool(s.classId, s), 3, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult).map((c) => c.id);
 }
 
 function relicAvailable(s: RunState, r: RelicDef): boolean {
-  return !s.relics.includes(r.id) && (r.classId === 'neutral' || r.classId === s.classId);
+  return (
+    !s.relics.includes(r.id) &&
+    (r.classId === 'neutral' || r.classId === s.classId) &&
+    !(s.locked && s.locked.relics.includes(r.id))
+  );
 }
 
 /** Случайная реликвия (не босс/стартовая/магазинная): common 50 / uncommon 33 / rare 17. */
@@ -128,8 +139,8 @@ export function removePrice(s: RunState, mods: AscensionMods): number {
 /** Магазин: 5 карт класса + 2 нейтральные, 3 реликвии, удаление карты. */
 export function buildShop(s: RunState, rng: Rng, mods: AscensionMods): ShopItem[] {
   const items: ShopItem[] = [];
-  const classCards = rollCards(rng, rewardCardPool(s.classId), 5, CARD_RARITY_WEIGHTS.shop);
-  const neutralCards = rollCards(rng, rewardCardPool('neutral'), 2, CARD_RARITY_WEIGHTS.shop);
+  const classCards = rollCards(rng, rewardCardPool(s.classId, s), 5, CARD_RARITY_WEIGHTS.shop);
+  const neutralCards = rollCards(rng, rewardCardPool('neutral', s), 2, CARD_RARITY_WEIGHTS.shop);
   for (const c of [...classCards, ...neutralCards]) {
     const range = CARD_PRICES[isRewardRarity(c.rarity) ? c.rarity : 'common'];
     items.push({ kind: 'card', id: c.id, price: price(rng, range, mods), sold: false });
