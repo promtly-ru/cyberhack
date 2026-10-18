@@ -1,0 +1,178 @@
+/* ============ Обучение: коучмарки, приглашение, подсказки, «Как играть» ============ */
+
+/* Слой поверх игры: ниже модалок (100), выше FX (70) и стрелки цели (60). Клики проходят насквозь. */
+.tut-layer { position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+.tut-dim { position: fixed; inset: 0; background: rgba(2, 3, 10, 0.72); animation: fade-in 0.2s; }
+.tut-shield { position: fixed; inset: 0; pointer-events: auto; }
+
+.tut-spot {
+  position: fixed; border-radius: 14px; pointer-events: none;
+  box-shadow: 0 0 0 200vmax rgba(2, 3, 10, 0.72), 0 0 0 2px var(--cyan), 0 0 26px rgba(0, 240, 255, 0.55);
+  /* Без transition по геометрии: огромная тень дорого перерисовывается и на телефоне отстаёт от цели */
+  animation: tut-in 0.2s ease-out;
+}
+.tut-layer--action .tut-spot { box-shadow: 0 0 0 200vmax rgba(2, 3, 10, 0.55), 0 0 0 2px var(--acid), 0 0 26px rgba(232, 255, 58, 0.5); }
+.tut-layer--action .tut-spot::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 18px; border: 2px solid var(--acid);
+  animation: tut-pulse 1.4s ease-out infinite;
+}
+@keyframes tut-pulse { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(1.08); } }
+
+.tut-bubble {
+  position: fixed; left: 0; top: 0; z-index: 2; pointer-events: auto;
+  width: min(360px, calc(100vw - 20px));
+  padding: 14px 16px 12px;
+  background: var(--panel-solid); border: 1px solid var(--cyan); border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 240, 255, 0.18);
+  animation: tut-in 0.2s ease-out;
+}
+.tut-bubble--final { width: min(420px, calc(100vw - 20px)); border-color: var(--acid); text-align: left; }
+@keyframes tut-in { from { opacity: 0; } }
+.tut-bubble__top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.tut-bubble__top .eyebrow { font-size: 11px; }
+.tut-bubble__title { font-size: 18px; color: #fff; margin: 0 0 6px; }
+.tut-bubble--final .tut-bubble__title { font-size: 24px; color: var(--acid); text-shadow: 0 0 14px rgba(232, 255, 58, 0.4); }
+.tut-bubble__text { font-size: 15px; line-height: 1.45; color: var(--text); }
+.tut-bubble__actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tut-bubble__actions .btn--primary { margin-left: auto; min-width: 110px; }
+.tut-skip { color: var(--text-dim); border-color: var(--line-2); }
+@media (max-width: 400px) {
+  .tut-bubble { padding: 12px 12px 10px; }
+  .tut-bubble__actions .btn--sm { padding: 6px 10px; font-size: 12px; letter-spacing: 0.04em; }
+  .tut-bubble__actions .btn--primary { min-width: 96px; }
+}
+
+.tut-wait { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acid); display: inline-flex; align-items: center; gap: 6px; }
+.tut-wait::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--acid); animation: tut-blink 1s steps(2) infinite; }
+@keyframes tut-blink { 50% { opacity: 0.2; } }
+
+/* Список узлов в шаге «Узлы бывают разные» (на телефоне, где легенда спрятана) */
+.tut-note { display: block; margin-top: 8px; font-size: 13px; color: var(--text-dim); }
+/* Список узлов в шаге «Узлы бывают разные» */
+.tut-kinds { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 5px; font-size: 13px; line-height: 1.3; }
+.tut-kinds li { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
+.tut-kinds b { color: #fff; font-weight: 600; }
+.tut-kinds__icon { flex: none; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid currentColor; background: #0a0d1f; }
+.tut-kinds .kind-combat .tut-kinds__icon { color: #c0c8e4; }
+.tut-kinds .kind-elite .tut-kinds__icon { color: var(--orange); }
+.tut-kinds .kind-event .tut-kinds__icon { color: var(--violet); }
+.tut-kinds .kind-shop .tut-kinds__icon { color: var(--acid); }
+.tut-kinds .kind-rest .tut-kinds__icon { color: var(--green); }
+.tut-kinds .kind-treasure .tut-kinds__icon { color: var(--cyan); }
+.tut-kinds .kind-boss .tut-kinds__icon { color: var(--magenta); }
+
+/* Плашка под верхней панелью: мини-напоминание обучения и одноразовые подсказки экранов */
+.tut-plaque {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 88;
+  width: min(560px, calc(100vw - 20px));
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 8px 8px 12px;
+  background: rgba(11, 15, 34, 0.96); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  font-size: 14px; line-height: 1.35; color: var(--text);
+  animation: tut-in 0.25s ease-out;
+}
+.tut-plaque--hint { bottom: max(12px, env(safe-area-inset-bottom)); border-color: rgba(0, 240, 255, 0.45); }
+@media (max-width: 480px) {
+  .tut-plaque { font-size: 13px; padding: 6px 6px 6px 10px; gap: 8px; }
+}
+.tut-plaque--tutorial { border-color: rgba(232, 255, 58, 0.55); pointer-events: none; }
+.tut-plaque--tutorial .tut-plaque__skip { pointer-events: auto; }
+.tut-plaque__icon { flex: none; color: var(--cyan); display: grid; }
+.tut-plaque--tutorial .tut-plaque__icon { color: var(--acid); }
+.tut-plaque__text { flex: 1; min-width: 0; }
+.tut-plaque__text b { color: #fff; }
+.tut-plaque__close { flex: none; min-width: 40px; height: 40px; }
+.tut-plaque__skip {
+  flex: none; background: none; border: 0; padding: 8px; min-height: 40px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.tut-plaque__skip:hover { color: var(--text); }
+
+/* Приглашение и подтверждение */
+.tut-modal-backdrop { z-index: 110; }
+.tut-modal { width: min(480px, 100%); border-color: rgba(232, 255, 58, 0.5); }
+.tut-modal__body { padding: 22px 20px 18px; display: flex; flex-direction: column; gap: 12px; }
+.tut-modal__title { font-size: 22px; color: #fff; }
+.tut-modal__text { margin: 0; color: var(--text); line-height: 1.5; }
+.tut-modal__actions { display: flex; flex-wrap: wrap-reverse; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+.tut-modal__actions .btn { flex: 1 1 auto; }
+@media (max-width: 480px) {
+  .tut-modal__actions .btn { flex: 1 1 100%; }
+}
+
+/* ============ «Как играть» ============ */
+.howto { padding: max(16px, env(safe-area-inset-top)) var(--gutter) 0; gap: 16px; max-width: 1200px; margin: 0 auto; width: 100%; }
+.howto__toc { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.howto__chip {
+  flex: none; padding: 7px 12px; border-radius: 99px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.03);
+  color: var(--text); font-size: 13px; text-decoration: none; white-space: nowrap;
+}
+.howto__chip:hover { border-color: var(--line); color: var(--cyan); }
+.howto__grid { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+@media (min-width: 900px) {
+  .howto__grid { grid-template-columns: 1fr 1fr; }
+  .howto__grid > #howto-goal, .howto__grid > #howto-terms, .howto__grid > #howto-classes { grid-column: 1 / -1; }
+}
+.howto__section { scroll-margin-top: 12px; }
+.howto__section p { margin: 0; line-height: 1.5; }
+.howto__lead { font-size: 16px; color: #fff; }
+
+.howto-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.howto-row { display: flex; gap: 12px; align-items: flex-start; }
+.howto-row__icon { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; border: 1px solid currentColor; background: #0a0d1f; color: var(--cyan); }
+.howto-row__icon--node { border-radius: 50%; }
+.howto-row__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.45; }
+.howto-row__body b { color: #fff; font-size: 15px; }
+.howto-row__body span { color: var(--text-dim); font-size: 14px; }
+.howto-row.tone-acid .howto-row__icon { color: var(--acid); }
+.howto-row.tone-magenta .howto-row__icon { color: var(--magenta); }
+.howto-row.tone-red .howto-row__icon { color: var(--red); }
+.howto-row.tone-dim .howto-row__icon { color: #8d97b5; }
+.howto-list--nodes .kind-combat .howto-row__icon { color: #c0c8e4; }
+.howto-list--nodes .kind-elite .howto-row__icon { color: var(--orange); }
+.howto-list--nodes .kind-event .howto-row__icon { color: var(--violet); }
+.howto-list--nodes .kind-shop .howto-row__icon { color: var(--acid); }
+.howto-list--nodes .kind-rest .howto-row__icon { color: var(--green); }
+.howto-list--nodes .kind-treasure .howto-row__icon { color: var(--cyan); }
+.howto-list--nodes .kind-boss .howto-row__icon { color: var(--magenta); }
+
+.howto-terms-group + .howto-terms-group { margin-top: 6px; }
+.howto-terms-group__title { font-family: var(--font-body); font-size: 15px; color: var(--cyan); margin: 0 0 8px; letter-spacing: 0.02em; }
+.howto-terms { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 10px; }
+.howto-term { padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 10px; background: rgba(255, 255, 255, 0.02); }
+.howto-term dt { display: flex; align-items: center; gap: 6px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.howto-term dd { margin: 0; color: var(--text-dim); font-size: 14px; line-height: 1.45; }
+.howto-term.is-buff dt svg { color: var(--green); }
+.howto-term.is-debuff dt svg { color: var(--red); }
+.howto-term__kind { margin-left: auto; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 400; color: var(--text-dim); }
+.howto-term.is-buff .howto-term__kind { color: var(--green); }
+.howto-term.is-debuff .howto-term__kind { color: #ff8da0; }
+
+.howto-classes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 10px; }
+.howto-class { display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid var(--line-2); border-radius: 10px; background: rgba(255, 255, 255, 0.02); line-height: 1.45; }
+.howto-class__name { display: flex; align-items: center; gap: 6px; font-family: var(--font-display); font-size: 17px; color: #fff; }
+.howto-class__meta { display: flex; gap: 14px; font-size: 13px; color: var(--text-dim); }
+.howto-class__meta span { display: inline-flex; align-items: center; gap: 4px; }
+.howto-class.is-locked .howto-class__name { color: var(--text-dim); }
+
+.howto-asc summary { cursor: pointer; color: var(--cyan); font-size: 14px; padding: 6px 0; }
+.howto-asc ol { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text-dim); }
+.howto-asc .mono { color: var(--acid); display: inline-block; min-width: 34px; }
+
+.howto__foot {
+  position: sticky; bottom: 0; z-index: 5; margin: 0 calc(-1 * var(--gutter));
+  display: flex; justify-content: space-between; gap: 10px;
+  padding: 12px var(--gutter) max(12px, env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(5, 6, 15, 0.98) 70%, rgba(5, 6, 15, 0));
+}
+@media (max-width: 480px) {
+  .howto__foot .btn { flex: 1; padding-left: 10px; padding-right: 10px; font-size: 13px; }
+}
+
+/* Меньше движения */
+@media (prefers-reduced-motion: reduce) {
+  .tut-spot, .tut-layer--action .tut-spot::after, .tut-wait::before, .tut-bubble, .tut-plaque, .tut-dim { animation: none; }
+}
+html[data-motion='reduced'] .tut-layer--action .tut-spot::after { animation: none; opacity: 0.6; }

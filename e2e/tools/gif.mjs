@@ -9,9 +9,19 @@ const out = process.argv[2] ?? 'tmp/gif';
 const base = process.env.BASE_URL ?? 'http://localhost:4173/';
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
+// Профиль «уже умеет играть»: без приглашения в обучение и одноразовых подсказок на скриншотах
+const SKIP_TUTORIAL = () => {
+  try {
+    localStorage.setItem('cyberhack:tutorial', 'done');
+    localStorage.setItem('cyberhack:hints', '["*"]');
+  } catch {
+    /* хранилище недоступно */
+  }
+};
 
 const browser = await chromium.launch({ channel: process.env.CI ? undefined : 'msedge' });
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, serviceWorkers: 'block' });
+await ctx.addInitScript(SKIP_TUTORIAL);
 const page = await ctx.newPage();
 page.on('pageerror', (e) => console.log('pageerror:', e.message));
 

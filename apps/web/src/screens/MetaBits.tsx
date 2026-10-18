@@ -115,7 +115,7 @@ export function RunEndUnlocks({
         <ul className="unlock-list">
           {info.ascensionUnlocked ? (
             <li>
-              <Icon name="upgrade" size={16} /> {CLASS_NAME[info.ascensionUnlocked.classId]}: открыт Ascension {info.ascensionUnlocked.level}
+              <Icon name="upgrade" size={16} /> {CLASS_NAME[info.ascensionUnlocked.classId]}: открыта сложность {info.ascensionUnlocked.level}
             </li>
           ) : null}
           {unlocks.map((u) => (
@@ -132,14 +132,14 @@ export function RunEndUnlocks({
 /** Описание уровней ascension: выбранный уровень и все действующие модификаторы. */
 export function AscensionInfo({ level }: { level: number }) {
   const rows = getAscensionDescriptions();
-  if (level === 0) return <p className="asc-info muted small">Ascension 0 — базовая сложность, без модификаторов.</p>;
+  if (level === 0) return <p className="asc-info muted small">Уровень 0 — базовая сложность, враги без усилений.</p>;
   return (
-    <ol className="asc-info" aria-label={`Модификаторы Ascension ${level}`}>
+    <ol className="asc-info" aria-label={`Что меняет сложность ${level}`}>
       {rows
         .filter((r) => r.level <= level)
         .map((r) => (
           <li key={r.level} className={r.level === level ? 'is-current' : undefined}>
-            <span className="mono">A{r.level}</span> {r.description}
+            <span className="mono">Ур. {r.level}</span> {r.description}
           </li>
         ))}
     </ol>

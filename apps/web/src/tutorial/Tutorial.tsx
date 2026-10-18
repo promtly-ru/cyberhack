@@ -1,14 +1,378 @@
 /**
- * Интерактивное обучение: подсказки-«коучмарки» поверх обычного забега.
- * ЗАГОТОВКА — реализацию делает агент «Обучение».
+ * Интерактивное обучение: подсказки-«коучмарки» поверх обычного забега,
+ * приглашение при первом запуске и одноразовые подсказки на экранах.
  */
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useGame } from '../game/store';
+import { isReducedMotion } from '../ui/settings';
+import { sfx } from '../audio/sfx';
+import { COUNTED, STEPS, type Step } from './steps';
+import { beginTutorial, ctxOf, declineInvite, finishTutorial, hasActiveRun, nextStep, skipTutorial, useTutorial } from './tutorialStore';
+import { ScreenHint, TopPlaque } from './hints';
 
 /** Запустить обучение (из меню или из приглашения при первом запуске). */
 export function startTutorial(): void {
-  // TODO(обучение)
+  if (hasActiveRun()) useTutorial.setState({ confirm: true });
+  else beginTutorial();
 }
 
 /** Слой обучения: смонтирован в App поверх всех экранов. */
 export function TutorialLayer() {
-  return null;
+  return (
+    <>
+      <Invite />
+      <ConfirmRestart />
+      <Coach />
+      <ScreenHint />
+    </>
+  );
+}
+
+// ---------------- Геометрия ----------------
+
+interface Rect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+const PAD = 8; // отступ спотлайта вокруг цели
+const GAP = 12; // зазор между спотлайтом и пузырём
+const EDGE = 10; // поля от края экрана
+
+function sameRect(a: Rect | null, b: Rect | null): boolean {
+  if (!a || !b) return a === b;
+  return Math.abs(a.left - b.left) < 0.5 && Math.abs(a.top - b.top) < 0.5 && Math.abs(a.width - b.width) < 0.5 && Math.abs(a.height - b.height) < 0.5;
+}
+
+/** Куда поставить пузырь: рядом с целью, не перекрывая её и не вылезая за экран. */
+function placeBubble(r: Rect | null, bw: number, bh: number, vw: number, vh: number): { x: number; y: number } {
+  const clampX = (x: number) => Math.max(EDGE, Math.min(x, vw - bw - EDGE));
+  const clampY = (y: number) => Math.max(EDGE, Math.min(y, vh - bh - EDGE));
+  if (!r) return { x: clampX((vw - bw) / 2), y: clampY((vh - bh) / 2) };
+  const bottom = r.top + r.height;
+  const right = r.left + r.width;
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  const below = { x: clampX(cx - bw / 2), y: bottom + GAP, fits: bottom + GAP + bh <= vh - EDGE };
+  const above = { x: clampX(cx - bw / 2), y: r.top - GAP - bh, fits: r.top - GAP - bh >= EDGE };
+  const toRight = { x: right + GAP, y: clampY(cy - bh / 2), fits: right + GAP + bw <= vw - EDGE };
+  const toLeft = { x: r.left - GAP - bw, y: clampY(cy - bh / 2), fits: r.left - GAP - bw >= EDGE };
+  const order = cy > vh / 2 ? [above, below, toRight, toLeft] : [below, above, toRight, toLeft];
+  const ok = order.find((o) => o.fits);
+  if (ok) return { x: ok.x, y: ok.y };
+  // Цель на весь экран — перекрытия не избежать: туда, где больше места
+  return vh - bottom >= r.top ? { x: clampX(cx - bw / 2), y: clampY(bottom + GAP) } : { x: clampX(cx - bw / 2), y: clampY(r.top - GAP - bh) };
+}
+
+function visibleRect(el: Element): Rect | null {
+  const r = el.getBoundingClientRect();
+  if (r.width <= 0 || r.height <= 0) return null;
+  return { left: r.left - PAD, top: r.top - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 };
+}
+
+/**
+ * Следим за целью шага каждый кадр: она двигается (веер карт, прокрутка карты, resize),
+ * появляется позже или меняется (выбрал карту → цель — враг).
+ */
+function useTarget(step: Step | undefined, enabled: boolean, getCtx: () => ReturnType<typeof ctxOf>) {
+  const [rect, setRect] = useState<Rect | null>(null);
+  const [sig, setSig] = useState('');
+  const [vp, setVp] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }));
+  const scrolledFor = useRef<Element | null>(null);
+
+  useEffect(() => {
+    if (!enabled || !step) return;
+    let raf = 0;
+    let last: Rect | null | undefined; // undefined — ещё не мерили: первый кадр всегда обновляет (сброс цели прошлого шага)
+    let lastSig = '';
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const ctx = getCtx();
+      const sels = ctx && step.target ? step.target(ctx) : null;
+      let el: Element | null = null;
+      let chosen = '';
+      for (const s of sels ?? []) {
+        const found = document.querySelector(s);
+        if (found && found.getBoundingClientRect().width > 0) {
+          el = found;
+          chosen = s;
+          break;
+        }
+      }
+      // Цель за краем экрана (лента руки на телефоне, длинная карта сети) — докручиваем один раз
+      if (el && scrolledFor.current !== el) {
+        scrolledFor.current = el;
+        const r = el.getBoundingClientRect();
+        if (r.top < 0 || r.left < 0 || r.bottom > window.innerHeight || r.right > window.innerWidth) {
+          el.scrollIntoView({ block: 'nearest', inline: 'center', behavior: isReducedMotion() ? 'auto' : 'smooth' });
+        }
+      }
+      const next = el ? visibleRect(el) : null;
+      if (last === undefined || !sameRect(next, last)) {
+        last = next;
+        setRect(next);
+      }
+      const nextSig = `${chosen}|${step.canAct ? String(step.canAct()) : ''}`;
+      if (nextSig !== lastSig) {
+        lastSig = nextSig;
+        setSig(nextSig);
+      }
+      setVp((v) => (v.w === window.innerWidth && v.h === window.innerHeight ? v : { w: window.innerWidth, h: window.innerHeight }));
+    };
+    tick();
+    return () => cancelAnimationFrame(raf);
+  }, [step, enabled, getCtx]);
+
+  return { rect: enabled ? rect : null, sig, vp };
+}
+
+// ---------------- Коучмарки ----------------
+
+function Coach() {
+  const active = useTutorial((s) => s.active);
+  const index = useTutorial((s) => s.index);
+  const snap = useTutorial((s) => s.snap);
+  const pre = useTutorial((s) => s.pre);
+  const run = useGame((s) => s.run);
+  const heldCombat = useGame((s) => s.heldCombat);
+  const view = useGame((s) => s.view);
+  const step = active ? STEPS[index] : undefined;
+  const ctx = ctxOf({ run, heldCombat, view }, { snap, pre });
+  const shown = !!(step && ctx && step.screens.includes(ctx.screen));
+  const tracked = shown && (step.mode === 'coach' || step.mode === 'action');
+
+  const getCtx = useCallback(() => {
+    const g = useGame.getState();
+    return ctxOf(g, useTutorial.getState());
+  }, []);
+  // Хук сам перерисовывает пузырь, когда меняется цель или выбранная карта
+  const { rect, vp } = useTarget(step, tracked, getCtx);
+
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const primaryRef = useRef<HTMLButtonElement>(null);
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const el = bubbleRef.current;
+    if (!el) return;
+    const measure = () => setSize((s) => (s && s.w === el.offsetWidth && s.h === el.offsetHeight ? s : { w: el.offsetWidth, h: el.offsetHeight }));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [shown, index, step?.mode]);
+
+  const canAct = step?.canAct ? step.canAct() : true;
+  const showNext = !!step && (step.mode === 'coach' || (step.mode === 'action' && !canAct));
+
+  // Фокус на главную кнопку — Enter сразу работает, скринридер читает пузырь
+  useEffect(() => {
+    if (!shown || !step) return;
+    if (step.mode === 'coach' || step.mode === 'final') primaryRef.current?.focus({ preventScroll: true });
+  }, [shown, step, showNext]);
+
+  // Клавиатура: Enter — «Далее», Esc — пропустить
+  useEffect(() => {
+    if (!shown || !step) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (document.querySelector('.modal')) return; // открыта модалка (стопка, настройки) — Esc закрывает её
+      if (e.key === 'Escape') {
+        if (step.mode === 'final') finishTutorial();
+        else skipTutorial();
+        return;
+      }
+      if (e.key !== 'Enter') return;
+      const t = e.target as Element | null;
+      if (t && bubbleRef.current?.contains(t)) return; // кнопка в пузыре нажмётся сама
+      if (t && t !== document.body && t.closest('button, a, input, select, textarea, [role="button"], [tabindex]')) return;
+      if (step.mode === 'final') {
+        e.preventDefault();
+        finishTutorial();
+      } else if (showNext) {
+        e.preventDefault();
+        nextStep();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [shown, step, showNext]);
+
+  if (!shown || !step || !ctx) return null;
+
+  const counter = COUNTED.indexOf(step.id);
+  const text = step.text(ctx);
+
+  if (step.mode === 'mini') {
+    return <TopPlaque kind="tutorial" text={text} closeLabel="Пропустить обучение" closeText="Пропустить" onClose={skipTutorial} testId="tutorial-mini" />;
+  }
+
+  const pos = size ? placeBubble(step.mode === 'final' ? null : rect, size.w, size.h, vp.w, vp.h) : { x: -9999, y: -9999 };
+  const titleId = `tut-title-${step.id}`;
+
+  return (
+    <div className={`tut-layer tut-layer--${step.mode}`} data-testid="tutorial" data-step={step.id}>
+      {rect && step.mode !== 'final' ? (
+        <div key={step.id} className="tut-spot" style={{ left: rect.left, top: rect.top, width: rect.width, height: rect.height }} aria-hidden="true" />
+      ) : (
+        <div className="tut-dim" aria-hidden="true" />
+      )}
+      {step.mode === 'coach' || step.mode === 'final' ? (
+        // Пока читаешь подсказку, игра под затемнением не нажимается
+        <div className="tut-shield" aria-hidden="true" onPointerDown={(e) => e.preventDefault()} />
+      ) : null}
+      <div
+        ref={bubbleRef}
+        className={`tut-bubble${step.mode === 'final' ? ' tut-bubble--final' : ''}`}
+        style={{ transform: `translate(${Math.round(pos.x)}px, ${Math.round(pos.y)}px)`, visibility: size ? 'visible' : 'hidden' }}
+        role="dialog"
+        aria-modal={step.mode === 'final'}
+        aria-labelledby={titleId}
+        data-testid="tutorial-bubble"
+      >
+        <div className="tut-bubble__top">
+          <span className="eyebrow">Обучение{counter >= 0 ? ` · ${counter + 1}/${COUNTED.length}` : ''}</span>
+          {step.mode === 'action' && canAct ? <span className="tut-wait">ждём твой ход</span> : null}
+        </div>
+        <h2 id={titleId} className="tut-bubble__title">
+          {step.title}
+        </h2>
+        <div className="tut-bubble__text" aria-live="polite">
+          {text}
+        </div>
+        {step.mode === 'final' ? (
+          <div className="tut-bubble__actions">
+            <button className="btn btn--ghost btn--sm" data-testid="tutorial-menu" onClick={() => finishTutorial(true)}>
+              В меню
+            </button>
+            <button
+              ref={primaryRef}
+              className="btn btn--primary btn--sm"
+              data-testid="tutorial-continue"
+              onClick={() => {
+                sfx('click');
+                finishTutorial();
+              }}
+            >
+              Играть дальше
+            </button>
+          </div>
+        ) : (
+          <div className="tut-bubble__actions">
+            <button className="btn btn--ghost btn--sm tut-skip" data-testid="tutorial-skip" onClick={skipTutorial}>
+              Пропустить обучение
+            </button>
+            {showNext ? (
+              <button
+                ref={primaryRef}
+                className="btn btn--primary btn--sm"
+                data-testid="tutorial-next"
+                onClick={() => {
+                  sfx('click');
+                  nextStep();
+                }}
+              >
+                Далее
+              </button>
+            ) : null}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------- Модалки: приглашение и подтверждение ----------------
+
+function TutModal({ title, children, onEsc, testId }: { title: string; children: ReactNode; onEsc: () => void; testId: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const escRef = useRef(onEsc);
+  escRef.current = onEsc;
+  useEffect(() => {
+    ref.current?.querySelector<HTMLButtonElement>('.btn--primary')?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        escRef.current();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+  return (
+    <div className="modal-backdrop tut-modal-backdrop">
+      <div className="modal tut-modal" role="dialog" aria-modal="true" aria-labelledby={`${testId}-title`} ref={ref} data-testid={testId}>
+        <div className="modal__body tut-modal__body">
+          <h2 id={`${testId}-title`} className="tut-modal__title">
+            {title}
+          </h2>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Invite() {
+  const flag = useTutorial((s) => s.flag);
+  const active = useTutorial((s) => s.active);
+  const closed = useTutorial((s) => s.inviteClosed);
+  const confirm = useTutorial((s) => s.confirm);
+  const view = useGame((s) => s.view);
+  const mode = useGame((s) => s.backendMode);
+  const totalRuns = useGame((s) => s.profile.totalRuns);
+  const saved = useGame((s) => !!s.savedRun);
+  const hasRun = useGame((s) => !!s.run);
+  const want = !flag && !active && !closed && !confirm && view === 'menu' && mode !== 'loading' && totalRuns === 0 && !saved && !hasRun;
+  // Небольшая пауза: профиль подгружается после выбора бэкенда — не мигаем ветеранам
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (!want) {
+      setReady(false);
+      return;
+    }
+    const t = setTimeout(() => setReady(true), 350);
+    return () => clearTimeout(t);
+  }, [want]);
+  if (!want || !ready) return null;
+  return (
+    <TutModal title="Впервые в CyberHack?" onEsc={() => useTutorial.setState({ inviteClosed: true })} testId="tutorial-invite">
+      <p className="tut-modal__text">Короткое обучение, 2 минуты: один бой с подсказками, и ты в деле. Забег после него продолжится как обычный.</p>
+      <div className="tut-modal__actions">
+        <button className="btn btn--ghost" data-testid="invite-decline" onClick={declineInvite}>
+          Я уже умею играть
+        </button>
+        <button
+          className="btn btn--primary"
+          data-testid="invite-accept"
+          onClick={() => {
+            sfx('select');
+            startTutorial();
+          }}
+        >
+          Пройти обучение
+        </button>
+      </div>
+    </TutModal>
+  );
+}
+
+function ConfirmRestart() {
+  const confirm = useTutorial((s) => s.confirm);
+  if (!confirm) return null;
+  const cancel = () => useTutorial.setState({ confirm: false });
+  return (
+    <TutModal title="Начать обучение?" onEsc={cancel} testId="tutorial-confirm">
+      <p className="tut-modal__text">У тебя есть незаконченный забег. Обучение начнёт новый, и старый пропадёт.</p>
+      <div className="tut-modal__actions">
+        <button className="btn btn--ghost" onClick={cancel}>
+          Отмена
+        </button>
+        <button className="btn btn--primary" data-testid="confirm-tutorial" onClick={beginTutorial}>
+          Начать обучение
+        </button>
+      </div>
+    </TutModal>
+  );
 }

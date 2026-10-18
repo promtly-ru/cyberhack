@@ -1,12 +1,13 @@
 /**
- * Гостевой режим без сервера: всё хранится в localStorage этого браузера.
- * Используется, когда не заданы VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY,
- * а в supabase-режиме — для невошедшего игрока и как локальный кэш.
+ * Режим без сервера: всё хранится в localStorage этого браузера — гость или офлайн-профиль
+ * устройства (net/device.ts). Используется, когда не заданы VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY,
+ * а в supabase-режиме — для невошедшего в облако игрока и как локальный кэш.
  */
 import { replay as engineReplay } from '@cyberhack/engine';
 import type { Action, NewRunOptions, RunState } from '@cyberhack/engine';
 import type { AuthApi, Backend, LeaderboardApi, LeaderboardEntry, Profile, SavedRun, SavesApi, User } from './types';
 import { BackendNotConfiguredError } from './errors';
+import { createDeviceAccounts, type DeviceAccounts } from './device';
 import { CLASS_IDS, MAX_ASCENSION, defaultProfile, normalizeProfile, normalizeSavedRun } from './profile';
 import { browserStorage, isRecord, readJson, removeKey, writeJson, type KeyValueStorage } from './storage';
 
@@ -57,21 +58,24 @@ export function guestUser(storage: KeyValueStorage, randomId: () => string = def
   return { id, email: null, displayName: 'Гость', provider: 'guest' };
 }
 
-export function createLocalAuth(storage: KeyValueStorage, randomId?: () => string): AuthApi {
-  let cached: User | null = null;
-  const user = () => (cached ??= guestUser(storage, randomId));
+/** Вход без сервера: гость или офлайн-профиль устройства. Почта/OAuth недоступны. */
+export function createLocalAuth(device: DeviceAccounts): AuthApi {
   return {
     async getUser() {
-      return user();
+      return device.user();
     },
     onChange(cb) {
       let active = true;
       // как onAuthStateChange в Supabase: сразу сообщаем текущего пользователя
       queueMicrotask(() => {
-        if (active) cb(user());
+        if (active) cb(device.user());
+      });
+      const off = device.subscribe((u) => {
+        if (active) cb(u);
       });
       return () => {
         active = false;
+        off();
       };
     },
     async signInWithEmail() {
@@ -81,7 +85,8 @@ export function createLocalAuth(storage: KeyValueStorage, randomId?: () => strin
       throw new BackendNotConfiguredError();
     },
     async signOut() {
-      // гость не может выйти
+      // офлайн-профиль → гость; гость остаётся гостем
+      await device.api.signOut();
     },
   };
 }
@@ -221,10 +226,12 @@ export function createLocalLeaderboard(
 
 export function createLocalBackend(opts: LocalBackendOptions = {}): Backend {
   const storage = opts.storage ?? browserStorage();
+  const device = createDeviceAccounts({ storage, replay: opts.replay, now: opts.now, randomId: opts.randomId });
   return {
     mode: 'local',
-    auth: createLocalAuth(storage, opts.randomId),
-    saves: createLocalSaves(storage),
-    leaderboard: createLocalLeaderboard(storage, opts.replay, opts.now),
+    auth: createLocalAuth(device),
+    saves: device.saves,
+    leaderboard: device.leaderboard,
+    profiles: device.api,
   };
 }

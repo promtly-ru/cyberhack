@@ -40,9 +40,12 @@
 .class-card__body { display: flex; flex-direction: column; gap: 6px; }
 .class-card__name { font-family: var(--font-display); font-size: 22px; color: var(--class-color); }
 .class-card__desc { font-size: 14px; color: #c9d3ee; }
-.class-card__meta { display: flex; gap: 14px; font-size: 13px; color: var(--text-dim); }
-.class-card__meta span { display: inline-flex; align-items: center; gap: 4px; }
-.class-card__relic { font-size: 13px; color: var(--acid); }
+.class-card__meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--text-dim); }
+.class-card__meta span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.class-card__relic { font-size: 13px; color: var(--acid); align-self: flex-start; cursor: help; }
+.class-card__style { font-size: 14px; line-height: 1.35; color: #eef3ff; }
+.class-card__style b { color: var(--class-color); font-weight: 700; }
+.class-card__meta span { cursor: help; }
 .class-card__lock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; text-align: center; background: rgba(5, 6, 15, 0.72); border-radius: 14px; color: var(--text); }
 .class-card__lock > span { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .class-card__lock small { max-width: 30ch; font-size: 13px; line-height: 1.35; color: #c9d3ee; }
@@ -76,8 +79,9 @@
 
 /* ---------- Карта ---------- */
 .map-screen { height: 100dvh; overflow: hidden; }
-.map-head { display: flex; justify-content: space-between; align-items: flex-end; padding: 12px var(--gutter) 8px; max-width: 980px; margin: 0 auto; width: 100%; }
+.map-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; column-gap: 12px; padding: 12px var(--gutter) 8px; max-width: 980px; margin: 0 auto; width: 100%; }
 .map-title { font-size: clamp(20px, 3vw, 30px); }
+.map-head > div { flex: 1; min-width: 0; }
 .map-body { flex: 1; min-height: 0; display: flex; gap: 20px; justify-content: center; padding: 0 var(--gutter); }
 .map-scroll { flex: 0 1 560px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--line-2); border-radius: 14px; background: rgba(5, 6, 15, 0.6); scrollbar-color: var(--line) transparent; margin-bottom: 12px; }
 .map-svg { display: block; width: 100%; height: auto; }
@@ -130,6 +134,10 @@
 /* ---------- Экраны забега ---------- */
 .run-screen__body { width: min(1100px, 100%); margin: 0 auto; padding: 20px var(--gutter) 32px; display: flex; flex-direction: column; gap: 18px; }
 .panel-head { text-align: center; }
+/* Короткая инструкция «что здесь сделать» под заголовком экрана */
+.screen-hint { margin: 8px auto 0; max-width: 60ch; font-size: 15px; line-height: 1.4; color: #dfe6ff; }
+.screen-hint--map { flex-basis: 100%; margin: 4px 0 0; font-size: 14px; max-width: none; }
+@media (max-width: 767px) { .screen-hint { font-size: 14px; } .screen-hint--map { font-size: 13px; } }
 .panel-head h1 { font-size: clamp(26px, 5vw, 44px); color: #fff; text-shadow: 0 0 16px rgba(0, 240, 255, 0.6); }
 .flavor { color: #c9d3ee; font-style: italic; margin: 0; }
 .reward-list { list-style: none; margin: 0 auto; padding: 0; width: min(520px, 100%); display: flex; flex-direction: column; gap: 10px; }
@@ -142,7 +150,9 @@
 .reward__text small { color: var(--text-dim); font-size: 13px; }
 .reward__cta { font-family: var(--font-mono); font-size: 12px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; }
 
-.pick-row { display: flex; gap: clamp(10px, 3vw, 32px); justify-content: center; flex-wrap: wrap; --card-w: clamp(150px, 26vw, 220px); }
+.pick-row { display: flex; gap: clamp(10px, 3vw, 32px); justify-content: center; align-items: flex-start; flex-wrap: wrap; --card-w: clamp(150px, 26vw, 220px); }
+.pick-slot { display: flex; flex-direction: column; gap: 8px; width: var(--card-w); }
+.pick-slot .card-terms { width: 100%; }
 .pick-card, .select-card, .shop-item { padding: 0; border: 0; background: none; cursor: pointer; transition: transform 0.15s; border-radius: 10px; }
 .pick-card:hover, .select-card:hover, .shop-item:hover:not(:disabled) { transform: translateY(-6px) scale(1.03); }
 @media (max-width: 520px) { .pick-row { --card-w: calc((100vw - 52px) / 2); } }

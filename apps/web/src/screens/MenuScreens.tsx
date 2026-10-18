@@ -6,6 +6,7 @@ import { hasPlayedDaily, todayDailyClass } from '../game/meta';
 import { Icon } from '../components/Icon';
 import { PlayerArt, CLASS_COLOR } from '../components/UnitArt';
 import { RelicIcon } from '../components/Bits';
+import { tip } from '../components/Tooltip';
 import { useUi } from '../ui/uiStore';
 import { sfx, unlockAudio } from '../audio/sfx';
 import { AscensionInfo, CLASS_NAME, DailyBoard } from './MetaBits';
@@ -63,23 +64,22 @@ export function MainMenu() {
             <Icon name="terminal" size={22} />
             <span>
               <b>Новый взлом</b>
-              <small>Выбрать класс и сложность</small>
+              <small>Новая игра: выбрать класс и сложность</small>
             </span>
           </button>
           <button className="menu-btn" data-testid="menu-continue" onClick={onContinue} disabled={!cont}>
             <Icon name="play" size={22} />
             <span>
               <b>Продолжить</b>
-              <small>{cont ? `${CLASS_NAME[cont.classId]} · этаж ${cont.floor} · A${cont.ascension}` : 'Нет активного забега'}</small>
+              <small>{cont ? `Продолжить сохранённую игру · ${CLASS_NAME[cont.classId]}, этаж ${cont.floor}${cont.ascension > 0 ? `, сложность ${cont.ascension}` : ''}` : 'Сохранённой игры нет'}</small>
             </span>
           </button>
           <button className="menu-btn" data-testid="menu-daily" onClick={click(() => openClassSelect(true))}>
             <Icon name="calendar" size={22} />
             <span>
               <b>Ежедневный взлом</b>
-              <small className="mono">
-                {today}
-                {dailyCls ? ` · ${CLASS_NAME[dailyCls]}` : ''}
+              <small>
+                Один забег в день, общий для всех{dailyCls ? ` · ${CLASS_NAME[dailyCls]}` : ''}
                 {dailyDone ? ' · сыгран' : ''}
               </small>
             </span>
@@ -102,7 +102,7 @@ export function MainMenu() {
             <Icon name="user" size={22} />
             <span>
               <b>{user ? 'Профиль' : 'Профиль / Вход'}</b>
-              <small>{user ? user.displayName : 'Гость'}</small>
+              <small>{user ? `${user.displayName} · достижения и рекорды` : 'Гость · достижения и рекорды'}</small>
             </span>
           </button>
           <button className="menu-btn menu-btn--quiet" data-testid="menu-settings" onClick={click(() => openSettings(true))}>
@@ -114,7 +114,7 @@ export function MainMenu() {
           </button>
         </nav>
         <footer className="menu__foot">
-          <span className={`badge${backendMode === 'supabase' ? ' badge--ok' : ''}`}>{backendMode === 'loading' ? 'подключение…' : backendMode === 'supabase' ? 'онлайн' : 'гостевой режим'}</span>
+          <span className={`badge${backendMode === 'supabase' ? ' badge--ok' : ''}`}>{backendMode === 'loading' ? 'подключение…' : backendMode === 'supabase' ? 'онлайн' : 'офлайн: прогресс на этом устройстве'}</span>
           {isMockActive() ? <span className="badge badge--warn">DEV · мок движка</span> : null}
           <span className="muted mono">v0.1</span>
         </footer>
@@ -138,6 +138,13 @@ function lockHint(id: ClassId): string {
   return a ? `${a.name}: ${a.description.toLowerCase()}` : 'Откроется позже';
 }
 
+/** Стиль класса простыми словами. */
+const CLASS_STYLE: Record<string, string> = {
+  netrunner: 'прямой урон — сильные атаки и наращивание Разгона.',
+  phreaker: 'яды и ослабления — враги слабеют и теряют здоровье каждый ход.',
+  ghost: 'защита и много карт — блок, дешёвые карты, постоянный добор.',
+};
+
 function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selected: boolean; locked: boolean; onSelect: () => void; hint?: string }) {
   const relic = tryRelicDef(c.startingRelic);
   return (
@@ -159,19 +166,28 @@ function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selec
       </span>
       <span className="class-card__body">
         <b className="class-card__name">{c.name}</b>
+        {CLASS_STYLE[c.id] ? (
+          <span className="class-card__style">
+            <b>Стиль:</b> {CLASS_STYLE[c.id]}
+          </span>
+        ) : null}
         <span className="class-card__desc">{c.description}</span>
         <span className="class-card__meta mono">
-          <span>
-            <Icon name="hp" size={14} /> {c.maxHp}
+          <span {...tip('Здоровье', 'Максимум здоровья в начале забега.')}>
+            <Icon name="hp" size={14} /> {c.maxHp} HP
           </span>
-          <span>
-            <Icon name="gold" size={14} /> {c.startingGold}
+          <span {...tip('Кредиты', 'Стартовые деньги для чёрного рынка.')}>
+            <Icon name="gold" size={14} /> {c.startingGold} кр.
           </span>
-          <span>
-            <Icon name="deck" size={14} /> {c.startingDeck.length}
+          <span {...tip('Колода', 'Сколько карт в стартовой колоде.')}>
+            <Icon name="deck" size={14} /> {c.startingDeck.length} карт
           </span>
         </span>
-        {relic ? <span className="class-card__relic">Имплант: {relic.name}</span> : null}
+        {relic ? (
+          <span className="class-card__relic" {...tip(relic.name, `Стартовый имплант — бонус на весь забег. ${relic.description}`)}>
+            Стартовый имплант: {relic.name}
+          </span>
+        ) : null}
       </span>
       {locked ? (
         <span className="class-card__lock">
@@ -232,7 +248,7 @@ function RegularSelect() {
 
   return (
     <div className="screen class-select" data-testid="class-select">
-      <SelectHead eyebrow="Новый взлом" title="Выберите оболочку" />
+      <SelectHead eyebrow="Новый взлом" title="Выбери класс" />
       <div className="cs-classes" role="radiogroup" aria-label="Класс">
         {classes.map((c) => (
           <ClassCard key={c.id} c={c} selected={cls === c.id} locked={!unlocked(c.id)} hint={lockHint(c.id)} onSelect={() => setCls(c.id)} />
@@ -240,12 +256,12 @@ function RegularSelect() {
       </div>
       <section className="cs-asc" aria-label="Уровень сложности">
         <div className="cs-asc__head">
-          <h2 className="section-title">Ascension</h2>
+          <h2 className="section-title">Сложность (Ascension)</h2>
           <span className="muted small">
-            {current ? `${current.name}: открыто до ${maxAsc}.` : `Открыто до ${maxAsc}.`} Победа на максимальном уровне открывает следующий.
+            Каждый уровень добавляет врагам силы. Следующий уровень открывается победой на текущем максимальном. {current ? `${current.name}: открыто до ${maxAsc}.` : `Открыто до ${maxAsc}.`}
           </span>
         </div>
-        <div className="asc-chips" role="radiogroup" aria-label="Ascension">
+        <div className="asc-chips" role="radiogroup" aria-label="Сложность">
           {Array.from({ length: MAX_ASCENSION + 1 }, (_, i) => {
             const locked = i > maxAsc;
             return (
@@ -259,7 +275,7 @@ function RegularSelect() {
                   sfx('click');
                   setAsc(i);
                 }}
-                aria-label={locked ? `Ascension ${i}, заблокирован` : `Ascension ${i}`}
+                aria-label={locked ? `Сложность ${i}, закрыта` : `Сложность ${i}`}
               >
                 {locked ? <Icon name="lock" size={12} /> : i}
               </button>
@@ -274,7 +290,7 @@ function RegularSelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">Ascension {asc}</small>
+              <small className="muted">{asc === 0 ? 'Базовая сложность' : `Сложность ${asc}`}</small>
             </span>
           </div>
         ) : null}
@@ -312,7 +328,7 @@ function DailySelect() {
       ) : null}
       <div className="daily-info">
         <p className="muted">
-          Один сид и один класс на всех, сложность A0, все карты и импланты открыты. Одна попытка в день — результат уходит в таблицу лидеров.
+          Один и тот же забег для всех игроков: одинаковые карта и класс, базовая сложность, все карты и импланты открыты. Одна попытка в день — результат попадает в таблицу лидеров.
         </p>
         {played ? (
           <p className="ok">
@@ -330,7 +346,7 @@ function DailySelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">Ежедневный · A0</small>
+              <small className="muted">Ежедневный · базовая сложность</small>
             </span>
           </div>
         ) : null}

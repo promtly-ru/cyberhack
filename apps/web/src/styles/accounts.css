@@ -1,0 +1,107 @@
+/* ---------- Аккаунты: чип в меню, блок «Аккаунт» на экране профиля ---------- */
+
+/* Аватар: кружок с первой буквой ника (цвет — из ника), у гостя — иконка */
+.avatar {
+  --avatar: var(--cyan);
+  flex: none; display: inline-grid; place-items: center; border-radius: 50%;
+  font-family: var(--font-display); font-weight: 700; line-height: 1; color: var(--avatar);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--avatar) 28%, transparent), color-mix(in srgb, var(--avatar) 8%, #05060f) 70%);
+  border: 1.5px solid color-mix(in srgb, var(--avatar) 70%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--avatar) 25%, transparent);
+}
+.avatar--guest { --avatar: var(--text-dim); color: var(--text-dim); box-shadow: none; border-style: dashed; }
+
+/* ---------- Чип в углу главного меню ---------- */
+.screen.menu { position: relative; }
+.account-chip {
+  position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(var(--gutter), env(safe-area-inset-right)); z-index: 2;
+  display: flex; align-items: center; gap: 10px; max-width: min(240px, 46vw);
+  min-height: 48px; padding: 6px 14px 6px 6px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 99px; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.account-chip:hover { border-color: var(--cyan); background: rgba(0, 240, 255, 0.1); }
+.account-chip:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+.account-chip__text { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; text-align: left; line-height: 1.15; }
+.account-chip__text b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-display); font-size: 14px; color: #fff; letter-spacing: 0.02em; }
+.account-chip__text small { font-size: 12px; color: var(--text-dim); }
+.account-chip--guest .account-chip__text small { color: var(--cyan); font-weight: 600; }
+
+/* Узкий экран: чип не висит поверх логотипа, а стоит строкой над меню */
+@media (max-width: 720px) {
+  .menu { justify-content: flex-start; }
+  .account-chip { position: static; align-self: flex-end; max-width: 100%; margin: 0 0 12px; }
+  .menu__inner { margin-block: auto; }
+}
+
+/* ---------- Блок «Аккаунт» ---------- */
+.account-panel { grid-column: 1 / -1; }
+.account-panel .section-title { margin-bottom: 0; }
+.account-who { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.account-who__text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 220px; min-width: 0; }
+.account-who__text b { font-family: var(--font-display); font-size: 22px; color: #fff; overflow-wrap: anywhere; }
+.account-who__text .muted { font-size: 14px; }
+.account-who__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.account-msg { margin: 0; font-size: 14px; }
+@media (max-width: 560px) {
+  .account-who__actions { flex-basis: 100%; }
+  .account-who__actions .btn { flex: 1 1 auto; white-space: nowrap; padding-inline: 12px; }
+}
+
+.account-login { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); padding-top: 14px; border-top: 1px solid var(--line-2); }
+/* Без облака офлайн-профили — единственный вариант: на всю ширину, список слева, создание справа */
+.account-login--solo { grid-template-columns: 1fr; }
+.account-login__foot { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.account-login__foot p { margin: 0; flex: 1 1 260px; }
+.account-block { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.account-block p { margin: 0; }
+.account-block__title { font-size: 16px; color: #fff; }
+
+.acc-input {
+  width: 100%; min-height: 44px; padding: 8px 12px; background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line); border-radius: 8px; color: var(--text); font: inherit; font-size: 16px;
+}
+.acc-input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.2); }
+.acc-input[aria-invalid='true'] { border-color: var(--red); }
+.acc-input--pin { letter-spacing: 0.4em; max-width: 160px; }
+
+/* Список профилей устройства */
+.dp-body { display: grid; gap: 14px; align-items: start; }
+.account-login--solo .dp-body { grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }
+.account-login--solo .dp-body--empty { grid-template-columns: minmax(0, 560px); }
+.dp-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.dp-item { display: flex; flex-direction: column; gap: 8px; padding: 6px; border: 1px solid var(--line-2); border-radius: 12px; background: rgba(255, 255, 255, 0.02); }
+.dp-item.is-current { border-color: rgba(61, 255, 138, 0.35); }
+.dp-row { display: flex; align-items: center; gap: 6px; }
+.dp-pick {
+  flex: 1; min-width: 0; min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 4px 8px;
+  background: transparent; border: 0; border-radius: 8px; cursor: pointer; text-align: left;
+}
+.dp-pick:hover:not(:disabled) { background: rgba(0, 240, 255, 0.08); }
+.dp-pick:disabled { cursor: default; }
+.dp-pick:focus-visible { outline: 2px solid var(--acid); outline-offset: -2px; }
+.dp-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: #fff; }
+.dp-lock { display: inline-flex; color: var(--text-dim); }
+.dp-del { flex: none; min-width: 44px; height: 44px; justify-content: center; }
+.dp-del:hover:not(:disabled) { color: var(--red); border-color: rgba(255, 59, 92, 0.5); }
+.dp-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; padding: 4px 8px 8px; }
+.dp-form > p { flex-basis: 100%; margin: 0; }
+.dp-form .field { flex: 0 1 180px; }
+.dp-form--danger { border-top: 1px dashed rgba(255, 59, 92, 0.35); padding-top: 10px; }
+.dp-form__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Создание профиля */
+.dp-create { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px dashed var(--line); border-radius: 12px; }
+.dp-create__title { margin: 0; font-family: var(--font-display); font-size: 15px; color: var(--cyan); letter-spacing: 0.04em; }
+.dp-create__fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 160px); gap: 10px; }
+.dp-create__fields .field { justify-content: flex-end; }
+.dp-create .btn--primary { align-self: flex-start; }
+@media (max-width: 420px) {
+  .dp-create__fields { grid-template-columns: 1fr; }
+  .dp-create .btn--primary { align-self: stretch; }
+}
+
+.acc-check { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; font-size: 14px; }
+.acc-check input { width: 20px; height: 20px; accent-color: var(--cyan); flex: none; }
+.acc-link { padding: 0; background: none; border: 0; color: var(--cyan); text-decoration: underline; cursor: pointer; font: inherit; }
+.acc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

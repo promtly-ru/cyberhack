@@ -4,9 +4,9 @@ test('профиль открывается, достижения видны', a
   await page.goto('./');
   await act(page.getByTestId('menu-profile'));
   await expect(page.getByTestId('profile')).toBeVisible();
-  // Гость: не «Вы вошли как Гость / Выйти», а «Гостевой режим / Войти»
-  await expect(page.getByTestId('profile').getByText('Гостевой режим').first()).toBeVisible();
-  await expect(page.getByTestId('profile-login')).toBeVisible();
+  // Гость: заголовок «Гость» и кнопка «Войти», без «Выйти»
+  await expect(page.getByTestId('profile').getByRole('heading', { name: 'Гость' }).first()).toBeVisible();
+  await expect(page.getByTestId('account-login')).toBeVisible();
   await expect(page.getByTestId('profile').getByRole('button', { name: /Выйти/ })).toHaveCount(0);
   const panel = page.getByTestId('achievements');
   await panel.scrollIntoViewIfNeeded();

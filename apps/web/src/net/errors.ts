@@ -29,3 +29,24 @@ export class BackendError extends Error {
     this.name = 'BackendError';
   }
 }
+
+export type LocalProfileErrorCode =
+  | 'name_length'
+  | 'name_chars'
+  | 'name_taken'
+  | 'pin_format'
+  | 'pin_required'
+  | 'pin_wrong'
+  | 'not_found'
+  | 'too_many';
+
+/** Ошибка офлайн-профиля: текст можно сразу показывать игроку. */
+export class LocalProfileError extends Error {
+  constructor(
+    readonly code: LocalProfileErrorCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'LocalProfileError';
+  }
+}

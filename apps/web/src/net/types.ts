@@ -8,7 +8,8 @@ export interface User {
   id: string;
   email: string | null;
   displayName: string;
-  provider: 'email' | 'google' | 'github' | 'guest';
+  /** 'local' — офлайн-профиль на этом устройстве (ник + необязательный PIN), 'guest' — гость по умолчанию */
+  provider: 'email' | 'google' | 'github' | 'local' | 'guest';
 }
 
 export interface Profile {
@@ -67,9 +68,39 @@ export interface LeaderboardApi {
   getDaily(seed: string, limit?: number): Promise<LeaderboardEntry[]>;
 }
 
+/** Офлайн-профиль на этом устройстве (без PIN-хеша — он не покидает net/). */
+export interface DeviceProfile {
+  id: string;
+  name: string;
+  hasPin: boolean;
+  createdAt: string; // ISO
+}
+
+/**
+ * Офлайн-профили: несколько игроков на одном устройстве, у каждого свой прогресс.
+ * Работают без сервера. Ошибки — LocalProfileError с понятным текстом.
+ */
+export interface DeviceProfilesApi {
+  /** Все профили этого устройства (по алфавиту) */
+  list(): DeviceProfile[];
+  /** Активный офлайн-профиль; null — играет гость */
+  current(): DeviceProfile | null;
+  /** Есть ли у гостя прогресс или сохранённый забег (для галочки «Перенести прогресс гостя») */
+  guestHasProgress(): boolean;
+  /** Создать профиль и сразу войти в него */
+  create(input: { name: string; pin?: string; importGuest?: boolean }): Promise<User>;
+  signIn(id: string, pin?: string): Promise<User>;
+  /** Выйти из офлайн-профиля — снова гость */
+  signOut(): Promise<void>;
+  /** Удалить профиль и весь его прогресс. Если у профиля есть PIN — нужен PIN */
+  remove(id: string, pin?: string): Promise<void>;
+}
+
 export interface Backend {
   mode: 'supabase' | 'local';
   auth: AuthApi;
   saves: SavesApi;
   leaderboard: LeaderboardApi;
+  /** Офлайн-профили устройства (нет у заглушки) */
+  profiles?: DeviceProfilesApi;
 }

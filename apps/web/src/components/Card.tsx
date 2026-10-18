@@ -1,6 +1,8 @@
 import { memo, type CSSProperties, type ReactNode } from 'react';
 import { cardStats, describeCard, type CardType, type Rarity } from '../game/engine';
 import { CardArt } from './CardArt';
+import { cardTerms, getTerm, splitKeywords } from './glossary';
+import { tip } from './Tooltip';
 
 export const TYPE_LABEL: Record<CardType, string> = {
   attack: 'Атака',
@@ -18,16 +20,44 @@ export const RARITY_LABEL: Record<Rarity, string> = {
   special: 'Особая',
 };
 
-const KEYWORDS = /(Сгорает|ВСЕМ|Неиграбельна|Эфемерна|Вируса?|Уязвимост[ьи]|Слабост[ьи]|Разгона?|Отклика?|Хрупкост[ьи]|Обратного трейса|Самовосстановления)/;
-
-/** Подсветка чисел и ключевых слов в тексте карты. */
+/** Подсветка чисел и ключевых слов в тексте карты; у ключевых слов — подсказка из словаря. */
 export function formatCardText(text: string, upgraded: boolean): ReactNode[] {
-  const parts = text.split(/(\d+|Сгорает|ВСЕМ|Неиграбельна|Эфемерна|Вируса?|Уязвимост[ьи]|Слабост[ьи]|Разгона?|Отклика?|Хрупкост[ьи]|Обратного трейса|Самовосстановления)/);
-  return parts.map((p, i) => {
-    if (/^\d+$/.test(p)) return <b key={i} className={upgraded ? 'num num--up' : 'num'}>{p}</b>;
-    if (KEYWORDS.test(p) && p.length > 0) return <b key={i} className="kw">{p}</b>;
-    return p;
+  const out: ReactNode[] = [];
+  splitKeywords(text).forEach((part, i) => {
+    if (typeof part !== 'string') {
+      const term = getTerm(part.termId);
+      out.push(
+        <b key={`k${i}`} className="kw" {...(term ? tip(term.name, term.desc) : {})}>
+          {part.word}
+        </b>,
+      );
+      return;
+    }
+    part.split(/(\d+)/).forEach((p, j) => {
+      if (!p) return;
+      out.push(/^\d+$/.test(p) ? <b key={`${i}-${j}`} className={upgraded ? 'num num--up' : 'num'}>{p}</b> : p);
+    });
   });
+  return out;
+}
+
+/** Блок «Термины» под картой: описания всех ключевых слов этой карты (как в Slay the Spire). */
+export function CardTerms({ defId, upgraded = false, compact }: { defId: string; upgraded?: boolean; compact?: boolean }) {
+  const list = cardTerms(defId, upgraded, { basics: !compact });
+  if (!list.length) return null;
+  return (
+    <div className={`card-terms${compact ? ' card-terms--compact' : ''}`} data-testid="card-terms">
+      <div className="card-terms__title">Термины</div>
+      <dl>
+        {list.map((t) => (
+          <div key={t.id} className={`card-terms__item${t.tone ? ` is-${t.tone}` : ''}`}>
+            <dt>{t.name}</dt>
+            <dd>{t.desc}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
 }
 
 export interface CardProps {

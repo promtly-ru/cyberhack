@@ -10,10 +10,10 @@ import { sfx } from '../audio/sfx';
 
 export const NODE_LABEL: Record<MapNodeKind, { name: string; text: string }> = {
   combat: { name: 'Сервер', text: 'Обычный бой с защитными программами.' },
-  elite: { name: 'Элитная защита', text: 'Опасный страж. Награда — реликвия.' },
+  elite: { name: 'Элитная защита', text: 'Опасный страж. Награда — имплант.' },
   event: { name: 'Неизвестный сигнал', text: 'Случайное событие.' },
-  shop: { name: 'Чёрный рынок', text: 'Купить программы, реликвии, удалить карту.' },
-  rest: { name: 'Безопасный узел', text: 'Восстановиться или улучшить программу.' },
+  shop: { name: 'Чёрный рынок', text: 'Купить карты и импланты, удалить карту.' },
+  rest: { name: 'Безопасный узел', text: 'Восстановить здоровье или улучшить карту.' },
   treasure: { name: 'Тайник данных', text: 'Сундук с наградой.' },
   boss: { name: 'Ядро системы', text: 'Финальный страж акта.' },
 };
@@ -93,6 +93,11 @@ export function MapScreen({ run }: { run: RunState }) {
         <button className="btn btn--ghost btn--sm legend-toggle" onClick={() => setLegendOpen((v) => !v)} aria-expanded={legendOpen}>
           Легенда
         </button>
+        {available.size > 0 ? (
+          <p className="screen-hint screen-hint--map" data-testid="screen-hint">
+            Выбери следующий узел — пульсирующие доступны. Что значат значки — в легенде.
+          </p>
+        ) : null}
       </div>
       <div className="map-body">
         <div className="map-scroll" ref={scrollRef}>
@@ -171,7 +176,7 @@ export function MapScreen({ run }: { run: RunState }) {
               </li>
             ))}
           </ul>
-          <p className="muted small">Пульсирующие узлы доступны для перехода.</p>
+          <p className="muted small">Пульсирующие узлы доступны для перехода. Идти можно только по линиям вверх.</p>
         </aside>
       </div>
     </div>

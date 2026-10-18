@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { Action, ClassId, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
 import { applyAction, evaluateRunEnd, newRun } from './engine';
 import { dailyRunOptions, hasPlayedDaily, markDailyLocal, regularRunOptions } from './meta';
-import type { Backend, Profile, SavedRun, User } from '../net/types';
+import type { Backend, DeviceProfile, Profile, SavedRun, User } from '../net/types';
 import { defaultProfile, getBackend, peekBackend } from './backend';
 import { sfx } from '../audio/sfx';
 import { animScale } from '../ui/settings';
@@ -34,6 +34,8 @@ interface GameStore {
   error: string | null;
 
   user: User | null;
+  /** Офлайн-профили этого устройства; null — недоступны (бэкенд-заглушка или ещё грузится) */
+  accounts: { profiles: DeviceProfile[]; guestHasProgress: boolean } | null;
   profile: Profile;
   savedRun: SavedRun | null;
   backendMode: 'supabase' | 'local' | 'loading';
@@ -91,6 +93,7 @@ export const useGame = create<GameStore>((set, get) => ({
   heldCombat: null,
   error: null,
   user: null,
+  accounts: null,
   profile: defaultProfile(),
   savedRun: null,
   backendMode: 'loading',
@@ -213,9 +216,11 @@ function saveNow(): void {
   // Если бэкенд уже подключён — пишем синхронно: на pagehide промис может не успеть
   const ready = peekBackend();
   const write = (b: Backend) => b.saves.saveRun(saved).catch(() => undefined);
-  if (ready) void write(ready);
-  else void getBackend().then(write).catch(() => undefined);
+  lastWrite = ready ? write(ready) : getBackend().then(write).catch(() => undefined);
 }
+
+/** Последняя запись забега — её дожидаемся перед сменой аккаунта, чтобы забег не ушёл новому игроку. */
+let lastWrite: Promise<unknown> = Promise.resolve();
 
 /** Досохранить отложенное (уход со вкладки, сворачивание, закрытие страницы). */
 export function flushSave(): void {
@@ -271,9 +276,77 @@ export async function initBackend(): Promise<void> {
     profile: profile.status === 'fulfilled' ? profile.value : defaultProfile(),
     savedRun: saved.status === 'fulfilled' && saved.value && saved.value.state.status === 'active' ? saved.value : null,
   });
-  b.auth.onChange((u) => {
+  refreshAccounts(b);
+  b.auth.onChange((u) => applyUser(b, u));
+}
+
+// ---------------- Аккаунт: вход, выход, смена профиля ----------------
+
+/** Номер последней смены пользователя: ответы для прежнего пользователя отбрасываются. */
+let userSeq = 0;
+
+/** Список офлайн-профилей устройства → в стор (для экрана профиля). */
+function refreshAccounts(b: Backend): void {
+  const api = b.profiles;
+  try {
+    useGame.setState({ accounts: api ? { profiles: api.list(), guestHasProgress: api.guestHasProgress() } : null });
+  } catch {
+    useGame.setState({ accounts: null });
+  }
+}
+
+/**
+ * Пользователь сменился (вход, выход, переключение профиля) — забег и профиль прежнего
+ * не должны достаться новому: всё сбрасываем и грузим данные нового пользователя.
+ * Тот же пользователь (обновление токена) — только перечитываем профиль и сохранение.
+ */
+function applyUser(b: Backend, u: User | null): void {
+  const prev = useGame.getState().user;
+  const changed = (prev?.id ?? null) !== (u?.id ?? null);
+  const seq = ++userSeq;
+  if (changed) {
+    clearTimeout(saveTimer);
+    saveTimer = undefined;
+    clearTimeout(holdTimer);
+    const { view } = useGame.getState();
+    useGame.setState({
+      user: u,
+      profile: defaultProfile(),
+      savedRun: null,
+      run: null,
+      options: null,
+      actions: [],
+      events: [],
+      heldCombat: null,
+      runEnd: null,
+      dailyResult: null,
+      view: view === 'run' ? 'menu' : view,
+    });
+  } else {
     useGame.setState({ user: u });
-    void b.saves.loadProfile().then((p) => useGame.setState({ profile: p })).catch(() => undefined);
-    void refreshSaved();
+  }
+  refreshAccounts(b);
+  void Promise.allSettled([b.saves.loadProfile(), b.saves.loadRun()]).then(([p, r]) => {
+    if (seq !== userSeq) return; // пока грузили, пользователь сменился ещё раз
+    const patch: Partial<GameStore> = {};
+    if (p.status === 'fulfilled') patch.profile = p.value;
+    if (r.status === 'fulfilled') patch.savedRun = r.value && r.value.state.status === 'active' ? r.value : null;
+    useGame.setState(patch);
   });
+}
+
+/**
+ * Выполнить действие с аккаунтом (войти, выйти, создать/удалить профиль).
+ * Сначала дописываем отложенное сохранение забега прежнему пользователю — иначе
+ * таймер сохранения сработал бы уже после переключения и записал забег новому.
+ */
+export async function accountAction<T>(fn: (b: Backend) => Promise<T>): Promise<T> {
+  flushSave();
+  await lastWrite;
+  const b = await getBackend();
+  try {
+    return await fn(b);
+  } finally {
+    refreshAccounts(b);
+  }
 }

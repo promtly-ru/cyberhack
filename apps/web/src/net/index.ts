@@ -9,7 +9,7 @@ import { createSupabaseBackend } from './supabase';
 import { browserStorage } from './storage';
 
 export type * from './types';
-export { BackendNotConfiguredError, AuthRequiredError, NetworkError, BackendError } from './errors';
+export { BackendNotConfiguredError, AuthRequiredError, NetworkError, BackendError, LocalProfileError } from './errors';
 export { StorageWriteError, type KeyValueStorage } from './storage';
 export { defaultProfile, mergeProfiles } from './profile';
 

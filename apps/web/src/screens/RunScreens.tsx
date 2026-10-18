@@ -3,7 +3,7 @@ import type { CardInstance, RewardItem, RunState, Screen, ShopItem } from '../ga
 import { getEventDef, tryRelicDef, cardStats } from '../game/engine';
 import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
-import { Card } from '../components/Card';
+import { Card, CardTerms } from '../components/Card';
 import { RelicGlyph } from '../components/Bits';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
@@ -19,7 +19,7 @@ function cardName(id: string | undefined): string {
   }
 }
 
-function Shell({ run, className, eyebrow, title, children, glitch }: { run: RunState; className: string; eyebrow: string; title: string; children: ReactNode; glitch?: boolean }) {
+function Shell({ run, className, eyebrow, title, hint, children, glitch }: { run: RunState; className: string; eyebrow: string; title: string; hint?: ReactNode; children: ReactNode; glitch?: boolean }) {
   return (
     <div className={`screen run-screen ${className}`} data-testid={className}>
       <TopBar run={run} />
@@ -29,6 +29,11 @@ function Shell({ run, className, eyebrow, title, children, glitch }: { run: RunS
           <h1 className={glitch ? 'glitch' : undefined} data-text={title}>
             {title}
           </h1>
+          {hint ? (
+            <p className="screen-hint" data-testid="screen-hint">
+              {hint}
+            </p>
+          ) : null}
         </header>
         {children}
       </div>
@@ -45,7 +50,7 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
     dispatch({ type: 'take_reward', index: i });
   };
   return (
-    <Shell run={run} className="reward-screen" eyebrow="Доступ получен" title="Трофеи" glitch>
+    <Shell run={run} className="reward-screen" eyebrow="Доступ получен" title="Трофеи" hint="Нажми на награду, чтобы забрать её. Когда закончишь — «Дальше»." glitch>
       <ul className="reward-list">
         {screen.items.map((item, i) => {
           let icon: ReactNode;
@@ -57,12 +62,12 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
           } else if (item.kind === 'relic') {
             const d = tryRelicDef(item.relicId);
             icon = <RelicGlyph id={item.relicId} />;
-            label = d?.name ?? item.relicId;
+            label = `Имплант «${d?.name ?? item.relicId}»`;
             sub = d?.description ?? '';
           } else {
             icon = <Icon name="deck" size={26} />;
-            label = 'Новая программа';
-            sub = `Выбрать 1 из ${item.cardIds.length}`;
+            label = 'Новая карта в колоду';
+            sub = `Выбери 1 из ${item.cardIds.length}`;
           }
           return (
             <li key={`${item.kind}-${i}`}>
@@ -100,21 +105,23 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
 export function CardPickScreen({ run, screen }: { run: RunState; screen: Extract<Screen, { kind: 'card_pick' }> }) {
   const dispatch = useGame((s) => s.dispatch);
   return (
-    <Shell run={run} className="pick-screen" eyebrow="Новая программа" title="Выберите карту">
+    <Shell run={run} className="pick-screen" eyebrow="Новая программа" title="Выбери карту" hint="Возьми одну карту в колоду или пропусти. Подчёркнутые слова — термины, их смысл под картой.">
       <div className="pick-row">
         {screen.cardIds.map((id) => (
-          <button
-            key={id}
-            className="pick-card"
-            data-testid="pick-card"
-            aria-label={`Взять «${cardName(id)}»`}
-            onClick={() => {
-              sfx('buy');
-              dispatch({ type: 'pick_card', cardId: id });
-            }}
-          >
-            <Card defId={id} />
-          </button>
+          <div key={id} className="pick-slot">
+            <button
+              className="pick-card"
+              data-testid="pick-card"
+              aria-label={`Взять «${cardName(id)}»`}
+              onClick={() => {
+                sfx('buy');
+                dispatch({ type: 'pick_card', cardId: id });
+              }}
+            >
+              <Card defId={id} />
+            </button>
+            <CardTerms defId={id} compact />
+          </div>
         ))}
       </div>
       <div className="actions">
@@ -157,10 +164,10 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
     </span>
   );
   return (
-    <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок">
+    <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты и импланты за кредиты или удали лишнюю карту из колоды. Импланты — бонусы на весь забег.">
       <p className="flavor">«Всё чистое, без закладок. Почти». — брокер по кличке Ноль</p>
       <section>
-        <h2 className="section-title">Программы</h2>
+        <h2 className="section-title">Карты</h2>
         <div className="shop-cards">
           {cards.map(({ it, i }) => (
             <button key={i} className={`shop-item${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={it.sold ? `«${cardName(it.id)}» — продано` : `Купить «${cardName(it.id)}» за ${it.price}`}>
@@ -193,7 +200,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
             <button key={i} className={`shop-service${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold}>
               <Icon name="trash" size={26} />
               <span>
-                <b>Удалить программу</b>
+                <b>Удалить карту</b>
                 <small>Стереть одну карту из колоды</small>
               </span>
               {price(it)}
@@ -223,7 +230,7 @@ export function RestScreen({ run }: { run: RunState }) {
   const heal = Math.floor(run.maxHp * 0.3);
   const canUpgrade = run.deck.some((c) => !c.upgraded);
   return (
-    <Shell run={run} className="rest-screen" eyebrow="Шифрованный канал" title="Безопасный узел">
+    <Shell run={run} className="rest-screen" eyebrow="Шифрованный канал" title="Безопасный узел" hint="Выбери одно: восстановить здоровье или улучшить карту.">
       <div className="rest-core" aria-hidden="true">
         <svg viewBox="0 0 200 200">
           <circle cx="100" cy="100" r="86" className="rc-ring rc-ring--1" />
@@ -245,7 +252,7 @@ export function RestScreen({ run }: { run: RunState }) {
           <Icon name="hp" size={34} />
           <b>Перезагрузка</b>
           <small>
-            Восстановить ≈30% HP (<span className="mono">+{Math.min(heal, run.maxHp - run.hp)}</span>)
+            Восстановить ≈30% здоровья (<span className="mono">+{Math.min(heal, run.maxHp - run.hp)}</span>)
           </small>
         </button>
         <button
@@ -258,7 +265,7 @@ export function RestScreen({ run }: { run: RunState }) {
         >
           <Icon name="upgrade" size={34} />
           <b>Оптимизация кода</b>
-          <small>{canUpgrade ? 'Улучшить одну программу' : 'Все программы уже улучшены'}</small>
+          <small>{canUpgrade ? 'Улучшить одну карту из колоды' : 'Все карты уже улучшены'}</small>
         </button>
       </div>
     </Shell>
@@ -276,7 +283,7 @@ export function EventScreen({ run, screen }: { run: RunState; screen: Extract<Sc
     ev = null;
   }
   return (
-    <Shell run={run} className="event-screen" eyebrow="Неизвестный сигнал" title={ev?.name ?? 'Помехи'}>
+    <Shell run={run} className="event-screen" eyebrow="Неизвестный сигнал" title={ev?.name ?? 'Помехи'} hint="Прочитай сообщение и выбери один из вариантов ниже.">
       <div className="terminal" role="log">
         <div className="terminal__bar">
           <span />
@@ -325,7 +332,13 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
     }
   };
   return (
-    <Shell run={run} className="deck-select-screen" eyebrow={upgrade ? 'Оптимизация' : 'Очистка'} title={upgrade ? 'Улучшить программу' : 'Удалить программу'}>
+    <Shell
+      run={run}
+      className="deck-select-screen"
+      eyebrow={upgrade ? 'Оптимизация' : 'Очистка'}
+      title={upgrade ? 'Улучшить карту' : 'Удалить карту'}
+      hint={upgrade ? 'Выбери карту: справа появится улучшенная версия, изменения — зелёным.' : 'Выбери карту, которую навсегда уберёшь из колоды.'}
+    >
       <div className="card-grid card-grid--select">
         {cards.map((c) => (
           <button
@@ -398,13 +411,13 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
   const st = run.stats;
   const rows: [string, string | number][] = [
     ['Класс', CLASS_NAME[run.classId] ?? run.classId],
-    ['Сложность', `Ascension ${run.ascension}`],
+    ['Сложность', `Уровень ${run.ascension}`],
     ['Этаж', run.floor],
     ['Врагов уничтожено', st.enemiesKilled],
     ['Элитных стражей', st.elitesKilled],
     ['Боссов', st.bossesKilled],
     ['Нанесено урона', st.damageDealt],
-    ['Запущено программ', st.cardsPlayed],
+    ['Сыграно карт', st.cardsPlayed],
     ['Карт в колоде', run.deck.length],
   ];
   const title = victory ? 'Система взломана' : 'Соединение разорвано';

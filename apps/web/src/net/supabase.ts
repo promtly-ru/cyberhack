@@ -2,21 +2,17 @@
  * Supabase-реализация Backend: вход (magic link, Google, GitHub), облачные сохранения
  * с офлайн-очередью, перенос гостевого прогресса, ежедневный лидерборд через Edge Function.
  *
- * Невошедший игрок в этом режиме работает как гость (local.ts): сохранения в браузере,
- * свой локальный результат дня. Чужие таблицы лидеров при этом читать можно.
+ * Невошедший в облако игрок в этом режиме работает как в local-режиме (net/device.ts):
+ * гость или офлайн-профиль устройства, сохранения в браузере, свой локальный результат дня.
+ * Чужие таблицы лидеров при этом читать можно. При первом входе в облако туда переносится
+ * прогресс того, кто играл на устройстве (гостя или активного офлайн-профиля).
  */
 import type { Session, SupabaseClient, User as SbUser } from '@supabase/supabase-js';
 import type { Action, NewRunOptions } from '@cyberhack/engine';
-import type { AuthApi, Backend, LeaderboardApi, LeaderboardEntry, Profile, SavedRun, SavesApi, User } from './types';
+import type { AuthApi, Backend, DeviceProfilesApi, LeaderboardApi, LeaderboardEntry, Profile, SavedRun, SavesApi, User } from './types';
 import { AuthRequiredError, BackendError, NetworkError } from './errors';
-import {
-  GUEST_PREFIX,
-  MAX_DAILY_ACTIONS,
-  createLocalLeaderboard,
-  createLocalSaves,
-  type LocalSaves,
-  type ReplayFn,
-} from './local';
+import { GUEST_PREFIX, MAX_DAILY_ACTIONS, createLocalSaves, type LocalSaves, type ReplayFn } from './local';
+import { createDeviceAccounts } from './device';
 import { CLASS_IDS, compareIso, hasProgress, mergeProfiles, normalizeProfile, normalizeSavedRun } from './profile';
 import { browserStorage, isRecord, readJson, removeKey, writeJson, type KeyValueStorage } from './storage';
 
@@ -206,8 +202,10 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
   const storage = opts.storage ?? browserStorage();
   const now = opts.now ?? (() => new Date());
   const redirectTo = opts.redirectTo ?? defaultRedirect;
-  const guestSaves = createLocalSaves(storage, GUEST_PREFIX);
-  const guestBoard = createLocalLeaderboard(storage, opts.replay, now, GUEST_PREFIX);
+  // Игрок устройства (гость или офлайн-профиль) — когда в облако не вошли
+  const device = createDeviceAccounts({ storage, replay: opts.replay, now: opts.now });
+  const deviceSaves = device.saves;
+  const deviceBoard = device.leaderboard;
 
   /** Последний известный пользователь: нужен офлайн, когда getSession не может обновить токен */
   let knownUser: User | null = null;
@@ -351,15 +349,20 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
   // ----- перенос гостевого прогресса -----
 
   async function migrateGuest(uid: string): Promise<void> {
+    // Переносим прогресс текущего игрока устройства: гостя (cyberhack:guest:migratedTo, как раньше)
+    // или активного офлайн-профиля (cyberhack:local:<id>:migratedTo)
+    const from = device.prefix();
+    const migratedKey = `${from}migratedTo`;
+    const source = createLocalSaves(storage, from);
     let migratedTo: string | null;
     try {
-      migratedTo = storage.getItem(GUEST_MIGRATED_KEY);
+      migratedTo = storage.getItem(migratedKey);
     } catch {
       migratedTo = null;
     }
-    if (migratedTo) return; // гостевой прогресс этого браузера уже перенесён в какой-то аккаунт
-    const guestProfile = guestSaves.readProfile();
-    const guestRun = guestSaves.readRun();
+    if (migratedTo) return; // этот прогресс уже перенесён в какой-то аккаунт
+    const guestProfile = source.readProfile();
+    const guestRun = source.readRun();
     const profileToMove = hasProgress(guestProfile);
     if (!profileToMove && !guestRun) return;
 
@@ -372,7 +375,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
       }
     }
     try {
-      storage.setItem(GUEST_MIGRATED_KEY, uid);
+      storage.setItem(migratedKey, uid);
     } catch {
       // не страшно: повторный перенос идемпотентен (merge + LWW)
     }
@@ -420,13 +423,21 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
 
   const auth: AuthApi = {
     async getUser() {
-      return currentUser();
+      // не вошёл в облако → офлайн-профиль устройства или null (гость)
+      return (await currentUser()) ?? device.activeUser();
     },
     onChange(cb) {
       const { data } = client.auth.onAuthStateChange((_event, session) => {
-        cb(session ? mapUser(session.user) : null);
+        cb(session ? mapUser(session.user) : device.activeUser());
       });
-      return () => data.subscription.unsubscribe();
+      // вход/выход офлайн-профиля виден, только пока не вошли в облако
+      const offDevice = device.subscribe((u) => {
+        if (!knownUser) cb(u.provider === 'guest' ? null : u);
+      });
+      return () => {
+        data.subscription.unsubscribe();
+        offDevice();
+      };
     },
     async signInWithEmail(email) {
       const trimmed = email.trim();
@@ -445,6 +456,10 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
       if (error) throw new BackendError(`Не удалось начать вход через ${provider}: ${error.message}`);
     },
     async signOut() {
+      // «Выйти» всегда ведёт в гостя: сначала офлайн-профиль (пока вошли в облако, его смена не видна),
+      // потом облако. Не вошли в облако — выходим только из офлайн-профиля.
+      await device.api.signOut();
+      if (!(await currentUser().catch(() => knownUser))) return;
       // scope 'local': выйти на этом устройстве даже без сети
       const { error } = await client.auth.signOut({ scope: 'local' });
       knownUser = null;
@@ -457,7 +472,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
   const saves: SavesApi = {
     async loadRun() {
       const user = await currentUser();
-      if (!user) return guestSaves.loadRun();
+      if (!user) return deviceSaves.loadRun();
       const uid = user.id;
       await ensureSynced(uid);
       if (readOutbox(storage, uid).run) {
@@ -481,7 +496,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
 
     async saveRun(run) {
       const user = await currentUser();
-      if (!user) return guestSaves.saveRun(run);
+      if (!user) return deviceSaves.saveRun(run);
       const uid = user.id;
       void ensureSynced(uid);
       await cacheFor(uid)
@@ -499,7 +514,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
 
     async clearRun() {
       const user = await currentUser();
-      if (!user) return guestSaves.clearRun();
+      if (!user) return deviceSaves.clearRun();
       const uid = user.id;
       const at = now().toISOString();
       await cacheFor(uid).clearRun();
@@ -516,7 +531,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
 
     async loadProfile() {
       const user = await currentUser();
-      if (!user) return guestSaves.loadProfile();
+      if (!user) return deviceSaves.loadProfile();
       const uid = user.id;
       await ensureSynced(uid);
       const cache = cacheFor(uid);
@@ -539,7 +554,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
 
     async saveProfile(profile) {
       const user = await currentUser();
-      if (!user) return guestSaves.saveProfile(profile);
+      if (!user) return deviceSaves.saveProfile(profile);
       const uid = user.id;
       void ensureSynced(uid);
       const clean = normalizeProfile(profile);
@@ -563,7 +578,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
   const leaderboard: LeaderboardApi = {
     async submitDaily(seed: string, options: NewRunOptions, actions: Action[]) {
       const user = await currentUser();
-      if (!user) return guestBoard.submitDaily(seed, options, actions);
+      if (!user) return deviceBoard.submitDaily(seed, options, actions);
       if (!Array.isArray(actions) || actions.length > MAX_DAILY_ACTIONS) return { accepted: false };
       let res: { data: unknown; error: unknown };
       try {
@@ -616,11 +631,25 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
     },
   };
 
+  // Офлайн-профиль и облачный аккаунт одновременно не активны: переход в офлайн-профиль = выход из облака на этом устройстве
+  const profiles: DeviceProfilesApi = {
+    ...device.api,
+    async create(input) {
+      if (await currentUser().catch(() => knownUser)) await auth.signOut();
+      return device.api.create(input);
+    },
+    async signIn(id, pin) {
+      if (await currentUser().catch(() => knownUser)) await auth.signOut();
+      return device.api.signIn(id, pin);
+    },
+  };
+
   return {
     mode: 'supabase',
     auth,
     saves,
     leaderboard,
+    profiles,
     flush,
     dispose() {
       authSub.subscription.unsubscribe();

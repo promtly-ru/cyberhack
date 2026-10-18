@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createSupabaseBackend, enqueueRun, outboxKey, readOutbox, GUEST_MIGRATED_KEY } from './supabase';
 import { createLocalSaves } from './local';
+import { localPrefix } from './device';
 import { AuthRequiredError, BackendError, NetworkError } from './errors';
 import { MemoryStorage } from './storage';
 import { defaultProfile } from './profile';
@@ -476,5 +477,43 @@ describe('supabase leaderboard', () => {
     ]);
     fake.offline = true;
     await expect(backend.leaderboard.getDaily(SEED)).rejects.toBeInstanceOf(NetworkError);
+  });
+});
+
+describe('офлайн-профили в supabase-режиме', () => {
+  it('без входа в облако работает офлайн-профиль: свой пользователь и свои сохранения', async () => {
+    const { fake, storage, backend } = setup();
+    const seen: Array<string | null> = [];
+    backend.auth.onChange((u) => seen.push(u ? `${u.provider}:${u.displayName}` : null));
+    await tick();
+    const neo = await backend.profiles!.create({ name: 'Нео' });
+    expect(await backend.auth.getUser()).toEqual(neo);
+    const run = fakeRun(iso('10:00:00'));
+    await backend.saves.saveRun(run);
+    expect(fake.saved_runs.size).toBe(0);
+    expect(await createLocalSaves(storage, localPrefix(neo.id)).loadRun()).toEqual(run);
+    expect(await createLocalSaves(storage).loadRun()).toBeNull();
+    await backend.auth.signOut();
+    expect(await backend.auth.getUser()).toBeNull();
+    expect(seen).toEqual([null, 'local:Нео', null]);
+  });
+
+  it('при входе в облако переносится прогресс активного офлайн-профиля, а не гостя', async () => {
+    const { fake, storage, backend } = setup();
+    await createLocalSaves(storage).saveProfile({ ...defaultProfile(), achievements: ['guest_ach'] });
+    const neo = await backend.profiles!.create({ name: 'Нео' });
+    await backend.saves.saveProfile({ ...defaultProfile(), achievements: ['neo_ach'] });
+    fake.signIn('u1');
+    expect((await backend.saves.loadProfile()).achievements).toEqual(['neo_ach']);
+    expect(storage.getItem(`${localPrefix(neo.id)}migratedTo`)).toBe('u1');
+    expect(storage.getItem(GUEST_MIGRATED_KEY)).toBeNull();
+  });
+
+  it('вход в офлайн-профиль выводит из облачного аккаунта на этом устройстве', async () => {
+    const { fake, backend } = setup({ signedIn: 'u1' });
+    expect((await backend.auth.getUser())!.id).toBe('u1');
+    const neo = await backend.profiles!.create({ name: 'Нео' });
+    expect(fake.auth.signOut).toHaveBeenCalled();
+    expect(await backend.auth.getUser()).toEqual(neo);
   });
 });

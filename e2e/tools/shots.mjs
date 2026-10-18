@@ -14,9 +14,19 @@ const sizes = [
   { name: '1440', width: 1440, height: 900, mobile: false },
 ];
 mkdirSync(out, { recursive: true });
+// Профиль «уже умеет играть»: без приглашения в обучение и одноразовых подсказок на скриншотах
+const SKIP_TUTORIAL = () => {
+  try {
+    localStorage.setItem('cyberhack:tutorial', 'done');
+    localStorage.setItem('cyberhack:hints', '["*"]');
+  } catch {
+    /* хранилище недоступно */
+  }
+};
 const browser = await chromium.launch({ channel: process.env.CI ? undefined : 'msedge' });
 for (const s of sizes) {
   const ctx = await browser.newContext({ viewport: { width: s.width, height: s.height }, hasTouch: s.mobile, isMobile: s.mobile, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  await ctx.addInitScript(SKIP_TUTORIAL);
   const page = await ctx.newPage();
   page.on('console', (m) => m.type() === 'error' && console.log(`[${s.name}] console:`, m.text()));
   page.on('pageerror', (e) => console.log(`[${s.name}] pageerror:`, e.message));

@@ -104,7 +104,7 @@ export function HpBar({ hp, maxHp, block }: { hp: number; maxHp: number; block: 
     prevPct.current = pct;
   }, [pct]);
   return (
-    <div className={`hpbar${block > 0 ? ' has-block' : ''}`} role="meter" aria-valuemin={0} aria-valuemax={maxHp} aria-valuenow={hp} aria-label={`HP ${hp} из ${maxHp}${block ? `, блок ${block}` : ''}`}>
+    <div className={`hpbar${block > 0 ? ' has-block' : ''}`} role="meter" aria-valuemin={0} aria-valuemax={maxHp} aria-valuenow={hp} aria-label={`Здоровье ${hp} из ${maxHp}${block ? `, блок ${block}` : ''}`}>
       <div className="hpbar__lag" ref={lagRef} />
       <div className="hpbar__fill" style={{ transform: `scaleX(${pct})` }} />
       <div className="hpbar__ticks" />
@@ -112,8 +112,8 @@ export function HpBar({ hp, maxHp, block }: { hp: number; maxHp: number; block: 
         {hp}/{maxHp}
       </span>
       {block > 0 ? (
-        <span className="hpbar__block" {...tip(`Блок ${block}`, 'Поглощает урон до начала следующего хода.')}>
-          <Icon name="block" size={18} />
+        <span className="hpbar__block" data-testid="block-badge" aria-hidden="true" {...tip(`Блок ${block}`, `Поглотит ${block} урона вместо здоровья. Пропадает в начале следующего хода.`)}>
+          <Icon name="block" size={14} />
           <span>{block}</span>
         </span>
       ) : null}
@@ -123,29 +123,52 @@ export function HpBar({ hp, maxHp, block }: { hp: number; maxHp: number; block: 
 
 // ---------- Намерение врага ----------
 
+/** Короткая подпись намерения под значком (видимая). */
 const INTENT_LABEL: Record<string, string> = {
   attack: 'Атака',
   defend: 'Защита',
   buff: 'Усиление',
-  debuff: 'Ослабление',
-  attack_defend: 'Атака и защита',
-  attack_debuff: 'Атака и ослабление',
+  debuff: 'Ослабит тебя',
+  attack_defend: 'Атака + защита',
+  attack_debuff: 'Атака + ослабит',
   unknown: 'Неизвестно',
 };
 
+/** Что значит намерение — для подсказки и скринридера. */
+const INTENT_DESC: Record<string, string> = {
+  attack: '',
+  defend: 'Враг поставит себе блок.',
+  buff: 'Враг усилит себя.',
+  debuff: 'Враг наложит на тебя ослабление.',
+  attack_defend: 'Ещё поставит себе блок.',
+  attack_debuff: 'Ещё наложит на тебя ослабление.',
+  unknown: 'Неясно, что сделает враг.',
+};
+
+/** Текст намерения из данных движка: «Атака 6», «Атака 3×2», «Защита»… */
+export function intentText(intent: Intent): { label: string; value: string; desc: string } {
+  const times = intent.times ?? 1;
+  const hasDmg = intent.damage !== undefined;
+  const value = hasDmg ? (times > 1 ? `${intent.damage}×${times}` : String(intent.damage)) : '';
+  const label = INTENT_LABEL[intent.kind] ?? 'Неизвестно';
+  const dmg = hasDmg ? `Нанесёт тебе ${intent.damage} урона${times > 1 ? ` ${times} раза (всего ${(intent.damage ?? 0) * times})` : ''}.` : '';
+  const desc = [dmg, INTENT_DESC[intent.kind] ?? ''].filter(Boolean).join(' ') || 'Враг готовит действие.';
+  return { label, value, desc };
+}
+
 export function IntentBadge({ intent, moveName }: { intent: Intent; moveName?: string }) {
   const parts: string[] = intent.kind === 'attack_defend' ? ['attack', 'defend'] : intent.kind === 'attack_debuff' ? ['attack', 'debuff'] : [intent.kind];
-  const hasDmg = intent.damage !== undefined;
-  const times = intent.times ?? 1;
-  const dmgText = hasDmg ? (times > 1 ? `${intent.damage}×${times}` : String(intent.damage)) : '';
-  const label = INTENT_LABEL[intent.kind] ?? 'Неизвестно';
-  const desc = hasDmg ? `Нанесёт ${intent.damage} урона${times > 1 ? ` ${times} раза (всего ${(intent.damage ?? 0) * times})` : ''}.` : 'Враг готовит действие.';
+  const { label, value, desc } = intentText(intent);
+  const full = `${label}${value ? ` ${value}` : ''}`;
   return (
-    <div className={`intent intent--${parts[0]}`} data-tut="intent" tabIndex={0} aria-label={`Намерение: ${label}. ${desc}`} {...tip(`${label}${moveName ? ` · ${moveName}` : ''}`, desc)}>
-      {parts.map((p) => (
-        <Icon key={p} name={p} size={22} className={`intent__icon intent__icon--${p}`} />
-      ))}
-      {dmgText ? <span className="intent__dmg">{dmgText}</span> : null}
+    <div className={`intent intent--${parts[0]}`} data-tut="intent" data-testid="intent" tabIndex={0} aria-label={`Намерение врага: ${full}. ${desc}`} {...tip(`${full}${moveName ? ` · ${moveName}` : ''}`, `${desc} Это ход врага после твоего.`)}>
+      <span className="intent__main">
+        {parts.map((p) => (
+          <Icon key={p} name={p} size={20} className={`intent__icon intent__icon--${p}`} />
+        ))}
+        {value ? <span className="intent__dmg">{value}</span> : null}
+      </span>
+      <span className="intent__label">{label}</span>
     </div>
   );
 }

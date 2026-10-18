@@ -147,8 +147,18 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
 .stat--floor { color: var(--cyan); }
 .stat--floor .mono { color: var(--text); }
 .stat--asc { color: var(--orange); }
-.topbar__relics { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; padding: 2px; }
+.topbar__relics { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; padding: 2px; }
 .topbar__actions { display: flex; gap: 6px; }
+.stat { cursor: help; }
+.stat__label, .topbar__relics-label { display: none; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #aab4d4; }
+.stat__act { display: none; }
+.icon-btn .stat__label { color: inherit; }
+/* Широкий экран: подписи рядом с числами */
+@media (min-width: 900px) {
+  .stat__label, .topbar__relics-label { display: inline; }
+  .stat__act { display: inline; }
+  .topbar__relics-label { margin-right: 4px; flex: none; }
+}
 
 @media (max-width: 767px) {
   .hide-sm { display: none; }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import type { CardInstance, CombatState, EnemyState, RunState } from '../game/engine';
 import { cardStats, describeCard, getEnemyDef, getLegalActions } from '../game/engine';
 import { useGame } from '../game/store';
-import { Card } from '../components/Card';
+import { Card, CardTerms } from '../components/Card';
 import { HpBar, IntentBadge, StatusRow } from '../components/Bits';
 import { EnemyArt, PlayerArt, CLASS_COLOR } from '../components/UnitArt';
 import { Icon } from '../components/Icon';
@@ -44,6 +44,19 @@ function cardLabel(c: CardInstance, playable: boolean): string {
 
 const LONG_PRESS_MS = 450;
 
+/** Сенсорный экран без мыши: подсказки «удерживай», а не «правый клик». */
+function useCoarsePointer(): boolean {
+  const [coarse, setCoarse] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.('(hover: none)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(hover: none)');
+    if (!mq) return;
+    const on = () => setCoarse(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return coarse;
+}
+
 function center(el: Element | null): { x: number; y: number } | undefined {
   if (!el) return undefined;
   const r = el.getBoundingClientRect();
@@ -81,6 +94,9 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   /** Долгий тап — превью карты на весь экран */
   const [preview, setPreview] = useState<CardInstance | null>(null);
   const previewShown = useRef(false);
+  /** Превью открыто правым кликом мыши — закрывается любым нажатием */
+  const [mousePreview, setMousePreview] = useState(false);
+  const coarse = useCoarsePointer();
 
   const playerPhase = combat.phase === 'player' && !frozen;
 
@@ -153,6 +169,26 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     clearTimeout(pressTimer.current);
     setPreview(null);
   }, []);
+  useEffect(() => {
+    if (!preview || !mousePreview) return;
+    const close = (e: Event) => {
+      if (e instanceof KeyboardEvent && e.key !== 'Escape') return;
+      e.preventDefault();
+      e.stopPropagation();
+      setMousePreview(false);
+      setPreview(null);
+      // Нажатие, закрывшее превью, не должно выбрать карту под ним
+      window.addEventListener('pointerup', (ev) => ev.stopPropagation(), { capture: true, once: true });
+    };
+    window.addEventListener('pointerdown', close, true);
+    window.addEventListener('keydown', close, true);
+    window.addEventListener('contextmenu', close, true);
+    return () => {
+      window.removeEventListener('pointerdown', close, true);
+      window.removeEventListener('keydown', close, true);
+      window.removeEventListener('contextmenu', close, true);
+    };
+  }, [preview, mousePreview]);
 
   const play = useCallback(
     (uid: string, targetUid?: string) => {
@@ -348,9 +384,22 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const maxOff = (n - 1) / 2;
   const handH = strip ? cardH + 22 : cardH + maxOff * maxOff * arc + cornerDip + 4;
 
-  const hintText =
-    hint ??
-    (!playerPhase ? '' : selectedCard ? (selectedTargeted ? 'Выберите цель' : 'Коснитесь поля или карты ещё раз, чтобы запустить') : '');
+  let hintText = '';
+  let hintKind: 'idle' | 'target' | 'confirm' | 'end' | 'error' = 'idle';
+  if (hint) {
+    hintText = hint;
+    hintKind = 'error';
+  } else if (playerPhase) {
+    if (selectedCard) {
+      hintText = selectedTargeted ? 'Теперь нажми на врага' : 'Нажми на карту ещё раз, чтобы сыграть';
+      hintKind = selectedTargeted ? 'target' : 'confirm';
+    } else if (legal.size === 0) {
+      hintText = combat.energy === 0 ? 'Энергия кончилась — нажми «Конец хода»' : 'Играть нечем — нажми «Конец хода»';
+      hintKind = 'end';
+    } else {
+      hintText = coarse ? 'Выбери карту · удерживай — подробнее' : 'Выбери карту · правый клик — подробнее';
+    }
+  }
 
   const player = combat.player;
   return (
@@ -427,13 +476,13 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         ) : null}
       </div>
 
-      <div className="combat-hud">
+      <div className={`combat-hud${strip ? ' is-strip' : ''}`}>
         <div className="hud-left">
           <EnergyCore energy={combat.energy} max={combat.maxEnergy} />
           <PileButton kind="draw" count={combat.drawPile.length} onClick={() => setPile('draw')} />
         </div>
-        <div className="hud-hint" aria-live="polite">
-          {hintText}
+        <div className={`hud-hint is-${hintKind}`} aria-live="polite" data-testid="hand-hint" data-hint={hintKind}>
+          {hintText ? <span>{hintText}</span> : null}
         </div>
         <div className={`hand${strip ? ' is-strip' : ''}`} ref={handRef} style={{ height: handH }} role="group" aria-label={`Рука: ${n} карт`} data-testid="hand">
           {combat.hand.map((c, i) => {
@@ -465,7 +514,14 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
                   previewShown.current = false;
                   endDrag(false);
                 }}
-                onContextMenu={(e) => e.preventDefault()}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  // Мышь: правый клик — рассмотреть карту и её термины
+                  if (!previewShown.current && !coarse) {
+                    setMousePreview(true);
+                    setPreview(c);
+                  }
+                }}
                 data-testid="hand-card"
                 data-uid={c.uid}
                 data-def={c.defId}
@@ -521,21 +577,25 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       </svg>
 
       {preview ? (
-        <div className="card-preview" aria-hidden="true" data-testid="card-preview">
-          <Card defId={preview.defId} upgraded={preview.upgraded} playable={legal.has(preview.uid)} />
+        <div className={`card-preview${mousePreview ? ' is-mouse' : ''}`} data-testid="card-preview" role="dialog" aria-label={`Карта: ${cardLabel(preview, legal.has(preview.uid))}`}>
+          <div className="card-preview__inner">
+            <Card defId={preview.defId} upgraded={preview.upgraded} playable={legal.has(preview.uid)} />
+            <CardTerms defId={preview.defId} upgraded={preview.upgraded} />
+          </div>
+          <p className="card-preview__close">{mousePreview ? 'Нажми в любом месте, чтобы закрыть' : 'Отпусти палец, чтобы закрыть'}</p>
         </div>
       ) : null}
 
-      {pile === 'draw' ? <CardGridModal title="Стопка добора" cards={combat.drawPile} onClose={() => setPile(null)} empty="Стопка пуста — сброс перемешается" /> : null}
+      {pile === 'draw' ? <CardGridModal title="Колода (добор)" cards={combat.drawPile} onClose={() => setPile(null)} empty="Стопка пуста — сброс перемешается" /> : null}
       {pile === 'discard' ? <CardGridModal title="Сброс" cards={[...combat.discardPile].reverse()} sorted={false} onClose={() => setPile(null)} /> : null}
-      {pile === 'exhaust' ? <CardGridModal title="Сгоревшие" cards={combat.exhaustPile} onClose={() => setPile(null)} empty="Ничего не сгорело" /> : null}
+      {pile === 'exhaust' ? <CardGridModal title="Сожжено" cards={combat.exhaustPile} onClose={() => setPile(null)} empty="Ничего не сгорело" /> : null}
     </div>
   );
 }
 
 function EnergyCore({ energy, max }: { energy: number; max: number }) {
   return (
-    <div className={`energy${energy === 0 ? ' is-empty' : ''}`} data-tut="energy" tabIndex={0} aria-label={`Энергия ${energy} из ${max}`} {...tip('Энергия ядра', `${energy} из ${max}. Тратится на запуск программ, восстанавливается каждый ход.`)}>
+    <div className={`energy${energy === 0 ? ' is-empty' : ''}`} data-tut="energy" data-testid="energy" tabIndex={0} aria-label={`Энергия ${energy} из ${max}`} {...tip(`Энергия ${energy} из ${max}`, 'Тратится на розыгрыш карт: цена — в кружке в углу карты. В начале каждого хода восстанавливается полностью.')}>
       <svg viewBox="0 0 100 100" className="energy__svg" aria-hidden="true">
         <circle cx="50" cy="50" r="44" className="energy__ring1" />
         <circle cx="50" cy="50" r="36" className="energy__ring2" />
@@ -550,11 +610,19 @@ function EnergyCore({ energy, max }: { energy: number; max: number }) {
         {energy}
         <small>/{max}</small>
       </span>
+      <span className="energy__label hud-label" aria-hidden="true">
+        Энергия
+      </span>
     </div>
   );
 }
 
-const PILE_LABEL = { draw: 'Добор', discard: 'Сброс', exhaust: 'Сгорело' } as const;
+const PILE_LABEL = { draw: 'Колода', discard: 'Сброс', exhaust: 'Сожжено' } as const;
+const PILE_TIP = {
+  draw: 'Карты, которые ты возьмёшь в следующие ходы. Нажми, чтобы посмотреть.',
+  discard: 'Сыгранные карты. Когда колода кончится, сброс перемешается в новую колоду. Нажми, чтобы посмотреть.',
+  exhaust: 'Сожжённые карты — до конца боя не вернутся. Нажми, чтобы посмотреть.',
+} as const;
 
 function PileButton({ kind, count, onClick }: { kind: 'draw' | 'discard' | 'exhaust'; count: number; onClick: () => void }) {
   return (
@@ -565,11 +633,15 @@ function PileButton({ kind, count, onClick }: { kind: 'draw' | 'discard' | 'exha
         sfx('click');
         onClick();
       }}
-      aria-label={`${PILE_LABEL[kind]}: ${count}`}
-      {...tip(PILE_LABEL[kind], 'Нажмите, чтобы посмотреть')}
+      data-testid={`pile-${kind}`}
+      aria-label={`${PILE_LABEL[kind]}: ${count} карт`}
+      {...tip(`${PILE_LABEL[kind]}: ${count}`, PILE_TIP[kind])}
     >
-      <Icon name={kind} size={22} />
-      <span className="pile__n mono">{count}</span>
+      <span className="pile__box">
+        <Icon name={kind} size={22} />
+        <span className="pile__n mono">{count}</span>
+      </span>
+      <span className="pile__label hud-label">{PILE_LABEL[kind]}</span>
     </button>
   );
 }

@@ -2,6 +2,19 @@ import { test as base, expect, type Locator, type Page } from '@playwright/test'
 
 export const SEED = 'E2ESEED1';
 
+/** Ключи обучения в localStorage (см. apps/web/src/tutorial/storage.ts) */
+export const TUTORIAL_KEY = 'cyberhack:tutorial';
+export const HINTS_KEY = 'cyberhack:hints';
+
+type Options = {
+  /**
+   * true (по умолчанию) — профиль «уже умеет играть»: обучение отмечено пройденным,
+   * одноразовые подсказки экранов показаны. Иначе приглашение и плашки мешали бы старым тестам.
+   * Тесты обучения отключают: test.use({ tutorialDone: false }).
+   */
+  tutorialDone: boolean;
+};
+
 type Fixtures = {
   /** Ошибки консоли и необработанные исключения — тест падает, если они были */
   consoleErrors: string[];
@@ -9,7 +22,27 @@ type Fixtures = {
   act: (target: Locator) => Promise<void>;
 };
 
-export const test = base.extend<Fixtures>({
+export const test = base.extend<Fixtures & Options & { tutorialInit: void }>({
+  tutorialDone: [true, { option: true }],
+  tutorialInit: [
+    async ({ page, tutorialDone }, use) => {
+      if (tutorialDone) {
+        await page.addInitScript(
+          ({ tk, hk }) => {
+            try {
+              if (!localStorage.getItem(tk)) localStorage.setItem(tk, 'done');
+              localStorage.setItem(hk, '["*"]');
+            } catch {
+              /* хранилище недоступно */
+            }
+          },
+          { tk: TUTORIAL_KEY, hk: HINTS_KEY },
+        );
+      }
+      await use();
+    },
+    { auto: true },
+  ],
   consoleErrors: [
     async ({ page }, use) => {
       const errors: string[] = [];

@@ -93,3 +93,20 @@
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 16px; justify-items: center; --card-w: 100%; }
 .card-grid .card { width: 100%; max-width: 180px; }
 @media (max-width: 420px) { .card-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+/* Термины карты (превью, выбор карты): описания ключевых слов */
+.card__text .kw[data-tip-title] { cursor: help; text-decoration: underline dotted color-mix(in srgb, var(--acid) 60%, transparent); text-underline-offset: 0.18em; }
+.card-terms {
+  text-align: left; padding: 10px 12px; border-radius: 10px;
+  background: rgba(8, 11, 26, 0.96); border: 1px solid var(--line); box-shadow: 0 0 18px rgba(0, 240, 255, 0.12);
+}
+.card-terms__title { margin-bottom: 6px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); }
+.card-terms dl { margin: 0; display: flex; flex-direction: column; gap: 7px; }
+.card-terms__item dt { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--acid); }
+.card-terms__item.is-debuff dt { color: #c9adff; }
+.card-terms__item dd { margin: 1px 0 0; font-size: 13px; line-height: 1.35; color: #dfe6ff; }
+.card-terms--compact { padding: 7px 9px; }
+.card-terms--compact .card-terms__title { display: none; }
+.card-terms--compact dl { gap: 5px; }
+.card-terms--compact .card-terms__item dt { font-size: 12.5px; }
+.card-terms--compact .card-terms__item dd { font-size: 12px; line-height: 1.3; }
