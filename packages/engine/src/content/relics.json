@@ -18,13 +18,13 @@
     "name": "Заражённая флешка",
     "rarity": "starter",
     "classId": "phreaker",
-    "description": "В начале боя накладывает 2 Вируса на всех врагов.",
+    "description": "В начале боя накладывает 4 Вируса на всех врагов.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 2,
+        "amount": 4,
         "target": "all_enemies"
       }
     ]
@@ -34,12 +34,12 @@
     "name": "Маскировочный модуль",
     "rarity": "starter",
     "classId": "ghost",
-    "description": "В начале боя возьми 2 дополнительные карты.",
+    "description": "В начале боя возьми 1 дополнительную карту.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "draw",
-        "amount": 2
+        "amount": 1
       }
     ]
   },

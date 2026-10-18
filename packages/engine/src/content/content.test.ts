@@ -27,6 +27,29 @@ describe('content', () => {
     expect(Array.isArray(validateContent())).toBe(true);
   });
 
+  it('реальный контент валиден', () => {
+    resetContent();
+    expect(validateContent()).toEqual([]);
+  });
+
+  it('нет бесконечных комбо: 0-стоимость без сжигания не добирает больше 1 карты', () => {
+    // Регрессия: «Скан портов+» (0, добор 2, без сжигания) давал бесконечный цикл добора и блока.
+    const bad: string[] = [];
+    for (const c of defaultContent.cards) {
+      for (const up of [false, true]) {
+        if (up && !c.upgrade) continue;
+        const cost = (up ? c.upgrade?.cost : undefined) ?? c.cost;
+        const exhaust = (up ? c.upgrade?.exhaust : undefined) ?? c.exhaust ?? false;
+        const effects = (up ? c.upgrade?.effects : undefined) ?? c.effects;
+        const draw = effects.reduce((s, e) => (e.type === 'draw' ? s + e.amount : s), 0);
+        const energy = effects.reduce((s, e) => (e.type === 'gain_energy' ? s + e.amount : s), 0);
+        if (!exhaust && c.type !== 'power' && (draw >= 2 || (draw >= 1 && energy > cost)) && cost <= energy)
+          bad.push(`${c.id}${up ? '+' : ''}`);
+      }
+    }
+    expect(bad).toEqual([]);
+  });
+
   it('находит дубли и битые ссылки', () => {
     const c = fixtureContent();
     c.cards.push({ ...c.cards[0]!, effects: [{ type: 'apply_status', status: 'nope', amount: 1 }] });

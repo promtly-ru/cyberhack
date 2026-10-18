@@ -23,7 +23,7 @@
     "id": "phreaker",
     "name": "Фрикер",
     "description": "Мастер заразы: Вирусы, Лаг и Брешь. Убивает медленно, но наверняка.",
-    "maxHp": 70,
+    "maxHp": 76,
     "startingGold": 99,
     "startingDeck": [
       "ph_ping",
@@ -43,7 +43,7 @@
     "id": "ghost",
     "name": "Призрак",
     "description": "Стелс-оператор: блок, Шифрование, дешёвые карты и постоянный добор.",
-    "maxHp": 74,
+    "maxHp": 62,
     "startingGold": 99,
     "startingDeck": [
       "gh_ping",

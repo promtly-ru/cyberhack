@@ -270,29 +270,29 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 5,
+        "amount": 6,
         "target": "enemy"
       },
       {
         "type": "block",
-        "amount": 5
+        "amount": 6
       }
     ],
-    "description": "Нанеси 5 урона. Получи 5 блока.",
+    "description": "Нанеси 6 урона. Получи 6 блока.",
     "upgrade": {
       "name": "Контратака+",
       "effects": [
         {
           "type": "damage",
-          "amount": 7,
+          "amount": 8,
           "target": "enemy"
         },
         {
           "type": "block",
-          "amount": 7
+          "amount": 8
         }
       ],
-      "description": "Нанеси 7 урона. Получи 7 блока."
+      "description": "Нанеси 8 урона. Получи 8 блока."
     }
   },
   {
@@ -476,22 +476,22 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 20,
+        "amount": 24,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 20 урона. Эфемерная.",
+    "description": "Нанеси 24 урона. Эфемерная.",
     "ethereal": true,
     "upgrade": {
       "name": "Kernel Panic+",
       "effects": [
         {
           "type": "damage",
-          "amount": 28,
+          "amount": 32,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 28 урона. Эфемерная."
+      "description": "Нанеси 32 урона. Эфемерная."
     }
   },
   {
@@ -505,27 +505,27 @@
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 3
+        "amount": 5
       },
       {
         "type": "gain_energy",
         "amount": 2
       }
     ],
-    "description": "Потеряй 3 HP. Получи 2 энергии.",
+    "description": "Потеряй 5 HP. Получи 2 энергии.",
     "upgrade": {
       "name": "Форсаж+",
       "effects": [
         {
           "type": "lose_hp",
-          "amount": 3
+          "amount": 4
         },
         {
           "type": "gain_energy",
           "amount": 3
         }
       ],
-      "description": "Потеряй 3 HP. Получи 3 энергии."
+      "description": "Потеряй 4 HP. Получи 3 энергии."
     }
   },
   {
@@ -633,11 +633,11 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 32,
+        "amount": 28,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 32 урона.",
+    "description": "Нанеси 28 урона.",
     "upgrade": {
       "name": "Зеро-дэй+",
       "effects": [
@@ -667,11 +667,11 @@
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 2,
+        "amount": 3,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 3 урона. Наложи 2 Вируса.",
+    "description": "Нанеси 3 урона. Наложи 3 Вируса.",
     "upgrade": {
       "name": "Троян+",
       "effects": [
@@ -683,11 +683,11 @@
         {
           "type": "apply_status",
           "status": "virus",
-          "amount": 3,
+          "amount": 4,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 4 урона. Наложи 3 Вируса."
+      "description": "Нанеси 4 урона. Наложи 4 Вируса."
     }
   },
   {
@@ -702,22 +702,22 @@
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 5,
+        "amount": 7,
         "target": "enemy"
       }
     ],
-    "description": "Наложи 5 Вируса.",
+    "description": "Наложи 7 Вируса.",
     "upgrade": {
       "name": "Червь+",
       "effects": [
         {
           "type": "apply_status",
           "status": "virus",
-          "amount": 7,
+          "amount": 9,
           "target": "enemy"
         }
       ],
-      "description": "Наложи 7 Вируса."
+      "description": "Наложи 9 Вируса."
     }
   },
   {
@@ -731,7 +731,7 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 7,
+        "amount": 8,
         "target": "enemy"
       },
       {
@@ -741,13 +741,13 @@
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 7 урона. Наложи 1 Лаг.",
+    "description": "Нанеси 8 урона. Наложи 1 Лаг.",
     "upgrade": {
       "name": "Фишинг+",
       "effects": [
         {
           "type": "damage",
-          "amount": 9,
+          "amount": 10,
           "target": "enemy"
         },
         {
@@ -757,7 +757,7 @@
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 9 урона. Наложи 2 Лага."
+      "description": "Нанеси 10 урона. Наложи 2 Лага."
     }
   },
   {
@@ -798,22 +798,22 @@
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 2,
+        "amount": 3,
         "target": "all_enemies"
       }
     ],
-    "description": "Наложи 2 Вируса на всех врагов.",
+    "description": "Наложи 3 Вируса на всех врагов.",
     "upgrade": {
       "name": "Спам-рассылка+",
       "effects": [
         {
           "type": "apply_status",
           "status": "virus",
-          "amount": 3,
+          "amount": 4,
           "target": "all_enemies"
         }
       ],
-      "description": "Наложи 3 Вируса на всех врагов."
+      "description": "Наложи 4 Вируса на всех врагов."
     }
   },
   {
@@ -860,11 +860,11 @@
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 3,
+        "amount": 4,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 6 урона. Наложи 3 Вируса.",
+    "description": "Нанеси 6 урона. Наложи 4 Вируса.",
     "upgrade": {
       "name": "Кейлоггер+",
       "effects": [
@@ -876,11 +876,11 @@
         {
           "type": "apply_status",
           "status": "virus",
-          "amount": 4,
+          "amount": 5,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 8 урона. Наложи 4 Вируса."
+      "description": "Нанеси 8 урона. Наложи 5 Вируса."
     }
   },
   {
@@ -901,11 +901,11 @@
       {
         "type": "apply_status",
         "status": "vulnerable",
-        "amount": 2,
+        "amount": 1,
         "target": "enemy"
       }
     ],
-    "description": "Наложи 2 Лага и 2 Бреши.",
+    "description": "Наложи 2 Лага и 1 Брешь.",
     "upgrade": {
       "name": "Шифровальщик+",
       "effects": [
@@ -918,11 +918,11 @@
         {
           "type": "apply_status",
           "status": "vulnerable",
-          "amount": 3,
+          "amount": 2,
           "target": "enemy"
         }
       ],
-      "description": "Наложи 3 Лага и 3 Бреши."
+      "description": "Наложи 3 Лага и 2 Бреши."
     }
   },
   {
@@ -936,23 +936,23 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 3,
+        "amount": 4,
         "times": 3,
         "target": "random_enemy"
       }
     ],
-    "description": "Нанеси 3 урона случайному врагу 3 раза.",
+    "description": "Нанеси 4 урона случайному врагу 3 раза.",
     "upgrade": {
       "name": "Рой ботов+",
       "effects": [
         {
           "type": "damage",
-          "amount": 4,
+          "amount": 5,
           "times": 3,
           "target": "random_enemy"
         }
       ],
-      "description": "Нанеси 4 урона случайному врагу 3 раза."
+      "description": "Нанеси 5 урона случайному врагу 3 раза."
     }
   },
   {
@@ -1005,22 +1005,22 @@
       {
         "type": "apply_status",
         "status": "thorns",
-        "amount": 3,
+        "amount": 4,
         "target": "self"
       }
     ],
-    "description": "Получи 3 Контрудара.",
+    "description": "Получи 4 Контрудара.",
     "upgrade": {
       "name": "Ханипот+",
       "effects": [
         {
           "type": "apply_status",
           "status": "thorns",
-          "amount": 5,
+          "amount": 6,
           "target": "self"
         }
       ],
-      "description": "Получи 5 Контрудара."
+      "description": "Получи 6 Контрудара."
     }
   },
   {
@@ -1035,22 +1035,22 @@
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 5,
+        "amount": 3,
         "target": "self"
       }
     ],
-    "description": "Получи 5 Самовосстановления.",
+    "description": "Получи 3 Самовосстановления.",
     "upgrade": {
       "name": "Бэкап+",
       "effects": [
         {
           "type": "apply_status",
           "status": "regen",
-          "amount": 7,
+          "amount": 5,
           "target": "self"
         }
       ],
-      "description": "Получи 7 Самовосстановления."
+      "description": "Получи 5 Самовосстановления."
     }
   },
   {
@@ -1178,27 +1178,27 @@
     "effects": [
       {
         "type": "block",
-        "amount": 3
+        "amount": 2
       },
       {
         "type": "draw",
         "amount": 1
       }
     ],
-    "description": "Получи 3 блока. Возьми 1 карту.",
+    "description": "Получи 2 блока. Возьми 1 карту.",
     "upgrade": {
       "name": "Затенение+",
       "effects": [
         {
           "type": "block",
-          "amount": 5
+          "amount": 4
         },
         {
           "type": "draw",
           "amount": 1
         }
       ],
-      "description": "Получи 5 блока. Возьми 1 карту."
+      "description": "Получи 4 блока. Возьми 1 карту."
     }
   },
   {
@@ -1212,22 +1212,22 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 4,
+        "amount": 3,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 4 урона. Сжигается.",
+    "description": "Нанеси 3 урона. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Осколок кода+",
       "effects": [
         {
           "type": "damage",
-          "amount": 6,
+          "amount": 5,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 6 урона. Сжигается."
+      "description": "Нанеси 5 урона. Сжигается."
     }
   },
   {
@@ -1241,21 +1241,21 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 5,
+        "amount": 4,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 5 урона.",
+    "description": "Нанеси 4 урона.",
     "upgrade": {
       "name": "Удар из тени+",
       "effects": [
         {
           "type": "damage",
-          "amount": 8,
+          "amount": 7,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 8 урона."
+      "description": "Нанеси 7 урона."
     }
   },
   {
@@ -1269,14 +1269,14 @@
     "effects": [
       {
         "type": "block",
-        "amount": 5
+        "amount": 6
       },
       {
         "type": "draw",
-        "amount": 2
+        "amount": 1
       }
     ],
-    "description": "Получи 5 блока. Возьми 2 карты.",
+    "description": "Получи 6 блока. Возьми 1 карту.",
     "upgrade": {
       "name": "Бэкфлип+",
       "effects": [
@@ -1303,7 +1303,7 @@
     "effects": [
       {
         "type": "block",
-        "amount": 11
+        "amount": 13
       },
       {
         "type": "apply_status",
@@ -1312,13 +1312,13 @@
         "target": "enemy"
       }
     ],
-    "description": "Получи 11 блока. Наложи 2 Лага.",
+    "description": "Получи 13 блока. Наложи 2 Лага.",
     "upgrade": {
       "name": "VPN-туннель+",
       "effects": [
         {
           "type": "block",
-          "amount": 14
+          "amount": 16
         },
         {
           "type": "apply_status",
@@ -1327,7 +1327,7 @@
           "target": "enemy"
         }
       ],
-      "description": "Получи 14 блока. Наложи 3 Лага."
+      "description": "Получи 16 блока. Наложи 3 Лага."
     }
   },
   {
@@ -1348,8 +1348,14 @@
     "exhaust": true,
     "upgrade": {
       "name": "Скан портов+",
-      "description": "Возьми 2 карты.",
-      "exhaust": false
+      "description": "Возьми 3 карты. Сжигается.",
+      "exhaust": true,
+      "effects": [
+        {
+          "type": "draw",
+          "amount": 3
+        }
+      ]
     }
   },
   {
@@ -1363,15 +1369,15 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 6,
+        "amount": 7,
         "target": "enemy"
       },
       {
         "type": "block",
-        "amount": 4
+        "amount": 5
       }
     ],
-    "description": "Нанеси 6 урона. Получи 4 блока.",
+    "description": "Нанеси 7 урона. Получи 5 блока.",
     "upgrade": {
       "name": "Тихий взлом+",
       "effects": [
@@ -1561,21 +1567,21 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 7,
+        "amount": 9,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 7 урона X раз.",
+    "description": "Нанеси 9 урона X раз.",
     "upgrade": {
       "name": "Шквал+",
       "effects": [
         {
           "type": "damage",
-          "amount": 10,
+          "amount": 12,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 10 урона X раз."
+      "description": "Нанеси 12 урона X раз."
     }
   },
   {
@@ -1593,24 +1599,24 @@
       },
       {
         "type": "draw",
-        "amount": 2
+        "amount": 1
       }
     ],
-    "description": "Получи 1 энергию. Возьми 2 карты. Сжигается.",
+    "description": "Получи 1 энергию. Возьми 1 карту. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Кофеин+",
       "effects": [
         {
           "type": "gain_energy",
-          "amount": 2
+          "amount": 1
         },
         {
           "type": "draw",
           "amount": 2
         }
       ],
-      "description": "Получи 2 энергии. Возьми 2 карты. Сжигается."
+      "description": "Получи 1 энергию. Возьми 2 карты. Сжигается."
     }
   },
   {
@@ -1666,7 +1672,7 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 12,
+        "amount": 10,
         "target": "enemy"
       },
       {
@@ -1680,14 +1686,14 @@
         "amount": 1
       }
     ],
-    "description": "Нанеси 12 урона. Наложи 2 Бреши. Возьми 1 карту. Сжигается.",
+    "description": "Нанеси 10 урона. Наложи 2 Бреши. Возьми 1 карту. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Засада+",
       "effects": [
         {
           "type": "damage",
-          "amount": 16,
+          "amount": 14,
           "target": "enemy"
         },
         {
@@ -1701,7 +1707,7 @@
           "amount": 1
         }
       ],
-      "description": "Нанеси 16 урона. Наложи 3 Бреши. Возьми 1 карту. Сжигается."
+      "description": "Нанеси 14 урона. Наложи 3 Бреши. Возьми 1 карту. Сжигается."
     }
   },
   {
@@ -1742,20 +1748,20 @@
     "effects": [
       {
         "type": "heal",
-        "amount": 6
+        "amount": 8
       }
     ],
-    "description": "Восстанови 6 HP. Сжигается.",
+    "description": "Восстанови 8 HP. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Хотфикс+",
       "effects": [
         {
           "type": "heal",
-          "amount": 9
+          "amount": 12
         }
       ],
-      "description": "Восстанови 9 HP. Сжигается."
+      "description": "Восстанови 12 HP. Сжигается."
     }
   },
   {
@@ -1800,20 +1806,20 @@
     "effects": [
       {
         "type": "gain_gold",
-        "amount": 10
+        "amount": 15
       }
     ],
-    "description": "Получи 10 кредитов. Сжигается.",
+    "description": "Получи 15 кредитов. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Криптомайнер+",
       "effects": [
         {
           "type": "gain_gold",
-          "amount": 15
+          "amount": 20
         }
       ],
-      "description": "Получи 15 кредитов. Сжигается."
+      "description": "Получи 20 кредитов. Сжигается."
     }
   },
   {
@@ -1827,21 +1833,21 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 6,
+        "amount": 7,
         "target": "all_enemies"
       }
     ],
-    "description": "Нанеси 6 урона всем врагам.",
+    "description": "Нанеси 7 урона всем врагам.",
     "upgrade": {
       "name": "Масс-скан+",
       "effects": [
         {
           "type": "damage",
-          "amount": 9,
+          "amount": 10,
           "target": "all_enemies"
         }
       ],
-      "description": "Нанеси 9 урона всем врагам."
+      "description": "Нанеси 10 урона всем врагам."
     }
   },
   {
