@@ -9,6 +9,11 @@ on:
         description: 'Тег релиза (создастся на текущем коммите, если его нет)'
         required: true
         default: 'v0.1.0'
+      targets:
+        description: 'Что собирать'
+        type: choice
+        options: [all, desktop, android]
+        default: all
 
 permissions:
   contents: write
@@ -42,6 +47,7 @@ jobs:
   desktop:
     name: Desktop (${{ matrix.platform }})
     needs: release
+    if: github.event_name != 'workflow_dispatch' || inputs.targets != 'android'
     strategy:
       fail-fast: false
       matrix:
@@ -80,6 +86,7 @@ jobs:
   android:
     name: Android (APK)
     needs: release
+    if: github.event_name != 'workflow_dispatch' || inputs.targets != 'desktop'
     runs-on: ubuntu-latest
     env:
       KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -101,6 +108,9 @@ jobs:
           cache: gradle
 
       - uses: android-actions/setup-android@v3
+        with:
+          # дефолтный пакет 'tools' удалён из sdkmanager — задаём явно
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
 
       - run: npm ci
 
