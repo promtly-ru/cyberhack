@@ -43,7 +43,7 @@ export interface CardProps {
 
 export const Card = memo(function Card({ defId, upgraded = false, className, style, playable = true, compact }: CardProps) {
   let stats;
-  let text = '';
+  let text: string;
   try {
     stats = cardStats(defId, upgraded);
     text = describeCard(defId, upgraded);

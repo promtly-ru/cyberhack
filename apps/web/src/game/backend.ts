@@ -54,6 +54,7 @@ export function createStubBackend(): Backend {
 }
 
 let pending: Promise<Backend> | null = null;
+let ready: Backend | null = null;
 let isStub = false;
 
 export function getBackend(): Promise<Backend> {
@@ -68,9 +69,15 @@ export function getBackend(): Promise<Backend> {
         if (import.meta.env.DEV) console.info('[backend] заглушка:', e instanceof Error ? e.message : e);
         isStub = true;
         return createStubBackend();
-      });
+      })
+      .then((b) => (ready = b));
   }
   return pending;
+}
+
+/** Уже подключённый бэкенд (синхронно) — для сохранения на pagehide, когда ждать промис поздно. */
+export function peekBackend(): Backend | null {
+  return ready;
 }
 
 export function isStubBackend(): boolean {

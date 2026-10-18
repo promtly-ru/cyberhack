@@ -22,6 +22,8 @@ const ROW_H = 84;
 const PAD_TOP = 110;
 const PAD_BOTTOM = 70;
 const VIEW_W = 420;
+/** Радиус зоны тапа в единицах viewBox: при ширине карты ~326 px (экран 360) это ≈ 47 px в диаметре */
+const HIT_R = 30;
 
 function nodePos(n: MapNode) {
   if (n.kind === 'boss') return { x: VIEW_W / 2, y: PAD_TOP - 30 };
@@ -111,7 +113,8 @@ export function MapScreen({ run }: { run: RunState }) {
               const b = pos.get(to.id)!;
               return <line key={`${from.id}>${to.id}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`map-edge is-${state}`} />;
             })}
-            {nodes.map((n) => {
+            {/* Доступные узлы рисуем последними, чтобы их зона тапа была поверх соседей */}
+            {[...nodes].sort((a, b) => Number(available.has(a.id)) - Number(available.has(b.id))).map((n) => {
               const p = pos.get(n.id)!;
               const isAvail = available.has(n.id);
               const isVisited = visited.has(n.id);
@@ -139,6 +142,8 @@ export function MapScreen({ run }: { run: RunState }) {
                   }}
                   {...tip(label.name, label.text)}
                 >
+                  {/* Невидимая зона тапа: на 360 px узел ~29 px, а нужно ≥ 44 px */}
+                  {isAvail ? <circle r={Math.max(r + 10, HIT_R)} className="map-node__hit" data-testid="map-node-hit" /> : null}
                   {isAvail ? <circle r={r + 9} className="map-node__pulse" /> : null}
                   <circle r={r + 4} className="map-node__halo" />
                   <circle r={r} className="map-node__bg" />

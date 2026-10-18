@@ -65,3 +65,14 @@ test('телефон: долгий тап — превью карты, тап к
   await page.locator('[data-testid="enemy-hit"]:not([disabled])').first().tap();
   await expect(page.locator(`[data-testid="hand-card"][data-uid="${uid}"]`)).toHaveCount(0);
 });
+
+test('телефон: зона тапа узлов карты не меньше 44 px', async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.use.hasTouch, 'только для touch');
+  await page.goto('./?dev=map');
+  await expect(page.getByTestId('map')).toBeVisible();
+  const hits = page.getByTestId('map-node-hit');
+  await expect(hits.first()).toBeVisible();
+  const sizes = await hits.evaluateAll((els) => els.map((e) => e.getBoundingClientRect()).map((r) => Math.min(r.width, r.height)));
+  expect(sizes.length).toBeGreaterThan(0);
+  for (const s of sizes) expect(s).toBeGreaterThanOrEqual(44);
+});

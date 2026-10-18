@@ -40,7 +40,7 @@ function defaultRandomId(): string {
 // ---------- Auth ----------
 
 export function guestUser(storage: KeyValueStorage, randomId: () => string = defaultRandomId): User {
-  let id: string | null = null;
+  let id: string | null;
   try {
     id = storage.getItem(GUEST_ID_KEY);
   } catch {

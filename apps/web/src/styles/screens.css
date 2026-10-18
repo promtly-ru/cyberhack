@@ -88,6 +88,7 @@
 .map-node { color: #8e98ba; }
 .map-node__bg { fill: #0a0d1f; stroke: currentColor; stroke-width: 2; }
 .map-node__halo { fill: none; stroke: transparent; }
+.map-node__hit { fill: #000; fill-opacity: 0; stroke: none; }
 .map-node.kind-combat { color: #c0c8e4; }
 .map-node.kind-elite { color: var(--orange); }
 .map-node.kind-event { color: var(--violet); }

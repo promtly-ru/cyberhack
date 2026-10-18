@@ -351,7 +351,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
   // ----- перенос гостевого прогресса -----
 
   async function migrateGuest(uid: string): Promise<void> {
-    let migratedTo: string | null = null;
+    let migratedTo: string | null;
     try {
       migratedTo = storage.getItem(GUEST_MIGRATED_KEY);
     } catch {

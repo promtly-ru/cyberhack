@@ -4,6 +4,7 @@ import { App } from './App';
 import { initBackend } from './game/store';
 import { applyToDocument } from './ui/settings';
 import { unlockAudio } from './audio/sfx';
+import { registerServiceWorker } from './pwa';
 import './styles/base.css';
 import './styles/card.css';
 import './styles/combat.css';
@@ -12,6 +13,7 @@ import './styles/screens.css';
 applyToDocument();
 void initBackend();
 window.addEventListener('pointerdown', unlockAudio, { once: true });
+registerServiceWorker();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -64,3 +64,19 @@ test('сохранение: «Продолжить» после перезагр
   // Бой продолжается
   await expect(page.getByTestId('end-turn')).toBeEnabled();
 });
+
+test('сохранение: перезагрузка сразу после хода не теряет действия', async ({ page, act }) => {
+  await startRun(page, act);
+  await enterCombat(page, act);
+  // Вход в бой меняет экран — запись без задержки
+  expect(await savedActions(page)).toBeGreaterThanOrEqual(1);
+  expect(await playOneCard(page, act)).toBe(true);
+  const hand = await page.locator('[data-testid="hand-card"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-uid')).join(','));
+  // Без ожидания 400 мс: отложенное сохранение досохраняется на pagehide
+  await page.reload();
+  await expect(page.getByTestId('menu')).toBeVisible();
+  expect(await savedActions(page)).toBeGreaterThanOrEqual(2);
+  await act(page.getByTestId('menu-continue'));
+  await expect(page.getByTestId('combat')).toBeVisible();
+  expect(await page.locator('[data-testid="hand-card"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-uid')).join(','))).toBe(hand);
+});

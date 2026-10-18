@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import type { Action, ClassId, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
 import { applyAction, evaluateRunEnd, newRun } from './engine';
 import { dailyRunOptions, hasPlayedDaily, markDailyLocal, regularRunOptions } from './meta';
-import type { Profile, SavedRun, User } from '../net/types';
-import { defaultProfile, getBackend } from './backend';
+import type { Backend, Profile, SavedRun, User } from '../net/types';
+import { defaultProfile, getBackend, peekBackend } from './backend';
 import { sfx } from '../audio/sfx';
 import { animScale } from '../ui/settings';
 
@@ -104,7 +104,7 @@ export const useGame = create<GameStore>((set, get) => ({
     try {
       const state = newRun(opts);
       get().loadRun(state, opts, []);
-      scheduleSave();
+      saveNow();
     } catch (e) {
       set({ error: e instanceof Error ? e.message : String(e) });
     }
@@ -163,7 +163,9 @@ export const useGame = create<GameStore>((set, get) => ({
       holdTimer = setTimeout(() => set({ heldCombat: null }), 1500 * animScale());
     }
     set({ run: res.state, actions: [...actions, action], events: [...events, ...queued].slice(-200), heldCombat, error: null });
-    scheduleSave();
+    // Смена экрана (узел карты, награда, выход из боя) — сохраняем сразу, иначе перезагрузка в первые 400 мс теряет шаг
+    if (res.state.screen.kind !== run.screen.kind || !res.state.combat !== !run.combat) saveNow();
+    else scheduleSave();
     if (res.state.status !== 'active' && run.status === 'active') void onRunEnded(res.state);
     return true;
   },
@@ -194,15 +196,37 @@ export const useGame = create<GameStore>((set, get) => ({
   clearError: () => set({ error: null }),
 }));
 
+/** Отложенное сохранение: частые действия в бою (розыгрыш карт) склеиваются в одну запись. */
 function scheduleSave(): void {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    const { run, options, actions } = useGame.getState();
-    if (!run || !options || run.status !== 'active') return;
-    const saved: SavedRun = { options, actions, state: run, updatedAt: new Date().toISOString() };
-    useGame.setState({ savedRun: saved });
-    void getBackend().then((b) => b.saves.saveRun(saved)).catch(() => undefined);
-  }, 400);
+  saveTimer = setTimeout(saveNow, 400);
+}
+
+/** Сохранить забег сейчас же (отменяя отложенное сохранение). */
+function saveNow(): void {
+  clearTimeout(saveTimer);
+  saveTimer = undefined;
+  const { run, options, actions } = useGame.getState();
+  if (!run || !options || run.status !== 'active') return;
+  const saved: SavedRun = { options, actions, state: run, updatedAt: new Date().toISOString() };
+  useGame.setState({ savedRun: saved });
+  // Если бэкенд уже подключён — пишем синхронно: на pagehide промис может не успеть
+  const ready = peekBackend();
+  const write = (b: Backend) => b.saves.saveRun(saved).catch(() => undefined);
+  if (ready) void write(ready);
+  else void getBackend().then(write).catch(() => undefined);
+}
+
+/** Досохранить отложенное (уход со вкладки, сворачивание, закрытие страницы). */
+export function flushSave(): void {
+  if (saveTimer !== undefined) saveNow();
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', flushSave);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushSave();
+  });
 }
 
 /** Итоги забега → новый профиль (с сохранением полей, о которых движок не знает). */

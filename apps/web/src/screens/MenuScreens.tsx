@@ -344,6 +344,10 @@ export function ProfileScreen() {
   const [email, setEmail] = useState('');
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  // Локальный бэкенд отдаёт «гостя» как пользователя — это не вход
+  const isGuest = !user || user.provider === 'guest';
+  const cloudOff = backendMode === 'local';
   const today = dailySeed(new Date());
   const totalCards = safeCount(lockableCards);
   const totalRelics = safeCount(lockableRelics);
@@ -367,11 +371,26 @@ export function ProfileScreen() {
   const classes: ClassId[] = ['netrunner', 'phreaker', 'ghost'];
   return (
     <div className="screen profile" data-testid="profile">
-      <SelectHead eyebrow={backendMode === 'supabase' ? 'Облачный профиль' : 'Гостевой режим'} title={user ? user.displayName : 'Профиль'} />
+      <SelectHead eyebrow={isGuest ? 'Гостевой режим' : 'Облачный профиль'} title={isGuest ? 'Профиль' : user.displayName} />
       <div className="profile__grid">
         <section className="panel">
           <h2 className="section-title">Доступ</h2>
-          {user ? (
+          {isGuest && !loginOpen ? (
+            <>
+              <p>
+                <b>Гостевой режим</b>
+                <span className="muted"> · прогресс хранится только на этом устройстве</span>
+              </p>
+              {cloudOff ? (
+                <p className="muted" data-testid="cloud-off">
+                  Облачные сохранения в этой сборке не настроены — вход недоступен, игра работает офлайн.
+                </p>
+              ) : null}
+              <button className="btn btn--primary" data-testid="profile-login" disabled={busy || cloudOff} onClick={() => setLoginOpen(true)}>
+                <Icon name="mail" size={18} /> Войти
+              </button>
+            </>
+          ) : !isGuest ? (
             <>
               <p>
                 Вы вошли как <b>{user.displayName}</b>
