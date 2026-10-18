@@ -12,7 +12,8 @@
     "build": "npm run build -w @cyberhack/web",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "sim": "npm run sim -w @cyberhack/engine"
+    "sim": "npm run sim -w @cyberhack/engine",
+    "e2e": "playwright test"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.3",

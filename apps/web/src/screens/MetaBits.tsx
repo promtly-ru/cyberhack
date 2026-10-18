@@ -30,7 +30,7 @@ function AchievementCard({ a, profile }: { a: AchievementDef; profile: Profile }
   const pr = achievementProgress(profile, a.id);
   const pct = Math.round((pr.value / pr.target) * 100);
   return (
-    <li className={`ach${pr.done ? ' is-done' : ''}`}>
+    <li className={`ach${pr.done ? ' is-done' : ''}`} data-testid="achievement">
       <span className="ach__icon" aria-hidden>
         <Icon name={pr.done ? 'trophy' : 'lock'} size={20} />
       </span>
@@ -60,7 +60,7 @@ export function AchievementsPanel({ profile }: { profile: Profile }) {
     return dy.value / dy.target - dx.value / dx.target;
   });
   return (
-    <section className="panel panel--wide">
+    <section className="panel panel--wide" data-testid="achievements" aria-label="Достижения">
       <div className="cs-asc__head">
         <h2 className="section-title">Достижения</h2>
         <span className="muted small mono">

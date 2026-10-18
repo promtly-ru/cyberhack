@@ -49,6 +49,8 @@ h1, h2, h3 { font-family: var(--font-display); margin: 0; letter-spacing: 0.02em
 .error { color: #ff7a90; }
 .ok { color: var(--green); }
 :focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+/* У кнопок со срезанными углами clip-path обрезает внешнюю обводку — рисуем её внутри */
+.btn:focus-visible, .menu-btn:focus-visible { outline: 2px solid var(--acid); outline-offset: -5px; box-shadow: 0 0 0 1px #05060f inset, 0 0 18px rgba(232, 255, 58, 0.45); }
 
 /* Сканлайны + виньетка */
 html[data-scanlines='on'] body::after {

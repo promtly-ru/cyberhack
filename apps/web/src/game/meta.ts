@@ -7,7 +7,19 @@ import type { Profile } from '../net/types';
 
 const DAILY_KEY = 'cyberhack:daily-played';
 
+/** Фиксированный сид из адреса (?seed=ABC) — для e2e-тестов и воспроизведения багов. */
+function urlSeed(): string | null {
+  try {
+    const s = new URLSearchParams(globalThis.location?.search ?? '').get('seed');
+    return s && /^[\w-]{1,32}$/.test(s) ? s : null;
+  } catch {
+    return null;
+  }
+}
+
 export function randomSeed(): string {
+  const fixed = urlSeed();
+  if (fixed) return fixed;
   return Math.random().toString(36).slice(2, 10).toUpperCase();
 }
 

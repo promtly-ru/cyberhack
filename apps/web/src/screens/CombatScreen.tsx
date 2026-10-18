@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as RMouseEvent, type PointerEvent as RPointerEvent } from 'react';
 import type { CardInstance, CombatState, EnemyState, RunState } from '../game/engine';
-import { cardStats, getEnemyDef, getLegalActions } from '../game/engine';
+import { cardStats, describeCard, getEnemyDef, getLegalActions } from '../game/engine';
 import { useGame } from '../game/store';
 import { Card } from '../components/Card';
 import { HpBar, IntentBadge, StatusRow } from '../components/Bits';
@@ -31,6 +31,19 @@ function enemyInfo(e: EnemyState) {
   }
 }
 
+/** Подпись карты для скринридера: имя, стоимость, текст. */
+function cardLabel(c: CardInstance, playable: boolean): string {
+  try {
+    const st = cardStats(c.defId, c.upgraded);
+    const cost = st.cost === -1 ? 'X' : st.cost <= -2 ? 'нет' : String(st.cost);
+    return `${st.name}${c.upgraded ? '+' : ''}, стоимость ${cost}. ${describeCard(c.defId, c.upgraded)}${playable ? '' : ' (недоступна)'}`;
+  } catch {
+    return c.defId;
+  }
+}
+
+const LONG_PRESS_MS = 450;
+
 function center(el: Element | null): { x: number; y: number } | undefined {
   if (!el) return undefined;
   const r = el.getBoundingClientRect();
@@ -57,11 +70,17 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const [banner, setBanner] = useState<{ key: number; text: string } | null>(null);
   const handRef = useRef<HTMLDivElement>(null);
   const [handW, setHandW] = useState(600);
+  /** Телефон: рука — горизонтальная лента со свайпом, карты крупнее */
+  const strip = handW < 440;
   const drag = useRef<DragState | null>(null);
   const arrowRef = useRef<SVGPathElement>(null);
   const arrowSvgRef = useRef<SVGSVGElement>(null);
   const cardEls = useRef(new Map<string, HTMLElement>());
   const hintTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  /** Долгий тап — превью карты на весь экран */
+  const [preview, setPreview] = useState<CardInstance | null>(null);
+  const previewShown = useRef(false);
 
   const playerPhase = combat.phase === 'player' && !frozen;
 
@@ -123,7 +142,17 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     clearTimeout(hintTimer.current);
     hintTimer.current = setTimeout(() => setHint(null), 1600);
   }, []);
-  useEffect(() => () => clearTimeout(hintTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(hintTimer.current);
+      clearTimeout(pressTimer.current);
+    },
+    [],
+  );
+  const hidePreview = useCallback(() => {
+    clearTimeout(pressTimer.current);
+    setPreview(null);
+  }, []);
 
   const play = useCallback(
     (uid: string, targetUid?: string) => {
@@ -185,7 +214,17 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const onCardDown = (e: RPointerEvent<HTMLElement>, c: CardInstance) => {
     if (!playerPhase || e.button > 0) return;
     const el = e.currentTarget;
-    el.setPointerCapture(e.pointerId);
+    if (!strip) el.setPointerCapture(e.pointerId);
+    previewShown.current = false;
+    clearTimeout(pressTimer.current);
+    if (e.pointerType !== 'mouse') {
+      pressTimer.current = setTimeout(() => {
+        if (drag.current?.uid === c.uid && !drag.current.moved) {
+          previewShown.current = true;
+          setPreview(c);
+        }
+      }, LONG_PRESS_MS);
+    }
     drag.current = { uid: c.uid, pointerId: e.pointerId, x0: e.clientX, y0: e.clientY, moved: false, targeted: isTargeted(c), el };
   };
 
@@ -196,6 +235,13 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     const dy = e.clientY - d.y0;
     if (!d.moved) {
       if (Math.hypot(dx, dy) < 12) return;
+      clearTimeout(pressTimer.current);
+      // Лента на телефоне: горизонтальный свайп листает руку, перетаскивания нет — только тап
+      if (previewShown.current) return;
+      if (strip) {
+        drag.current = null; // свайп — не тап
+        return;
+      }
       if (!legal.has(d.uid)) return;
       d.moved = true;
       setDragUid(d.uid);
@@ -228,6 +274,12 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const endDrag = (commit: boolean, e?: RPointerEvent<HTMLElement>) => {
     const d = drag.current;
     drag.current = null;
+    clearTimeout(pressTimer.current);
+    if (previewShown.current) {
+      previewShown.current = false;
+      setPreview(null);
+      return;
+    }
     if (!d) return;
     const inner = d.el.querySelector<HTMLElement>('.hand-card__inner');
     if (inner) inner.style.translate = '';
@@ -279,14 +331,22 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     else setSelected(null);
   };
 
-  // ---------- Раскладка веером ----------
+  // ---------- Раскладка: веер или лента (телефон) ----------
   const n = combat.hand.length;
   const compact = handW < 520;
-  const cardW = compact ? Math.min(112, Math.max(88, handW / 3.25)) : Math.min(164, Math.max(120, handW / 5.6));
+  const cardW = strip ? Math.min(136, Math.max(112, (handW - 12) / 2.75)) : compact ? Math.min(112, Math.max(88, handW / 3.25)) : Math.min(164, Math.max(120, handW / 5.6));
   const cardH = cardW * 1.4;
-  const step = n > 1 ? Math.min(cardW * (compact ? 0.86 : 0.9), (handW - cardW) / (n - 1)) : 0;
+  const fanAngle = n > 1 && !strip ? Math.min(5, 28 / n) : 0;
+  const maxRot = ((fanAngle * (n - 1)) / 2) * (Math.PI / 180);
+  // Повёрнутые крайние карты выступают за свою рамку — оставляем поля, чтобы не залезать под кнопки HUD
+  const sidePad = Math.ceil(cardH * Math.sin(maxRot) * 0.9);
+  const cornerDip = Math.ceil((cardW / 2) * Math.sin(maxRot));
+  const usable = Math.max(cardW, handW - 2 * sidePad);
+  const step = n > 1 ? Math.min(cardW * (compact ? 0.86 : 0.9), (usable - cardW) / (n - 1)) : 0;
   const total = step * (n - 1);
-  const fanAngle = n > 1 ? Math.min(5, 28 / n) : 0;
+  const arc = compact ? 1.2 : 2.4;
+  const maxOff = (n - 1) / 2;
+  const handH = strip ? cardH + 22 : cardH + maxOff * maxOff * arc + cornerDip + 4;
 
   const hintText =
     hint ??
@@ -294,7 +354,12 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
 
   const player = combat.player;
   return (
-    <div className={`screen combat${frozen ? ' is-frozen' : ''}${selectedTargeted ? ' is-targeting' : ''}`} style={{ '--card-w': `${cardW}px` } as CSSProperties}>
+    <div
+      className={`screen combat${frozen ? ' is-frozen' : ''}${selectedTargeted ? ' is-targeting' : ''}`}
+      style={{ '--card-w': `${cardW}px` } as CSSProperties}
+      data-testid="combat"
+      data-phase={frozen ? 'frozen' : combat.phase}
+    >
       <TopBar run={run} />
       <div className="battlefield" onClick={onFieldClick}>
         <div className="battlefield__grid" aria-hidden="true" />
@@ -320,6 +385,8 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
               <div
                 key={e.uid}
                 className={`unit unit--enemy tier-${info.tier}${targetable ? ' is-targetable' : ''}${hovered ? ' is-hovered' : ''}`}
+                data-testid="enemy"
+                data-hp={e.hp}
                 data-fx-target={e.uid}
                 data-target-uid={dead ? undefined : e.uid}
                 data-dead={dead ? '1' : undefined}
@@ -338,6 +405,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
                 {!dead ? (
                   <button
                     className="unit__hit"
+                    data-testid="enemy-hit"
                     aria-label={`${info.name}, HP ${e.hp} из ${e.maxHp}${targetable ? ' — выбрать целью' : ''}`}
                     disabled={!targetable}
                     onClick={(ev) => {
@@ -367,20 +435,19 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         <div className="hud-hint" aria-live="polite">
           {hintText}
         </div>
-        <div className="hand" ref={handRef} style={{ height: cardH + (compact ? 4 : 10) }} aria-label="Рука">
+        <div className={`hand${strip ? ' is-strip' : ''}`} ref={handRef} style={{ height: handH }} role="group" aria-label={`Рука: ${n} карт`} data-testid="hand">
           {combat.hand.map((c, i) => {
             const off = i - (n - 1) / 2;
             const x = handW / 2 - total / 2 + i * step - cardW / 2;
             // Веер: крайние карты слегка ниже, но не за краем экрана
-            const y = Math.abs(off) * Math.abs(off) * (compact ? 1.2 : 2.4) - (compact ? 4 : 10);
+            const y = (off * off - maxOff * maxOff) * arc - cornerDip;
             const isSel = selected === c.uid;
             const playable = legal.has(c.uid);
-            const style = {
-              '--x': `${x}px`,
-              '--y': `${y}px`,
-              '--r': `${off * fanAngle}deg`,
-              zIndex: isSel || dragUid === c.uid ? 40 : 10 + i,
-            } as CSSProperties;
+            const style = (
+              strip
+                ? { zIndex: isSel ? 40 : 10 + i }
+                : { '--x': `${x}px`, '--y': `${y}px`, '--r': `${off * fanAngle}deg`, zIndex: isSel || dragUid === c.uid ? 40 : 10 + i }
+            ) as CSSProperties;
             return (
               <button
                 key={c.uid}
@@ -393,7 +460,18 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
                 onPointerDown={(e) => onCardDown(e, c)}
                 onPointerMove={onCardMove}
                 onPointerUp={(e) => endDrag(true, e)}
-                onPointerCancel={() => endDrag(false)}
+                onPointerCancel={() => {
+                  hidePreview();
+                  previewShown.current = false;
+                  endDrag(false);
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+                data-testid="hand-card"
+                data-uid={c.uid}
+                data-def={c.defId}
+                data-playable={playable ? '1' : '0'}
+                data-targeted={isTargeted(c) ? '1' : '0'}
+                aria-label={cardLabel(c, playable)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -414,6 +492,8 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         <div className="hud-right">
           <button
             className="btn btn--end"
+            data-testid="end-turn"
+            aria-keyshortcuts="E"
             disabled={!playerPhase}
             onClick={() => {
               sfx('click');
@@ -439,6 +519,12 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         </defs>
         <path ref={arrowRef} d="" markerEnd="url(#arrow-head)" />
       </svg>
+
+      {preview ? (
+        <div className="card-preview" aria-hidden="true" data-testid="card-preview">
+          <Card defId={preview.defId} upgraded={preview.upgraded} playable={legal.has(preview.uid)} />
+        </div>
+      ) : null}
 
       {pile === 'draw' ? <CardGridModal title="Стопка добора" cards={combat.drawPile} onClose={() => setPile(null)} empty="Стопка пуста — сброс перемешается" /> : null}
       {pile === 'discard' ? <CardGridModal title="Сброс" cards={[...combat.discardPile].reverse()} sorted={false} onClose={() => setPile(null)} /> : null}

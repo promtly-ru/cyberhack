@@ -53,25 +53,25 @@ export function MainMenu() {
   };
 
   return (
-    <div className="screen menu">
+    <div className="screen menu" data-testid="menu">
       <div className="menu__inner">
         <Logo />
         <nav className="menu__nav" aria-label="Главное меню">
-          <button className="menu-btn menu-btn--primary" onClick={click(() => openClassSelect(false))}>
+          <button className="menu-btn menu-btn--primary" data-testid="menu-new" onClick={click(() => openClassSelect(false))}>
             <Icon name="terminal" size={22} />
             <span>
               <b>Новый взлом</b>
               <small>Выбрать класс и сложность</small>
             </span>
           </button>
-          <button className="menu-btn" onClick={onContinue} disabled={!cont}>
+          <button className="menu-btn" data-testid="menu-continue" onClick={onContinue} disabled={!cont}>
             <Icon name="play" size={22} />
             <span>
               <b>Продолжить</b>
               <small>{cont ? `${CLASS_NAME[cont.classId]} · этаж ${cont.floor} · A${cont.ascension}` : 'Нет активного забега'}</small>
             </span>
           </button>
-          <button className="menu-btn" onClick={click(() => openClassSelect(true))}>
+          <button className="menu-btn" data-testid="menu-daily" onClick={click(() => openClassSelect(true))}>
             <Icon name="calendar" size={22} />
             <span>
               <b>Ежедневный взлом</b>
@@ -82,14 +82,14 @@ export function MainMenu() {
               </small>
             </span>
           </button>
-          <button className="menu-btn" onClick={click(() => setView('profile'))}>
+          <button className="menu-btn" data-testid="menu-profile" onClick={click(() => setView('profile'))}>
             <Icon name="user" size={22} />
             <span>
               <b>{user ? 'Профиль' : 'Профиль / Вход'}</b>
               <small>{user ? user.displayName : 'Гость'}</small>
             </span>
           </button>
-          <button className="menu-btn menu-btn--quiet" onClick={click(() => openSettings(true))}>
+          <button className="menu-btn menu-btn--quiet" data-testid="menu-settings" onClick={click(() => openSettings(true))}>
             <Icon name="gear" size={22} />
             <span>
               <b>Настройки</b>
@@ -128,6 +128,7 @@ function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selec
     <button
       role="radio"
       aria-checked={selected}
+      data-testid={`class-${c.id}`}
       disabled={locked}
       title={locked ? hint : undefined}
       className={`class-card${selected ? ' is-selected' : ''}${locked ? ' is-locked' : ''}`}
@@ -214,7 +215,7 @@ function RegularSelect() {
   };
 
   return (
-    <div className="screen class-select">
+    <div className="screen class-select" data-testid="class-select">
       <SelectHead eyebrow="Новый взлом" title="Выберите оболочку" />
       <div className="cs-classes" role="radiogroup" aria-label="Класс">
         {classes.map((c) => (
@@ -262,7 +263,7 @@ function RegularSelect() {
           </div>
         ) : null}
         {error ? <p className="error">{error}</p> : null}
-        <button className="btn btn--primary btn--lg" onClick={start} disabled={!current || !unlocked(cls)}>
+        <button className="btn btn--primary btn--lg" data-testid="start-run" onClick={start} disabled={!current || !unlocked(cls)}>
           Начать взлом <Icon name="play" size={18} />
         </button>
       </div>
@@ -286,7 +287,7 @@ function DailySelect() {
   };
 
   return (
-    <div className="screen class-select">
+    <div className="screen class-select" data-testid="daily-select">
       <SelectHead eyebrow={`Ежедневный взлом · ${today}`} title="Взлом дня" />
       {current ? (
         <div className="cs-classes" role="radiogroup" aria-label="Класс дня">
@@ -318,7 +319,7 @@ function DailySelect() {
           </div>
         ) : null}
         {error ? <p className="error">{error}</p> : null}
-        <button className="btn btn--primary btn--lg" onClick={start} disabled={!current || played}>
+        <button className="btn btn--primary btn--lg" data-testid="start-daily" onClick={start} disabled={!current || played}>
           {played ? 'Попытка использована' : 'Начать взлом'} <Icon name={played ? 'lock' : 'play'} size={18} />
         </button>
       </div>
@@ -365,7 +366,7 @@ export function ProfileScreen() {
 
   const classes: ClassId[] = ['netrunner', 'phreaker', 'ghost'];
   return (
-    <div className="screen profile">
+    <div className="screen profile" data-testid="profile">
       <SelectHead eyebrow={backendMode === 'supabase' ? 'Облачный профиль' : 'Гостевой режим'} title={user ? user.displayName : 'Профиль'} />
       <div className="profile__grid">
         <section className="panel">

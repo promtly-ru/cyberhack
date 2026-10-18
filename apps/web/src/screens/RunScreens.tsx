@@ -10,9 +10,18 @@ import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
 import { DailyBoard, RunEndUnlocks } from './MetaBits';
 
+function cardName(id: string | undefined): string {
+  if (!id) return 'программа';
+  try {
+    return cardStats(id, false).name;
+  } catch {
+    return id;
+  }
+}
+
 function Shell({ run, className, eyebrow, title, children, glitch }: { run: RunState; className: string; eyebrow: string; title: string; children: ReactNode; glitch?: boolean }) {
   return (
-    <div className={`screen run-screen ${className}`}>
+    <div className={`screen run-screen ${className}`} data-testid={className}>
       <TopBar run={run} />
       <div className="run-screen__body">
         <header className="panel-head">
@@ -57,7 +66,7 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
           }
           return (
             <li key={`${item.kind}-${i}`}>
-              <button className={`reward reward--${item.kind}`} onClick={() => take(i, item)}>
+              <button className={`reward reward--${item.kind}`} data-testid="reward-item" data-kind={item.kind} onClick={() => take(i, item)}>
                 <span className="reward__icon">{icon}</span>
                 <span className="reward__text">
                   <b>{label}</b>
@@ -73,6 +82,7 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
       <div className="actions">
         <button
           className="btn btn--primary"
+          data-testid="reward-leave"
           onClick={() => {
             sfx('click');
             dispatch({ type: 'leave_reward' });
@@ -96,6 +106,8 @@ export function CardPickScreen({ run, screen }: { run: RunState; screen: Extract
           <button
             key={id}
             className="pick-card"
+            data-testid="pick-card"
+            aria-label={`Взять «${cardName(id)}»`}
             onClick={() => {
               sfx('buy');
               dispatch({ type: 'pick_card', cardId: id });
@@ -108,6 +120,7 @@ export function CardPickScreen({ run, screen }: { run: RunState; screen: Extract
       <div className="actions">
         <button
           className="btn btn--ghost"
+          data-testid="pick-skip"
           onClick={() => {
             sfx('click');
             dispatch({ type: 'pick_card', cardId: null });
@@ -150,7 +163,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
         <h2 className="section-title">Программы</h2>
         <div className="shop-cards">
           {cards.map(({ it, i }) => (
-            <button key={i} className={`shop-item${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`Купить за ${it.price}`}>
+            <button key={i} className={`shop-item${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={it.sold ? `«${cardName(it.id)}» — продано` : `Купить «${cardName(it.id)}» за ${it.price}`}>
               {it.id ? <Card defId={it.id} /> : null}
               {price(it)}
             </button>
@@ -164,7 +177,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
             {relics.map(({ it, i }) => {
               const d = it.id ? tryRelicDef(it.id) : null;
               return (
-                <button key={i} className={`shop-relic${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} {...tip(d?.name ?? '', d?.description ?? '')}>
+                <button key={i} className={`shop-relic${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}${it.sold ? ' — продано' : `, цена ${it.price}`}`} {...tip(d?.name ?? '', d?.description ?? '')}>
                   <span className="shop-relic__icon">{it.id ? <RelicGlyph id={it.id} /> : null}</span>
                   <span className="shop-relic__name">{d?.name ?? it.id}</span>
                   {price(it)}
@@ -396,7 +409,7 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
   ];
   const title = victory ? 'Система взломана' : 'Соединение разорвано';
   return (
-    <div className={`screen gameover ${victory ? 'is-victory' : 'is-defeat'}`}>
+    <div className={`screen gameover ${victory ? 'is-victory' : 'is-defeat'}`} data-testid="gameover">
       <div className="gameover__inner">
         <div className="eyebrow">{victory ? 'Победа' : 'Поражение'} · сид {run.seed}</div>
         <h1 className="glitch gameover__title" data-text={title}>

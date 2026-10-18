@@ -81,7 +81,7 @@ export function MapScreen({ run }: { run: RunState }) {
   }
 
   return (
-    <div className="screen map-screen">
+    <div className="screen map-screen" data-testid="map">
       <TopBar run={run} />
       <div className="map-head">
         <div>
@@ -125,6 +125,9 @@ export function MapScreen({ run }: { run: RunState }) {
                   className={`map-node kind-${n.kind} is-${state}`}
                   transform={`translate(${p.x} ${p.y})`}
                   role={isAvail ? 'button' : undefined}
+                  data-testid="map-node"
+                  data-kind={n.kind}
+                  data-state={state}
                   tabIndex={isAvail ? 0 : -1}
                   aria-label={`${label.name}${isAvail ? ' — доступен' : isVisited ? ' — пройден' : ''}`}
                   onClick={() => choose(n.id)}
