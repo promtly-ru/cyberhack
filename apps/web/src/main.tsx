@@ -9,6 +9,8 @@ import './styles/base.css';
 import './styles/card.css';
 import './styles/combat.css';
 import './styles/screens.css';
+import './styles/tutorial.css';
+import './styles/accounts.css';
 
 applyToDocument();
 void initBackend();

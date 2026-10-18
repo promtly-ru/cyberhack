@@ -363,7 +363,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       <TopBar run={run} />
       <div className="battlefield" onClick={onFieldClick}>
         <div className="battlefield__grid" aria-hidden="true" />
-        <div className={`player-zone${hoverTarget === 'play' ? ' is-drop' : ''}`}>
+        <div className={`player-zone${hoverTarget === 'play' ? ' is-drop' : ''}`} data-tut="player">
           <div className="unit unit--player" data-fx-target="player" style={{ '--unit-color': CLASS_COLOR[run.classId] } as CSSProperties}>
             <div className="unit__intent-spacer" />
             <div className="unit__sprite">
@@ -535,7 +535,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
 
 function EnergyCore({ energy, max }: { energy: number; max: number }) {
   return (
-    <div className={`energy${energy === 0 ? ' is-empty' : ''}`} tabIndex={0} aria-label={`Энергия ${energy} из ${max}`} {...tip('Энергия ядра', `${energy} из ${max}. Тратится на запуск программ, восстанавливается каждый ход.`)}>
+    <div className={`energy${energy === 0 ? ' is-empty' : ''}`} data-tut="energy" tabIndex={0} aria-label={`Энергия ${energy} из ${max}`} {...tip('Энергия ядра', `${energy} из ${max}. Тратится на запуск программ, восстанавливается каждый ход.`)}>
       <svg viewBox="0 0 100 100" className="energy__svg" aria-hidden="true">
         <circle cx="50" cy="50" r="44" className="energy__ring1" />
         <circle cx="50" cy="50" r="36" className="energy__ring2" />
@@ -560,6 +560,7 @@ function PileButton({ kind, count, onClick }: { kind: 'draw' | 'discard' | 'exha
   return (
     <button
       className={`pile pile--${kind}`}
+      data-tut={`pile-${kind}`}
       onClick={() => {
         sfx('click');
         onClick();

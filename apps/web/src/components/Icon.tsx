@@ -284,6 +284,26 @@ const P: Record<string, ReactNode> = {
       <path d="M5 21h14" />
     </>
   ),
+  help: (
+    <>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M9.4 9.3a2.7 2.7 0 1 1 3.7 2.5c-.7.3-1.1.9-1.1 1.6v.6" />
+      <circle cx="12" cy="17.3" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M12 6.5C10 5 7 4.5 3.5 5v13.5C7 18 10 18.5 12 20c2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z" />
+      <path d="M12 6.5V20" />
+    </>
+  ),
+  graduation: (
+    <>
+      <path d="M2 9l10-5 10 5-10 5z" />
+      <path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+      <path d="M22 9v6" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof P;

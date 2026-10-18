@@ -3,7 +3,10 @@ import { useGame } from './game/store';
 import { devScenario, type DevScenario } from './game/engine';
 import { FxHost } from './fx/FxHost';
 import { TooltipLayer } from './components/Tooltip';
-import { MainMenu, ClassSelect, ProfileScreen } from './screens/MenuScreens';
+import { MainMenu, ClassSelect } from './screens/MenuScreens';
+import { ProfileScreen } from './screens/ProfileScreen';
+import { HowToPlay } from './tutorial/HowToPlay';
+import { TutorialLayer } from './tutorial/Tutorial';
 import { MapScreen } from './screens/MapScreen';
 import { CombatScreen } from './screens/CombatScreen';
 import { RewardScreen, CardPickScreen, ShopScreen, RestScreen, EventScreen, DeckSelectScreen, GameOverScreen } from './screens/RunScreens';
@@ -59,7 +62,7 @@ export function App() {
     <>
       <FxHost />
       <main className="app">
-        {view === 'menu' ? <MainMenu /> : view === 'class_select' ? <ClassSelect /> : view === 'profile' ? <ProfileScreen /> : <RunView />}
+        {view === 'menu' ? <MainMenu /> : view === 'class_select' ? <ClassSelect /> : view === 'profile' ? <ProfileScreen /> : view === 'howto' ? <HowToPlay /> : <RunView />}
       </main>
       {error && view === 'run' ? (
         <div className="toast" role="alert" onClick={() => useGame.getState().clearError()}>
@@ -67,6 +70,7 @@ export function App() {
         </div>
       ) : null}
       {settingsOpen ? <SettingsModal /> : null}
+      <TutorialLayer />
       <TooltipLayer />
     </>
   );

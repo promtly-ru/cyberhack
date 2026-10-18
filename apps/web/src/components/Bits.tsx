@@ -141,7 +141,7 @@ export function IntentBadge({ intent, moveName }: { intent: Intent; moveName?: s
   const label = INTENT_LABEL[intent.kind] ?? 'Неизвестно';
   const desc = hasDmg ? `Нанесёт ${intent.damage} урона${times > 1 ? ` ${times} раза (всего ${(intent.damage ?? 0) * times})` : ''}.` : 'Враг готовит действие.';
   return (
-    <div className={`intent intent--${parts[0]}`} tabIndex={0} aria-label={`Намерение: ${label}. ${desc}`} {...tip(`${label}${moveName ? ` · ${moveName}` : ''}`, desc)}>
+    <div className={`intent intent--${parts[0]}`} data-tut="intent" tabIndex={0} aria-label={`Намерение: ${label}. ${desc}`} {...tip(`${label}${moveName ? ` · ${moveName}` : ''}`, desc)}>
       {parts.map((p) => (
         <Icon key={p} name={p} size={22} className={`intent__icon intent__icon--${p}`} />
       ))}
