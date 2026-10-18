@@ -474,8 +474,8 @@ describe('ascension', () => {
     expect(d).toHaveLength(15);
     expect(d.map((x) => x.level)).toEqual(Array.from({ length: 15 }, (_, i) => i + 1));
     expect(getAscensionMods(0).eliteWeightMult).toBe(1);
-    expect(getAscensionMods(1).eliteWeightMult).toBe(1.6);
-    expect(getAscensionMods(5)).toMatchObject({ eliteWeightMult: 1.6, normalDamageMult: 1.15, actHealPct: 0.5, startHpPct: 1 });
+    expect(getAscensionMods(1).eliteWeightMult).toBe(1.5);
+    expect(getAscensionMods(5)).toMatchObject({ eliteWeightMult: 1.5, normalDamageMult: 1.1, actHealPct: 0.5, startHpPct: 1 });
     expect(getAscensionMods(15)).toMatchObject({ curseInDeck: true, goldMult: 0.8, restHealPct: 0.25, maxHpPenaltyPct: 0.05 });
   });
 

@@ -43,7 +43,7 @@
     "id": "ghost",
     "name": "Призрак",
     "description": "Стелс-оператор: блок, Шифрование, дешёвые карты и постоянный добор.",
-    "maxHp": 62,
+    "maxHp": 70,
     "startingGold": 99,
     "startingDeck": [
       "gh_ping",

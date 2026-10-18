@@ -249,7 +249,9 @@ export function buildReport(
     .filter((r) => r.rarity !== 'starter')
     .map((r) => {
       const withR = recs.filter((x) => x.relics.includes(r.id));
-      const d = acquisitionDelta(recs, r.id, (x) => x.relics.includes(r.id));
+      // Классовые реликвии сравниваются внутри своего класса (как карты), иначе дельта несёт силу класса.
+      const pool = r.classId === 'neutral' ? recs : recs.filter((x) => x.cls === r.classId);
+      const d = acquisitionDelta(pool, r.id, (x) => x.relics.includes(r.id));
       return { id: r.id, rarity: r.rarity, takeRate: pct(withR.length, recs.length), ...d };
     })
     .sort((a, b) => (b.winRateDelta ?? -99) - (a.winRateDelta ?? -99));

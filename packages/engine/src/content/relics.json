@@ -34,12 +34,16 @@
     "name": "Маскировочный модуль",
     "rarity": "starter",
     "classId": "ghost",
-    "description": "В начале боя возьми 1 дополнительную карту.",
+    "description": "В начале боя возьми 1 дополнительную карту и получи 4 блока.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "draw",
         "amount": 1
+      },
+      {
+        "type": "block",
+        "amount": 4
       }
     ]
   },
@@ -246,13 +250,13 @@
     "name": "Нанопатч",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "В начале боя получи 4 Самовосстановления.",
+    "description": "В начале боя получи 2 Самовосстановления.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 4,
+        "amount": 2,
         "target": "self"
       }
     ]
@@ -330,38 +334,33 @@
     "name": "Осколок ИИ-ядра",
     "rarity": "boss",
     "classId": "neutral",
-    "description": "В начале боя получи 1 Самообучение (+1 Разгон в конце каждого хода).",
-    "trigger": "combat_start",
+    "description": "Каждый 2-й ход в конце хода получи 1 Разгон.",
+    "trigger": "turn_end",
     "effects": [
       {
         "type": "apply_status",
-        "status": "ritual",
+        "status": "strength",
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "every": 2
   },
   {
     "id": "r_zero_day_archive",
     "name": "Архив нулевого дня",
     "rarity": "boss",
     "classId": "neutral",
-    "description": "В начале боя возьми 2 карты, получи 1 Разгон и 1 Шифрование.",
+    "description": "В начале боя возьми 1 карту и получи 1 Разгон.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "draw",
-        "amount": 2
+        "amount": 1
       },
       {
         "type": "apply_status",
         "status": "strength",
-        "amount": 1,
-        "target": "self"
-      },
-      {
-        "type": "apply_status",
-        "status": "dexterity",
         "amount": 1,
         "target": "self"
       }
@@ -412,5 +411,617 @@
         "target": "all_enemies"
       }
     ]
+  },
+  {
+    "id": "r_nr_overclock_chip",
+    "name": "Чип форсажа",
+    "rarity": "common",
+    "classId": "netrunner",
+    "description": "В начале боя получи 2 Разгона и потеряй 4 HP.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 4
+      }
+    ]
+  },
+  {
+    "id": "r_nr_aux_battery",
+    "name": "Резервный аккумулятор",
+    "rarity": "common",
+    "classId": "netrunner",
+    "description": "В первый ход боя получи 1 дополнительную энергию.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": "r_nr_coolant",
+    "name": "Жидкостное охлаждение",
+    "rarity": "uncommon",
+    "classId": "netrunner",
+    "description": "Каждый 2-й ход восстанавливает 2 HP.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 2
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_nr_multiplexer",
+    "name": "Сокет-мультиплексор",
+    "rarity": "rare",
+    "classId": "netrunner",
+    "description": "Каждая 3-я сыгранная атака наносит 4 урона случайному врагу.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 4,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 3
+  },
+  {
+    "id": "r_nr_thermal_reactor",
+    "name": "Термоядерный реактор",
+    "rarity": "boss",
+    "classId": "netrunner",
+    "description": "В начале хода наносит 7 урона всем врагам, а ты теряешь 1 HP.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "all_enemies"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": "r_ph_botnet_node",
+    "name": "Узел ботнета",
+    "rarity": "common",
+    "classId": "phreaker",
+    "description": "Каждый 3-й ход накладывает 3 Вируса на всех врагов.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 3,
+        "target": "all_enemies"
+      }
+    ],
+    "every": 3
+  },
+  {
+    "id": "r_ph_packet_analyzer",
+    "name": "Анализатор пакетов",
+    "rarity": "common",
+    "classId": "phreaker",
+    "description": "В начале боя накладывает 2 Бреши на случайного врага.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "random_enemy"
+      }
+    ]
+  },
+  {
+    "id": "r_ph_mailserver",
+    "name": "Почтовый сервер",
+    "rarity": "uncommon",
+    "classId": "phreaker",
+    "description": "Каждая 5-я сыгранная карта накладывает 3 Вируса на случайного врага.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 3,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 5
+  },
+  {
+    "id": "r_ph_zero_patient",
+    "name": "Пробирка нулевого пациента",
+    "rarity": "rare",
+    "classId": "phreaker",
+    "description": "Каждая 2-я сыгранная атака накладывает 2 Вируса на случайного врага.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 2,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_ph_pandemic",
+    "name": "Ядро пандемии",
+    "rarity": "boss",
+    "classId": "phreaker",
+    "description": "В начале хода накладывает 2 Вируса на всех врагов.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 2,
+        "target": "all_enemies"
+      }
+    ]
+  },
+  {
+    "id": "r_gh_null_cache",
+    "name": "Нулевой кэш",
+    "rarity": "common",
+    "classId": "ghost",
+    "description": "Каждая 4-я сыгранная карта даёт 3 блока.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 3
+      }
+    ],
+    "every": 4
+  },
+  {
+    "id": "r_gh_crypto_core",
+    "name": "Крипто-ядро",
+    "rarity": "common",
+    "classId": "ghost",
+    "description": "В начале боя получи 1 Шифрование.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_gh_shadow_drive",
+    "name": "Теневой диск",
+    "rarity": "uncommon",
+    "classId": "ghost",
+    "description": "В начале боя добавляет в руку 2 Осколка кода.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "gh_shard",
+        "to": "hand",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "id": "r_gh_ghost_cache",
+    "name": "Призрачный кэш",
+    "rarity": "rare",
+    "classId": "ghost",
+    "description": "Каждая 10-я сыгранная карта: возьми 1 карту.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "every": 10
+  },
+  {
+    "id": "r_gh_stealth_matrix",
+    "name": "Стелс-матрица",
+    "rarity": "boss",
+    "classId": "ghost",
+    "description": "В начале хода получи 1 энергию и 1 Фрагментацию.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_spike_cable",
+    "name": "Шипованный кабель",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "Каждый 2-й ход наносит 3 урона случайному врагу.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_pocket_router",
+    "name": "Карманный роутер",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "Каждая 4-я сыгранная атака даёт 5 блока.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      }
+    ],
+    "every": 4
+  },
+  {
+    "id": "r_bug_bounty",
+    "name": "Баг-баунти",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В конце боя получи 8 кредитов.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 8
+      }
+    ]
+  },
+  {
+    "id": "r_first_aid",
+    "name": "Аптечка",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "При получении: восстанови 30 HP.",
+    "trigger": "pickup",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 30
+      }
+    ]
+  },
+  {
+    "id": "r_coffee_maker",
+    "name": "Кофемашина",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "Каждый привал приносит 30 кредитов.",
+    "trigger": "rest",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 30
+      }
+    ]
+  },
+  {
+    "id": "r_net_filter",
+    "name": "Сетевой фильтр",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В начале боя накладывает 1 Лаг на случайного врага.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "random_enemy"
+      }
+    ]
+  },
+  {
+    "id": "r_spare_ram",
+    "name": "Запасная планка ОЗУ",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В начале боя возьми 1 дополнительную карту.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": "r_turbo_fan",
+    "name": "Турбокулер",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждый 3-й ход получи 1 энергию.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      }
+    ],
+    "every": 3
+  },
+  {
+    "id": "r_logic_bomb",
+    "name": "Логическая бомба",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждый 3-й ход наносит 10 урона случайному врагу.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 10,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 3
+  },
+  {
+    "id": "r_watchdog",
+    "name": "Сторожевой скрипт",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждая 5-я сыгранная карта даёт 4 блока.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 4
+      }
+    ],
+    "every": 5
+  },
+  {
+    "id": "r_disassembler",
+    "name": "Дизассемблер",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "В начале боя накладывает 1 Брешь и 1 Лаг на всех врагов.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ]
+  },
+  {
+    "id": "r_quantum_gen",
+    "name": "Квантовый генератор",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждая 6-я сыгранная атака даёт 1 энергию.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      }
+    ],
+    "every": 6
+  },
+  {
+    "id": "r_signal_mirror",
+    "name": "Зеркало сигнала",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "В начале хода получи 2 блока.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 2
+      }
+    ]
+  },
+  {
+    "id": "r_neuro_accel",
+    "name": "Нейроускоритель",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "Каждый 2-й ход возьми 1 дополнительную карту.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_black_ice_shard",
+    "name": "Осколок чёрного льда",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "Каждый 2-й ход накладывает 1 Брешь на случайного врага.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_auto_patcher",
+    "name": "Автопатчер",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "Каждый 3-й ход в конце хода получи 1 Броня-патч.",
+    "trigger": "turn_end",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "every": 3
+  },
+  {
+    "id": "r_debug_port",
+    "name": "Отладочный порт",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "В начале боя добавляет в руку Дебаггер.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "n_debugger",
+        "to": "hand",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "r_quantum_battery",
+    "name": "Квантовая батарея",
+    "rarity": "boss",
+    "classId": "neutral",
+    "description": "В начале хода получи 1 энергию. В сброс добавляется 1 Спам.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "add_card",
+        "cardId": "spam",
+        "to": "discard",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "r_singularity_core",
+    "name": "Ядро сингулярности",
+    "rarity": "boss",
+    "classId": "neutral",
+    "description": "В начале боя получи 2 Разгона и 2 Шифрования, но потеряй 5 HP.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 5
+      }
+    ]
+  },
+  {
+    "id": "r_premium_vpn",
+    "name": "Премиум-VPN",
+    "rarity": "shop",
+    "classId": "neutral",
+    "description": "Каждый 2-й ход получи 4 блока.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 4
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_loyalty_card",
+    "name": "Карта лояльности",
+    "rarity": "shop",
+    "classId": "neutral",
+    "description": "В конце боя получи 6 кредитов и восстанови 2 HP.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 6
+      },
+      {
+        "type": "heal",
+        "amount": 2
+      }
+    ]
+  },
+  {
+    "id": "r_smart_watch",
+    "name": "Смарт-часы",
+    "rarity": "shop",
+    "classId": "neutral",
+    "description": "Каждый 4-й ход получи 1 энергию и возьми 1 карту.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "every": 4
   }
 ]

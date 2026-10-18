@@ -387,7 +387,7 @@ class ExpertBot implements Bot {
     let bestV = 0;
     items.forEach((it, i) => {
       if (!legal.has(i) || it.kind === 'remove' || !it.id) return;
-      let v = 0;
+      let v: number;
       if (it.kind === 'relic') v = this.relicValue(it.id) * 2.2;
       else {
         if (this.chooseCard(s, [it.id], 1.5) === null) return;

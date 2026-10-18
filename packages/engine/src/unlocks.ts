@@ -100,7 +100,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Победить за Нетраннера',
     target: 1,
     value: lt('winsNetrunner'),
-    unlocks: [card('nr_zero_day')],
+    unlocks: [card('nr_zero_day'), card('nr_flood_loop')],
   },
   {
     id: 'win_phreaker',
@@ -108,7 +108,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Победить за Фрикера',
     target: 1,
     value: lt('winsPhreaker'),
-    unlocks: [card('ph_patient_zero')],
+    unlocks: [card('ph_patient_zero'), card('ph_dos')],
   },
   {
     id: 'win_ghost',
@@ -116,7 +116,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Победить за Призрака',
     target: 1,
     value: lt('winsGhost'),
-    unlocks: [card('gh_ambush')],
+    unlocks: [card('gh_ambush'), card('gh_quantum')],
   },
   {
     id: 'ascend_5',
@@ -140,7 +140,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: `Победить на Ascension ${MAX_ASCENSION}`,
     target: MAX_ASCENSION,
     value: (p) => ((p.lifetime?.wins ?? 0) > 0 ? (p.lifetime?.bestWinAscension ?? 0) : 0),
-    unlocks: [],
+    unlocks: [relic('r_singularity_core')],
   },
   {
     id: 'cards_1000',
@@ -156,7 +156,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Уничтожить 100 врагов (за все забеги)',
     target: 100,
     value: lt('enemiesKilled'),
-    unlocks: [relic('r_damper')],
+    unlocks: [relic('r_damper'), relic('r_logic_bomb')],
   },
   {
     id: 'damage_10000',
@@ -172,7 +172,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Наложить 100 вируса на врагов за один бой',
     target: 100,
     value: lt('bestVirusInCombat'),
-    unlocks: [card('ph_honeypot'), card('ph_backup')],
+    unlocks: [card('ph_honeypot'), card('ph_backup'), card('ph_polymorph')],
   },
   {
     id: 'big_hit',
@@ -180,7 +180,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Нанести 50 урона одной атакой',
     target: 50,
     value: lt('bestHit'),
-    unlocks: [card('nr_firewall_bash'), card('nr_afterburn')],
+    unlocks: [card('nr_firewall_bash'), card('nr_afterburn'), card('nr_meltdown')],
   },
   {
     id: 'combo_20',
@@ -188,7 +188,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Сыграть 20 карт за один ход',
     target: 20,
     value: lt('bestCardsInTurn'),
-    unlocks: [card('gh_flurry')],
+    unlocks: [card('gh_flurry'), card('gh_null_storm')],
   },
   {
     id: 'elite_hunter',
@@ -204,7 +204,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Накопить 500 золота одновременно',
     target: 500,
     value: lt('bestGold'),
-    unlocks: [relic('r_trace_jammer')],
+    unlocks: [relic('r_trace_jammer'), relic('r_smart_watch')],
   },
   {
     id: 'collector',
@@ -212,7 +212,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Собрать 15 реликвий за один забег',
     target: 15,
     value: lt('bestRelics'),
-    unlocks: [relic('r_signal_booster')],
+    unlocks: [relic('r_signal_booster'), relic('r_debug_port')],
   },
   {
     id: 'upgrader',
@@ -220,7 +220,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Закончить забег с 8 улучшенными картами в колоде',
     target: 8,
     value: lt('bestUpgraded'),
-    unlocks: [],
+    unlocks: [card('gh_phase_shift'), relic('r_auto_patcher')],
   },
   {
     id: 'veteran',
@@ -229,6 +229,47 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     target: 10,
     value: (p) => p.totalRuns,
     unlocks: [relic('r_med_patch')],
+  },
+  // ---- Контент v2 ----
+  {
+    id: 'elites_20',
+    name: 'Ледокол',
+    description: 'Победить 20 элитных врагов (за все забеги)',
+    target: 20,
+    value: lt('elitesKilled'),
+    unlocks: [card('nr_redline'), relic('r_black_ice_shard')],
+  },
+  {
+    id: 'bosses_10',
+    name: 'Гроза файрволов',
+    description: 'Победить 10 боссов (за все забеги)',
+    target: 10,
+    value: lt('bossesKilled'),
+    unlocks: [card('ph_mass_mailer'), relic('r_ph_pandemic')],
+  },
+  {
+    id: 'wins_5',
+    name: 'Серийный взломщик',
+    description: 'Победить в 5 забегах',
+    target: 5,
+    value: lt('wins'),
+    unlocks: [card('n_ram_upgrade'), relic('r_turbo_fan')],
+  },
+  {
+    id: 'damage_50000',
+    name: 'Цифровой шторм',
+    description: 'Нанести 50 000 урона (за все забеги)',
+    target: 50_000,
+    value: lt('damageDealt'),
+    unlocks: [card('nr_unlimit'), relic('r_nr_multiplexer')],
+  },
+  {
+    id: 'runs_25',
+    name: 'Завсегдатай даркнета',
+    description: 'Завершить 25 забегов',
+    target: 25,
+    value: (p) => p.totalRuns,
+    unlocks: [card('ph_rootkit'), card('gh_layers'), relic('r_ph_zero_patient'), relic('r_gh_ghost_cache')],
   },
 ];
 

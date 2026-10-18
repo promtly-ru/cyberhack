@@ -50,9 +50,9 @@ interface AscensionLevel {
 }
 
 export const ASCENSION_TABLE: readonly AscensionLevel[] = [
-  { level: 1, description: 'Элитные файрволы встречаются на карте чаще', apply: (m) => (m.eliteWeightMult = 1.6) },
-  { level: 2, description: 'Обычные враги наносят на 15% больше урона', apply: (m) => (m.normalDamageMult = 1.15) },
-  { level: 3, description: 'Элитные враги наносят на 15% больше урона', apply: (m) => (m.eliteDamageMult = 1.15) },
+  { level: 1, description: 'Элитные файрволы встречаются на карте чаще', apply: (m) => (m.eliteWeightMult = 1.5) },
+  { level: 2, description: 'Обычные враги наносят на 10% больше урона', apply: (m) => (m.normalDamageMult = 1.1) },
+  { level: 3, description: 'Элитные враги наносят на 10% больше урона', apply: (m) => (m.eliteDamageMult = 1.1) },
   { level: 4, description: 'Боссы наносят на 15% больше урона', apply: (m) => (m.bossDamageMult = 1.15) },
   {
     level: 5,

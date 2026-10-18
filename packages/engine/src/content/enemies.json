@@ -404,7 +404,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9
+            "amount": 8
           }
         ]
       },
@@ -448,7 +448,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9
+            "amount": 8
           }
         ]
       },
@@ -481,8 +481,8 @@
     "tier": "boss",
     "act": 1,
     "hp": [
-      118,
-      122
+      112,
+      116
     ],
     "moves": [
       {
@@ -539,7 +539,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 18
+            "amount": 16
           }
         ]
       },
@@ -581,8 +581,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      24,
-      30
+      22,
+      27
     ],
     "moves": [
       {
@@ -592,7 +592,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 7
           }
         ]
       },
@@ -697,7 +697,7 @@
           {
             "type": "apply_status",
             "status": "thorns",
-            "amount": 3,
+            "amount": 2,
             "target": "self"
           },
           {
@@ -909,7 +909,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9,
+            "amount": 8,
             "times": 2
           }
         ]
@@ -921,7 +921,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 16
+            "amount": 14
           },
           {
             "type": "apply_status",
@@ -948,8 +948,8 @@
     "tier": "boss",
     "act": 2,
     "hp": [
-      200,
-      210
+      180,
+      190
     ],
     "moves": [
       {
@@ -992,7 +992,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6,
+            "amount": 5,
             "times": 4
           }
         ]
@@ -1023,7 +1023,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 24
+            "amount": 20
           }
         ]
       }
@@ -1077,7 +1077,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9,
+            "amount": 8,
             "times": 2
           }
         ]
@@ -1126,7 +1126,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 24
+            "amount": 22
           }
         ]
       }
@@ -1169,7 +1169,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 15
+            "amount": 13
           }
         ]
       },
@@ -1180,7 +1180,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9
+            "amount": 8
           },
           {
             "type": "apply_status",
@@ -1396,8 +1396,8 @@
     "tier": "boss",
     "act": 3,
     "hp": [
-      285,
-      295
+      275,
+      285
     ],
     "moves": [
       {
@@ -1514,5 +1514,678 @@
       ]
     },
     "description": "Главный ИИ корпорации. Фаза 1: глухая оборона и анализ. После «Пробуждения» каждый ход растёт Разгон, а «Сингулярность» бьёт на 34+."
+  },
+  {
+    "id": "a1_phisher",
+    "name": "Фишинг-бот",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      22,
+      26
+    ],
+    "moves": [
+      {
+        "id": "bait",
+        "name": "Приманка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          },
+          {
+            "type": "add_card",
+            "cardId": "spam",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "hook",
+        "name": "Подсечка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8
+          }
+        ]
+      },
+      {
+        "id": "reel",
+        "name": "Вытягивание",
+        "intent": "attack_defend",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 5
+          },
+          {
+            "type": "block",
+            "amount": 5
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "bait": 30,
+        "hook": 40,
+        "reel": 30
+      }
+    },
+    "description": "Рассылает спам в твою колоду и бьёт по ослабленным."
+  },
+  {
+    "id": "a2_packet_sniffer",
+    "name": "Пакетный сниффер",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      32,
+      38
+    ],
+    "moves": [
+      {
+        "id": "sniff",
+        "name": "Перехват",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "leak",
+        "name": "Утечка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "sniff",
+        "leak",
+        "leak"
+      ]
+    },
+    "description": "Слушает трафик, а потом бьёт по слабым местам."
+  },
+  {
+    "id": "a2_ransom_bot",
+    "name": "Бот-вымогатель",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      44,
+      50
+    ],
+    "moves": [
+      {
+        "id": "lock",
+        "name": "Шифрование диска",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "draw",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "demand",
+        "name": "Требование выкупа",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 13
+          }
+        ]
+      },
+      {
+        "id": "strike",
+        "name": "Заражение",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "lock",
+        "demand",
+        "strike"
+      ]
+    },
+    "description": "Засоряет колоду Глитчами и требует выкуп."
+  },
+  {
+    "id": "a2_data_warden",
+    "name": "Страж данных",
+    "tier": "elite",
+    "act": 2,
+    "hp": [
+      105,
+      112
+    ],
+    "moves": [
+      {
+        "id": "shield",
+        "name": "Резервирование",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 15
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "purge",
+        "name": "Чистка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8,
+            "times": 2
+          }
+        ]
+      },
+      {
+        "id": "overload",
+        "name": "Перегрузка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "slam",
+        "name": "Удар массива",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 18
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "shield",
+        "purge",
+        "overload",
+        "slam",
+        "purge"
+      ]
+    },
+    "description": "Элита акта 2: копит броню, заражает и бьёт массивом данных."
+  },
+  {
+    "id": "a3_swarm_node",
+    "name": "Узел роя",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      30,
+      36
+    ],
+    "moves": [
+      {
+        "id": "bite",
+        "name": "Укус",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 2
+          }
+        ]
+      },
+      {
+        "id": "harden",
+        "name": "Синхронизация",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 8
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "bite": 65,
+        "harden": 35
+      }
+    },
+    "description": "Слабый поодиночке, опасный в стае."
+  },
+  {
+    "id": "a3_black_wall",
+    "name": "Чёрная стена",
+    "tier": "elite",
+    "act": 3,
+    "hp": [
+      170,
+      180
+    ],
+    "moves": [
+      {
+        "id": "fortify",
+        "name": "Укрепление",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 22
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "crush",
+        "name": "Сокрушение",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 22
+          }
+        ]
+      },
+      {
+        "id": "drain",
+        "name": "Истощение",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "fortify",
+        "crush",
+        "drain",
+        "crush"
+      ]
+    },
+    "description": "Элита акта 3: толстая стена с Контрударом. Мульти-удары по ней обходятся дорого."
+  },
+  {
+    "id": "boss_hydra",
+    "name": "ГИДРА — ботнет-матка",
+    "tier": "boss",
+    "act": 1,
+    "hp": [
+      112,
+      118
+    ],
+    "moves": [
+      {
+        "id": "infect",
+        "name": "Заражение роя",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          },
+          {
+            "type": "add_card",
+            "cardId": "spam",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "swarm",
+        "name": "Атака роя",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 4,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "harden",
+        "name": "Регенерация узлов",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "bite",
+        "name": "Укус ядра",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "infect",
+        "swarm",
+        "harden",
+        "bite",
+        "swarm",
+        "harden",
+        "bite"
+      ]
+    },
+    "description": "Альтернативный босс акта 1. Заражает Вирусом и спамит в колоду, с каждым циклом укрепляется Разгоном."
+  },
+  {
+    "id": "boss_leviathan",
+    "name": "ЛЕВИАФАН — дата-хранилище",
+    "tier": "boss",
+    "act": 2,
+    "hp": [
+      190,
+      200
+    ],
+    "moves": [
+      {
+        "id": "wall",
+        "name": "Холодное хранилище",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 24
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "leech",
+        "name": "Выкачка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10
+          },
+          {
+            "type": "heal",
+            "amount": 6
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "crush",
+        "name": "Обвал массива",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 18
+          }
+        ]
+      },
+      {
+        "id": "quake",
+        "name": "Дефрагментация",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 5,
+            "times": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "enrage",
+        "name": "Расширение тома",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "wall",
+        "leech",
+        "crush",
+        "quake",
+        "enrage",
+        "leech",
+        "crush",
+        "quake"
+      ]
+    },
+    "description": "Альтернативный босс акта 2. Медленный танк: блок с Контрударом, высасывает HP и копит Разгон."
+  },
+  {
+    "id": "boss_archon",
+    "name": "АРХОНТ — протокол судного дня",
+    "tier": "boss",
+    "act": 3,
+    "hp": [
+      295,
+      305
+    ],
+    "moves": [
+      {
+        "id": "scan",
+        "name": "Глубокое сканирование",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "draw",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "barrage",
+        "name": "Залп",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "lockdown",
+        "name": "Карантин сети",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 24
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "purge",
+        "name": "Очистка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 14
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          }
+        ]
+      },
+      {
+        "id": "judgment",
+        "name": "Приговор",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 32
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "scan",
+        "barrage",
+        "lockdown",
+        "purge",
+        "judgment",
+        "barrage",
+        "lockdown",
+        "purge",
+        "judgment"
+      ]
+    },
+    "description": "Альтернативный босс акта 3. Сканирует и засоряет колоду, каждый цикл набирает Разгон и выносит «Приговор»."
   }
 ]

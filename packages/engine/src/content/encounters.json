@@ -290,5 +290,109 @@
     "enemies": [
       "boss_omnis"
     ]
+  },
+  {
+    "id": "a1_e_phisher",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_phisher",
+      "a1_phisher"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_phisher_proxy",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_phisher",
+      "a1_proxy"
+    ]
+  },
+  {
+    "id": "a1_boss_hydra",
+    "act": 1,
+    "tier": "boss",
+    "enemies": [
+      "boss_hydra"
+    ]
+  },
+  {
+    "id": "a2_e_sniffer",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_packet_sniffer"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_ransom",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_ransom_bot"
+    ]
+  },
+  {
+    "id": "a2_sniffer_worm",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_packet_sniffer",
+      "a2_crypto_worm"
+    ]
+  },
+  {
+    "id": "a2_elite_warden",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_data_warden"
+    ]
+  },
+  {
+    "id": "a2_boss_leviathan",
+    "act": 2,
+    "tier": "boss",
+    "enemies": [
+      "boss_leviathan"
+    ]
+  },
+  {
+    "id": "a3_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_swarm_node",
+      "a3_swarm_node",
+      "a3_swarm_node"
+    ]
+  },
+  {
+    "id": "a3_swarm_watch",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_swarm_node",
+      "a3_netwatch"
+    ]
+  },
+  {
+    "id": "a3_elite_wall",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_black_wall"
+    ]
+  },
+  {
+    "id": "a3_boss_archon",
+    "act": 3,
+    "tier": "boss",
+    "enemies": [
+      "boss_archon"
+    ]
   }
 ]
