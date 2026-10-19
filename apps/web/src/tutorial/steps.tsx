@@ -96,7 +96,6 @@ const ANY_ATTACK_SEL = '[data-testid="hand-card"][data-playable="1"][data-target
 const FIREWALL_SEL = '[data-testid="hand-card"][data-playable="1"][data-def="nr_firewall"]';
 const ANY_BLOCK_SEL = '[data-testid="hand-card"][data-playable="1"][data-block="1"]';
 const SELECTED_TARGETED = '[data-testid="hand-card"][aria-pressed="true"][data-targeted="1"]';
-const SELECTED_FIREWALL = '[data-testid="hand-card"][aria-pressed="true"][data-def="nr_firewall"]';
 const SELECTED_BLOCK = '[data-testid="hand-card"][aria-pressed="true"][data-block="1"]';
 
 const LEGEND_SEL = '.map-legend';

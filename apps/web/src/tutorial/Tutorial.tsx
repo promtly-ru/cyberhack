@@ -386,7 +386,7 @@ function Setup() {
   const [cls, setCls] = useState<ClassId>('netrunner');
   const [diff, setDiff] = useState<Difficulty>('normal');
   if (!open) return null;
-  let classes: ClassDef[] = [];
+  let classes: ClassDef[];
   try {
     classes = listClasses().filter((c) => unlockedIds.includes(c.id));
   } catch {
