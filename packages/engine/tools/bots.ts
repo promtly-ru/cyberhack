@@ -339,8 +339,10 @@ class ExpertBot implements Bot {
   private bestUpgrade(s: RunState): CardInstance | undefined {
     let best: CardInstance | undefined;
     let bv = -Infinity;
+    const offer = s.screen.kind === 'select_deck_card' ? s.screen.offer : undefined;
     for (const c of s.deck) {
       if (!canUpgrade(c.defId, c.upgraded)) continue;
+      if (offer && !offer.includes(c.uid)) continue;
       const gain = cardScore(c.defId, true, s.classId) - cardScore(c.defId, false, s.classId);
       const v = gain + (isStarterBasic(c.defId) ? -1 : 0);
       if (v > bv) {

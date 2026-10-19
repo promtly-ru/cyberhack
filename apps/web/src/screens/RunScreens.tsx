@@ -4,7 +4,7 @@ import { getEventDef, tryRelicDef, cardStats } from '../game/engine';
 import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
-import { RelicGlyph } from '../components/Bits';
+import { RelicGlyph, SynergyBar } from '../components/Bits';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
@@ -323,7 +323,10 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
   const dispatch = useGame((s) => s.dispatch);
   const [chosen, setChosen] = useState<CardInstance | null>(null);
   const upgrade = screen.purpose === 'upgrade';
-  const cards = useMemo(() => run.deck.filter((c) => !upgrade || !c.upgraded), [run.deck, upgrade]);
+  const cards = useMemo(
+    () => run.deck.filter((c) => !upgrade || (!c.upgraded && (!screen.offer || screen.offer.includes(c.uid)))),
+    [run.deck, upgrade, screen.offer],
+  );
   const hasUpgrade = (c: CardInstance) => {
     try {
       return !!cardStats(c.defId, false).def.upgrade;
@@ -337,8 +340,9 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
       className="deck-select-screen"
       eyebrow={upgrade ? 'Оптимизация' : 'Очистка'}
       title={upgrade ? 'Улучшить карту' : 'Удалить карту'}
-      hint={upgrade ? 'Выбери карту: справа появится улучшенная версия, изменения — зелёным.' : 'Выбери карту, которую навсегда уберёшь из колоды.'}
+      hint={upgrade ? `Тебе предложены ${cards.length} из колоды — выбери одну. Справа появится улучшенная версия.` : 'Выбери карту, которую навсегда уберёшь из колоды.'}
     >
+      <SynergyBar deck={run.deck} />
       <div className="card-grid card-grid--select">
         {cards.map((c) => (
           <button
@@ -401,7 +405,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
 
 // ---------------- Конец забега ----------------
 
-const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак' };
+const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай' };
 
 export function GameOverScreen({ run, victory }: { run: RunState; victory: boolean }) {
   const toMenu = useGame((s) => s.toMenu);

@@ -5,8 +5,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      11,
-      15
+      13,
+      17
     ],
     "moves": [
       {
@@ -16,7 +16,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6
+            "amount": 7
           }
         ]
       },
@@ -49,8 +49,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      18,
-      22
+      21,
+      25
     ],
     "moves": [
       {
@@ -60,7 +60,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 4,
+            "amount": 5,
             "times": 2
           }
         ]
@@ -93,8 +93,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      28,
-      32
+      32,
+      37
     ],
     "moves": [
       {
@@ -104,7 +104,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7
+            "amount": 8
           },
           {
             "type": "add_card",
@@ -133,7 +133,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10
+            "amount": 11
           }
         ]
       }
@@ -154,8 +154,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      38,
-      42
+      44,
+      48
     ],
     "moves": [
       {
@@ -177,7 +177,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9
+            "amount": 10
           }
         ]
       },
@@ -188,7 +188,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 4
+            "amount": 5
           },
           {
             "type": "block",
@@ -214,8 +214,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      40,
-      44
+      46,
+      51
     ],
     "moves": [
       {
@@ -225,7 +225,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11
+            "amount": 12
           }
         ]
       },
@@ -236,7 +236,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7
+            "amount": 8
           },
           {
             "type": "block",
@@ -278,8 +278,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      46,
-      50
+      53,
+      57
     ],
     "moves": [
       {
@@ -302,7 +302,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6
+            "amount": 7
           }
         ]
       }
@@ -327,8 +327,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      82,
-      86
+      94,
+      99
     ],
     "moves": [
       {
@@ -355,7 +355,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 14
+            "amount": 16
           }
         ]
       },
@@ -366,7 +366,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6
+            "amount": 7
           },
           {
             "type": "apply_status",
@@ -393,8 +393,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      36,
-      40
+      41,
+      46
     ],
     "moves": [
       {
@@ -404,7 +404,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 9
           }
         ]
       },
@@ -437,8 +437,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      36,
-      40
+      41,
+      46
     ],
     "moves": [
       {
@@ -448,7 +448,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 9
           }
         ]
       },
@@ -481,8 +481,8 @@
     "tier": "boss",
     "act": 1,
     "hp": [
-      112,
-      116
+      129,
+      133
     ],
     "moves": [
       {
@@ -509,7 +509,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 5,
+            "amount": 6,
             "times": 3
           }
         ]
@@ -539,7 +539,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 16
+            "amount": 18
           }
         ]
       },
@@ -581,8 +581,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      22,
-      27
+      25,
+      31
     ],
     "moves": [
       {
@@ -592,7 +592,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7
+            "amount": 8
           }
         ]
       },
@@ -624,8 +624,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      34,
-      40
+      39,
+      46
     ],
     "moves": [
       {
@@ -652,7 +652,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11
+            "amount": 12
           }
         ]
       },
@@ -663,7 +663,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6,
+            "amount": 7,
             "times": 2
           }
         ]
@@ -685,8 +685,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      50,
-      56
+      57,
+      64
     ],
     "moves": [
       {
@@ -713,7 +713,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11
+            "amount": 12
           }
         ]
       },
@@ -724,7 +724,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 9
           },
           {
             "type": "apply_status",
@@ -751,8 +751,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      60,
-      66
+      69,
+      76
     ],
     "moves": [
       {
@@ -762,7 +762,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 13
+            "amount": 15
           }
         ]
       },
@@ -790,7 +790,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7
+            "amount": 8
           },
           {
             "type": "apply_status",
@@ -816,8 +816,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      70,
-      76
+      80,
+      87
     ],
     "moves": [
       {
@@ -827,7 +827,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 9
           },
           {
             "type": "apply_status",
@@ -843,7 +843,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 16
+            "amount": 18
           }
         ]
       },
@@ -881,8 +881,8 @@
     "tier": "elite",
     "act": 2,
     "hp": [
-      130,
-      140
+      150,
+      161
     ],
     "moves": [
       {
@@ -909,7 +909,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 2
           }
         ]
@@ -921,7 +921,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 14
+            "amount": 16
           },
           {
             "type": "apply_status",
@@ -948,8 +948,8 @@
     "tier": "boss",
     "act": 2,
     "hp": [
-      180,
-      190
+      207,
+      218
     ],
     "moves": [
       {
@@ -976,7 +976,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10
+            "amount": 11
           },
           {
             "type": "apply_status",
@@ -992,7 +992,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 5,
+            "amount": 6,
             "times": 4
           }
         ]
@@ -1023,7 +1023,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 20
+            "amount": 22
           }
         ]
       }
@@ -1049,8 +1049,8 @@
     "tier": "normal",
     "act": 3,
     "hp": [
-      45,
-      55
+      52,
+      63
     ],
     "moves": [
       {
@@ -1077,7 +1077,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 2
           }
         ]
@@ -1098,8 +1098,8 @@
     "tier": "normal",
     "act": 3,
     "hp": [
-      60,
-      70
+      69,
+      80
     ],
     "moves": [
       {
@@ -1126,7 +1126,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 22
+            "amount": 25
           }
         ]
       }
@@ -1146,8 +1146,8 @@
     "tier": "normal",
     "act": 3,
     "hp": [
-      70,
-      80
+      80,
+      92
     ],
     "moves": [
       {
@@ -1169,7 +1169,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 13
+            "amount": 15
           }
         ]
       },
@@ -1180,7 +1180,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 9
           },
           {
             "type": "apply_status",
@@ -1206,8 +1206,8 @@
     "tier": "normal",
     "act": 3,
     "hp": [
-      80,
-      90
+      92,
+      103
     ],
     "moves": [
       {
@@ -1234,7 +1234,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 20
+            "amount": 22
           }
         ]
       },
@@ -1245,7 +1245,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6,
+            "amount": 7,
             "times": 3
           }
         ]
@@ -1267,8 +1267,8 @@
     "tier": "normal",
     "act": 3,
     "hp": [
-      95,
-      105
+      109,
+      121
     ],
     "moves": [
       {
@@ -1295,7 +1295,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 18
+            "amount": 20
           }
         ]
       },
@@ -1306,7 +1306,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 12
+            "amount": 13
           },
           {
             "type": "add_card",
@@ -1333,8 +1333,8 @@
     "tier": "elite",
     "act": 3,
     "hp": [
-      155,
-      165
+      178,
+      190
     ],
     "moves": [
       {
@@ -1362,7 +1362,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 3
           }
         ]
@@ -1374,7 +1374,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 24
+            "amount": 27
           }
         ]
       }
@@ -1396,8 +1396,8 @@
     "tier": "boss",
     "act": 3,
     "hp": [
-      275,
-      285
+      316,
+      328
     ],
     "moves": [
       {
@@ -1447,7 +1447,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10,
+            "amount": 11,
             "times": 3
           }
         ]
@@ -1459,7 +1459,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 15
+            "amount": 17
           },
           {
             "type": "apply_status",
@@ -1494,7 +1494,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 34
+            "amount": 38
           }
         ]
       }
@@ -1521,8 +1521,8 @@
     "tier": "normal",
     "act": 1,
     "hp": [
-      22,
-      26
+      25,
+      30
     ],
     "moves": [
       {
@@ -1550,7 +1550,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8
+            "amount": 9
           }
         ]
       },
@@ -1561,7 +1561,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 5
+            "amount": 6
           },
           {
             "type": "block",
@@ -1586,8 +1586,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      32,
-      38
+      37,
+      44
     ],
     "moves": [
       {
@@ -1614,7 +1614,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6,
+            "amount": 7,
             "times": 2
           }
         ]
@@ -1636,8 +1636,8 @@
     "tier": "normal",
     "act": 2,
     "hp": [
-      44,
-      50
+      51,
+      57
     ],
     "moves": [
       {
@@ -1664,7 +1664,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 13
+            "amount": 15
           }
         ]
       },
@@ -1675,7 +1675,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6
+            "amount": 7
           },
           {
             "type": "apply_status",
@@ -1701,8 +1701,8 @@
     "tier": "elite",
     "act": 2,
     "hp": [
-      105,
-      112
+      121,
+      129
     ],
     "moves": [
       {
@@ -1729,7 +1729,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 2
           }
         ]
@@ -1758,7 +1758,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 18
+            "amount": 20
           }
         ]
       }
@@ -1781,8 +1781,8 @@
     "tier": "normal",
     "act": 3,
     "hp": [
-      30,
-      36
+      34,
+      41
     ],
     "moves": [
       {
@@ -1792,7 +1792,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 6,
+            "amount": 7,
             "times": 2
           }
         ]
@@ -1830,8 +1830,8 @@
     "tier": "elite",
     "act": 3,
     "hp": [
-      170,
-      180
+      195,
+      207
     ],
     "moves": [
       {
@@ -1858,7 +1858,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 22
+            "amount": 25
           }
         ]
       },
@@ -1869,7 +1869,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11
+            "amount": 12
           },
           {
             "type": "apply_status",
@@ -1901,8 +1901,8 @@
     "tier": "boss",
     "act": 1,
     "hp": [
-      112,
-      118
+      129,
+      136
     ],
     "moves": [
       {
@@ -1930,7 +1930,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 4,
+            "amount": 5,
             "times": 3
           }
         ]
@@ -1959,7 +1959,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 15
+            "amount": 17
           }
         ]
       }
@@ -1984,8 +1984,8 @@
     "tier": "boss",
     "act": 2,
     "hp": [
-      190,
-      200
+      218,
+      230
     ],
     "moves": [
       {
@@ -2012,7 +2012,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10
+            "amount": 11
           },
           {
             "type": "heal",
@@ -2032,7 +2032,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 18
+            "amount": 20
           }
         ]
       },
@@ -2043,7 +2043,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 5,
+            "amount": 6,
             "times": 3
           },
           {
@@ -2088,8 +2088,8 @@
     "tier": "boss",
     "act": 3,
     "hp": [
-      295,
-      305
+      339,
+      351
     ],
     "moves": [
       {
@@ -2122,7 +2122,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7,
+            "amount": 8,
             "times": 4
           }
         ]
@@ -2151,7 +2151,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 14
+            "amount": 16
           },
           {
             "type": "apply_status",
@@ -2167,7 +2167,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 32
+            "amount": 36
           }
         ]
       }

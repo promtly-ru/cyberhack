@@ -114,7 +114,7 @@ describe('local saves', () => {
     const p = await saves.loadProfile();
     expect(p.unlockedClasses.sort()).toEqual(['ghost', 'netrunner']);
     expect(p.unlockedCards).toEqual(['zap']);
-    expect(p.maxAscension).toEqual({ netrunner: 0, phreaker: 0, ghost: 15 });
+    expect(p.maxAscension).toEqual({ netrunner: 0, phreaker: 0, ghost: 15, samurai: 0 });
     expect(p.totalRuns).toBe(12);
     expect(p.totalWins).toBe(0);
     await saves.saveProfile({ ...p, totalWins: 3 });

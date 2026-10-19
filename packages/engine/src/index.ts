@@ -32,6 +32,8 @@ export type { ContentData } from './content';
 export { getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
 export type { AscensionMods } from './ascension';
 export { computeScore } from './score';
+export { SYNERGIES, getActiveSynergies } from './synergies';
+export type { SynergyDef } from './synergies';
 export { availableNodes, currentNode } from './run';
 export { calcAttackDamage, calcBlock, STATUS } from './statuses';
 export { hashString } from './rng';

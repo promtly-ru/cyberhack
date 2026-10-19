@@ -7,6 +7,7 @@ import type { AscensionMods } from './ascension';
 import { COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, type ResolvedCard } from './cards';
 import { getContent } from './content';
 import { rngOf } from './rng';
+import { getActiveSynergies } from './synergies';
 import { addStatus, calcAttackDamage, calcBlock, getStatus, KNOWN_STATUSES, STATUS } from './statuses';
 import {
   InvalidActionError,
@@ -448,6 +449,15 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
   return ctx;
 }
 
+function applySynergies(ctx: CombatCtx): void {
+  for (const syn of getActiveSynergies(ctx.s.deck.map((c) => c.defId))) {
+    for (const eff of syn.effects) {
+      if (isOver(ctx)) return;
+      applyRelicEffect(ctx, eff);
+    }
+  }
+}
+
 export function startPlayerTurn(ctx: CombatCtx): void {
   const c = ctx.c;
   c.turn += 1;
@@ -460,7 +470,10 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   triggerRelics(ctx, 'turn_start');
   if (isOver(ctx)) return;
   drawCards(ctx, DRAW_PER_TURN);
-  if (c.turn === 1) triggerRelics(ctx, 'combat_start');
+  if (c.turn === 1) {
+    triggerRelics(ctx, 'combat_start');
+    applySynergies(ctx);
+  }
   refreshIntents(ctx);
 }
 

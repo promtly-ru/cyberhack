@@ -341,16 +341,17 @@ describe('отдых', () => {
   it('rest_upgrade → выбор карты → улучшение; отмена возвращает к отдыху', () => {
     const s = enterKind('rest');
     let sel = act(s, { type: 'rest_upgrade' });
-    expect(sel.screen).toEqual({ kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' });
+    expect(sel.screen).toMatchObject({ kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' });
     expect(act(sel, { type: 'select_deck_card', cardUid: null }).screen.kind).toBe('rest');
-    const uid = sel.deck[0]!.uid;
+    const uid = (sel.screen as { offer: string[] }).offer[0]!;
+    const picked = sel.deck.find((c) => c.uid === uid)!;
     const r = applyAction(sel, { type: 'select_deck_card', cardUid: uid });
-    expect(r.state.deck[0]!.upgraded).toBe(true);
+    expect(r.state.deck.find((c) => c.uid === uid)!.upgraded).toBe(true);
     expect(r.state.screen.kind).toBe('map');
-    expect(r.events).toContainEqual({ type: 'card_upgraded', cardUid: uid, defId: sel.deck[0]!.defId });
+    expect(r.events).toContainEqual({ type: 'card_upgraded', cardUid: uid, defId: picked.defId });
     // уже улучшенную нельзя
     sel = structuredClone(sel);
-    sel.deck[0]!.upgraded = true;
+    sel.deck.find((c) => c.uid === uid)!.upgraded = true;
     expect(() => act(sel, { type: 'select_deck_card', cardUid: uid })).toThrow(/cannot be upgraded/);
     // всё улучшено — rest_upgrade нелегален
     const all = enterKind('rest');
@@ -386,7 +387,7 @@ describe('события', () => {
 
   it('special: upgrade_card / remove_card', () => {
     const up = act(inEvent('ev_forge'), { type: 'event_choice', index: 0 });
-    expect(up.screen).toEqual({ kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' });
+    expect(up.screen).toMatchObject({ kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' });
     expect(act(up, { type: 'select_deck_card', cardUid: null }).screen.kind).toBe('map');
     const rm = act(inEvent('ev_forge'), { type: 'event_choice', index: 1 });
     expect(rm.screen).toEqual({ kind: 'select_deck_card', purpose: 'remove', returnTo: 'map' });

@@ -312,6 +312,14 @@ function upgradableCards(s: RunState): CardInstance[] {
   return s.deck.filter((c) => canUpgrade(c.defId, c.upgraded));
 }
 
+/** Улучшение: игроку предлагают случайные 3 карты (или меньше, если их меньше). */
+const UPGRADE_OFFER_SIZE = 3;
+function upgradeScreen(s: RunState): Screen {
+  const pool = upgradableCards(s);
+  const offer = rngOf(s, 'cards').shuffle([...pool]).slice(0, UPGRADE_OFFER_SIZE).map((c) => c.uid);
+  return { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map', offer };
+}
+
 function enterEvent(s: RunState, ev: GameEvent[]): void {
   const events = getContent().data.events.filter(
     (e) => (e.act === undefined || e.act === s.act) && e.options.length > 0,
@@ -454,7 +462,7 @@ export function applyAction(state: RunState, action: Action): ActionResult {
     case 'rest_upgrade':
       if (s.screen.kind !== 'rest') invalid('Not at rest site');
       if (upgradableCards(s).length === 0) invalid('No cards to upgrade');
-      s.screen = { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' };
+      s.screen = upgradeScreen(s);
       break;
     case 'select_deck_card':
       selectDeckCard(s, action.cardUid, ev);
@@ -494,6 +502,7 @@ function selectDeckCard(s: RunState, cardUid: string | null, ev: GameEvent[]): v
   if (!card) invalid(`Card ${cardUid} is not in deck`);
   if (purpose === 'upgrade') {
     if (!canUpgrade(card.defId, card.upgraded)) invalid(`Card ${cardUid} cannot be upgraded`);
+    if (s.screen.offer && !s.screen.offer.includes(cardUid)) invalid(`Card ${cardUid} is not offered`);
     card.upgraded = true;
     ev.push({ type: 'card_upgraded', cardUid, defId: card.defId });
     if (fromRest) triggerOutOfCombatRelics(s, 'rest', ev);
@@ -523,7 +532,7 @@ function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void 
       else goToMap(s);
       return;
     case 'upgrade_card':
-      if (upgradableCards(s).length > 0) s.screen = { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' };
+      if (upgradableCards(s).length > 0) s.screen = upgradeScreen(s);
       else goToMap(s);
       return;
     case 'random_relic': {
@@ -596,7 +605,7 @@ export function getLegalActions(state: RunState): Action[] {
       for (const index of legalEventOptions(s, screen.eventId)) actions.push({ type: 'event_choice', index });
       break;
     case 'select_deck_card': {
-      const cards = screen.purpose === 'upgrade' ? upgradableCards(s) : s.deck;
+      const cards = screen.purpose === 'upgrade' ? upgradableCards(s).filter((c) => !screen.offer || screen.offer.includes(c.uid)) : s.deck;
       for (const c of cards) actions.push({ type: 'select_deck_card', cardUid: c.uid });
       actions.push({ type: 'select_deck_card', cardUid: null });
       break;

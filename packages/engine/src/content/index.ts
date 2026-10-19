@@ -99,7 +99,7 @@ export function resetContent(): void {
 
 // ---------- Валидация ----------
 
-const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost']);
+const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai']);
 const RELIC_TRIGGERS: ReadonlySet<RelicTrigger> = new Set<RelicTrigger>([
   'combat_start',
   'turn_start',

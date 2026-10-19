@@ -18,6 +18,7 @@ export interface LifetimeStats {
   winsNetrunner?: number;
   winsPhreaker?: number;
   winsGhost?: number;
+  winsSamurai?: number;
   /** Высший уровень Ascension, на котором была победа */
   bestWinAscension?: number;
   bestAct?: number;
@@ -93,6 +94,22 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     target: 1,
     value: lt('wins'),
     unlocks: [relic('r_thread_pool')],
+  },
+  {
+    id: 'vet_two',
+    name: 'Двойная победа',
+    description: 'Победить в двух забегах',
+    target: 2,
+    value: lt('wins'),
+    unlocks: [{ kind: 'class', id: 'samurai' }, card('sm_heavy_strike')],
+  },
+  {
+    id: 'win_samurai',
+    name: 'Путь клинка',
+    description: 'Победить за Кибер-самурая',
+    target: 1,
+    value: lt('winsSamurai'),
+    unlocks: [card('sm_hundred_cuts'), card('sm_bushido')],
   },
   {
     id: 'win_netrunner',
@@ -345,6 +362,7 @@ const WIN_KEY: Record<ClassId, keyof LifetimeStats> = {
   netrunner: 'winsNetrunner',
   phreaker: 'winsPhreaker',
   ghost: 'winsGhost',
+  samurai: 'winsSamurai',
 };
 
 function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, victory: boolean): LifetimeStats {

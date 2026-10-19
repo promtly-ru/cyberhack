@@ -6,6 +6,7 @@ export const CLASS_COLOR: Record<ClassId, string> = {
   netrunner: '#00f0ff',
   phreaker: '#e8ff3a',
   ghost: '#b48cff',
+  samurai: '#ff5a36',
 };
 
 export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId }) {
@@ -27,6 +28,7 @@ export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId
         <path d="M24 84h10l4-6h6M96 84H86l-4-6h-6" strokeWidth="1" opacity=".7" />
         <circle cx="44" cy="78" r="1.5" fill="currentColor" stroke="none" />
         <circle cx="76" cy="78" r="1.5" fill="currentColor" stroke="none" />
+        {classId === 'samurai' ? <path d="M104 148L116 70M101 128l9 4" strokeWidth="2.4" /> : null}
       </g>
       {/* Голо-клавиатура */}
       <g className="holo">

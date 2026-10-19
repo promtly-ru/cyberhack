@@ -3,7 +3,7 @@ import type { CardInstance, CombatState, EnemyState, RunState } from '../game/en
 import { cardStats, describeCard, getEnemyDef, getLegalActions } from '../game/engine';
 import { useGame } from '../game/store';
 import { Card, CardTerms } from '../components/Card';
-import { HpBar, IntentBadge, StatusRow } from '../components/Bits';
+import { HpBar, IntentBadge, StatusRow, SynergyBar } from '../components/Bits';
 import { EnemyArt, PlayerArt, CLASS_COLOR } from '../components/UnitArt';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
@@ -420,7 +420,8 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
             </div>
             <div className="unit__info">
               <HpBar hp={player.hp} maxHp={player.maxHp} block={player.block} />
-              <StatusRow statuses={player.statuses} />
+              <StatusRow statuses={player.statuses} labeled />
+              <SynergyBar deck={run.deck} />
             </div>
           </div>
         </div>
@@ -449,7 +450,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
                 <div className="unit__info">
                   <div className="unit__name">{info.name}</div>
                   <HpBar hp={e.hp} maxHp={e.maxHp} block={e.block} />
-                  <StatusRow statuses={e.statuses} />
+                  <StatusRow statuses={e.statuses} labeled />
                 </div>
                 {!dead ? (
                   <button

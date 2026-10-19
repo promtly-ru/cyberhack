@@ -153,6 +153,7 @@ const CLASS_STYLE: Record<string, string> = {
   netrunner: 'прямой урон — сильные атаки и наращивание Разгона.',
   phreaker: 'яды и ослабления — враги слабеют и теряют здоровье каждый ход.',
   ghost: 'защита и много карт — блок, дешёвые карты, постоянный добор.',
+  samurai: 'ближний бой — Разгон, серии ударов и Шипы.',
 };
 
 function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selected: boolean; locked: boolean; onSelect: () => void; hint?: string }) {

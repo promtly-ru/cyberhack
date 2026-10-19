@@ -1023,5 +1023,25 @@
       }
     ],
     "every": 4
+  },
+  {
+    "id": "r_katana_chip",
+    "name": "Чип катаны",
+    "rarity": "starter",
+    "classId": "samurai",
+    "description": "В начале боя получи 2 Шипа и 4 блока.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 4
+      }
+    ]
   }
 ]

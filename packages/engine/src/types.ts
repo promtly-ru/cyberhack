@@ -8,7 +8,7 @@ export const SAVE_VERSION = 1 as const;
 
 // ---------- Базовые идентификаторы ----------
 
-export type ClassId = 'netrunner' | 'phreaker' | 'ghost';
+export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai';
 export type CardType = 'attack' | 'skill' | 'power' | 'status' | 'curse';
 export type Rarity = 'starter' | 'common' | 'uncommon' | 'rare' | 'special';
 export type TargetKind = 'enemy' | 'all_enemies' | 'random_enemy' | 'self' | 'none';
@@ -220,7 +220,7 @@ export type Screen =
   | { kind: 'shop'; items: ShopItem[] }
   | { kind: 'rest' }
   | { kind: 'event'; eventId: string }
-  | { kind: 'select_deck_card'; purpose: 'remove' | 'upgrade'; returnTo: 'map' | 'shop' }
+  | { kind: 'select_deck_card'; purpose: 'remove' | 'upgrade'; returnTo: 'map' | 'shop'; /** uid карт, из которых можно выбрать улучшение (1 из 3) */ offer?: string[] }
   | { kind: 'game_over'; victory: boolean };
 
 // ---------- Забег ----------

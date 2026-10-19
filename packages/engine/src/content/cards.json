@@ -3551,5 +3551,520 @@
       "cost": 0,
       "description": "Получи 1 Разгон и 1 Шифрование."
     }
+  },
+  {
+    "id": "sm_slash",
+    "name": "Рубящий удар",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 5 урона.",
+    "upgrade": {
+      "name": "Рубящий удар+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 8,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 8 урона."
+    }
+  },
+  {
+    "id": "sm_guard",
+    "name": "Стойка",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 6 блока.",
+    "upgrade": {
+      "name": "Стойка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока."
+    }
+  },
+  {
+    "id": "sm_focus",
+    "name": "Сосредоточение",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 1 Разгон. Исчезает после розыгрыша.",
+    "upgrade": {
+      "name": "Сосредоточение+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 2 Разгона. Исчезает после розыгрыша."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "sm_twin_cut",
+    "name": "Двойной надрез",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy",
+        "times": 2
+      }
+    ],
+    "description": "Нанеси 3 урона 2 раза.",
+    "upgrade": {
+      "name": "Двойной надрез+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 5,
+          "target": "enemy",
+          "times": 2
+        }
+      ],
+      "description": "Нанеси 5 урона 2 раза."
+    }
+  },
+  {
+    "id": "sm_riposte",
+    "name": "Контрвыпад",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 7
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 7 блока и 2 Шипа.",
+    "upgrade": {
+      "name": "Контрвыпад+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 9 блока и 3 Шипа."
+    }
+  },
+  {
+    "id": "sm_whirlwind",
+    "name": "Вихрь клинков",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "all_enemies",
+        "times": 1
+      }
+    ],
+    "description": "Нанеси 5 урона всем врагам.",
+    "upgrade": {
+      "name": "Вихрь клинков+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 8,
+          "target": "all_enemies",
+          "times": 1
+        }
+      ],
+      "description": "Нанеси 8 урона всем врагам."
+    }
+  },
+  {
+    "id": "sm_meditate",
+    "name": "Медитация",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 3
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 3 блока. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Медитация+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 5
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Получи 5 блока. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "sm_hex_wall",
+    "name": "Стена шёпота",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 5 блока. Все враги получают 1 Лаг.",
+    "upgrade": {
+      "name": "Стена шёпота+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 8
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 2,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Получи 8 блока. Все враги получают 2 Лага."
+    }
+  },
+  {
+    "id": "sm_overclock_blade",
+    "name": "Раскалённый клинок",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 4,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 4 урона. Наложи 1 Брешь.",
+    "upgrade": {
+      "name": "Раскалённый клинок+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 8,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 8 урона. Наложи 2 Бреши."
+    }
+  },
+  {
+    "id": "sm_heavy_strike",
+    "name": "Тяжёлый удар",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 14,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 14 урона.",
+    "upgrade": {
+      "name": "Тяжёлый удар+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 18,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 18 урона."
+    }
+  },
+  {
+    "id": "sm_ronin_stance",
+    "name": "Стойка ронина",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 12
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 12 блока и 1 Шифрование.",
+    "upgrade": {
+      "name": "Стойка ронина+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 16
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 16 блока и 2 Шифрования."
+    }
+  },
+  {
+    "id": "sm_bloodlust",
+    "name": "Жажда крови",
+    "classId": "samurai",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 1 Разгон.",
+    "upgrade": {
+      "name": "Жажда крови+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 2 Разгона."
+    }
+  },
+  {
+    "id": "sm_execute",
+    "name": "Казнь",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 10,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 10 урона. Наложи 2 Бреши и 2 Лага.",
+    "upgrade": {
+      "name": "Казнь+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 14,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 3,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 14 урона. Наложи 3 Бреши и 3 Лага."
+    }
+  },
+  {
+    "id": "sm_hundred_cuts",
+    "name": "Сто порезов",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy",
+        "times": 4
+      }
+    ],
+    "description": "Нанеси 3 урона 4 раза.",
+    "upgrade": {
+      "name": "Сто порезов+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 4,
+          "target": "enemy",
+          "times": 4
+        }
+      ],
+      "description": "Нанеси 4 урона 4 раза."
+    }
+  },
+  {
+    "id": "sm_bushido",
+    "name": "Бусидо",
+    "classId": "samurai",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 2 Разгона и 1 Шифрование.",
+    "upgrade": {
+      "name": "Бусидо+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 3 Разгона и 2 Шифрования."
+    }
   }
 ]

@@ -90,9 +90,9 @@
 .card.is-upgraded .card__name span:first-child { color: #d7ffe7; }
 .card.is-doomed { filter: grayscale(0.6) drop-shadow(0 0 8px rgba(255, 59, 92, 0.7)); }
 
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 16px; justify-items: center; --card-w: 100%; }
-.card-grid .card { width: 100%; max-width: 180px; }
-@media (max-width: 420px) { .card-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; justify-items: center; --card-w: 100%; }
+.card-grid .card { width: 100%; max-width: 150px; }
+@media (max-width: 420px) { .card-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
 
 /* Термины карты (превью, выбор карты): описания ключевых слов */
 .card__text .kw[data-tip-title] { cursor: help; text-decoration: underline dotted color-mix(in srgb, var(--acid) 60%, transparent); text-underline-offset: 0.18em; }

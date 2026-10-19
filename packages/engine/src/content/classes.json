@@ -58,5 +58,25 @@
       "gh_fade"
     ],
     "startingRelic": "r_cloak_module"
+  },
+  {
+    "id": "samurai",
+    "name": "Кибер-самурай",
+    "description": "Воин ближнего боя: Разгон, быстрые серии ударов и Шипы. Чем дольше бой, тем опаснее.",
+    "maxHp": 72,
+    "startingGold": 99,
+    "startingDeck": [
+      "sm_slash",
+      "sm_slash",
+      "sm_slash",
+      "sm_slash",
+      "sm_slash",
+      "sm_guard",
+      "sm_guard",
+      "sm_guard",
+      "sm_guard",
+      "sm_focus"
+    ],
+    "startingRelic": "r_katana_chip"
   }
 ]

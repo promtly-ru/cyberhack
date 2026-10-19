@@ -490,7 +490,7 @@ export function ProfileScreen() {
   const openCards = profile.unlockedCards.filter((id) => lockableCards().includes(id)).length;
   const openRelics = profile.unlockedRelics.filter((id) => lockableRelics().includes(id)).length;
 
-  const classes: ClassId[] = ['netrunner', 'phreaker', 'ghost'];
+  const classes: ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai'];
   return (
     <div className="screen profile" data-testid="profile">
       <SelectHead eyebrow="Профиль" title={guest || !user ? 'Гость' : user.displayName} />

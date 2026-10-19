@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, type ReactNode } from 'react';
-import { tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
+import { cardStats, getActiveSynergies, tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
 import { hash, r2, rng } from '../ui/rand';
 import { Icon, hasIcon } from './Icon';
 import { tip } from './Tooltip';
@@ -64,11 +64,11 @@ export function RelicIcon({ id, size = 'md' }: { id: string; size?: 'sm' | 'md' 
 
 // ---------- Статусы ----------
 
-export function StatusRow({ statuses }: { statuses: Record<string, number> }) {
+export function StatusRow({ statuses, labeled = false }: { statuses: Record<string, number>; labeled?: boolean }) {
   const entries = Object.entries(statuses).filter(([, v]) => v !== 0);
   if (!entries.length) return <div className="status-row is-empty" />;
   return (
-    <div className="status-row">
+    <div className={`status-row${labeled ? " status-row--labeled" : ""}`}>
       {entries.map(([id, v]) => {
         const def = tryStatusDef(id);
         const kind = def?.kind ?? (v < 0 ? 'debuff' : 'buff');
@@ -77,6 +77,7 @@ export function StatusRow({ statuses }: { statuses: Record<string, number> }) {
         return (
           <span key={id} className={`status status--${kind}`} tabIndex={0} aria-label={`${name} ${v}`} {...tip(`${name} ${v}`, desc)}>
             <Icon name={hasIcon(id) ? id : 'status'} size={16} />
+            {labeled ? <span className="status__name">{name}</span> : null}
             <span className="status__n">{v}</span>
           </span>
         );
@@ -207,4 +208,28 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
       </div>
     </div>
   );
+}
+
+// ---------- Синергии колоды ----------
+
+export function SynergyBar({ deck }: { deck: readonly { defId: string }[] }) {
+  const active = getActiveSynergies(deck.map((c) => c.defId));
+  if (!active.length) return null;
+  return (
+    <div className="synergy-bar" aria-label="Активные синергии">
+      {active.map((s) => (
+        <span key={s.id} className="synergy" tabIndex={0} {...tip(`★ ${s.name}`, `${s.description}. Нужны карты: ${s.cards.map((id) => cardName(id)).join(' + ')}.`)}>
+          ★ {s.name}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function cardName(id: string): string {
+  try {
+    return cardStats(id, false).name;
+  } catch {
+    return id;
+  }
 }
