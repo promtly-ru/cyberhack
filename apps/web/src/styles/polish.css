@@ -651,7 +651,10 @@ html[data-motion='reduced'] .menu::after, html[data-motion='reduced'] .map-scree
 @media (max-height: 520px) {
   .menu { padding-top: 12px; padding-bottom: 12px; }
   .showcase { display: none; }
-  .menu__inner { width: min(900px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; }
+  .menu { padding-top: 50px; }
+  .menu__inner { width: min(980px, 100%); display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: center; }
+  .menu__nav { display: grid; grid-template-columns: 1fr 1fr; }
+  .menu__hero .logo__sub { display: none; }
   .menu__hero .logo__word { font-size: clamp(28px, 9vh, 48px); }
   .menu__nav { gap: 5px; }
   .menu-btn { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
