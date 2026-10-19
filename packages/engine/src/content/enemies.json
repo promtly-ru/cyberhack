@@ -1937,7 +1937,7 @@
       },
       {
         "id": "harden",
-        "name": "Регенерация узлов",
+        "name": "Самовосстановление узлов",
         "intent": "buff",
         "effects": [
           {
@@ -2187,5 +2187,1465 @@
       ]
     },
     "description": "Альтернативный босс акта 3. Сканирует и засоряет колоду, каждый цикл набирает Разгон и выносит «Приговор»."
+  },
+  {
+    "id": "a4_phantom",
+    "name": "Квантовый фантом",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      66,
+      76
+    ],
+    "moves": [
+      {
+        "id": "blink",
+        "name": "Мерцание",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 14
+          },
+          {
+            "type": "apply_status",
+            "status": "dexterity",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "slash",
+        "name": "Разрез",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 18
+          }
+        ]
+      },
+      {
+        "id": "echo",
+        "name": "Эхо",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7,
+            "times": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "blink": 25,
+        "slash": 35,
+        "echo": 40
+      }
+    },
+    "description": "Появляется и исчезает. Бьёт в момент, когда ты расслабился."
+  },
+  {
+    "id": "a4_leech",
+    "name": "Пожиратель данных",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      71,
+      82
+    ],
+    "moves": [
+      {
+        "id": "drain",
+        "name": "Высасывание",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "feast",
+        "name": "Пир",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "id": "bite",
+        "name": "Укус",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 16
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "drain",
+        "feast",
+        "bite"
+      ]
+    },
+    "description": "С каждым пиром бьёт сильнее. Не затягивай бой."
+  },
+  {
+    "id": "a4_mirror",
+    "name": "Зеркальный лёд",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      82,
+      94
+    ],
+    "moves": [
+      {
+        "id": "reflect",
+        "name": "Отражение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 18
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 4,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "shatter",
+        "name": "Осколки",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "freeze",
+        "name": "Заморозка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "reflect": 30,
+        "shatter": 45,
+        "freeze": 25
+      }
+    },
+    "description": "Колючий лёд: чем больше ударов, тем больнее тебе."
+  },
+  {
+    "id": "a4_logic_bomb",
+    "name": "Логическая бомба",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      51,
+      60
+    ],
+    "moves": [
+      {
+        "id": "arm",
+        "name": "Взвод",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 5,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      },
+      {
+        "id": "blast",
+        "name": "Взрыв",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 30
+          }
+        ]
+      },
+      {
+        "id": "junk",
+        "name": "Мусор",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "spam",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "arm",
+        "junk",
+        "blast"
+      ]
+    },
+    "description": "Взрывается на третий ход. Копи блок."
+  },
+  {
+    "id": "a4_overseer",
+    "name": "Надзиратель ядра",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      100,
+      112
+    ],
+    "moves": [
+      {
+        "id": "scan",
+        "name": "Скан",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "hammer",
+        "name": "Молот",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 23
+          }
+        ]
+      },
+      {
+        "id": "order",
+        "name": "Приказ",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 20
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "scan",
+        "hammer",
+        "order",
+        "hammer"
+      ]
+    },
+    "description": "Железная дисциплина. Каждый цикл на шаг сильнее."
+  },
+  {
+    "id": "a4_nano",
+    "name": "Нанорой",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      37,
+      44
+    ],
+    "moves": [
+      {
+        "id": "swarm",
+        "name": "Рой",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 5,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "rebuild",
+        "name": "Самосборка",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "swarm": 60,
+        "rebuild": 40
+      }
+    },
+    "description": "Мелкие, но их всегда много."
+  },
+  {
+    "id": "a4_core_guard",
+    "name": "Страж ядра",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      107,
+      119
+    ],
+    "moves": [
+      {
+        "id": "guard",
+        "name": "Оборона",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 24
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "cleave",
+        "name": "Рассечение",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 25
+          }
+        ]
+      },
+      {
+        "id": "corrupt",
+        "name": "Порча",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 12
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 5
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "guard",
+        "cleave",
+        "corrupt",
+        "cleave"
+      ]
+    },
+    "description": "Последняя линия обороны ядра."
+  },
+  {
+    "id": "a4_siren",
+    "name": "Сирена",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      60,
+      70
+    ],
+    "moves": [
+      {
+        "id": "wail",
+        "name": "Вой",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "sting",
+        "name": "Жало",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 14
+          }
+        ]
+      },
+      {
+        "id": "overload",
+        "name": "Перегрузка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          },
+          {
+            "type": "add_card",
+            "cardId": "backdoor",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "wail": 30,
+        "sting": 40,
+        "overload": 30
+      }
+    },
+    "description": "Оглушает и подталкивает к ошибке."
+  },
+  {
+    "id": "a4_void_warden",
+    "name": "Страж пустоты",
+    "tier": "elite",
+    "act": 4,
+    "hp": [
+      221,
+      235
+    ],
+    "moves": [
+      {
+        "id": "void",
+        "name": "Пустота",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "crush",
+        "name": "Давление",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 28
+          }
+        ]
+      },
+      {
+        "id": "wall",
+        "name": "Стена",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 30
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "rend",
+        "name": "Разрыв",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10,
+            "times": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "void",
+        "crush",
+        "wall",
+        "rend",
+        "crush"
+      ]
+    },
+    "description": "Элита акта 4: давит и закрывается шипами."
+  },
+  {
+    "id": "a4_twin_core",
+    "name": "Двойное ядро",
+    "tier": "elite",
+    "act": 4,
+    "hp": [
+      204,
+      218
+    ],
+    "moves": [
+      {
+        "id": "sync",
+        "name": "Синхронизация",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 16
+          }
+        ]
+      },
+      {
+        "id": "beam",
+        "name": "Луч",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 26
+          }
+        ]
+      },
+      {
+        "id": "pulse",
+        "name": "Импульс",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 12
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 6
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "sync",
+        "beam",
+        "pulse",
+        "beam"
+      ]
+    },
+    "description": "Элита акта 4: два реактора, один убийственный ритм."
+  },
+  {
+    "id": "boss_nexus",
+    "name": "НЕКСУС — хранитель ядра",
+    "tier": "boss",
+    "act": 4,
+    "hp": [
+      312,
+      328
+    ],
+    "moves": [
+      {
+        "id": "bulwark",
+        "name": "Бастион",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 36
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 5,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "scan",
+        "name": "Тотальный скан",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 3
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "draw",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "barrage",
+        "name": "Шквал",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "rewrite",
+        "name": "Переписывание",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 19
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "ascend",
+        "name": "Вознесение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 4,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "nova",
+        "name": "Нова",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 39
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "bulwark",
+        "scan",
+        "barrage",
+        "rewrite",
+        "ascend",
+        "nova",
+        "barrage",
+        "rewrite",
+        "nova"
+      ]
+    },
+    "description": "Хранитель ядра. После «Вознесения» растёт каждый ход, а «Нова» бьёт на 50+."
+  },
+  {
+    "id": "boss_singularity",
+    "name": "СИНГУЛЯРНОСТЬ",
+    "tier": "boss",
+    "act": 4,
+    "hp": [
+      309,
+      323
+    ],
+    "moves": [
+      {
+        "id": "collapse",
+        "name": "Коллапс",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "horizon",
+        "name": "Горизонт событий",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 40
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 5,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "devour",
+        "name": "Поглощение",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 20
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "spaghetti",
+        "name": "Спагеттификация",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 4
+          },
+          {
+            "type": "add_card",
+            "cardId": "backdoor",
+            "to": "draw",
+            "count": 1
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "draw",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "overclock",
+        "name": "Разгон бесконечности",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 5,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "zero",
+        "name": "Нулевая точка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 46
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "horizon",
+        "spaghetti",
+        "collapse",
+        "devour",
+        "overclock",
+        "collapse",
+        "zero",
+        "devour",
+        "zero"
+      ]
+    },
+    "description": "Конец сети. Чем дольше бой, тем быстрее всё рушится."
+  },
+  {
+    "id": "a1_rogue_scanner",
+    "name": "Сканер-изгой",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      22,
+      26
+    ],
+    "moves": [
+      {
+        "id": "ping",
+        "name": "Пинг",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "flag",
+        "name": "Метка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "zap",
+        "name": "Разряд",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "ping": 40,
+        "flag": 25,
+        "zap": 35
+      }
+    },
+    "description": "Ищет слабые места."
+  },
+  {
+    "id": "a1_cache_rat",
+    "name": "Кеш-крыса",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      30,
+      36
+    ],
+    "moves": [
+      {
+        "id": "gnaw",
+        "name": "Грызня",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 5,
+            "times": 2
+          }
+        ]
+      },
+      {
+        "id": "hoard",
+        "name": "Запас",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "gnaw": 65,
+        "hoard": 35
+      }
+    },
+    "description": "Тащит всё, что плохо лежит."
+  },
+  {
+    "id": "a1_elite_warden",
+    "name": "Привратник",
+    "tier": "elite",
+    "act": 1,
+    "hp": [
+      96,
+      108
+    ],
+    "moves": [
+      {
+        "id": "lock",
+        "name": "Замок",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 14
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "smash",
+        "name": "Удар",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15
+          }
+        ]
+      },
+      {
+        "id": "alarm",
+        "name": "Тревога",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "lock",
+        "smash",
+        "alarm",
+        "smash"
+      ]
+    },
+    "description": "Элита акта 1: закрывается и бьёт."
+  },
+  {
+    "id": "a2_data_wraith",
+    "name": "Призрак данных",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      48,
+      58
+    ],
+    "moves": [
+      {
+        "id": "haunt",
+        "name": "Преследование",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "phase",
+        "name": "Фаза",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 12
+          }
+        ]
+      },
+      {
+        "id": "strike",
+        "name": "Вспышка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 13
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "haunt": 35,
+        "phase": 25,
+        "strike": 40
+      }
+    },
+    "description": "Проходит сквозь защиту."
+  },
+  {
+    "id": "a2_trap_node",
+    "name": "Узел-ловушка",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      56,
+      66
+    ],
+    "moves": [
+      {
+        "id": "snare",
+        "name": "Силки",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "spring",
+        "name": "Захлоп",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 18
+          }
+        ]
+      },
+      {
+        "id": "charge",
+        "name": "Накопление",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "snare",
+        "charge",
+        "spring"
+      ]
+    },
+    "description": "Сначала ловит, потом бьёт."
+  },
+  {
+    "id": "a2_elite_hydra",
+    "name": "Гидра протоколов",
+    "tier": "elite",
+    "act": 2,
+    "hp": [
+      150,
+      164
+    ],
+    "moves": [
+      {
+        "id": "heads",
+        "name": "Три головы",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "regrow",
+        "name": "Самовосстановление",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 12
+          }
+        ]
+      },
+      {
+        "id": "venom",
+        "name": "Яд",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "heads",
+        "regrow",
+        "venom",
+        "heads"
+      ]
+    },
+    "description": "Элита акта 2: срубишь одну голову, вырастут две."
+  },
+  {
+    "id": "a3_mind_flayer",
+    "name": "Потрошитель разума",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      82,
+      94
+    ],
+    "moves": [
+      {
+        "id": "probe",
+        "name": "Зондирование",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "mindslash",
+        "name": "Разрез разума",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 18
+          }
+        ]
+      },
+      {
+        "id": "flood",
+        "name": "Затопление",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "probe": 25,
+        "mindslash": 40,
+        "flood": 35
+      }
+    },
+    "description": "Копается в твоей колоде."
+  },
+  {
+    "id": "a3_ward",
+    "name": "Страж-охранник",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      96,
+      108
+    ],
+    "moves": [
+      {
+        "id": "wall",
+        "name": "Барьер",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 20
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "hit",
+        "name": "Удар",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 20
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "wall",
+        "hit",
+        "hit"
+      ]
+    },
+    "description": "Скучный, но очень прочный."
+  },
+  {
+    "id": "a3_elite_colossus",
+    "name": "Колосс",
+    "tier": "elite",
+    "act": 3,
+    "hp": [
+      220,
+      236
+    ],
+    "moves": [
+      {
+        "id": "stomp",
+        "name": "Топот",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 30
+          }
+        ]
+      },
+      {
+        "id": "armor",
+        "name": "Закалка",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 26
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "quake",
+        "name": "Землетрясение",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 14
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "armor",
+        "stomp",
+        "quake",
+        "stomp"
+      ]
+    },
+    "description": "Элита акта 3: медленный, но разрушительный."
   }
 ]

@@ -3687,7 +3687,7 @@
         "target": "self"
       }
     ],
-    "description": "Получи 7 блока и 2 Шипа.",
+    "description": "Получи 7 блока и 2 Контрудара.",
     "upgrade": {
       "name": "Контрвыпад+",
       "effects": [
@@ -3702,7 +3702,7 @@
           "target": "self"
         }
       ],
-      "description": "Получи 9 блока и 3 Шипа."
+      "description": "Получи 9 блока и 3 Контрудара."
     }
   },
   {
@@ -4289,7 +4289,7 @@
         "target": "self"
       }
     ],
-    "description": "Получи 4 блока и 3 Шипа.",
+    "description": "Получи 4 блока и 3 Контрудара.",
     "upgrade": {
       "name": "Шоковая ловушка+",
       "effects": [
@@ -4304,7 +4304,7 @@
           "target": "self"
         }
       ],
-      "description": "Получи 6 блока и 4 Шипа."
+      "description": "Получи 6 блока и 4 Контрудара."
     }
   },
   {
@@ -4500,7 +4500,7 @@
         "target": "self"
       }
     ],
-    "description": "Получи 4 Броня-патча и 3 Шипа.",
+    "description": "Получи 4 Броня-патча и 3 Контрудара.",
     "upgrade": {
       "name": "Бастион+",
       "effects": [
@@ -4517,7 +4517,7 @@
           "target": "self"
         }
       ],
-      "description": "Получи 6 Броня-патча и 4 Шипа."
+      "description": "Получи 6 Броня-патча и 4 Контрудара."
     }
   },
   {
@@ -4588,6 +4588,945 @@
         }
       ],
       "description": "Получи 3 Разгона и 3 Броня-патча."
+    }
+  },
+  {
+    "id": "bh_scalpel",
+    "name": "Скальпель",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона.",
+    "upgrade": {
+      "name": "Скальпель+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 9 урона."
+    }
+  },
+  {
+    "id": "bh_bandage",
+    "name": "Бинт",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 6 блока.",
+    "upgrade": {
+      "name": "Бинт+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока."
+    }
+  },
+  {
+    "id": "bh_stim",
+    "name": "Стимулятор",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 2 Самовосстановления.",
+    "upgrade": {
+      "name": "Стимулятор+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 3 Самовосстановления."
+    }
+  },
+  {
+    "id": "bh_syringe",
+    "name": "Шприц",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 9,
+        "target": "enemy"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ],
+    "description": "Нанеси 9 урона. Потеряй 1 HP.",
+    "upgrade": {
+      "name": "Шприц+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 12,
+          "target": "enemy"
+        },
+        {
+          "type": "lose_hp",
+          "amount": 1
+        }
+      ],
+      "description": "Нанеси 12 урона. Потеряй 1 HP."
+    }
+  },
+  {
+    "id": "bh_transfusion",
+    "name": "Переливание",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 3
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Восстанови 3 HP. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Переливание+",
+      "effects": [
+        {
+          "type": "heal",
+          "amount": 5
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Восстанови 5 HP. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "bh_toxin",
+    "name": "Токсин",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 4,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 4,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 4 урона. Наложи 4 Вируса.",
+    "upgrade": {
+      "name": "Токсин+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 6,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 6,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 6 урона. Наложи 6 Вируса."
+    }
+  },
+  {
+    "id": "bh_scab",
+    "name": "Струп",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 4
+      },
+      {
+        "type": "lose_hp",
+        "amount": 1
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 4 блока. Потеряй 1 HP. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Струп+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 6
+        },
+        {
+          "type": "lose_hp",
+          "amount": 1
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Получи 6 блока. Потеряй 1 HP. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "bh_biopsy",
+    "name": "Биопсия",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 7 урона. Наложи 1 Брешь.",
+    "upgrade": {
+      "name": "Биопсия+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 10,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 10 урона. Наложи 2 Бреши."
+    }
+  },
+  {
+    "id": "bh_lifesteal",
+    "name": "Кровосос",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "enemy"
+      },
+      {
+        "type": "heal",
+        "amount": 3
+      }
+    ],
+    "description": "Нанеси 7 урона. Восстанови 3 HP.",
+    "upgrade": {
+      "name": "Кровосос+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 10,
+          "target": "enemy"
+        },
+        {
+          "type": "heal",
+          "amount": 4
+        }
+      ],
+      "description": "Нанеси 10 урона. Восстанови 4 HP."
+    }
+  },
+  {
+    "id": "bh_symbiote",
+    "name": "Симбиот",
+    "classId": "biohacker",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 3 Самовосстановления.",
+    "upgrade": {
+      "name": "Симбиот+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 4 Самовосстановления."
+    }
+  },
+  {
+    "id": "bh_regen_matrix",
+    "name": "Матрица регенерации",
+    "classId": "biohacker",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 4,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 4 Самовосстановления и 1 Броня-патч.",
+    "upgrade": {
+      "name": "Матрица регенерации+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 5,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 5 Самовосстановления и 2 Броня-патча."
+    }
+  },
+  {
+    "id": "bh_blood_pact",
+    "name": "Кровавый пакт",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 2
+      },
+      {
+        "type": "gain_energy",
+        "amount": 2
+      }
+    ],
+    "description": "Потеряй 2 HP. Получи 2 энергии.",
+    "upgrade": {
+      "name": "Кровавый пакт+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 2
+        },
+        {
+          "type": "gain_energy",
+          "amount": 2
+        }
+      ],
+      "description": "Потеряй 2 HP. Получи 2 энергии."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "bh_hemorrhage",
+    "name": "Кровоизлияние",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 12,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 12 урона. Наложи 6 Вируса.",
+    "upgrade": {
+      "name": "Кровоизлияние+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 15,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 8,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 15 урона. Наложи 8 Вируса."
+    }
+  },
+  {
+    "id": "bh_adrenaline",
+    "name": "Адреналин",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 2
+      },
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Потеряй 2 HP. Получи 2 Разгона.",
+    "upgrade": {
+      "name": "Адреналин+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 2
+        },
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Потеряй 2 HP. Получи 3 Разгона."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "bh_mutation",
+    "name": "Мутация",
+    "classId": "biohacker",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 4
+      },
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Потеряй 4 HP. Получи 2 Разгона и 2 Шифрования.",
+    "upgrade": {
+      "name": "Мутация+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 4
+        },
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Потеряй 4 HP. Получи 3 Разгона и 3 Шифрования."
+    }
+  },
+  {
+    "id": "bh_overgrowth",
+    "name": "Буйный рост",
+    "classId": "biohacker",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 6,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 6 Самовосстановления и 3 Броня-патча.",
+    "upgrade": {
+      "name": "Буйный рост+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 6,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 6 Самовосстановления и 3 Броня-патча.",
+      "cost": 2
+    }
+  },
+  {
+    "id": "bh_plague_doctor",
+    "name": "Чумной доктор",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 5,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 6 урона всем врагам. Наложи им 5 Вируса.",
+    "upgrade": {
+      "name": "Чумной доктор+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 7,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Нанеси 9 урона всем врагам. Наложи им 7 Вируса."
+    }
+  },
+  {
+    "id": "n_data_siphon",
+    "name": "Утечка данных",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "heal",
+        "amount": 2
+      }
+    ],
+    "description": "Нанеси 5 урона. Восстанови 2 HP.",
+    "upgrade": {
+      "name": "Утечка данных+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "enemy"
+        },
+        {
+          "type": "heal",
+          "amount": 3
+        }
+      ],
+      "description": "Нанеси 7 урона. Восстанови 3 HP."
+    }
+  },
+  {
+    "id": "n_emergency_cache",
+    "name": "Аварийный кеш",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 9
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 9 блока. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Аварийный кеш+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 12
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Получи 12 блока. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "n_signal_jam",
+    "name": "Глушение сигнала",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Все враги получают 1 Лаг и 1 Брешь.",
+    "upgrade": {
+      "name": "Глушение сигнала+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 2,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Все враги получают 2 Лага и 2 Бреши."
+    }
+  },
+  {
+    "id": "n_overwrite",
+    "name": "Перезапись",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 16,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 16 урона. Исчезает после розыгрыша.",
+    "upgrade": {
+      "name": "Перезапись+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 22,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 22 урона. Исчезает после розыгрыша."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "n_reboot",
+    "name": "Перезагрузка",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 2
+      },
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ],
+    "description": "Возьми 2 карты. Потеряй 1 HP.",
+    "upgrade": {
+      "name": "Перезагрузка+",
+      "effects": [
+        {
+          "type": "draw",
+          "amount": 3
+        },
+        {
+          "type": "lose_hp",
+          "amount": 1
+        }
+      ],
+      "description": "Возьми 3 карты. Потеряй 1 HP."
+    }
+  },
+  {
+    "id": "n_black_market",
+    "name": "Чёрный рынок",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 20
+      }
+    ],
+    "description": "Получи 20 кредитов. Исчезает после розыгрыша.",
+    "upgrade": {
+      "name": "Чёрный рынок+",
+      "effects": [
+        {
+          "type": "gain_gold",
+          "amount": 35
+        }
+      ],
+      "description": "Получи 35 кредитов. Исчезает после розыгрыша."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "n_power_surge",
+    "name": "Скачок мощности",
+    "classId": "neutral",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 1 Разгон, 1 Шифрование и 1 Броня-патч.",
+    "upgrade": {
+      "name": "Скачок мощности+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 2 Разгона, 1 Шифрование и 2 Броня-патча."
+    }
+  },
+  {
+    "id": "n_kill_switch",
+    "name": "Аварийный выключатель",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 8,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 3,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 3,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 8 урона. Наложи 3 Бреши и 3 Лага.",
+    "upgrade": {
+      "name": "Аварийный выключатель+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 12,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 4,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 4,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 12 урона. Наложи 4 Бреши и 4 Лага."
     }
   }
 ]

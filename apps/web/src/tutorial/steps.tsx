@@ -274,6 +274,15 @@ export const STEPS: Step[] = [
     skip: (c) => c.screen !== 'reward' || !(c.run.screen.kind === 'reward' && c.run.screen.items.some((i) => i.kind === 'card_choice')),
   },
   {
+    id: 'reward-firmware',
+    mode: 'coach',
+    screens: ['reward'],
+    title: 'Прошивка',
+    text: () => 'Прошивка ⚡ даёт мощный бонус, но только если в колоде собраны все её особые карты. Наведи на неё в панели сверху: там список нужных карт. Собирай комплект из наград и магазина.',
+    target: () => ['[data-testid="reward-item"][data-kind="firmware"]'],
+    skip: (c) => c.screen !== 'reward' || !(c.run.screen.kind === 'reward' && c.run.screen.items.some((i) => i.kind === 'firmware')),
+  },
+  {
     id: 'reward-free',
     // Ничего не показываем: экраны наград и выбора карты сами подсказывают строкой под заголовком
     mode: 'mini',

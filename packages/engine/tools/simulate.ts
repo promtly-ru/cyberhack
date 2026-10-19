@@ -13,7 +13,7 @@ import { applyAction, newRun } from '../src/run';
 import type { ClassId, RunState } from '../src/types';
 import { createBot, type BotKind } from './bots';
 
-const CLASSES: ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer'];
+const CLASSES: ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker'];
 const MAX_ACTIONS = 20000;
 
 interface RunRecord {

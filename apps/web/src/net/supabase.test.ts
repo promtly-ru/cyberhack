@@ -379,7 +379,7 @@ describe('перенос гостевого прогресса при перво
       ...defaultProfile(),
       unlockedClasses: ['netrunner', 'ghost'],
       unlockedCards: ['guest_card'],
-      maxAscension: { netrunner: 2, phreaker: 0, ghost: 0, samurai: 0, engineer: 0 },
+      maxAscension: { netrunner: 2, phreaker: 0, ghost: 0, samurai: 0, engineer: 0, biohacker: 0 },
       totalWins: 1,
     });
     const guestRun = fakeRun(iso('09:00:00'), { floor: 5 });
@@ -387,7 +387,7 @@ describe('перенос гостевого прогресса при перво
 
     fake.profiles.set('u1', {
       user_id: 'u1',
-      data: { ...defaultProfile(), unlockedCards: ['cloud_card'], maxAscension: { netrunner: 1, phreaker: 3, ghost: 0, samurai: 0, engineer: 0 } },
+      data: { ...defaultProfile(), unlockedCards: ['cloud_card'], maxAscension: { netrunner: 1, phreaker: 3, ghost: 0, samurai: 0, engineer: 0, biohacker: 0 } },
       updated_at: iso('08:00:00'),
     });
     fake.signIn('u1');
@@ -395,7 +395,7 @@ describe('перенос гостевого прогресса при перво
     const profile = await backend.saves.loadProfile();
     expect(profile.unlockedClasses).toEqual(['netrunner', 'ghost']);
     expect(profile.unlockedCards).toEqual(['cloud_card', 'guest_card']);
-    expect(profile.maxAscension).toEqual({ netrunner: 2, phreaker: 3, ghost: 0, samurai: 0, engineer: 0 });
+    expect(profile.maxAscension).toEqual({ netrunner: 2, phreaker: 3, ghost: 0, samurai: 0, engineer: 0, biohacker: 0 });
     expect(profile.totalWins).toBe(1);
     expect(await backend.saves.loadRun()).toEqual(guestRun);
     expect(storage.getItem(GUEST_MIGRATED_KEY)).toBe('u1');

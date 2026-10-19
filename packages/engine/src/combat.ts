@@ -8,6 +8,7 @@ import { COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, type ResolvedCa
 import { getContent } from './content';
 import { rngOf } from './rng';
 import { getActiveSynergies } from './synergies';
+import { FIRMWARES, isFirmwareActive } from './firmware';
 import { addStatus, calcAttackDamage, calcBlock, getStatus, KNOWN_STATUSES, STATUS } from './statuses';
 import {
   InvalidActionError,
@@ -449,6 +450,19 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
   return ctx;
 }
 
+function applyFirmwares(ctx: CombatCtx, trigger: 'combat_start' | 'turn_start'): void {
+  const owned = ctx.s.firmwares ?? [];
+  if (owned.length === 0) return;
+  const deck = ctx.s.deck.map((c) => c.defId);
+  for (const fw of FIRMWARES) {
+    if (fw.trigger !== trigger || !owned.includes(fw.id) || !isFirmwareActive(fw, deck)) continue;
+    for (const eff of fw.effects) {
+      if (isOver(ctx)) return;
+      applyRelicEffect(ctx, eff);
+    }
+  }
+}
+
 function applySynergies(ctx: CombatCtx): void {
   for (const syn of getActiveSynergies(ctx.s.deck.map((c) => c.defId))) {
     for (const eff of syn.effects) {
@@ -469,10 +483,13 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   c.energy = c.maxEnergy;
   triggerRelics(ctx, 'turn_start');
   if (isOver(ctx)) return;
+  applyFirmwares(ctx, 'turn_start');
+  if (isOver(ctx)) return;
   drawCards(ctx, DRAW_PER_TURN);
   if (c.turn === 1) {
     triggerRelics(ctx, 'combat_start');
     applySynergies(ctx);
+    applyFirmwares(ctx, 'combat_start');
   }
   refreshIntents(ctx);
 }

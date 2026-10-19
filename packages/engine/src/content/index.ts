@@ -99,7 +99,7 @@ export function resetContent(): void {
 
 // ---------- Валидация ----------
 
-const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer']);
+const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker']);
 const RELIC_TRIGGERS: ReadonlySet<RelicTrigger> = new Set<RelicTrigger>([
   'combat_start',
   'turn_start',
@@ -230,7 +230,8 @@ export function validateContent(data: ContentData = current.data): string[] {
 
   // Покрытие актов: для каждого акта нужны обычные, элитные и босс-встречи.
   if (data.encounters.length > 0) {
-    for (const act of [1, 2, 3] as const) {
+    const maxAct = Math.max(...data.encounters.map((e) => e.act));
+    for (const act of ([1, 2, 3, 4] as const).filter((a) => a <= maxAct)) {
       for (const tier of ['normal', 'elite', 'boss'] as const) {
         if (!data.encounters.some((e) => e.act === act && e.tier === tier))
           errors.push(`encounters: нет встреч tier "${tier}" для акта ${act}`);

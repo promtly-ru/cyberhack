@@ -1,10 +1,10 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import type { CardInstance, RewardItem, RunState, Screen, ShopItem } from '../game/engine';
-import { getEventDef, tryRelicDef, cardStats } from '../game/engine';
+import { getEventDef, getFirmware, tryRelicDef, cardStats } from '../game/engine';
 import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
-import { RelicGlyph, SynergyBar } from '../components/Bits';
+import { RelicGlyph, SynergyBar, firmwareNeeds } from '../components/Bits';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
@@ -64,6 +64,11 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
             icon = <RelicGlyph id={item.relicId} />;
             label = `Имплант «${d?.name ?? item.relicId}»`;
             sub = d?.description ?? '';
+          } else if (item.kind === 'firmware') {
+            const fw = getFirmware(item.firmwareId);
+            icon = <span className="reward__fw">⚡</span>;
+            label = `Прошивка «${fw?.name ?? item.firmwareId}»`;
+            sub = `${fw?.description ?? ''}. Нужны: ${firmwareNeeds(item.firmwareId, run.deck)}`;
           } else {
             icon = <Icon name="deck" size={26} />;
             label = 'Новая карта в колоду';
@@ -121,6 +126,9 @@ export function CardPickScreen({ run, screen }: { run: RunState; screen: Extract
               <Card defId={id} />
             </button>
             <CardTerms defId={id} compact />
+            {(run.firmwares ?? []).filter((f) => getFirmware(f)?.needs.includes(id) && !run.deck.some((c) => c.defId === id)).map((f) => (
+              <span key={f} className="fw-hint">⚡ для прошивки «{getFirmware(f)?.name}»</span>
+            ))}
           </div>
         ))}
       </div>
@@ -405,7 +413,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
 
 // ---------------- Конец забега ----------------
 
-const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер' };
+const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер' };
 
 export function GameOverScreen({ run, victory }: { run: RunState; victory: boolean }) {
   const toMenu = useGame((s) => s.toMenu);

@@ -74,6 +74,8 @@ test('обучение: от карты до конца первого боя и
   await expect(page.getByTestId('reward-screen')).toBeVisible();
   await next(page, act, 'reward-gold');
   await next(page, act, 'reward-card');
+  // Прошивка выпадает не всегда: если выпала, обучение объясняет и её
+  if (await step(page, 'reward-firmware').isVisible().catch(() => false)) await next(page, act, 'reward-firmware');
   await expect(page.getByTestId('tutorial')).toHaveCount(0); // дальше игрок сам, экран подсказывает строкой
   await act(page.getByTestId('reward-leave'));
 

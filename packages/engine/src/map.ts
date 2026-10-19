@@ -40,7 +40,7 @@ function crosses(edges: readonly Edge[], row: number, c: number, nc: number): bo
   return edges.some((e) => e.row === row && ((e.from < c && e.to > nc) || (e.from > c && e.to < nc)));
 }
 
-export function generateMap(act: 1 | 2 | 3, rng: Rng, eliteWeightMult = 1): MapNode[] {
+export function generateMap(act: 1 | 2 | 3 | 4, rng: Rng, eliteWeightMult = 1): MapNode[] {
   const edges: Edge[] = [];
   const edgeKeys = new Set<string>();
   const cells = new Set<string>();

@@ -20,6 +20,7 @@ export interface LifetimeStats {
   winsGhost?: number;
   winsSamurai?: number;
   winsEngineer?: number;
+  winsBiohacker?: number;
   /** Высший уровень Ascension, на котором была победа */
   bestWinAscension?: number;
   bestAct?: number;
@@ -119,6 +120,22 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     target: 1,
     value: lt('winsEngineer'),
     unlocks: [card('en_railgun'), card('en_reactor')],
+  },
+  {
+    id: 'act_four',
+    name: 'За гранью сети',
+    description: 'Дойти до 4-го акта',
+    target: 4,
+    value: lt('bestAct'),
+    unlocks: [{ kind: 'class', id: 'biohacker' }, card('bh_mutation')],
+  },
+  {
+    id: 'win_biohacker',
+    name: 'Эволюция',
+    description: 'Победить за Биохакера',
+    target: 1,
+    value: lt('winsBiohacker'),
+    unlocks: [card('bh_plague_doctor'), card('bh_overgrowth')],
   },
   {
     id: 'win_samurai',
@@ -381,6 +398,7 @@ const WIN_KEY: Record<ClassId, keyof LifetimeStats> = {
   ghost: 'winsGhost',
   samurai: 'winsSamurai',
   engineer: 'winsEngineer',
+  biohacker: 'winsBiohacker',
 };
 
 function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, victory: boolean): LifetimeStats {

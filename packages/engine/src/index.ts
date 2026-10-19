@@ -32,6 +32,8 @@ export type { ContentData } from './content';
 export { DIFFICULTY_INFO, getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
 export type { AscensionMods } from './ascension';
 export { computeScore } from './score';
+export { FIRMWARES, getFirmware, firmwareProgress, isFirmwareActive } from './firmware';
+export type { FirmwareDef } from './firmware';
 export { SYNERGIES, getActiveSynergies } from './synergies';
 export type { SynergyDef } from './synergies';
 export { availableNodes, currentNode } from './run';

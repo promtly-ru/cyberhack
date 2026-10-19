@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, type ReactNode } from 'react';
-import { cardStats, getActiveSynergies, tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
+import { cardStats, firmwareProgress, getActiveSynergies, getFirmware, tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
 import { hash, r2, rng } from '../ui/rand';
 import { Icon, hasIcon } from './Icon';
 import { tip } from './Tooltip';
@@ -232,4 +232,44 @@ function cardName(id: string): string {
   } catch {
     return id;
   }
+}
+
+// ---------- Прошивки ----------
+
+/** Подпись «что нужно собрать» для прошивки: ✓ есть в колоде, ✗ нет. */
+export function firmwareNeeds(firmwareId: string, deck: readonly { defId: string }[]): string {
+  const fw = getFirmware(firmwareId);
+  if (!fw) return '';
+  const have = new Set(deck.map((c) => c.defId));
+  return fw.needs.map((id) => `${have.has(id) ? '✓' : '✗'} ${cardName(id)}`).join(' · ');
+}
+
+export function FirmwareBar({ firmwares, deck }: { firmwares: readonly string[]; deck: readonly { defId: string }[] }) {
+  if (!firmwares.length) return null;
+  const ids = deck.map((c) => c.defId);
+  return (
+    <div className="firmware-bar" aria-label="Прошивки">
+      <span className="topbar__relics-label" aria-hidden="true">
+        Прошивки
+      </span>
+      {firmwares.map((id) => {
+        const fw = getFirmware(id);
+        if (!fw) return null;
+        const { missing } = firmwareProgress(fw, ids);
+        const active = missing.length === 0;
+        return (
+          <span
+            key={id}
+            className={`firmware${active ? ' is-active' : ' is-idle'}`}
+            tabIndex={0}
+            aria-label={`${fw.name}: ${active ? 'активна' : `не хватает карт: ${missing.length}`}`}
+            {...tip(`${active ? '⚡' : '○'} ${fw.name}`, `${fw.description}. ${active ? 'Активна!' : 'Не активна: собери все карты.'} ${firmwareNeeds(id, deck)}`)}
+          >
+            {active ? '⚡' : '○'} {fw.name}
+            {!active ? <small>{fw.needs.length - missing.length}/{fw.needs.length}</small> : null}
+          </span>
+        );
+      })}
+    </div>
+  );
 }

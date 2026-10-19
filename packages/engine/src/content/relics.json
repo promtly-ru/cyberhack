@@ -663,7 +663,7 @@
   },
   {
     "id": "r_spike_cable",
-    "name": "Шипованный кабель",
+    "name": "Контрудараанный кабель",
     "rarity": "common",
     "classId": "neutral",
     "description": "Каждый 2-й ход наносит 3 урона случайному врагу.",
@@ -1029,7 +1029,7 @@
     "name": "Чип катаны",
     "rarity": "starter",
     "classId": "samurai",
-    "description": "В начале боя получи 2 Шипа и 4 блока.",
+    "description": "В начале боя получи 2 Контрудара и 4 блока.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -1059,5 +1059,110 @@
         "target": "self"
       }
     ]
+  },
+  {
+    "id": "r_biolab",
+    "name": "Биолаборатория",
+    "rarity": "starter",
+    "classId": "biohacker",
+    "description": "В начале боя получи 2 Самовосстановления.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 2,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_overclock_fan",
+    "name": "Кулер оверклока",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждый 3-й ход получи 1 энергию.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      }
+    ],
+    "every": 3
+  },
+  {
+    "id": "r_spiked_gloves",
+    "name": "Контрудараанные перчатки",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "Каждая 4-я сыгранная атака даёт 5 блока.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      }
+    ],
+    "every": 4
+  },
+  {
+    "id": "r_data_leech",
+    "name": "Пиявка данных",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В конце боя восстанавливает 4 HP.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 4
+      }
+    ]
+  },
+  {
+    "id": "r_pocket_server",
+    "name": "Карманный сервер",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "При получении: +80 кредитов.",
+    "trigger": "pickup",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 80
+      }
+    ]
+  },
+  {
+    "id": "r_adaptive_armor",
+    "name": "Адаптивная броня",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "В начале боя получи 2 Броня-патча.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 2,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_hot_swap",
+    "name": "Горячая замена",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "Каждая 8-я сыгранная карта: возьми 1 карту.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "every": 8
   }
 ]

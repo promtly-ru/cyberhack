@@ -153,8 +153,9 @@ const CLASS_STYLE: Record<string, string> = {
   netrunner: 'прямой урон — сильные атаки и наращивание Разгона.',
   phreaker: 'яды и ослабления — враги слабеют и теряют здоровье каждый ход.',
   ghost: 'защита и много карт — блок, дешёвые карты, постоянный добор.',
-  samurai: 'ближний бой — Разгон, серии ударов и Шипы.',
-  engineer: 'крепкая броня — Броня-патчи, Шипы и тяжёлые орудия.',
+  samurai: 'ближний бой — Разгон, серии ударов и Контрудар.',
+  biohacker: 'риск и мутации — жертвуй HP, лечись Самовосстановлением, души Вирусом.',
+  engineer: 'крепкая броня — Броня-патчи, Контрудар и тяжёлые орудия.',
 };
 
 function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selected: boolean; locked: boolean; onSelect: () => void; hint?: string }) {

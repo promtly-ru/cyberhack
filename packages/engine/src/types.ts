@@ -8,7 +8,7 @@ export const SAVE_VERSION = 1 as const;
 
 // ---------- Базовые идентификаторы ----------
 
-export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer';
+export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer' | 'biohacker';
 export type Difficulty = 'easy' | 'normal' | 'hard';
 export type CardType = 'attack' | 'skill' | 'power' | 'status' | 'curse';
 export type Rarity = 'starter' | 'common' | 'uncommon' | 'rare' | 'special';
@@ -76,7 +76,7 @@ export interface EnemyDef {
   id: string;
   name: string;
   tier: 'normal' | 'elite' | 'boss';
-  act: 1 | 2 | 3;
+  act: 1 | 2 | 3 | 4;
   hp: [min: number, max: number];
   moves: EnemyMove[];
   /** Простой ИИ: 'cycle' — по кругу, 'random' — взвешенный выбор без 3 повторов подряд */
@@ -87,7 +87,7 @@ export interface EnemyDef {
 /** Группа врагов для узла карты */
 export interface EncounterDef {
   id: string;
-  act: 1 | 2 | 3;
+  act: 1 | 2 | 3 | 4;
   tier: 'normal' | 'elite' | 'boss';
   enemies: string[]; // id врагов, порядок = слева направо
   /** Только для первых 3 боёв акта (лёгкие) */
@@ -137,7 +137,7 @@ export interface EventDef {
   id: string;
   name: string;
   text: string;
-  act?: 1 | 2 | 3;
+  act?: 1 | 2 | 3 | 4;
   options: EventOption[];
 }
 
@@ -192,7 +192,7 @@ export type MapNodeKind = 'combat' | 'elite' | 'event' | 'shop' | 'rest' | 'trea
 
 export interface MapNode {
   id: string; // `${act}-${row}-${col}`
-  act: 1 | 2 | 3;
+  act: 1 | 2 | 3 | 4;
   row: number; // 0..14, boss = 15
   col: number; // 0..6
   kind: MapNodeKind;
@@ -204,7 +204,8 @@ export interface MapNode {
 export type RewardItem =
   | { kind: 'gold'; amount: number }
   | { kind: 'card_choice'; cardIds: string[] }
-  | { kind: 'relic'; relicId: string };
+  | { kind: 'relic'; relicId: string }
+  | { kind: 'firmware'; firmwareId: string };
 
 export interface ShopItem {
   kind: 'card' | 'relic' | 'remove';
@@ -253,13 +254,15 @@ export interface RunState {
   /** Режим сложности (поверх Ascension); нет поля = normal */
   difficulty?: Difficulty;
   daily: boolean;
-  act: 1 | 2 | 3;
+  act: 1 | 2 | 3 | 4;
   floor: number; // общий счётчик пройденных узлов
   hp: number;
   maxHp: number;
   gold: number;
   deck: CardInstance[];
   relics: string[];
+  /** Прошивки: работают, пока в колоде собраны их карты (см. firmware.ts) */
+  firmwares?: string[];
   map: MapNode[];
   currentNodeId: string | null;
   visited: string[];
@@ -314,6 +317,7 @@ export type GameEvent =
   | { type: 'enemy_move'; enemyUid: string; moveId: string }
   | { type: 'cards_drawn'; count: number }
   | { type: 'relic_triggered'; relicId: string }
+  | { type: 'firmware_obtained'; firmwareId: string }
   | { type: 'turn_started'; turn: number }
   | { type: 'combat_won' }
   | { type: 'combat_lost' }
@@ -326,7 +330,7 @@ export type GameEvent =
   | { type: 'card_obtained'; defId: string }
   | { type: 'card_removed'; cardUid: string; defId: string }
   | { type: 'card_upgraded'; cardUid: string; defId: string }
-  | { type: 'act_started'; act: 1 | 2 | 3 };
+  | { type: 'act_started'; act: 1 | 2 | 3 | 4 };
 
 export interface ActionResult {
   state: RunState;

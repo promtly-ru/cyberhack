@@ -68,6 +68,7 @@ export function newRun(opts: NewRunOptions): RunState {
     gold: cls.startingGold,
     deck: [],
     relics: [],
+    firmwares: [],
     map: [],
     currentNodeId: null,
     visited: [],
@@ -99,7 +100,14 @@ export function newRun(opts: NewRunOptions): RunState {
   return s;
 }
 
-function startAct(s: RunState, act: 1 | 2 | 3, ev: GameEvent[]): void {
+/** Последний акт = максимальный акт среди боссов контента. */
+function finalAct(): number {
+  let m = 1;
+  for (const e of getContent().data.encounters) if (e.tier === 'boss' && e.act > m) m = e.act;
+  return m;
+}
+
+function startAct(s: RunState, act: 1 | 2 | 3 | 4, ev: GameEvent[]): void {
   s.act = act;
   s.map = generateMap(act, rngOf(s, 'map'), modsOf(s).eliteWeightMult);
   s.currentNodeId = null;
@@ -224,7 +232,7 @@ function onCombatWon(s: RunState, ctx: CombatCtx, ev: GameEvent[]): void {
   if (tier === 'elite') s.stats.elitesKilled += 1;
   if (tier === 'boss') s.stats.bossesKilled += 1;
   s.combat = null;
-  if (tier === 'boss' && s.act === 3) {
+  if (tier === 'boss' && s.act >= finalAct()) {
     s.status = 'won';
     s.screen = { kind: 'game_over', victory: true };
     return;
@@ -398,6 +406,10 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       if (item.kind === 'gold') {
         s.gold += item.amount;
         items.splice(action.index, 1);
+      } else if (item.kind === 'firmware') {
+        items.splice(action.index, 1);
+        (s.firmwares ??= []).push(item.firmwareId);
+        ev.push({ type: 'firmware_obtained', firmwareId: item.firmwareId });
       } else if (item.kind === 'relic') {
         items.splice(action.index, 1);
         obtainRelic(s, item.relicId, ev);
@@ -421,9 +433,9 @@ export function applyAction(state: RunState, action: Action): ActionResult {
     }
     case 'leave_reward': {
       if (s.screen.kind !== 'reward') invalid('Not on reward screen');
-      if (currentNode(s)?.kind === 'boss' && s.act < 3) {
+      if (currentNode(s)?.kind === 'boss' && s.act < finalAct()) {
         healRun(s, (s.maxHp - s.hp) * modsOf(s).actHealPct, ev);
-        startAct(s, (s.act + 1) as 2 | 3, ev);
+        startAct(s, (s.act + 1) as 2 | 3 | 4, ev);
       } else goToMap(s);
       break;
     }

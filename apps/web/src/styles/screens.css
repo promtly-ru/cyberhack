@@ -228,3 +228,13 @@
 .stats dd { margin: 0; font-weight: 700; }
 .stats--compact { grid-template-columns: 1fr; }
 @media (max-width: 480px) { .stats { grid-template-columns: 1fr; } }
+
+/* Компактный выбор класса: 6 классов помещаются без долгой прокрутки, кнопка старта всегда видна */
+@media (min-width: 721px) {
+  .cs-classes { gap: 12px; }
+  .class-card__art { height: 96px; }
+  .class-card__desc { display: none; }
+  .class-card__name { font-size: 19px; }
+  .class-card__style { font-size: 13px; }
+}
+.cs-foot { position: sticky; bottom: 0; z-index: 15; padding: 10px 0; background: linear-gradient(to top, rgba(5, 6, 15, 0.97) 70%, transparent); }

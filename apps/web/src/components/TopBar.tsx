@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { RunState } from '../game/engine';
 import { Icon } from './Icon';
-import { RelicIcon } from './Bits';
+import { FirmwareBar, RelicIcon } from './Bits';
 import { tip } from './Tooltip';
 import { CardGridModal } from './CardGridModal';
 import { useUi, ACT_NAMES } from '../ui/uiStore';
@@ -60,6 +60,7 @@ export function TopBar({ run }: { run: RunState }) {
           <RelicIcon key={id} id={id} size="sm" />
         ))}
       </div>
+      <FirmwareBar firmwares={run.firmwares ?? []} deck={run.deck} />
       <div className="topbar__actions">
         <button
           className="icon-btn icon-btn--count"

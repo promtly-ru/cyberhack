@@ -8,6 +8,7 @@ export const CLASS_COLOR: Record<ClassId, string> = {
   ghost: '#b48cff',
   samurai: '#ff5a36',
   engineer: '#ff9d1c',
+  biohacker: '#3dff8a',
 };
 
 export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId }) {

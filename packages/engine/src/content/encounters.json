@@ -394,5 +394,194 @@
     "enemies": [
       "boss_archon"
     ]
+  },
+  {
+    "id": "a4_e_phantom",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_phantom"
+    ],
+    "early": true
+  },
+  {
+    "id": "a4_e_leech",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_leech"
+    ],
+    "early": true
+  },
+  {
+    "id": "a4_e_bomb",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_logic_bomb",
+      "a4_nano"
+    ],
+    "early": true
+  },
+  {
+    "id": "a4_mirror",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_mirror"
+    ]
+  },
+  {
+    "id": "a4_overseer",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_overseer"
+    ]
+  },
+  {
+    "id": "a4_nano_swarm",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_nano",
+      "a4_nano",
+      "a4_nano"
+    ]
+  },
+  {
+    "id": "a4_guard_siren",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_core_guard",
+      "a4_siren"
+    ]
+  },
+  {
+    "id": "a4_phantom_leech",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_phantom",
+      "a4_leech"
+    ]
+  },
+  {
+    "id": "a4_bomb_mirror",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_logic_bomb",
+      "a4_mirror"
+    ]
+  },
+  {
+    "id": "a4_elite_void",
+    "act": 4,
+    "tier": "elite",
+    "enemies": [
+      "a4_void_warden"
+    ]
+  },
+  {
+    "id": "a4_elite_twin",
+    "act": 4,
+    "tier": "elite",
+    "enemies": [
+      "a4_twin_core"
+    ]
+  },
+  {
+    "id": "a4_boss_nexus",
+    "act": 4,
+    "tier": "boss",
+    "enemies": [
+      "boss_nexus"
+    ]
+  },
+  {
+    "id": "a4_boss_singularity",
+    "act": 4,
+    "tier": "boss",
+    "enemies": [
+      "boss_singularity"
+    ]
+  },
+  {
+    "id": "a1_scanner",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_rogue_scanner",
+      "a1_rogue_scanner"
+    ]
+  },
+  {
+    "id": "a1_rat_scanner",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_cache_rat",
+      "a1_rogue_scanner"
+    ]
+  },
+  {
+    "id": "a1_elite_warden",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_elite_warden"
+    ]
+  },
+  {
+    "id": "a2_wraith",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_data_wraith"
+    ]
+  },
+  {
+    "id": "a2_trap_wraith",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_trap_node",
+      "a2_data_wraith"
+    ]
+  },
+  {
+    "id": "a2_elite_hydra",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_elite_hydra"
+    ]
+  },
+  {
+    "id": "a3_flayer",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_mind_flayer"
+    ]
+  },
+  {
+    "id": "a3_ward_flayer",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_ward",
+      "a3_mind_flayer"
+    ]
+  },
+  {
+    "id": "a3_elite_colossus",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_elite_colossus"
+    ]
   }
 ]

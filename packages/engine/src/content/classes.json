@@ -3,7 +3,7 @@
     "id": "netrunner",
     "name": "Нетраннер",
     "description": "Классический взломщик: тяжёлые эксплойты, Разгон и броня. Лечится после каждого боя.",
-    "maxHp": 80,
+    "maxHp": 90,
     "startingGold": 99,
     "startingDeck": [
       "nr_ping",
@@ -62,7 +62,7 @@
   {
     "id": "samurai",
     "name": "Кибер-самурай",
-    "description": "Воин ближнего боя: Разгон, быстрые серии ударов и Шипы. Чем дольше бой, тем опаснее.",
+    "description": "Воин ближнего боя: Разгон, быстрые серии ударов и Контрудар. Чем дольше бой, тем опаснее.",
     "maxHp": 72,
     "startingGold": 99,
     "startingDeck": [
@@ -82,8 +82,8 @@
   {
     "id": "engineer",
     "name": "Инженер",
-    "description": "Крепкий танк: Броня-патчи, Шипы и тяжёлые орудия. Медленно набирает мощь, но почти непробиваем.",
-    "maxHp": 74,
+    "description": "Крепкий танк: Броня-патчи, Контрудар и тяжёлые орудия. Медленно набирает мощь, но почти непробиваем.",
+    "maxHp": 68,
     "startingGold": 99,
     "startingDeck": [
       "en_bolt",
@@ -98,5 +98,25 @@
       "en_wrench"
     ],
     "startingRelic": "r_toolkit"
+  },
+  {
+    "id": "biohacker",
+    "name": "Биохакер",
+    "description": "Рискованный мутант: жертвует HP ради мощи, лечится Самовосстановлением и душит врагов Вирусом.",
+    "maxHp": 88,
+    "startingGold": 99,
+    "startingDeck": [
+      "bh_scalpel",
+      "bh_scalpel",
+      "bh_scalpel",
+      "bh_scalpel",
+      "bh_scalpel",
+      "bh_bandage",
+      "bh_bandage",
+      "bh_bandage",
+      "bh_bandage",
+      "bh_stim"
+    ],
+    "startingRelic": "r_biolab"
   }
 ]

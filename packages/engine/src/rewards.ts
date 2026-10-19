@@ -1,4 +1,5 @@
-﻿/**
+import { rollableFirmwares } from './firmware';
+/**
  * Генерация наград и магазина.
  */
 import type { AscensionMods } from './ascension';
@@ -125,6 +126,12 @@ export function buildCombatRewards(s: RunState, tier: CombatTier, mods: Ascensio
   if (cards.length > 0) items.push({ kind: 'card_choice', cardIds: cards });
   const relicId = tier === 'boss' ? rollBossRelic(s, rng) : tier === 'elite' ? rollRelic(s, rng) : undefined;
   if (relicId) items.push({ kind: 'relic', relicId });
+  // Прошивки: всегда с элит и боссов, иногда с обычных боёв
+  const fwPool = rollableFirmwares(s);
+  const fwChance = tier === 'normal' ? 0.12 : 1;
+  if (fwPool.length > 0 && rngOf(s, 'rewards').next() < fwChance) {
+    items.push({ kind: 'firmware', firmwareId: rngOf(s, 'rewards').pick(fwPool).id });
+  }
   return items;
 }
 
