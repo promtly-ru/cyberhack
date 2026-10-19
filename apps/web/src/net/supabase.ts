@@ -451,6 +451,28 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
         throw new BackendError(`Не удалось отправить ссылку: ${error.message}`);
       }
     },
+    async signUpWithPassword(email, password) {
+      const trimmed = email.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) throw new BackendError('Некорректный email');
+      if (password.length < 8) throw new BackendError('Пароль должен быть не короче 8 символов');
+      const { data, error } = await client.auth.signUp({
+        email: trimmed,
+        password,
+        options: { emailRedirectTo: redirectTo() },
+      });
+      if (error) {
+        if (isThrownNetworkError(error)) throw new NetworkError();
+        throw new BackendError(`Не удалось зарегистрироваться: ${error.message}`);
+      }
+      return { confirmEmail: !data.session };
+    },
+    async signInWithPassword(email, password) {
+      const { error } = await client.auth.signInWithPassword({ email: email.trim(), password });
+      if (error) {
+        if (isThrownNetworkError(error)) throw new NetworkError();
+        throw new BackendError(`Не удалось войти: ${error.message}`);
+      }
+    },
     async signInWithOAuth(provider) {
       const { error } = await client.auth.signInWithOAuth({ provider, options: { redirectTo: redirectTo() } });
       if (error) throw new BackendError(`Не удалось начать вход через ${provider}: ${error.message}`);

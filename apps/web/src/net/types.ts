@@ -49,6 +49,9 @@ export interface AuthApi {
   getUser(): Promise<User | null>;
   onChange(cb: (user: User | null) => void): () => void;
   signInWithEmail(email: string): Promise<void>; // magic link
+  /** Регистрация по почте и паролю. true — нужно подтвердить почту по письму */
+  signUpWithPassword(email: string, password: string): Promise<{ confirmEmail: boolean }>;
+  signInWithPassword(email: string, password: string): Promise<void>;
   signInWithOAuth(provider: 'google' | 'github'): Promise<void>;
   signOut(): Promise<void>;
 }

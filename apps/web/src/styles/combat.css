@@ -228,6 +228,9 @@
   .hud-hint { min-height: 28px; padding: 2px 0; }
   .hud-hint span { font-size: 12px; padding: 3px 10px; }
   .unit { --intent-h: 46px; }
+  .status-row--labeled { width: 100%; }
+  .status-row--labeled .status { min-width: 0; padding: 2px 6px 2px 4px; gap: 4px; }
+  .status-row--labeled .status__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
   .intent { padding: 2px 5px 3px; }
   .intent__label { font-size: 10px; letter-spacing: 0; }
   .btn--end { width: auto; min-height: 44px; padding: 8px 14px; font-size: 13px; }

@@ -12,6 +12,7 @@ import { CardGridModal } from '../components/CardGridModal';
 import { fx, parseColor } from '../fx/fx';
 import { sfx } from '../audio/sfx';
 import { hash } from '../ui/rand';
+import { useTutorial } from '../tutorial/tutorialStore';
 
 const TYPE_COLOR: Record<string, string> = { attack: '#ff2bd6', skill: '#00f0ff', power: '#e8ff3a', status: '#8d97b5', curse: '#ff3b5c' };
 const ENEMY_COLORS = ['#ff3b5c', '#ff6a3d', '#ff2bd6'];
@@ -99,6 +100,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   /** Превью открыто правым кликом мыши — закрывается любым нажатием */
   const [mousePreview, setMousePreview] = useState(false);
   const coarse = useCoarsePointer();
+  const tutorialActive = useTutorial((s) => s.active);
 
   const playerPhase = combat.phase === 'player' && !frozen;
 
@@ -250,10 +252,15 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         else setSelected(null);
         return;
       }
+      // Единственная возможная цель: сразу играем, без второго клика по врагу
+      if (isTargeted(c) && options.size === 1 && !tutorialActive) {
+        play(c.uid, [...options][0]);
+        return;
+      }
       sfx('select');
       setSelected(c.uid);
     },
-    [combat.energy, flashHint, isTargeted, legal, play, playerPhase, selected],
+    [combat.energy, flashHint, isTargeted, legal, play, playerPhase, selected, tutorialActive],
   );
 
   // ---------- Перетаскивание ----------

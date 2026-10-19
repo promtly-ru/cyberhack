@@ -101,6 +101,9 @@ export async function playOneCard(page: Page, act: Fixtures['act']): Promise<boo
   const uid = await card.getAttribute('data-uid');
   const isTargeted = (await card.getAttribute('data-targeted')) === '1';
   await act(card);
+  // Единственная цель: карта играется сразу, второй клик не нужен
+  const played = page.locator(`[data-testid="hand-card"][data-uid="${uid}"]`);
+  if (isTargeted && (await played.count()) === 0) return true;
   await expect(card).toHaveAttribute('aria-pressed', 'true');
   if (isTargeted) {
     const hit = page.locator('[data-testid="enemy-hit"]:not([disabled])').first();

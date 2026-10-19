@@ -150,7 +150,7 @@ function AccountPanel() {
       ) : null}
       {open ? (
         <div className={`account-login${cloud ? '' : ' account-login--solo'}`} data-testid="account-login-panel">
-          {cloud ? <CloudLogin busy={busy} act={act} /> : null}
+          <CloudLogin busy={busy} act={act} cloud={cloud} />
           {accounts ? (
             <DeviceProfiles
               profiles={accounts.profiles}
@@ -181,7 +181,7 @@ function AccountPanel() {
 }
 
 /** Облачный вход: почта (magic link), Google, GitHub. */
-function CloudLogin({ busy, act }: { busy: boolean; act: Act }) {
+function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: boolean }) {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
   const submit = (e: FormEvent) => {
@@ -193,12 +193,29 @@ function CloudLogin({ busy, act }: { busy: boolean; act: Act }) {
     setEmailError(null);
     void act(() => accountAction((b) => b.auth.signInWithEmail(email)), 'Готово! Открой письмо и нажми на ссылку для входа', { close: false });
   };
+  const [password, setPassword] = useState('');
+  const [usePassword, setUsePassword] = useState(false);
+  const signUp = () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setEmailError('Похоже, в адресе опечатка — проверь почту');
+    if (password.length < 8) return setEmailError('Пароль — не короче 8 символов');
+    setEmailError(null);
+    void act(
+      () => accountAction((b) => b.auth.signUpWithPassword(email, password)),
+      'Аккаунт создан! Если пришло письмо — подтверди почту',
+      { close: false },
+    );
+  };
+  const passwordSignIn = () => {
+    setEmailError(null);
+    void act(() => accountAction((b) => b.auth.signInWithPassword(email, password)), 'Ты вошёл', { close: false });
+  };
   const oauth = (provider: 'google' | 'github', label: string) =>
     void act(() => accountAction((b) => b.auth.signInWithOAuth(provider)), `Переходим к ${label}…`, { close: false });
   return (
     <div className="account-block" data-testid="cloud-login">
       <h3 className="account-block__title">Облачный аккаунт</h3>
       <p className="muted small">Прогресс сохранится в облаке: продолжай с любого устройства и попадай в таблицу лидеров.</p>
+      {!cloud ? <p className="muted small">Сервер ещё не подключён — вход заработает после настройки Supabase.</p> : null}
       <form className="login-form" onSubmit={submit} noValidate>
         <label className="field">
           <span>Почта — пришлём ссылку для входа</span>
@@ -213,9 +230,35 @@ function CloudLogin({ busy, act }: { busy: boolean; act: Act }) {
             aria-invalid={!!emailError}
           />
         </label>
+        {usePassword ? (
+          <label className="field">
+            <span>Пароль (от 8 символов)</span>
+            <input
+              className="acc-input"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+        ) : null}
         {emailError ? <p className="error small">{emailError}</p> : null}
-        <button className="btn btn--primary" type="submit" disabled={busy}>
-          <Icon name="mail" size={18} /> Получить ссылку
+        {usePassword ? (
+          <>
+            <button className="btn btn--primary" type="button" disabled={busy} onClick={signUp}>
+              <Icon name="mail" size={18} /> Зарегистрироваться
+            </button>
+            <button className="btn btn--ghost" type="button" disabled={busy} onClick={passwordSignIn}>
+              Войти
+            </button>
+          </>
+        ) : (
+          <button className="btn btn--primary" type="submit" disabled={busy}>
+            <Icon name="mail" size={18} /> Получить ссылку
+          </button>
+        )}
+        <button className="btn btn--ghost small" type="button" onClick={() => setUsePassword((v) => !v)}>
+          {usePassword ? 'Войти по ссылке из письма' : 'Почта и пароль'}
         </button>
       </form>
       <div className="oauth">

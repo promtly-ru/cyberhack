@@ -32,6 +32,12 @@ export function createStubBackend(): Backend {
       signInWithEmail: async () => {
         throw new Error('Сервер авторизации недоступен: гостевой режим');
       },
+      signUpWithPassword: async () => {
+        throw new Error('Сервер авторизации недоступен: гостевой режим');
+      },
+      signInWithPassword: async () => {
+        throw new Error('Сервер авторизации недоступен: гостевой режим');
+      },
       signInWithOAuth: async () => {
         throw new Error('Сервер авторизации недоступен: гостевой режим');
       },
