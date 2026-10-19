@@ -407,6 +407,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       className={`screen combat${frozen ? ' is-frozen' : ''}${selectedTargeted ? ' is-targeting' : ''}`}
       style={{ '--card-w': `${cardW}px` } as CSSProperties}
       data-testid="combat"
+      data-act={run.act}
       data-phase={frozen ? 'frozen' : combat.phase}
     >
       <TopBar run={run} />

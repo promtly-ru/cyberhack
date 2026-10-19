@@ -27,6 +27,24 @@ export function Logo({ small }: { small?: boolean }) {
 
 // ---------------- Главное меню ----------------
 
+function ClassShowcase() {
+  const profile = useGame((s) => s.profile);
+  const classes = safeClasses();
+  return (
+    <ul className="showcase" aria-label="Классы">
+      {classes.map((c) => {
+        const locked = !profile.unlockedClasses.includes(c.id);
+        return (
+          <li key={c.id} className={`showcase__item${locked ? ' is-locked' : ''}`} style={{ '--class-color': CLASS_COLOR[c.id] } as CSSProperties} {...tip(c.name, locked ? 'Закрыт: открой в игре.' : c.description)}>
+            <PlayerArt classId={c.id} />
+            <span>{c.name}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 export function MainMenu() {
   const savedRun = useGame((s) => s.savedRun);
   const run = useGame((s) => s.run);
@@ -59,7 +77,10 @@ export function MainMenu() {
     <div className="screen menu" data-testid="menu">
       <AccountChip />
       <div className="menu__inner">
-        <Logo />
+        <div className="menu__hero">
+          <Logo />
+          <ClassShowcase />
+        </div>
         <nav className="menu__nav" aria-label="Главное меню">
           <button className="menu-btn menu-btn--primary" data-testid="menu-new" onClick={click(() => openClassSelect(false))}>
             <Icon name="terminal" size={22} />

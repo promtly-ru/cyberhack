@@ -30,8 +30,30 @@ export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId
         <path d="M24 84h10l4-6h6M96 84H86l-4-6h-6" strokeWidth="1" opacity=".7" />
         <circle cx="44" cy="78" r="1.5" fill="currentColor" stroke="none" />
         <circle cx="76" cy="78" r="1.5" fill="currentColor" stroke="none" />
-        {classId === 'engineer' ? <path d="M12 96h20v10H12zM88 96h20v10H88z" strokeWidth="2" /> : null}
-        {classId === 'samurai' ? <path d="M104 148L116 70M101 128l9 4" strokeWidth="2.4" /> : null}
+        {classId === 'netrunner' ? <path d="M34 20l-8-10M86 20l8-10M60 8V0" strokeWidth="1.6" opacity=".8" /> : null}
+        {classId === 'phreaker' ? <path d="M40 14L28 0M80 14L92 0M28 0l-4 4M92 0l4 4" strokeWidth="1.8" /> : null}
+        {classId === 'ghost' ? <path d="M30 70c8 10 18 14 30 14s22-4 30-14M60 86v16" strokeWidth="1.4" opacity=".7" /> : null}
+        {classId === 'engineer' ? (
+          <>
+            <path d="M26 30c0-16 15-26 34-26s34 10 34 26z" className="fill-deep" strokeWidth="2.2" />
+            <path d="M60 4v26M20 30h80" strokeWidth="1.6" />
+            <circle cx="60" cy="18" r="6" className="fill-glow-soft" strokeWidth="1.4" />
+            <path d="M12 96h20v10H12zM88 96h20v10H88z" strokeWidth="2" />
+          </>
+        ) : null}
+        {classId === 'samurai' ? (
+          <>
+            <path d="M24 34c10-20 26-28 36-28s26 8 36 28" className="fill-deep" strokeWidth="2.2" />
+            <path d="M28 22L14 2l22 10M92 22L106 2 84 12" strokeWidth="2" />
+            <path d="M104 148L116 70M101 128l9 4" strokeWidth="2.4" />
+          </>
+        ) : null}
+        {classId === 'biohacker' ? (
+          <>
+            <path d="M18 98c-10-8-14-22-10-34M102 98c10-8 14-22 10-34M8 64l-4-8M112 64l4-8" strokeWidth="2" />
+            <path d="M60 34v14M53 41h14" strokeWidth="2" opacity=".9" />
+          </>
+        ) : null}
       </g>
       {/* Голо-клавиатура */}
       <g className="holo">

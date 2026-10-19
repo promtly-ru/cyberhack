@@ -83,7 +83,7 @@ export function MapScreen({ run }: { run: RunState }) {
   }
 
   return (
-    <div className="screen map-screen" data-testid="map">
+    <div className="screen map-screen" data-testid="map" data-act={run.act}>
       <TopBar run={run} />
       <div className="map-head">
         <div>

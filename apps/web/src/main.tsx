@@ -12,6 +12,7 @@ import './styles/screens.css';
 import './styles/tutorial.css';
 import './styles/accounts.css';
 import './styles/download.css';
+import './styles/polish.css';
 
 applyToDocument();
 void initBackend();
