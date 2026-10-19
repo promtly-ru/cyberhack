@@ -24,6 +24,7 @@ export const SYNERGIES: readonly SynergyDef[] = [
   { id: 'syn_assassin', name: 'Тихий убийца', description: '+2 Разгона в начале боя', cards: ['gh_ambush', 'gh_backstab'], effects: [self('strength', 2)] },
   { id: 'syn_warrior', name: 'Путь воина', description: '+1 Разгон и 3 Шипа в начале боя', cards: ['sm_bloodlust', 'sm_bushido'], effects: [self('strength', 1), self('thorns', 3)] },
   { id: 'syn_wall', name: 'Железная стена', description: '+10 блока и 2 Шипа в начале боя', cards: ['sm_riposte', 'sm_ronin_stance'], effects: [{ type: 'block', amount: 10 }, self('thorns', 2)] },
+  { id: 'syn_bastion', name: 'Несокрушимый бастион', description: '+4 Броня-патча в начале боя', cards: ['en_reinforce', 'en_fortress'], effects: [self('plating', 4)] },
   { id: 'syn_ram', name: 'Разгон ОЗУ', description: '+1 энергия в первый ход боя', cards: ['n_miner', 'n_ram_upgrade'], effects: [{ type: 'gain_energy', amount: 1 }] },
 ];
 

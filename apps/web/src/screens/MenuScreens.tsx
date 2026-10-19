@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import type { ClassDef, ClassId } from '../game/engine';
-import { dailySeed, isMockActive, listClasses, tryRelicDef, unlockSource } from '../game/engine';
+import type { ClassDef, ClassId, Difficulty } from '../game/engine';
+import { DIFFICULTY_INFO, dailySeed, isMockActive, listClasses, tryRelicDef, unlockSource } from '../game/engine';
 import { MAX_ASCENSION, useGame } from '../game/store';
 import { hasPlayedDaily, todayDailyClass } from '../game/meta';
 import { Icon } from '../components/Icon';
@@ -154,6 +154,7 @@ const CLASS_STYLE: Record<string, string> = {
   phreaker: 'яды и ослабления — враги слабеют и теряют здоровье каждый ход.',
   ghost: 'защита и много карт — блок, дешёвые карты, постоянный добор.',
   samurai: 'ближний бой — Разгон, серии ударов и Шипы.',
+  engineer: 'крепкая броня — Броня-патчи, Шипы и тяжёлые орудия.',
 };
 
 function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selected: boolean; locked: boolean; onSelect: () => void; hint?: string }) {
@@ -248,13 +249,14 @@ function RegularSelect() {
   const [cls, setCls] = useState<ClassId>(() => classes.find((c) => unlocked(c.id))?.id ?? classes[0]?.id ?? 'netrunner');
   const maxAsc = Math.min(MAX_ASCENSION, profile.maxAscension[cls] ?? 0);
   const [asc, setAsc] = useState(0);
+  const [diff, setDiff] = useState<Difficulty>('normal');
   useEffect(() => setAsc((a) => Math.min(a, maxAsc)), [maxAsc]);
   const current = classes.find((c) => c.id === cls);
 
   const start = () => {
     unlockAudio();
     sfx('select');
-    startRegular(cls, asc);
+    startRegular(cls, asc, diff);
   };
 
   return (
@@ -265,9 +267,32 @@ function RegularSelect() {
           <ClassCard key={c.id} c={c} selected={cls === c.id} locked={!unlocked(c.id)} hint={lockHint(c.id)} onSelect={() => setCls(c.id)} />
         ))}
       </div>
+      <section className="cs-asc" aria-label="Режим сложности">
+        <div className="cs-asc__head">
+          <h2 className="section-title">Режим</h2>
+          <span className="muted small">{DIFFICULTY_INFO[diff].description}</span>
+        </div>
+        <div className="asc-chips" role="radiogroup" aria-label="Режим">
+          {(['easy', 'normal', 'hard'] as Difficulty[]).map((d) => (
+            <button
+              key={d}
+              role="radio"
+              aria-checked={diff === d}
+              className={`asc-chip${diff === d ? ' is-selected' : ''}`}
+              style={{ width: 'auto', padding: '0 16px' }}
+              onClick={() => {
+                sfx('click');
+                setDiff(d);
+              }}
+            >
+              {DIFFICULTY_INFO[d].name}
+            </button>
+          ))}
+        </div>
+      </section>
       <section className="cs-asc" aria-label="Уровень сложности">
         <div className="cs-asc__head">
-          <h2 className="section-title">Сложность (Ascension)</h2>
+          <h2 className="section-title">Ascension (открывается победами)</h2>
           <span className="muted small">
             Каждый уровень добавляет врагам силы. Следующий уровень открывается победой на текущем максимальном. {current ? `${current.name}: открыто до ${maxAsc}.` : `Открыто до ${maxAsc}.`}
           </span>
@@ -301,7 +326,7 @@ function RegularSelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">{asc === 0 ? 'Базовая сложность' : `Сложность ${asc}`}</small>
+              <small className="muted">{`${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}`}</small>
             </span>
           </div>
         ) : null}

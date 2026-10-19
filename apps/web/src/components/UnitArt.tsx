@@ -7,6 +7,7 @@ export const CLASS_COLOR: Record<ClassId, string> = {
   phreaker: '#e8ff3a',
   ghost: '#b48cff',
   samurai: '#ff5a36',
+  engineer: '#ff9d1c',
 };
 
 export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId }) {
@@ -28,6 +29,7 @@ export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId
         <path d="M24 84h10l4-6h6M96 84H86l-4-6h-6" strokeWidth="1" opacity=".7" />
         <circle cx="44" cy="78" r="1.5" fill="currentColor" stroke="none" />
         <circle cx="76" cy="78" r="1.5" fill="currentColor" stroke="none" />
+        {classId === 'engineer' ? <path d="M12 96h20v10H12zM88 96h20v10H88z" strokeWidth="2" /> : null}
         {classId === 'samurai' ? <path d="M104 148L116 70M101 128l9 4" strokeWidth="2.4" /> : null}
       </g>
       {/* Голо-клавиатура */}

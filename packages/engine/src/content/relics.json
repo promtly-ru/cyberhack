@@ -1043,5 +1043,21 @@
         "amount": 4
       }
     ]
+  },
+  {
+    "id": "r_toolkit",
+    "name": "Набор инженера",
+    "rarity": "starter",
+    "classId": "engineer",
+    "description": "В начале боя получи 2 Броня-патча.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 2,
+        "target": "self"
+      }
+    ]
   }
 ]

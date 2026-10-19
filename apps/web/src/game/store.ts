@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Action, ClassId, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
+import type { Action, ClassId, Difficulty, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
 import { applyAction, evaluateRunEnd, newRun } from './engine';
 import { dailyRunOptions, hasPlayedDaily, markDailyLocal, regularRunOptions } from './meta';
 import type { Backend, DeviceProfile, Profile, SavedRun, User } from '../net/types';
@@ -46,7 +46,7 @@ interface GameStore {
   openClassSelect(daily: boolean): void;
   startRun(opts: NewRunOptions): void;
   /** Обычный забег с учётом разблокировок профиля */
-  startRegular(classId: ClassId, ascension: number): void;
+  startRegular(classId: ClassId, ascension: number, difficulty?: Difficulty): void;
   /** Ежедневный забег (одна попытка в день). false — попытка уже использована */
   startDaily(): boolean;
   /** Загрузить готовое состояние (продолжение или dev-сценарий) */
@@ -113,14 +113,14 @@ export const useGame = create<GameStore>((set, get) => ({
     }
   },
 
-  startRegular(classId, ascension) {
+  startRegular(classId, ascension, difficulty) {
     const { profile } = get();
     if (!profile.unlockedClasses.includes(classId)) {
       set({ error: 'Класс ещё не открыт' });
       return;
     }
     const max = Math.min(MAX_ASCENSION, profile.maxAscension[classId] ?? 0);
-    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max))));
+    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max)), difficulty));
   },
 
   startDaily() {

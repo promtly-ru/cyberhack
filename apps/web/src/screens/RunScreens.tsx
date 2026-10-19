@@ -405,7 +405,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
 
 // ---------------- Конец забега ----------------
 
-const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай' };
+const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер' };
 
 export function GameOverScreen({ run, victory }: { run: RunState; victory: boolean }) {
   const toMenu = useGame((s) => s.toMenu);

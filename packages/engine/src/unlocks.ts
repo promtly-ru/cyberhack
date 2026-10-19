@@ -19,6 +19,7 @@ export interface LifetimeStats {
   winsPhreaker?: number;
   winsGhost?: number;
   winsSamurai?: number;
+  winsEngineer?: number;
   /** Высший уровень Ascension, на котором была победа */
   bestWinAscension?: number;
   bestAct?: number;
@@ -102,6 +103,22 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     target: 2,
     value: lt('wins'),
     unlocks: [{ kind: 'class', id: 'samurai' }, card('sm_heavy_strike')],
+  },
+  {
+    id: 'elite_slayer',
+    name: 'Охотник на элиту',
+    description: 'Уничтожить 8 элитных врагов',
+    target: 8,
+    value: lt('elitesKilled'),
+    unlocks: [{ kind: 'class', id: 'engineer' }, card('en_overcharge')],
+  },
+  {
+    id: 'win_engineer',
+    name: 'Несокрушимый',
+    description: 'Победить за Инженера',
+    target: 1,
+    value: lt('winsEngineer'),
+    unlocks: [card('en_railgun'), card('en_reactor')],
   },
   {
     id: 'win_samurai',
@@ -363,6 +380,7 @@ const WIN_KEY: Record<ClassId, keyof LifetimeStats> = {
   phreaker: 'winsPhreaker',
   ghost: 'winsGhost',
   samurai: 'winsSamurai',
+  engineer: 'winsEngineer',
 };
 
 function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, victory: boolean): LifetimeStats {

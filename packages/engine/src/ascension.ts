@@ -79,6 +79,45 @@ export const ASCENSION_TABLE: readonly AscensionLevel[] = [
   },
 ];
 
+import type { Difficulty } from './types';
+
+export const DIFFICULTY_INFO: Record<Difficulty, { name: string; description: string }> = {
+  easy: { name: 'Лёгкая', description: 'Враги слабее (HP −20%, урон −15%), отдых и награда за акт щедрее. Для знакомства с игрой.' },
+  normal: { name: 'Обычная', description: 'Задуманный баланс.' },
+  hard: { name: 'Сложная', description: 'Враги крепче (HP +15%, урон +12%), элит больше, золота меньше на 10%.' },
+};
+
+/** Режим сложности накладывается на модификаторы Ascension. */
+export function applyDifficulty(m: AscensionMods, d: Difficulty | undefined): AscensionMods {
+  if (d === 'easy') {
+    return {
+      ...m,
+      normalHpMult: m.normalHpMult * 0.8,
+      eliteHpMult: m.eliteHpMult * 0.8,
+      bossHpMult: m.bossHpMult * 0.8,
+      normalDamageMult: m.normalDamageMult * 0.85,
+      eliteDamageMult: m.eliteDamageMult * 0.85,
+      bossDamageMult: m.bossDamageMult * 0.85,
+      restHealPct: Math.max(m.restHealPct, 0.4),
+      actHealPct: 1,
+    };
+  }
+  if (d === 'hard') {
+    return {
+      ...m,
+      normalHpMult: m.normalHpMult * 1.15,
+      eliteHpMult: m.eliteHpMult * 1.15,
+      bossHpMult: m.bossHpMult * 1.15,
+      normalDamageMult: m.normalDamageMult * 1.12,
+      eliteDamageMult: m.eliteDamageMult * 1.12,
+      bossDamageMult: m.bossDamageMult * 1.12,
+      eliteWeightMult: m.eliteWeightMult * 1.25,
+      goldMult: m.goldMult * 0.9,
+    };
+  }
+  return m;
+}
+
 export function clampAscension(level: number | undefined): number {
   const n = Math.floor(Number(level ?? 0));
   if (!Number.isFinite(n)) return 0;

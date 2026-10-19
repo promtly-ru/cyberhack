@@ -11,6 +11,7 @@ export { InvalidActionError, SAVE_VERSION } from '@cyberhack/engine';
 // Метапрогрессия и ascension — только настоящий движок (мока нет)
 export {
   ACHIEVEMENTS,
+  DIFFICULTY_INFO,
   SYNERGIES,
   getActiveSynergies,
   STARTING_CLASSES,

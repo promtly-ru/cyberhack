@@ -29,7 +29,7 @@ import type {
 export * from './types';
 export { validateContent, setContentForTests, resetContent, getContent } from './content';
 export type { ContentData } from './content';
-export { getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
+export { DIFFICULTY_INFO, getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
 export type { AscensionMods } from './ascension';
 export { computeScore } from './score';
 export { SYNERGIES, getActiveSynergies } from './synergies';

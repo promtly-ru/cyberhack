@@ -8,7 +8,8 @@ export const SAVE_VERSION = 1 as const;
 
 // ---------- Базовые идентификаторы ----------
 
-export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai';
+export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer';
+export type Difficulty = 'easy' | 'normal' | 'hard';
 export type CardType = 'attack' | 'skill' | 'power' | 'status' | 'curse';
 export type Rarity = 'starter' | 'common' | 'uncommon' | 'rare' | 'special';
 export type TargetKind = 'enemy' | 'all_enemies' | 'random_enemy' | 'self' | 'none';
@@ -249,6 +250,8 @@ export interface RunState {
   seed: string;
   classId: ClassId;
   ascension: number; // 0..15
+  /** Режим сложности (поверх Ascension); нет поля = normal */
+  difficulty?: Difficulty;
   daily: boolean;
   act: 1 | 2 | 3;
   floor: number; // общий счётчик пройденных узлов
@@ -334,6 +337,7 @@ export interface NewRunOptions {
   seed: string;
   classId: ClassId;
   ascension?: number;
+  difficulty?: Difficulty;
   daily?: boolean;
   /**
    * Метапрогрессия: открытые игроком карты/реликвии из числа закрываемых (см. unlocks.ts).

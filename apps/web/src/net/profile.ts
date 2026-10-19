@@ -6,7 +6,7 @@ import type { ClassId, LifetimeStats } from '@cyberhack/engine';
 import type { Profile, SavedRun } from './types';
 import { isRecord } from './storage';
 
-export const CLASS_IDS: readonly ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai'];
+export const CLASS_IDS: readonly ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer'];
 export const MAX_ASCENSION = 15;
 
 function isClassId(v: unknown): v is ClassId {
@@ -18,7 +18,7 @@ export function defaultProfile(): Profile {
     unlockedClasses: ['netrunner'],
     unlockedCards: [],
     unlockedRelics: [],
-    maxAscension: { netrunner: 0, phreaker: 0, ghost: 0, samurai: 0 },
+    maxAscension: { netrunner: 0, phreaker: 0, ghost: 0, samurai: 0, engineer: 0 },
     achievements: [],
     totalRuns: 0,
     totalWins: 0,

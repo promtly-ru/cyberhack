@@ -4066,5 +4066,528 @@
       ],
       "description": "Получи 3 Разгона и 2 Шифрования."
     }
+  },
+  {
+    "id": "en_bolt",
+    "name": "Болт",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона.",
+    "upgrade": {
+      "name": "Болт+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 9 урона."
+    }
+  },
+  {
+    "id": "en_plate",
+    "name": "Пластина",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 6 блока.",
+    "upgrade": {
+      "name": "Пластина+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока."
+    }
+  },
+  {
+    "id": "en_wrench",
+    "name": "Гаечный ключ",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 2 Броня-патча.",
+    "upgrade": {
+      "name": "Гаечный ключ+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 3 Броня-патча."
+    }
+  },
+  {
+    "id": "en_rivet",
+    "name": "Заклёпочник",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy",
+        "times": 3
+      }
+    ],
+    "description": "Нанеси 3 урона 3 раза.",
+    "upgrade": {
+      "name": "Заклёпочник+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 4,
+          "target": "enemy",
+          "times": 3
+        }
+      ],
+      "description": "Нанеси 4 урона 3 раза."
+    }
+  },
+  {
+    "id": "en_bulkhead",
+    "name": "Переборка",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 9
+      }
+    ],
+    "description": "Получи 9 блока.",
+    "upgrade": {
+      "name": "Переборка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 12
+        }
+      ],
+      "description": "Получи 12 блока."
+    }
+  },
+  {
+    "id": "en_spark",
+    "name": "Искра",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 4,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 4 урона.",
+    "upgrade": {
+      "name": "Искра+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 7 урона."
+    }
+  },
+  {
+    "id": "en_scrap",
+    "name": "Утиль",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 5 блока. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Утиль+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 8
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Получи 8 блока. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "en_shock_trap",
+    "name": "Шоковая ловушка",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 4
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 4 блока и 3 Шипа.",
+    "upgrade": {
+      "name": "Шоковая ловушка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 6
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 6 блока и 4 Шипа."
+    }
+  },
+  {
+    "id": "en_arc_welder",
+    "name": "Дуговая сварка",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 8,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 8 урона всем врагам.",
+    "upgrade": {
+      "name": "Дуговая сварка+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 11,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Нанеси 11 урона всем врагам."
+    }
+  },
+  {
+    "id": "en_reinforce",
+    "name": "Усиление",
+    "classId": "engineer",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 3 Броня-патча.",
+    "upgrade": {
+      "name": "Усиление+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 4 Броня-патча."
+    }
+  },
+  {
+    "id": "en_overcharge",
+    "name": "Перезаряд",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "lose_hp",
+        "amount": 2
+      }
+    ],
+    "description": "Получи 1 энергию. Потеряй 2 HP.",
+    "upgrade": {
+      "name": "Перезаряд+",
+      "effects": [
+        {
+          "type": "gain_energy",
+          "amount": 2
+        },
+        {
+          "type": "lose_hp",
+          "amount": 2
+        }
+      ],
+      "description": "Получи 2 энергии. Потеряй 2 HP."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "en_breaker",
+    "name": "Домкрат",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона. Наложи 2 Бреши.",
+    "upgrade": {
+      "name": "Домкрат+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 9 урона. Наложи 2 Бреши."
+    }
+  },
+  {
+    "id": "en_hardlight",
+    "name": "Жёсткий свет",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 14
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 14 блока и 1 Шифрование.",
+    "upgrade": {
+      "name": "Жёсткий свет+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 18
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 18 блока и 1 Шифрование."
+    }
+  },
+  {
+    "id": "en_fortress",
+    "name": "Бастион",
+    "classId": "engineer",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 4,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 4 Броня-патча и 3 Шипа.",
+    "upgrade": {
+      "name": "Бастион+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 6,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 6 Броня-патча и 4 Шипа."
+    }
+  },
+  {
+    "id": "en_railgun",
+    "name": "Рельсотрон",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 30,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 30 урона.",
+    "upgrade": {
+      "name": "Рельсотрон+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 40,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 40 урона."
+    }
+  },
+  {
+    "id": "en_reactor",
+    "name": "Реактор",
+    "classId": "engineer",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 2 Разгона и 2 Броня-патча.",
+    "upgrade": {
+      "name": "Реактор+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 3 Разгона и 3 Броня-патча."
+    }
   }
 ]

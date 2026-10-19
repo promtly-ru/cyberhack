@@ -1,7 +1,7 @@
 /**
  * Метапрогрессия на стороне UI: опции забега из профиля, ежедневный забег (одна попытка в день).
  */
-import type { ClassId, NewRunOptions } from './engine';
+import type { ClassId, Difficulty, NewRunOptions } from './engine';
 import { dailyClassId, dailySeed, unlockedOptions } from './engine';
 import type { Profile } from '../net/types';
 
@@ -24,8 +24,8 @@ export function randomSeed(): string {
 }
 
 /** Обычный забег: открытые карты/реликвии из профиля. */
-export function regularRunOptions(profile: Profile, classId: ClassId, ascension: number): NewRunOptions {
-  return { seed: randomSeed(), classId, ascension, daily: false, unlocked: unlockedOptions(profile) };
+export function regularRunOptions(profile: Profile, classId: ClassId, ascension: number, difficulty: Difficulty = 'normal'): NewRunOptions {
+  return { seed: randomSeed(), classId, ascension, difficulty, daily: false, unlocked: unlockedOptions(profile) };
 }
 
 /** Ежедневный забег: сид дня, класс по дате, A0, всё содержимое открыто (одинаково для всех). */

@@ -23,7 +23,7 @@
     "id": "phreaker",
     "name": "Фрикер",
     "description": "Мастер заразы: Вирусы, Лаг и Брешь. Убивает медленно, но наверняка.",
-    "maxHp": 76,
+    "maxHp": 84,
     "startingGold": 99,
     "startingDeck": [
       "ph_ping",
@@ -78,5 +78,25 @@
       "sm_focus"
     ],
     "startingRelic": "r_katana_chip"
+  },
+  {
+    "id": "engineer",
+    "name": "Инженер",
+    "description": "Крепкий танк: Броня-патчи, Шипы и тяжёлые орудия. Медленно набирает мощь, но почти непробиваем.",
+    "maxHp": 74,
+    "startingGold": 99,
+    "startingDeck": [
+      "en_bolt",
+      "en_bolt",
+      "en_bolt",
+      "en_bolt",
+      "en_bolt",
+      "en_plate",
+      "en_plate",
+      "en_plate",
+      "en_plate",
+      "en_wrench"
+    ],
+    "startingRelic": "r_toolkit"
   }
 ]

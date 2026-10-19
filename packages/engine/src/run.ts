@@ -2,7 +2,7 @@
  * Забег: newRun, applyAction, getLegalActions, replay.
  * applyAction — чистая функция: клонирует вход и мутирует только клон.
  */
-import { clampAscension, getAscensionMods, type AscensionMods } from './ascension';
+import { applyDifficulty, clampAscension, getAscensionMods, type AscensionMods } from './ascension';
 import { canUpgrade, needsEnemyTarget, resolveCard } from './cards';
 import {
   endTurn,
@@ -37,7 +37,7 @@ import { lockedContent } from './unlocks';
 import { makeCard } from './util';
 
 function modsOf(s: RunState): AscensionMods {
-  return getAscensionMods(s.ascension);
+  return applyDifficulty(getAscensionMods(s.ascension), s.difficulty);
 }
 
 function invalid(msg: string): never {
@@ -51,7 +51,7 @@ export function newRun(opts: NewRunOptions): RunState {
   const cls = content.classes.get(opts.classId);
   if (!cls) throw new Error(`Unknown class id: ${opts.classId}`);
   const ascension = clampAscension(opts.ascension);
-  const mods = getAscensionMods(ascension);
+  const mods = applyDifficulty(getAscensionMods(ascension), opts.difficulty);
   const maxHp = Math.max(1, cls.maxHp - Math.floor(cls.maxHp * mods.maxHpPenaltyPct));
 
   const s: RunState = {
@@ -59,6 +59,7 @@ export function newRun(opts: NewRunOptions): RunState {
     seed: opts.seed,
     classId: opts.classId,
     ascension,
+    ...(opts.difficulty && opts.difficulty !== 'normal' ? { difficulty: opts.difficulty } : {}),
     daily: opts.daily ?? false,
     act: 1,
     floor: 0,
