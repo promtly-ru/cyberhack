@@ -7,10 +7,10 @@ import { MemoryStorage } from './storage';
 export function fakeState(over: Partial<RunState> = {}): RunState {
   return {
     version: 1,
-    seed: 'daily-2026-10-18',
+    seed: '2026-W43',
     classId: 'ghost',
     ascension: 0,
-    daily: true,
+    weekly: '2026-W43',
     act: 1,
     floor: 7,
     hp: 40,

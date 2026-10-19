@@ -8,18 +8,18 @@ import type { Action, NewRunOptions, RunState } from '@cyberhack/engine';
 import type { AuthApi, Backend, LeaderboardApi, LeaderboardEntry, Profile, SavedRun, SavesApi, User } from './types';
 import { BackendNotConfiguredError } from './errors';
 import { createDeviceAccounts, type DeviceAccounts } from './device';
-import { CLASS_IDS, MAX_ASCENSION, defaultProfile, normalizeProfile, normalizeSavedRun } from './profile';
+import { CLASS_IDS, defaultProfile, normalizeProfile, normalizeSavedRun } from './profile';
 import { browserStorage, isRecord, readJson, removeKey, writeJson, type KeyValueStorage } from './storage';
 
 export type ReplayFn = (opts: NewRunOptions, actions: Action[]) => RunState;
 
 export const GUEST_PREFIX = 'cyberhack:guest:';
 export const GUEST_ID_KEY = `${GUEST_PREFIX}id`;
-export const DAILY_SEED_RE = /^daily-\d{4}-\d{2}-\d{2}$/;
+export const WEEKLY_SEED_RE = /^\d{4}-W\d{2}$/;
 /** Ограничения, общие с сервером (Edge Function отвергнет больше) */
-export const MAX_DAILY_ACTIONS = 20_000;
+export const MAX_WEEKLY_ACTIONS = 20_000;
 
-const LOCAL_DAILY_LIMIT = 300;
+const LOCAL_WEEKLY_LIMIT = 300;
 
 export interface LocalBackendOptions {
   storage?: KeyValueStorage;
@@ -137,20 +137,21 @@ export function createLocalSaves(storage: KeyValueStorage, prefix: string = GUES
 
 // ---------- Leaderboard ----------
 
-interface LocalDailyResult {
+interface LocalWeeklyResult {
   seed: string;
   classId: LeaderboardEntry['classId'];
   score: number;
   floor: number;
   victory: boolean;
+  durationS: number | null;
   createdAt: string;
 }
 
-function readDaily(storage: KeyValueStorage, key: string): LocalDailyResult[] {
+function readWeekly(storage: KeyValueStorage, key: string): LocalWeeklyResult[] {
   const raw = readJson(storage, key);
   if (!Array.isArray(raw)) return [];
   return raw.filter(
-    (r): r is LocalDailyResult =>
+    (r): r is LocalWeeklyResult =>
       isRecord(r) &&
       typeof r.seed === 'string' &&
       (CLASS_IDS as readonly unknown[]).includes(r.classId) &&
@@ -158,10 +159,10 @@ function readDaily(storage: KeyValueStorage, key: string): LocalDailyResult[] {
       typeof r.floor === 'number' &&
       typeof r.victory === 'boolean' &&
       typeof r.createdAt === 'string',
-  );
+  ).map((r) => ({ ...r, durationS: typeof r.durationS === 'number' ? r.durationS : null }));
 }
 
-function sortResults(rs: LocalDailyResult[]): LocalDailyResult[] {
+function sortResults(rs: LocalWeeklyResult[]): LocalWeeklyResult[] {
   return [...rs].sort((a, b) => b.score - a.score || a.createdAt.localeCompare(b.createdAt));
 }
 
@@ -171,15 +172,13 @@ export function scoreRun(
   seed: string,
   options: NewRunOptions,
   actions: Action[],
-): Pick<LocalDailyResult, 'classId' | 'score' | 'floor' | 'victory'> | null {
-  if (!DAILY_SEED_RE.test(seed) || options.seed !== seed) return null;
+): Pick<LocalWeeklyResult, 'classId' | 'score' | 'floor' | 'victory'> | null {
+  if (!WEEKLY_SEED_RE.test(seed) || options.seed !== seed) return null;
   if (!CLASS_IDS.includes(options.classId)) return null;
-  if (!Array.isArray(actions) || actions.length > MAX_DAILY_ACTIONS) return null;
-  const ascension = Math.trunc(options.ascension ?? 0);
-  if (!(ascension >= 0 && ascension <= MAX_ASCENSION)) return null;
+  if (!Array.isArray(actions) || actions.length > MAX_WEEKLY_ACTIONS) return null;
   let state: RunState;
   try {
-    state = replay({ seed, classId: options.classId, ascension, daily: true }, actions);
+    state = replay({ seed, classId: options.classId, ascension: 0, weekly: seed }, actions);
   } catch {
     return null;
   }
@@ -193,37 +192,40 @@ export function scoreRun(
   };
 }
 
-/** Локальная таблица собственных результатов (гость). Несколько попыток на сид разрешены — это тренировка. */
+function toEntry(r: LocalWeeklyResult, rank: number): LeaderboardEntry {
+  return { rank, displayName: 'Вы', classId: r.classId, score: r.score, floor: r.floor, victory: r.victory, durationS: r.durationS };
+}
+
+/** Локальная таблица собственных результатов (гость). В зачёт идёт лучшая попытка недели; лимит попыток держит профиль. */
 export function createLocalLeaderboard(
   storage: KeyValueStorage,
   replay: ReplayFn = engineReplay,
   now: () => Date = () => new Date(),
   prefix: string = GUEST_PREFIX,
 ): LeaderboardApi {
-  const key = `${prefix}daily`;
+  const key = `${prefix}weekly`;
+  const best = (seed: string): LocalWeeklyResult | undefined => sortResults(readWeekly(storage, key).filter((r) => r.seed === seed))[0];
   return {
-    async submitDaily(seed, options, actions) {
+    async submitWeekly(seed, options, actions, durationS) {
       const result = scoreRun(replay, seed, options, actions);
       if (!result) return { accepted: false };
-      const entry: LocalDailyResult = { seed, ...result, createdAt: now().toISOString() };
-      const all = [...readDaily(storage, key), entry];
-      // храним последние LOCAL_DAILY_LIMIT результатов
-      const trimmed = all.slice(-LOCAL_DAILY_LIMIT);
-      writeJson(storage, key, trimmed);
-      const rank = sortResults(trimmed.filter((r) => r.seed === seed)).indexOf(entry) + 1;
-      return { accepted: true, rank };
+      const entry: LocalWeeklyResult = {
+        seed,
+        ...result,
+        durationS: typeof durationS === 'number' && Number.isFinite(durationS) && durationS >= 0 ? Math.floor(durationS) : null,
+        createdAt: now().toISOString(),
+      };
+      // храним последние LOCAL_WEEKLY_LIMIT результатов
+      writeJson(storage, key, [...readWeekly(storage, key), entry].slice(-LOCAL_WEEKLY_LIMIT));
+      return { accepted: true, rank: 1 };
     },
-    async getDaily(seed, limit = 50) {
-      return sortResults(readDaily(storage, key).filter((r) => r.seed === seed))
-        .slice(0, Math.max(0, limit))
-        .map((r, i) => ({
-          rank: i + 1,
-          displayName: 'Вы',
-          classId: r.classId,
-          score: r.score,
-          floor: r.floor,
-          victory: r.victory,
-        }));
+    async getWeekly(seed, limit = 50) {
+      const b = best(seed);
+      return b && limit > 0 ? [toEntry(b, 1)] : [];
+    },
+    async getWeeklyMine(seed) {
+      const b = best(seed);
+      return b ? toEntry(b, 1) : null;
     },
   };
 }

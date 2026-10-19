@@ -1,4 +1,5 @@
-/** Тесты чистой логики Edge Function submit-daily (supabase/functions/_shared/daily.ts). */
+/** Тесты чистой логики Edge Function submit-weekly (supabase/functions/_shared/weekly.ts). */
+import { weeklySeed } from '@cyberhack/engine';
 import { describe, expect, it } from 'vitest';
 import {
   MAX_ACTIONS,
@@ -6,48 +7,55 @@ import {
   extractResult,
   isSeedAllowed,
   parsePayload,
-  type DailyOptions,
-} from '../../../../supabase/functions/_shared/daily';
+  type WeeklyOptions,
+  weeklySeedFor,
+} from '../../../../supabase/functions/_shared/weekly';
 
-describe('сид дня', () => {
-  it('днём принимается только сегодняшний', () => {
-    const now = new Date('2026-10-18T12:00:00Z');
-    expect(allowedSeeds(now)).toEqual(['daily-2026-10-18']);
-    expect(isSeedAllowed('daily-2026-10-18', now)).toBe(true);
-    expect(isSeedAllowed('daily-2026-10-17', now)).toBe(false);
-    expect(isSeedAllowed('daily-2026-10-19', now)).toBe(false);
+describe('сид недели', () => {
+  it('в середине недели принимается только текущая', () => {
+    const now = new Date('2026-10-20T12:00:00Z');
+    expect(allowedSeeds(now)).toEqual(['2026-W43']);
+    expect(isSeedAllowed('2026-W43', now)).toBe(true);
+    expect(isSeedAllowed('2026-W42', now)).toBe(false);
+    expect(isSeedAllowed('2026-W44', now)).toBe(false);
   });
 
-  it('в первые 2 часа UTC принимается и вчерашний', () => {
-    expect(isSeedAllowed('daily-2026-10-17', new Date('2026-10-18T01:59:59Z'))).toBe(true);
-    expect(isSeedAllowed('daily-2026-10-17', new Date('2026-10-18T02:00:00Z'))).toBe(false);
-    // переход через месяц/год
-    expect(allowedSeeds(new Date('2027-01-01T00:30:00Z'))).toEqual(['daily-2027-01-01', 'daily-2026-12-31']);
+  it('в первые 2 часа понедельника UTC принимается и прошлая неделя', () => {
+    expect(isSeedAllowed('2026-W43', new Date('2026-10-26T01:59:59Z'))).toBe(true);
+    expect(isSeedAllowed('2026-W43', new Date('2026-10-26T02:00:00Z'))).toBe(false);
+    expect(allowedSeeds(new Date('2027-01-04T00:30:00Z'))).toEqual(['2027-W01', '2026-W53']);
+  });
+
+  it('совпадает с weeklySeed движка', () => {
+    for (let d = 0; d < 400; d += 3) {
+      const date = new Date(Date.UTC(2025, 11, 1) + d * 86_400_000 + 5 * 3600_000);
+      expect(weeklySeedFor(date)).toBe(weeklySeed(date));
+    }
   });
 
   it('мусор в seed отвергается', () => {
-    const now = new Date('2026-10-18T12:00:00Z');
-    expect(isSeedAllowed("daily-2026-10-18' or 1=1", now)).toBe(false);
-    expect(isSeedAllowed('daily-2026-10-18\n', now)).toBe(false);
+    const now = new Date('2026-10-20T12:00:00Z');
+    expect(isSeedAllowed("2026-W43' or 1=1", now)).toBe(false);
+    expect(isSeedAllowed('2026-W43\n', now)).toBe(false);
   });
 });
 
 describe('parsePayload', () => {
-  const seed = 'daily-2026-10-18';
+  const seed = '2026-W43';
   const good = { seed, options: { seed, classId: 'ghost', ascension: 2 }, actions: [{ type: 'end_turn' }] };
 
-  it('собирает параметры забега на сервере (daily всегда true)', () => {
-    const r = parsePayload({ ...good, options: { ...good.options, daily: false, extra: 'x' } });
+  it('собирает параметры забега на сервере (weekly = seed, ascension 0)', () => {
+    const r = parsePayload({ ...good, options: { ...good.options, weekly: 'x', extra: 'y' } });
     expect(r).toEqual({
       ok: true,
-      value: { seed, options: { seed, classId: 'ghost', ascension: 2, daily: true }, actions: good.actions },
+      value: { seed, options: { seed, classId: 'ghost', ascension: 0, weekly: seed }, actions: good.actions, durationS: null },
     });
   });
 
   it.each([
     ['не объект', null],
     ['плохой seed', { ...good, seed: 'my-seed' }],
-    ['seed в options другой', { ...good, options: { ...good.options, seed: 'daily-2026-10-17' } }],
+    ['seed в options другой', { ...good, options: { ...good.options, seed: '2026-W42' } }],
     ['неизвестный класс', { ...good, options: { ...good.options, classId: 'admin' } }],
     ['ascension вне диапазона', { ...good, options: { ...good.options, ascension: 16 } }],
     ['дробный ascension', { ...good, options: { ...good.options, ascension: 1.5 } }],
@@ -61,7 +69,7 @@ describe('parsePayload', () => {
 });
 
 describe('extractResult', () => {
-  const opts: DailyOptions = { seed: 'daily-2026-10-18', classId: 'ghost', ascension: 0, daily: true };
+  const opts: WeeklyOptions = { seed: '2026-W43', classId: 'ghost', ascension: 0, weekly: '2026-W43' };
   const st = (over: object) => ({ seed: opts.seed, classId: 'ghost', status: 'won' as const, score: 100, floor: 51, ...over });
 
   it('берёт результат из пересчитанного состояния', () => {
@@ -74,7 +82,7 @@ describe('extractResult', () => {
 
   it('незавершённый или чужой забег отвергается', () => {
     expect(extractResult(st({ status: 'active' }), opts)).toEqual({ ok: false, reason: 'run_not_finished' });
-    expect(extractResult(st({ seed: 'daily-2026-10-17' }), opts)).toEqual({ ok: false, reason: 'invalid_run' });
+    expect(extractResult(st({ seed: '2026-W42' }), opts)).toEqual({ ok: false, reason: 'invalid_run' });
     expect(extractResult(st({ classId: 'netrunner' }), opts)).toEqual({ ok: false, reason: 'invalid_run' });
     expect(extractResult(st({ score: Number.NaN }), opts)).toEqual({ ok: false, reason: 'invalid_run' });
     expect(extractResult(st({ score: -1 }), opts)).toEqual({ ok: false, reason: 'invalid_run' });

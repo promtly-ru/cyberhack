@@ -16,7 +16,7 @@ values
 -- 1-3: RLS включён
 select ok((select relrowsecurity from pg_class where oid = 'public.profiles'::regclass), 'RLS on profiles');
 select ok((select relrowsecurity from pg_class where oid = 'public.saved_runs'::regclass), 'RLS on saved_runs');
-select ok((select relrowsecurity from pg_class where oid = 'public.daily_results'::regclass), 'RLS on daily_results');
+select ok((select relrowsecurity from pg_class where oid = 'public.weekly_results'::regclass), 'RLS on weekly_results');
 
 -- 4-5: триггер создал профили; имя не раскрывает ФИО/email
 select is((select count(*)::int from public.profiles
@@ -26,8 +26,8 @@ select is((select display_name from public.profiles where user_id = '11111111-11
           'Хакер-111111', 'email-пользователь получает анонимное имя');
 
 -- 6-7: view не раскрывает user_id и actions
-select hasnt_column('public', 'daily_leaderboard', 'user_id', 'view без user_id');
-select hasnt_column('public', 'daily_leaderboard', 'actions', 'view без actions');
+select hasnt_column('public', 'weekly_leaderboard', 'user_id', 'view без user_id');
+select hasnt_column('public', 'weekly_leaderboard', 'actions', 'view без actions');
 
 -- ---------- Алиса ----------
 set local role authenticated;
@@ -70,12 +70,12 @@ select throws_ok(
   $$ update public.saved_runs set state = jsonb_build_object('junk', repeat('x', 1100000)), updated_at = now() $$,
   '23514', null, 'слишком большой state отклонён');
 
--- 15-16: клиент не может писать и читать daily_results напрямую
+-- 15-16: клиент не может писать и читать weekly_results напрямую
 select throws_ok(
-  $$ insert into public.daily_results (user_id, seed, class_id, score, floor, victory, actions)
-     values ('11111111-1111-4111-8111-111111111111', 'daily-2026-01-01', 'ghost', 999999, 50, true, '[]') $$,
-  '42501', null, 'клиент не может вставить результат дня');
-select throws_ok($$ select * from public.daily_results $$, '42501', null, 'клиент не читает daily_results');
+  $$ insert into public.weekly_results (user_id, seed, attempt_no, class_id, score, floor, victory, actions)
+     values ('11111111-1111-4111-8111-111111111111', '2026-W01', 1, 'ghost', 999999, 50, true, '[]') $$,
+  '42501', null, 'клиент не может вставить результат недели');
+select throws_ok($$ select * from public.weekly_results $$, '42501', null, 'клиент не читает weekly_results');
 
 -- 17: нельзя менять чужой профиль (строк не затронуто)
 select is_empty(
@@ -116,28 +116,28 @@ select throws_ok($$ select * from public.profiles $$, '42501', null, 'anon не 
 -- ---------- Edge Function (service role) пишет результат ----------
 reset role;
 set local role service_role;
-insert into public.daily_results (user_id, seed, class_id, score, floor, victory, actions)
-values ('11111111-1111-4111-8111-111111111111', 'daily-2026-01-01', 'ghost', 500, 20, false, '[]'),
-       ('22222222-2222-4222-8222-222222222222', 'daily-2026-01-01', 'netrunner', 900, 51, true, '[]');
+insert into public.weekly_results (user_id, seed, attempt_no, class_id, score, floor, victory, actions)
+values ('11111111-1111-4111-8111-111111111111', '2026-W01', 1, 'ghost', 500, 20, false, '[]'),
+       ('22222222-2222-4222-8222-222222222222', '2026-W01', 1, 'netrunner', 900, 51, true, '[]');
 
--- 24: одна попытка на seed
+-- 24: попытка с тем же номером на seed отклонена
 select throws_ok(
-  $$ insert into public.daily_results (user_id, seed, class_id, score, floor, victory, actions)
-     values ('11111111-1111-4111-8111-111111111111', 'daily-2026-01-01', 'ghost', 9000, 51, true, '[]') $$,
-  '23505', null, 'вторая попытка на тот же seed отклонена');
+  $$ insert into public.weekly_results (user_id, seed, attempt_no, class_id, score, floor, victory, actions)
+     values ('11111111-1111-4111-8111-111111111111', '2026-W01', 1, 'ghost', 9000, 51, true, '[]') $$,
+  '23505', null, 'повтор attempt_no на тот же seed отклонён');
 
 -- ---------- Аноним читает таблицу лидеров ----------
 reset role;
 set local role anon;
 
 -- 25: видит обе строки
-select is((select count(*)::int from public.daily_leaderboard where seed = 'daily-2026-01-01'), 2,
+select is((select count(*)::int from public.weekly_leaderboard where seed = '2026-W01'), 2,
           'anon видит таблицу лидеров');
 
 -- 26: ранги и имена корректны
 select results_eq(
-  $$ select rank, display_name, score from public.daily_leaderboard
-     where seed = 'daily-2026-01-01' order by rank $$,
+  $$ select rank, display_name, score from public.weekly_leaderboard
+     where seed = '2026-W01' order by rank $$,
   $$ values (1, 'bob_gh'::text, 900), (2, 'Хакер-111111'::text, 500) $$,
   'ранги по score, имена из profiles');
 
@@ -145,8 +145,8 @@ reset role;
 
 -- 27: у клиентов на view только чтение
 select ok(
-  not has_table_privilege('anon', 'public.daily_leaderboard', 'INSERT, UPDATE, DELETE')
-  and not has_table_privilege('authenticated', 'public.daily_leaderboard', 'INSERT, UPDATE, DELETE'),
+  not has_table_privilege('anon', 'public.weekly_leaderboard', 'INSERT, UPDATE, DELETE')
+  and not has_table_privilege('authenticated', 'public.weekly_leaderboard', 'INSERT, UPDATE, DELETE'),
   'view только для чтения');
 
 select * from finish();

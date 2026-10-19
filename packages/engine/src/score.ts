@@ -3,6 +3,7 @@
  * + бонус за HP при победе (1 очко за единицу HP).
  */
 import { mutatorScoreMult } from './mutators';
+import { weeklyScoreMult } from './weekly';
 import type { RunState } from './types';
 
 export const SCORE = {
@@ -16,7 +17,7 @@ export const SCORE = {
 
 export function computeScore(s: RunState): number {
   const won = s.status === 'won';
-  const mult = mutatorScoreMult(s.mutators);
+  const mult = mutatorScoreMult(s.mutators) * (s.weekly ? weeklyScoreMult(s.weekly) : 1);
   const base =
     s.floor * SCORE.perFloor +
     s.stats.elitesKilled * SCORE.perElite +

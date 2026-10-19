@@ -34,7 +34,7 @@ enabled = false
 client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 
-[functions.submit-daily]
+[functions.submit-weekly]
 # JWT проверяется внутри функции через auth.getUser(token) — это работает и со старыми
 # (JWT secret), и с новыми ключами (publishable/secret). Шлюз не дублирует проверку.
 verify_jwt = false

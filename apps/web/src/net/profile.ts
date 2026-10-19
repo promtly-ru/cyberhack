@@ -3,7 +3,7 @@
  * (перенос гостевого прогресса в облако, конфликт двух устройств).
  */
 import type { ClassId, LifetimeStats } from '@cyberhack/engine';
-import type { Profile, SavedRun } from './types';
+import type { Profile, SavedRun, WeeklyProgress } from './types';
 import { isRecord } from './storage';
 
 export const CLASS_IDS: readonly ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono'];
@@ -56,16 +56,33 @@ export function normalizeProfile(raw: unknown): Profile {
     achievements: stringList(raw.achievements),
     totalRuns: count(raw.totalRuns),
     totalWins: count(raw.totalWins),
-    ...optional(normalizeLifetime(raw.lifetime), typeof raw.dailyPlayed === 'string' && DAILY_RE.test(raw.dailyPlayed) ? raw.dailyPlayed : undefined),
+    ...optional(normalizeLifetime(raw.lifetime), normalizeWeekly(raw.weekly), normalizeTitles(raw.titles)),
   };
 }
 
 /** Опциональные поля добавляются только если есть (старые профили не меняют форму). */
-function optional(lifetime: LifetimeStats | undefined, dailyPlayed: string | undefined): Pick<Profile, 'lifetime' | 'dailyPlayed'> {
-  return { ...(lifetime ? { lifetime } : {}), ...(dailyPlayed ? { dailyPlayed } : {}) };
+function optional(
+  lifetime: LifetimeStats | undefined,
+  weekly: WeeklyProgress | undefined,
+  titles: string[] | undefined,
+): Pick<Profile, 'lifetime' | 'weekly' | 'titles'> {
+  return { ...(lifetime ? { lifetime } : {}), ...(weekly ? { weekly } : {}), ...(titles && titles.length > 0 ? { titles } : {}) };
 }
 
-const DAILY_RE = /^daily-\d{4}-\d{2}-\d{2}$/;
+const WEEK_RE = /^\d{4}-W\d{2}$/;
+const MAX_WEEKLY_ATTEMPTS = 3;
+
+function normalizeWeekly(v: unknown): WeeklyProgress | undefined {
+  if (!isRecord(v) || typeof v.seed !== 'string' || !WEEK_RE.test(v.seed)) return undefined;
+  const n = typeof v.attempts === 'number' && Number.isFinite(v.attempts) ? Math.trunc(v.attempts) : 0;
+  return { seed: v.seed, attempts: Math.min(MAX_WEEKLY_ATTEMPTS, Math.max(0, n)) };
+}
+
+function normalizeTitles(v: unknown): string[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const out = v.filter((x): x is string => typeof x === 'string' && x.length > 0 && x.length <= 40).slice(0, 200);
+  return out.length > 0 ? [...new Set(out)].sort() : undefined;
+}
 
 function normalizeLifetime(v: unknown): LifetimeStats | undefined {
   if (!isRecord(v)) return undefined;
@@ -87,10 +104,11 @@ function mergeLifetime(a: LifetimeStats | undefined, b: LifetimeStats | undefine
   return out as LifetimeStats;
 }
 
-function maxDaily(a: string | undefined, b: string | undefined): string | undefined {
-  if (!a) return b;
-  if (!b) return a;
-  return a > b ? a : b;
+function mergeWeekly(a: WeeklyProgress | undefined, b: WeeklyProgress | undefined): WeeklyProgress | undefined {
+  if (!a) return b ? { ...b } : undefined;
+  if (!b) return { ...a };
+  if (a.seed === b.seed) return { seed: a.seed, attempts: Math.max(a.attempts, b.attempts) };
+  return { ...(a.seed > b.seed ? a : b) };
 }
 
 function union<T>(a: readonly T[], b: readonly T[]): T[] {
@@ -110,7 +128,7 @@ export function mergeProfiles(a: Profile, b: Profile): Profile {
     achievements: sorted(union(a.achievements, b.achievements)),
     totalRuns: Math.max(a.totalRuns, b.totalRuns),
     totalWins: Math.max(a.totalWins, b.totalWins),
-    ...optional(mergeLifetime(a.lifetime, b.lifetime), maxDaily(a.dailyPlayed, b.dailyPlayed)),
+    ...optional(mergeLifetime(a.lifetime, b.lifetime), mergeWeekly(a.weekly, b.weekly), normalizeTitles([...(a.titles ?? []), ...(b.titles ?? [])])),
   };
 }
 

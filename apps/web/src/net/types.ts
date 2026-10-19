@@ -24,8 +24,15 @@ export interface Profile {
   // ---- Расширения (опциональные) ----
   /** Накопительная статистика и рекорды для достижений (слияние — максимум по ключу) */
   lifetime?: LifetimeStats;
-  /** Сид последнего начатого ежедневного забега ('daily-YYYY-MM-DD'): одна попытка в день */
-  dailyPlayed?: string;
+  /** Еженедельный вызов: id недели ('2026-W43') и сколько из 3 попыток начато */
+  weekly?: WeeklyProgress;
+  /** Эксклюзивные титулы (например «Чемпион W43») */
+  titles?: string[];
+}
+
+export interface WeeklyProgress {
+  seed: string;
+  attempts: number;
 }
 
 export interface SavedRun {
@@ -42,6 +49,18 @@ export interface LeaderboardEntry {
   score: number;
   floor: number;
   victory: boolean;
+  /** Длительность забега, сек (если известна) */
+  durationS?: number | null;
+}
+
+export interface SubmitWeeklyResult {
+  accepted: boolean;
+  rank?: number;
+  /** Номер использованной попытки (1..3) */
+  attempt?: number;
+  attemptsLeft?: number;
+  /** Причина отказа сервера: attempts_exhausted, seed_not_active, ... */
+  reason?: string;
 }
 
 export interface AuthApi {
@@ -67,8 +86,11 @@ export interface SavesApi {
 
 export interface LeaderboardApi {
   /** Сервер пересчитывает забег через replay() и только потом записывает результат */
-  submitDaily(seed: string, options: NewRunOptions, actions: Action[]): Promise<{ accepted: boolean; rank?: number }>;
-  getDaily(seed: string, limit?: number): Promise<LeaderboardEntry[]>;
+  submitWeekly(seed: string, options: NewRunOptions, actions: Action[], durationS?: number): Promise<SubmitWeeklyResult>;
+  /** Топ недели: одна строка на игрока (лучшая попытка) */
+  getWeekly(seed: string, limit?: number): Promise<LeaderboardEntry[]>;
+  /** Своя строка в таблице недели (null — не играл или гость без входа) */
+  getWeeklyMine(seed: string): Promise<LeaderboardEntry | null>;
 }
 
 /** Офлайн-профиль на этом устройстве (без PIN-хеша — он не покидает net/). */

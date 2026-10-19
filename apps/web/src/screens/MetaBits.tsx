@@ -1,9 +1,23 @@
 /**
- * Общие куски UI метапрогрессии: ачивки, разблокировки, ascension, таблица дня.
+ * Общие куски UI метапрогрессии: ачивки, разблокировки, ascension, таблица недели.
  */
 import { useEffect, useState } from 'react';
 import type { AchievementDef, ClassId, Unlock } from '../game/engine';
-import { ACHIEVEMENTS, achievementProgress, getAchievement, getAscensionDescriptions, getCardDef, tryRelicDef } from '../game/engine';
+import {
+  ACHIEVEMENTS,
+  achievementProgress,
+  getAchievement,
+  getAscensionDescriptions,
+  getCardDef,
+  getMutator,
+  prevWeeklySeed,
+  tryRelicDef,
+  weeklyMutatorIds,
+  weeklyResetAt,
+  weeklyRule,
+  weeklyScoreMult,
+  weeklySeed,
+} from '../game/engine';
 import { getBackend } from '../game/backend';
 import type { LeaderboardEntry, Profile } from '../net/types';
 import { Icon } from '../components/Icon';
@@ -146,37 +160,167 @@ export function AscensionInfo({ level }: { level: number }) {
   );
 }
 
-/** Таблица лидеров дня; reloadKey — перезапросить (например, после отправки результата). */
-export function DailyBoard({ seed, limit = 10, reloadKey }: { seed: string; limit?: number; reloadKey?: unknown }) {
+function useNow(intervalMs: number): Date {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+  return now;
+}
+
+/** '2д 03:15:09' до момента сброса. */
+export function formatCountdown(ms: number): string {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(s / 86400);
+  const hh = String(Math.floor((s % 86400) / 3600)).padStart(2, '0');
+  const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+  const ss = String(s % 60).padStart(2, '0');
+  return `${d > 0 ? `${d}д ` : ''}${hh}:${mm}:${ss}`;
+}
+
+/** Время забега: '12:05' или '1:02:05'. */
+export function formatDuration(sec: number | null | undefined): string {
+  if (sec === null || sec === undefined) return '—';
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  const ss = String(s).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
+}
+
+/** Номер недели из id: '2026-W43' -> 'W43'. */
+export function weekLabel(seed: string): string {
+  return `W${seed.split('-W')[1] ?? seed}`;
+}
+
+/** Мутаторы, правило недели и множитель очков. */
+export function WeeklyRules({ seed }: { seed: string }) {
+  const ids = weeklyMutatorIds(seed);
+  const rule = weeklyRule(seed);
+  const mult = weeklyScoreMult(seed);
+  const items = ids.slice(0, -1).map((id) => getMutator(id)).filter((m): m is NonNullable<typeof m> => !!m);
+  return (
+    <ul className="weekly-rules" aria-label="Правила недели">
+      <li className="weekly-rules__rule" data-testid="weekly-rule">
+        <b>Правило недели: {rule.name}</b>
+        <small>{rule.description}</small>
+      </li>
+      {items.map((m) => (
+        <li key={m.id}>
+          <b>{m.name}</b>
+          <small>{m.description}</small>
+        </li>
+      ))}
+      <li>
+        <b>Множитель очков ×{mult.toFixed(2)}</b>
+        <small>Применяется к очкам вызова вместе с бонусами мутаторов.</small>
+      </li>
+    </ul>
+  );
+}
+
+/** Таймер до сброса недели. */
+export function WeeklyTimer({ seed }: { seed: string }) {
+  const now = useNow(1000);
+  const reset = weeklyResetAt(now);
+  return (
+    <span className="weekly-timer mono" data-testid="weekly-timer" title={`Неделя ${seed} закончится в понедельник 00:00 UTC`}>
+      <Icon name="calendar" size={14} /> до сброса {formatCountdown(reset.getTime() - now.getTime())}
+    </span>
+  );
+}
+
+function Row({ r, mine }: { r: LeaderboardEntry; mine?: boolean }) {
+  return (
+    <li className={`wb-row${mine ? ' is-mine' : ''}`} data-testid={mine ? 'wb-mine' : undefined}>
+      <span className={`wb-rank mono${r.rank <= 3 ? ` medal medal--${r.rank}` : ''}`}>{r.rank <= 3 ? r.rank : `#${r.rank}`}</span>
+      <span className="wb-name">{mine ? `${r.displayName} (вы)` : r.displayName}</span>
+      <span className="wb-class muted">{CLASS_NAME[r.classId] ?? r.classId}</span>
+      <span className="wb-score mono">{r.score}</span>
+      <span className="wb-floor mono muted">{r.floor}</span>
+      <span className="wb-time mono muted">{formatDuration(r.durationS)}</span>
+    </li>
+  );
+}
+
+/**
+ * Таблица недели: топ-50, медали, своя строка (внизу, если вне топа), вкладки «Эта / Прошлая неделя».
+ * reloadKey — перезапросить (например, после отправки результата).
+ */
+export function WeeklyBoard({ limit = 50, reloadKey, showRules = true }: { limit?: number; reloadKey?: unknown; showRules?: boolean }) {
+  const now = new Date();
+  const thisWeek = weeklySeed(now);
+  const [tab, setTab] = useState<'this' | 'prev'>('this');
+  const seed = tab === 'this' ? thisWeek : prevWeeklySeed(now);
   const [board, setBoard] = useState<LeaderboardEntry[] | null>(null);
+  const [mine, setMine] = useState<LeaderboardEntry | null>(null);
   const [offline, setOffline] = useState(false);
   useEffect(() => {
     let alive = true;
     setBoard(null);
+    setMine(null);
     void getBackend()
-      .then((b) => {
+      .then(async (b) => {
         if (alive) setOffline(b.mode !== 'supabase');
-        return b.leaderboard.getDaily(seed, limit);
+        const [rows, me] = await Promise.all([b.leaderboard.getWeekly(seed, limit), b.leaderboard.getWeeklyMine(seed).catch(() => null)]);
+        if (alive) {
+          setBoard(rows);
+          setMine(me);
+        }
       })
-      .then((rows) => alive && setBoard(rows))
       .catch(() => alive && setBoard([]));
     return () => {
       alive = false;
     };
   }, [seed, limit, reloadKey]);
 
-  if (board === null) return <p className="muted">Загрузка…</p>;
-  if (board.length === 0) return <p className="muted">Пока пусто. {offline ? 'Таблица доступна онлайн.' : 'Будьте первым!'}</p>;
+  const isMine = (r: LeaderboardEntry): boolean => !!mine && r.rank === mine.rank && r.displayName === mine.displayName;
+  const inTop = (board ?? []).some(isMine);
   return (
-    <ol className="board">
-      {board.map((r) => (
-        <li key={`${r.rank}-${r.displayName}`}>
-          <span className="mono">#{r.rank}</span>
-          <span>{r.displayName}</span>
-          <span className="muted">{CLASS_NAME[r.classId] ?? r.classId}</span>
-          <span className="mono">{r.score}</span>
-        </li>
-      ))}
-    </ol>
+    <section className="weekly-board" data-testid="weekly-board" aria-label="Рейтинг недели">
+      <header className="weekly-board__head">
+        <h3 className="weekly-board__title">
+          Неделя {weekLabel(seed)} <small className="muted">{seed}</small>
+        </h3>
+        {tab === 'this' ? <WeeklyTimer seed={seed} /> : <span className="weekly-timer muted">неделя завершена</span>}
+      </header>
+      <div className="weekly-tabs" role="tablist" aria-label="Неделя">
+        <button role="tab" aria-selected={tab === 'this'} className={tab === 'this' ? 'is-active' : undefined} data-testid="wb-tab-this" onClick={() => setTab('this')}>
+          Эта неделя
+        </button>
+        <button role="tab" aria-selected={tab === 'prev'} className={tab === 'prev' ? 'is-active' : undefined} data-testid="wb-tab-prev" onClick={() => setTab('prev')}>
+          Прошлая неделя
+        </button>
+      </div>
+      {showRules ? <WeeklyRules seed={seed} /> : null}
+      {board === null ? (
+        <p className="muted">Загрузка…</p>
+      ) : board.length === 0 ? (
+        <p className="muted">Пока пусто. {offline ? 'Общая таблица доступна онлайн.' : 'Будьте первым!'}</p>
+      ) : (
+        <>
+          <div className="wb-head" aria-hidden="true">
+            <span>№</span>
+            <span>Ник</span>
+            <span className="wb-class">Класс</span>
+            <span className="wb-score">Очки</span>
+            <span className="wb-floor">Этаж</span>
+            <span className="wb-time">Время</span>
+          </div>
+          <ol className="wb-list">
+            {board.map((r) => (
+              <Row key={`${r.rank}-${r.displayName}`} r={r} mine={isMine(r)} />
+            ))}
+          </ol>
+          {mine && !inTop ? (
+            <ol className="wb-list wb-list--mine" aria-label="Ваше место">
+              <li className="wb-gap muted" aria-hidden="true">...</li>
+              <Row r={mine} mine />
+            </ol>
+          ) : null}
+        </>
+      )}
+    </section>
   );
 }

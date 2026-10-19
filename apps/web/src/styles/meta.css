@@ -34,6 +34,36 @@
 .class-card.is-locked .class-card__lock { background: rgba(5, 6, 15, 0.85); }
 .class-card__lock small { display: block; font-size: 13px; color: var(--text); max-width: 240px; }
 
-.daily-info { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
-.daily-board { width: min(520px, 100%); margin: 0 auto; }
-.gameover .daily-board { width: 100%; }
+
+/* ---------- Еженедельный вызов ---------- */
+.weekly-info { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
+.weekly-board { width: min(640px, 100%); margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.gameover .weekly-board { width: 100%; }
+.weekly-board__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.weekly-board__title { margin: 0; font-size: 18px; color: var(--text); }
+.weekly-timer { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--orange); }
+.weekly-tabs { display: flex; gap: 6px; }
+.weekly-tabs button { flex: 1; padding: 8px 12px; border-radius: var(--radius); border: 1px solid rgba(255, 255, 255, 0.15); background: transparent; color: var(--text-dim); font: inherit; cursor: pointer; }
+.weekly-tabs button.is-active { color: var(--text); border-color: var(--orange); background: rgba(255, 150, 40, 0.1); font-weight: 700; }
+.weekly-rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; text-align: left; }
+.weekly-rules li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: var(--radius); background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); }
+.weekly-rules li small { color: var(--text-dim); }
+.weekly-rules .weekly-rules__rule { border-color: var(--orange); background: rgba(255, 150, 40, 0.08); }
+.wb-head, .wb-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 120px 64px 48px 64px; gap: 8px; align-items: center; font-size: 14px; }
+.wb-head { padding: 0 10px; font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+.wb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.wb-row { padding: 7px 10px; border-radius: var(--radius); background: rgba(255, 255, 255, 0.03); }
+.wb-row.is-mine { background: rgba(61, 255, 138, 0.12); border: 1px solid rgba(61, 255, 138, 0.5); font-weight: 700; }
+.wb-name, .wb-class { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wb-score, .wb-floor, .wb-time { text-align: right; }
+.wb-gap { text-align: center; line-height: 1; }
+.wb-list--mine { margin-top: 2px; }
+.medal { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-weight: 800; color: #05060f; }
+.medal--1 { background: #ffd54a; box-shadow: 0 0 8px rgba(255, 213, 74, 0.6); }
+.medal--2 { background: #cfd8e3; }
+.medal--3 { background: #d98b4a; }
+@media (max-width: 480px) {
+  .wb-head, .wb-row { grid-template-columns: 36px minmax(0, 1fr) 84px 60px; gap: 6px; font-size: 13px; }
+  .wb-head .wb-floor, .wb-head .wb-time, .wb-row .wb-floor, .wb-row .wb-time { display: none; }
+}
+.title-chip { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--orange); color: var(--orange); font-size: 13px; }

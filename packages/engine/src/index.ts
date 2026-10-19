@@ -4,7 +4,7 @@
  */
 import { describeCard as describeCardImpl } from './cards';
 import { getContent } from './content';
-import { hashString } from './rng';
+import { weeklyClassId } from './weekly';
 import {
   applyAction as applyActionImpl,
   getLegalActions as getLegalActionsImpl,
@@ -40,7 +40,7 @@ export { availableNodes, blackboxForceCost, blackboxHackCost, canUsePotionNow, c
 export { MAX_SHOP_REFRESHES } from './rewards';
 export { POTIONS, POTION_SLOTS, getPotion } from './potions';
 export type { PotionDef } from './potions';
-export { MUTATORS, getMutator } from './mutators';
+export { MUTATORS, WEEKLY_RULES, getMutator, getWeeklyRule } from './mutators';
 export type { MutatorDef } from './mutators';
 export { calcAttackDamage, calcBlock, STATUS } from './statuses';
 export { hashString } from './rng';
@@ -117,14 +117,9 @@ export function listClasses(): ClassDef[] {
   return [...getContent().data.classes];
 }
 
-/** Ежедневный сид по дате UTC: 'daily-2026-10-18'. */
-export function dailySeed(date: Date): string {
-  return `daily-${date.toISOString().slice(0, 10)}`;
+/** Класс еженедельного вызова: детерминированно по id недели, одинаковый у всех игроков. */
+export function weeklyClass(seed: string): ClassId {
+  return weeklyClassId(seed, getContent().data.classes.map((c) => c.id)) as ClassId;
 }
 
-/** Класс ежедневного забега: детерминированно по сиду дня, одинаковый у всех игроков. */
-export function dailyClassId(seed: string): ClassId {
-  const classes = getContent().data.classes;
-  if (classes.length === 0) throw new Error('Content has no classes');
-  return classes[hashString(`${seed}:class`) % classes.length]!.id;
-}
+export * from './weekly';

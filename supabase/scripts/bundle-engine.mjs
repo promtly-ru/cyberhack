@@ -44,9 +44,9 @@ await build({
 const dts = `// СГЕНЕРИРОВАНО supabase/scripts/bundle-engine.mjs
 export interface EngineRunOptions {
   seed: string;
-  classId: 'netrunner' | 'phreaker' | 'ghost';
+  classId: string;
   ascension?: number;
-  daily?: boolean;
+  weekly?: string;
 }
 export interface EngineRunState {
   seed: string;
@@ -57,7 +57,8 @@ export interface EngineRunState {
   [key: string]: unknown;
 }
 export declare function replay(opts: EngineRunOptions, actions: unknown[]): EngineRunState;
-export declare function dailySeed(date: Date): string;
+export declare function weeklySeed(date: Date): string;
+export declare function weeklyClass(seed: string): string;
 export declare class InvalidActionError extends Error {
   constructor(message: string);
 }

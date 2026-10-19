@@ -53,8 +53,9 @@ export function createStubBackend(): Backend {
       },
     },
     leaderboard: {
-      submitDaily: async () => ({ accepted: false }),
-      getDaily: async () => [],
+      submitWeekly: async () => ({ accepted: false }),
+      getWeekly: async () => [],
+      getWeeklyMine: async () => null,
     },
   };
 }

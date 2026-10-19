@@ -170,7 +170,7 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
   .stat--floor .dim { display: none; }
   .topbar__actions { gap: 4px; }
   .icon-btn { padding: 0 6px; }
-  .stat--daily { display: none; }
+  .stat--weekly { display: none; }
   .icon-btn { min-width: 40px; height: 40px; }
 }
 

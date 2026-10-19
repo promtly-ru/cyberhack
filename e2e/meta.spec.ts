@@ -21,17 +21,30 @@ test('профиль открывается, достижения видны', a
   await expect(page.getByTestId('menu')).toBeVisible();
 });
 
-test('ежедневный забег стартует', async ({ page, act }) => {
+test('еженедельный вызов стартует, попытка списывается', async ({ page, act }) => {
   await page.goto('./');
-  await act(page.getByTestId('menu-daily'));
-  await expect(page.getByTestId('daily-select')).toBeVisible();
-  const start = page.getByTestId('start-daily');
+  await act(page.getByTestId('menu-weekly'));
+  await expect(page.getByTestId('weekly-select')).toBeVisible();
+  await expect(page.getByTestId('weekly-attempts')).toContainText('3 из 3');
+  await expect(page.getByTestId('weekly-board')).toBeVisible();
+  await expect(page.getByTestId('weekly-rule')).toBeVisible();
+  await expect(page.getByTestId('weekly-timer')).toContainText('до сброса');
+  const start = page.getByTestId('start-weekly');
   await expect(start).toBeEnabled();
   await act(start);
   await expect(page.getByTestId('map')).toBeVisible();
-  // Попытка засчитана: в меню ежедневный помечен как сыгранный, забег сохранён
+  // Попытка засчитана: в меню видно 2 из 3, забег сохранён
   await expect.poll(() => savedActions(page)).toBeGreaterThanOrEqual(0);
   await page.reload();
-  await expect(page.getByTestId('menu-daily')).toContainText('сыгран');
+  await expect(page.getByTestId('menu-weekly')).toContainText('попыток 2/3');
   await expect(page.getByTestId('menu-continue')).toBeEnabled();
+});
+
+test('рейтинг недели: вкладки переключаются', async ({ page, act }) => {
+  await page.goto('./');
+  await act(page.getByTestId('menu-weekly'));
+  await act(page.getByTestId('wb-tab-prev'));
+  await expect(page.getByTestId('weekly-board')).toContainText('неделя завершена');
+  await act(page.getByTestId('wb-tab-this'));
+  await expect(page.getByTestId('weekly-timer')).toBeVisible();
 });

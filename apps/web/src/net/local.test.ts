@@ -5,7 +5,7 @@ import { MemoryStorage, StorageWriteError, type KeyValueStorage } from './storag
 import { defaultProfile } from './profile';
 import { FullStorage, fakeReplay, fakeRun } from './test-helpers';
 
-const SEED = 'daily-2026-10-18';
+const SEED = '2026-W43';
 
 describe('local auth', () => {
   it('гость со стабильным id из хранилища', async () => {
@@ -130,18 +130,18 @@ describe('local leaderboard', () => {
   it('результат считается через replay, а не берётся у клиента', async () => {
     const replay = fakeReplay({ status: 'won', score: 1234, floor: 51 });
     const { leaderboard } = createLocalBackend({ storage: new MemoryStorage(), replay, now });
-    const res = await leaderboard.submitDaily(SEED, { ...opts, ascension: 3 }, [{ type: 'end_turn' }]);
+    const res = await leaderboard.submitWeekly(SEED, { ...opts, ascension: 3 }, [{ type: 'end_turn' }]);
     expect(res).toEqual({ accepted: true, rank: 1 });
-    expect(replay.calls[0]![0]).toEqual({ seed: SEED, classId: 'ghost', ascension: 3, daily: true });
-    expect(await leaderboard.getDaily(SEED)).toEqual([
-      { rank: 1, displayName: 'Вы', classId: 'ghost', score: 1234, floor: 51, victory: true },
+    expect(replay.calls[0]![0]).toEqual({ seed: SEED, classId: 'ghost', ascension: 0, weekly: SEED });
+    expect(await leaderboard.getWeekly(SEED)).toEqual([
+      { rank: 1, displayName: 'Вы', classId: 'ghost', score: 1234, floor: 51, victory: true, durationS: null },
     ]);
   });
 
   it('незавершённый, сломанный или чужой забег не принимается', async () => {
     const storage = new MemoryStorage();
     const active = createLocalBackend({ storage, replay: fakeReplay({ status: 'active' }), now });
-    expect(await active.leaderboard.submitDaily(SEED, opts, [])).toEqual({ accepted: false });
+    expect(await active.leaderboard.submitWeekly(SEED, opts, [])).toEqual({ accepted: false });
 
     const crashing = createLocalBackend({
       storage,
@@ -150,27 +150,25 @@ describe('local leaderboard', () => {
       },
       now,
     });
-    expect(await crashing.leaderboard.submitDaily(SEED, opts, [])).toEqual({ accepted: false });
+    expect(await crashing.leaderboard.submitWeekly(SEED, opts, [])).toEqual({ accepted: false });
 
     const ok = createLocalBackend({ storage, replay: fakeReplay({ status: 'lost', score: 5 }), now });
-    expect(await ok.leaderboard.submitDaily('my-seed', { ...opts, seed: 'my-seed' }, [])).toEqual({ accepted: false });
-    expect(await ok.leaderboard.submitDaily(SEED, { ...opts, seed: 'daily-2020-01-01' }, [])).toEqual({ accepted: false });
-    expect(await ok.leaderboard.submitDaily(SEED, { ...opts, ascension: 99 }, [])).toEqual({ accepted: false });
-    expect(await ok.leaderboard.getDaily(SEED)).toEqual([]);
+    expect(await ok.leaderboard.submitWeekly('my-seed', { ...opts, seed: 'my-seed' }, [])).toEqual({ accepted: false });
+    expect(await ok.leaderboard.submitWeekly(SEED, { ...opts, seed: '2020-W01' }, [])).toEqual({ accepted: false });
+    expect(await ok.leaderboard.getWeekly(SEED)).toEqual([]);
   });
 
-  it('несколько своих попыток сортируются по очкам', async () => {
+  it('несколько своих попыток: в зачёт идёт лучшая', async () => {
     const storage = new MemoryStorage();
     const mk = (score: number) =>
       createLocalBackend({ storage, replay: fakeReplay({ status: 'lost', score }), now }).leaderboard;
-    expect(await mk(100).submitDaily(SEED, opts, [])).toEqual({ accepted: true, rank: 1 });
-    expect(await mk(300).submitDaily(SEED, opts, [])).toEqual({ accepted: true, rank: 1 });
-    expect(await mk(200).submitDaily(SEED, opts, [])).toEqual({ accepted: true, rank: 2 });
-    const board = await mk(0).getDaily(SEED, 2);
-    expect(board.map((e) => [e.rank, e.score])).toEqual([
-      [1, 300],
-      [2, 200],
-    ]);
-    expect(await mk(0).getDaily('daily-2026-10-17')).toEqual([]);
+    expect(await mk(100).submitWeekly(SEED, opts, [])).toEqual({ accepted: true, rank: 1 });
+    expect(await mk(300).submitWeekly(SEED, opts, [])).toEqual({ accepted: true, rank: 1 });
+    expect(await mk(200).submitWeekly(SEED, opts, [], 90)).toEqual({ accepted: true, rank: 1 });
+    const board = await mk(0).getWeekly(SEED, 5);
+    expect(board.map((e) => [e.rank, e.score])).toEqual([[1, 300]]);
+    expect((await mk(0).getWeeklyMine(SEED))?.score).toBe(300);
+    expect(await mk(0).getWeekly('2026-W42')).toEqual([]);
+    expect(await mk(0).getWeeklyMine('2026-W42')).toBeNull();
   });
 });

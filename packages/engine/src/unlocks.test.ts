@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { runBot } from './__fixtures__/helpers';
 import { getAscensionMods } from './ascension';
 import { getContent, resetContent } from './content';
-import { dailyClassId, dailySeed } from './index';
+import { weeklyClass, weeklyMutatorIds, weeklyRule, weeklyScoreMult, weeklySeed } from './index';
 import { buildCombatRewards, buildShop, rewardCardPool, rollBossRelic, rollRelic } from './rewards';
 import { rngOf } from './rng';
 import { applyAction, newRun, replay } from './run';
@@ -163,17 +163,29 @@ describe('детерминизм с unlocked', () => {
     expect(full).toEqual(state);
   });
 
-  it('dailyClassId детерминирован и даёт существующий класс', () => {
-    const seed = dailySeed(new Date('2026-10-18T12:00:00Z'));
-    expect(dailyClassId(seed)).toBe(dailyClassId(seed));
+  it('неделя детерминированно задаёт класс, мутаторы, правило и множитель', () => {
+    const seed = weeklySeed(new Date('2026-10-20T12:00:00Z'));
+    expect(weeklyClass(seed)).toBe(weeklyClass(seed));
+    expect(weeklyMutatorIds(seed)).toEqual(weeklyMutatorIds(seed));
+    expect(weeklyRule(seed).id).toBe(weeklyRule(seed).id);
     const ids = getContent().data.classes.map((c) => c.id);
-    const seen = new Set<string>();
-    for (let d = 1; d <= 28; d++) {
-      const id = dailyClassId(`daily-2026-02-${String(d).padStart(2, '0')}`);
+    const classes = new Set<string>();
+    const rules = new Set<string>();
+    for (let w = 1; w <= 52; w++) {
+      const s = `2026-W${String(w).padStart(2, '0')}`;
+      const id = weeklyClass(s);
       expect(ids).toContain(id);
-      seen.add(id);
+      classes.add(id);
+      rules.add(weeklyRule(s).id);
+      const m = weeklyMutatorIds(s);
+      expect(m).toHaveLength(3);
+      expect(new Set(m).size).toBe(3);
+      const k = weeklyScoreMult(s);
+      expect(k).toBeGreaterThanOrEqual(1);
+      expect(k).toBeLessThanOrEqual(1.2001);
     }
-    expect(seen.size).toBeGreaterThan(1);
+    expect(classes.size).toBeGreaterThan(1);
+    expect(rules.size).toBeGreaterThan(1);
   });
 });
 

@@ -620,7 +620,7 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   if (isOver(ctx)) return;
   // Ход 1: все врождённые карты (они наверху добора) попадают в руку, даже если их больше 5
   const innate = c.turn === 1 ? c.drawPile.filter((card) => resolveCard(card.defId, card.upgraded).innate).length : 0;
-  drawCards(ctx, Math.max(DRAW_PER_TURN, innate));
+  drawCards(ctx, Math.max(DRAW_PER_TURN + getMutatorMods(ctx.s.mutators).bonusDraw, innate));
   if (c.turn === 1) {
     triggerRelics(ctx, 'combat_start');
     applySynergies(ctx);

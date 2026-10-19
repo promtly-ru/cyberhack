@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import type { Action, ClassId, Difficulty, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
 import { applyAction, evaluateRunEnd, newRun } from './engine';
-import { dailyRunOptions, hasPlayedDaily, markDailyLocal, regularRunOptions } from './meta';
-import type { Backend, DeviceProfile, Profile, SavedRun, User } from '../net/types';
+import { markWeeklyLocal, regularRunOptions, weeklyAttemptsLeft, weeklyRunOptions, withWeeklyAttempt, withWeeklyTitle } from './meta';
+import type { Backend, DeviceProfile, Profile, SavedRun, SubmitWeeklyResult, User } from '../net/types';
 import { defaultProfile, getBackend, peekBackend } from './backend';
 import { sfx } from '../audio/sfx';
 import { animScale } from '../ui/settings';
@@ -17,12 +17,15 @@ export interface QueuedEvent {
 export const MAX_ASCENSION = 15;
 
 /** Итоги забега для экрана конца: новые ачивки и разблокировки */
+/** Момент старта попытки недели (для времени в таблице); 0 — не еженедельный или забег продолжен после перезапуска */
+let weeklyStartedAt = 0;
+
 export type RunEndInfo = Omit<RunEndResult, 'profile'>;
 
 interface GameStore {
   view: View;
-  /** Выбор класса для ежедневного забега */
-  dailyMode: boolean;
+  /** Экран еженедельного вызова вместо выбора класса */
+  weeklyMode: boolean;
   run: RunState | null;
   options: NewRunOptions | null;
   /** Журнал действий — для сохранений и replay() на сервере */
@@ -39,16 +42,16 @@ interface GameStore {
   profile: Profile;
   savedRun: SavedRun | null;
   backendMode: 'supabase' | 'local' | 'loading';
-  dailyResult: { accepted: boolean; rank?: number } | null;
+  weeklyResult: SubmitWeeklyResult | null;
   runEnd: RunEndInfo | null;
 
   setView(v: View): void;
-  openClassSelect(daily: boolean): void;
+  openClassSelect(weekly: boolean): void;
   startRun(opts: NewRunOptions): void;
   /** Обычный забег с учётом разблокировок профиля */
   startRegular(classId: ClassId, ascension: number, difficulty?: Difficulty, mutators?: readonly string[]): void;
-  /** Ежедневный забег (одна попытка в день). false — попытка уже использована */
-  startDaily(): boolean;
+  /** Еженедельный вызов (3 попытки в неделю). false — попытка уже использована */
+  startWeekly(): boolean;
   /** Загрузить готовое состояние (продолжение или dev-сценарий) */
   loadRun(state: RunState, options: NewRunOptions, actions?: Action[]): void;
   dispatch(action: Action): boolean;
@@ -85,7 +88,7 @@ function finalCombat(prev: CombatState, events: GameEvent[]): CombatState {
 
 export const useGame = create<GameStore>((set, get) => ({
   view: 'menu',
-  dailyMode: false,
+  weeklyMode: false,
   run: null,
   options: null,
   actions: [],
@@ -97,13 +100,14 @@ export const useGame = create<GameStore>((set, get) => ({
   profile: defaultProfile(),
   savedRun: null,
   backendMode: 'loading',
-  dailyResult: null,
+  weeklyResult: null,
   runEnd: null,
 
   setView: (view) => set({ view }),
-  openClassSelect: (daily) => set({ view: 'class_select', dailyMode: daily }),
+  openClassSelect: (weekly) => set({ view: 'class_select', weeklyMode: weekly }),
 
   startRun(opts) {
+    weeklyStartedAt = opts.weekly ? Date.now() : 0;
     try {
       const state = newRun(opts);
       get().loadRun(state, opts, []);
@@ -123,17 +127,17 @@ export const useGame = create<GameStore>((set, get) => ({
     get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max)), difficulty, mutators));
   },
 
-  startDaily() {
-    const opts = dailyRunOptions(new Date());
+  startWeekly() {
+    const opts = weeklyRunOptions(new Date());
     const { profile } = get();
-    if (hasPlayedDaily(profile, opts.seed)) {
-      set({ error: 'Ежедневный взлом уже сыгран сегодня' });
+    if (weeklyAttemptsLeft(profile, opts.seed) <= 0) {
+      set({ error: 'Все 3 попытки этой недели использованы' });
       return false;
     }
     get().startRun(opts);
     if (get().run?.seed !== opts.seed) return false;
-    const next: Profile = { ...get().profile, dailyPlayed: opts.seed };
-    markDailyLocal(opts.seed);
+    const next: Profile = withWeeklyAttempt(get().profile, opts.seed);
+    markWeeklyLocal(opts.seed, next.weekly?.attempts ?? 0);
     set({ profile: next });
     void getBackend()
       .then((b) => b.saves.saveProfile(next))
@@ -143,7 +147,7 @@ export const useGame = create<GameStore>((set, get) => ({
 
   loadRun(state, options, actions = []) {
     clearTimeout(holdTimer);
-    set({ run: state, options, actions, events: [], heldCombat: null, view: 'run', dailyResult: null, runEnd: null, error: null });
+    set({ run: state, options, actions, events: [], heldCombat: null, view: 'run', weeklyResult: null, runEnd: null, error: null });
   },
 
   dispatch(action) {
@@ -246,12 +250,15 @@ async function onRunEnded(state: RunState): Promise<void> {
   const { profile: next, info } = applyRunEnd(profile, state);
   useGame.setState({ profile: next, savedRun: null, runEnd: info });
   await Promise.allSettled([b.saves.clearRun(), b.saves.saveProfile(next)]);
-  if (state.daily && options) {
+  if (state.weekly && options) {
     try {
-      const r = await b.leaderboard.submitDaily(state.seed, options, actions);
-      useGame.setState({ dailyResult: r });
+      const durationS = weeklyStartedAt ? Math.max(0, Math.round((Date.now() - weeklyStartedAt) / 1000)) : undefined;
+      const r = await b.leaderboard.submitWeekly(state.seed, options, actions, durationS);
+      const withTitle = r.accepted ? withWeeklyTitle(useGame.getState().profile, state.weekly) : null;
+      useGame.setState({ weeklyResult: r, ...(withTitle ? { profile: withTitle } : {}) });
+      if (withTitle) void b.saves.saveProfile(withTitle).catch(() => undefined);
     } catch {
-      useGame.setState({ dailyResult: { accepted: false } });
+      useGame.setState({ weeklyResult: { accepted: false } });
     }
   }
 }
@@ -319,7 +326,7 @@ function applyUser(b: Backend, u: User | null): void {
       events: [],
       heldCombat: null,
       runEnd: null,
-      dailyResult: null,
+      weeklyResult: null,
       view: view === 'run' ? 'menu' : view,
     });
   } else {

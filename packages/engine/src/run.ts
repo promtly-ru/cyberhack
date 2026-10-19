@@ -16,7 +16,8 @@ import {
 } from './combat';
 import { getContent } from './content';
 import { generateMap } from './map';
-import { applyMutators, normalizeMutators } from './mutators';
+import { applyMutators, getMutatorMods, normalizeMutators } from './mutators';
+import { weeklyMutatorIds } from './weekly';
 import { addPotion, gainPotions, getPotion, hasFreePotionSlot, potionsOf } from './potions';
 import { buildCombatRewards, buildShop, refreshShop, rollRelic, rewardCardPool, MAX_SHOP_REFRESHES, type CombatTier } from './rewards';
 import { createRngStore, rngOf } from './rng';
@@ -57,8 +58,8 @@ export function newRun(opts: NewRunOptions): RunState {
   const cls = content.classes.get(opts.classId);
   if (!cls) throw new Error(`Unknown class id: ${opts.classId}`);
   const ascension = clampAscension(opts.ascension);
-  // Мутаторы — только в обычном забеге (ежедневный одинаков для всех)
-  const mutators = opts.daily ? [] : normalizeMutators(opts.mutators);
+  // Еженедельный вызов: мутаторы и правило недели выводятся из id недели (одинаковы для всех)
+  const mutators = opts.weekly ? weeklyMutatorIds(opts.weekly) : normalizeMutators(opts.mutators);
   const mods = modsOf({ ascension, ...(opts.difficulty ? { difficulty: opts.difficulty } : {}), mutators });
   const maxHp = Math.max(1, cls.maxHp - Math.floor(cls.maxHp * mods.maxHpPenaltyPct));
 
@@ -69,7 +70,7 @@ export function newRun(opts: NewRunOptions): RunState {
     ascension,
     ...(opts.difficulty && opts.difficulty !== 'normal' ? { difficulty: opts.difficulty } : {}),
     ...(mutators.length > 0 ? { mutators } : {}),
-    daily: opts.daily ?? false,
+    ...(opts.weekly ? { weekly: opts.weekly } : {}),
     act: 1,
     floor: 0,
     hp: Math.max(1, Math.floor(maxHp * mods.startHpPct)),
@@ -104,6 +105,12 @@ export function newRun(opts: NewRunOptions): RunState {
 
   const ev: GameEvent[] = [];
   if (content.relics.has(cls.startingRelic)) obtainRelic(s, cls.startingRelic, ev);
+  if (getMutatorMods(mutators).bonusStartRelic) {
+    const pool = content.data.relics.filter(
+      (r) => (r.rarity === 'common' || r.rarity === 'uncommon') && (r.classId === 'neutral' || r.classId === opts.classId) && !s.relics.includes(r.id),
+    );
+    if (pool.length > 0) obtainRelic(s, rngOf(s, 'cards').pick(pool).id, ev);
+  }
   startAct(s, 1, ev);
   s.score = computeScore(s);
   return s;

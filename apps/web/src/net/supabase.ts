@@ -11,7 +11,7 @@ import type { Session, SupabaseClient, User as SbUser } from '@supabase/supabase
 import type { Action, NewRunOptions } from '@cyberhack/engine';
 import type { AuthApi, Backend, DeviceProfilesApi, LeaderboardApi, LeaderboardEntry, Profile, SavedRun, SavesApi, User } from './types';
 import { AuthRequiredError, BackendError, NetworkError } from './errors';
-import { GUEST_PREFIX, MAX_DAILY_ACTIONS, createLocalSaves, type LocalSaves, type ReplayFn } from './local';
+import { GUEST_PREFIX, MAX_WEEKLY_ACTIONS, createLocalSaves, type LocalSaves, type ReplayFn } from './local';
 import { createDeviceAccounts } from './device';
 import { CLASS_IDS, compareIso, hasProgress, mergeProfiles, normalizeProfile, normalizeSavedRun } from './profile';
 import { browserStorage, isRecord, readJson, removeKey, writeJson, type KeyValueStorage } from './storage';
@@ -181,6 +181,19 @@ interface LeaderboardRow {
   score: number;
   floor: number;
   victory: boolean;
+  duration_s?: number | null;
+}
+
+function rowToEntry(r: LeaderboardRow): LeaderboardEntry {
+  return {
+    rank: Number(r.rank),
+    displayName: r.display_name,
+    classId: r.class_id as LeaderboardEntry['classId'],
+    score: r.score,
+    floor: r.floor,
+    victory: r.victory,
+    durationS: r.duration_s ?? null,
+  };
 }
 
 function rowToRun(row: RunRow | null): SavedRun | null {
@@ -598,13 +611,13 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
   // ----- LeaderboardApi -----
 
   const leaderboard: LeaderboardApi = {
-    async submitDaily(seed: string, options: NewRunOptions, actions: Action[]) {
+    async submitWeekly(seed: string, options: NewRunOptions, actions: Action[], durationS?: number) {
       const user = await currentUser();
-      if (!user) return deviceBoard.submitDaily(seed, options, actions);
-      if (!Array.isArray(actions) || actions.length > MAX_DAILY_ACTIONS) return { accepted: false };
+      if (!user) return deviceBoard.submitWeekly(seed, options, actions, durationS);
+      if (!Array.isArray(actions) || actions.length > MAX_WEEKLY_ACTIONS) return { accepted: false };
       let res: { data: unknown; error: unknown };
       try {
-        res = await client.functions.invoke('submit-daily', { body: { seed, options, actions } });
+        res = await client.functions.invoke('submit-weekly', { body: { seed, options, actions, ...(durationS !== undefined ? { durationS } : {}) } });
       } catch (e) {
         if (isThrownNetworkError(e)) throw new NetworkError();
         throw e;
@@ -619,16 +632,37 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
       }
       const data = res.data;
       if (!isRecord(data) || typeof data.accepted !== 'boolean') throw new BackendError('Некорректный ответ сервера');
-      return typeof data.rank === 'number' ? { accepted: data.accepted, rank: data.rank } : { accepted: data.accepted };
+      return {
+        accepted: data.accepted,
+        ...(typeof data.rank === 'number' ? { rank: data.rank } : {}),
+        ...(typeof data.attempt === 'number' ? { attempt: data.attempt } : {}),
+        ...(typeof data.attemptsLeft === 'number' ? { attemptsLeft: data.attemptsLeft } : {}),
+        ...(typeof data.reason === 'string' ? { reason: data.reason } : {}),
+      };
     },
 
-    async getDaily(seed: string, limit = 50) {
+    async getWeeklyMine(seed: string) {
+      const user = await currentUser();
+      if (!user) return deviceBoard.getWeeklyMine(seed);
+      let res: { data: unknown; error: PgResult['error']; status?: number };
+      try {
+        res = await client.rpc('weekly_my_entry', { p_seed: seed });
+      } catch (e) {
+        if (isThrownNetworkError(e)) throw new NetworkError();
+        throw e;
+      }
+      check(res, 'Таблица лидеров');
+      const row = (Array.isArray(res.data) ? res.data[0] : res.data) as LeaderboardRow | undefined | null;
+      return row && (CLASS_IDS as readonly string[]).includes(row.class_id) ? rowToEntry(row) : null;
+    },
+
+    async getWeekly(seed: string, limit = 50) {
       const n = Math.min(100, Math.max(1, Math.floor(limit)));
       let res: { data: unknown; error: PgResult['error']; status?: number };
       try {
         res = await client
-          .from('daily_leaderboard')
-          .select('rank, display_name, class_id, score, floor, victory')
+          .from('weekly_leaderboard')
+          .select('rank, display_name, class_id, score, floor, victory, duration_s')
           .eq('seed', seed)
           .order('rank', { ascending: true })
           .limit(n);
@@ -638,18 +672,7 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
       }
       check(res, 'Таблица лидеров');
       const rows = Array.isArray(res.data) ? (res.data as LeaderboardRow[]) : [];
-      return rows
-        .filter((r) => (CLASS_IDS as readonly string[]).includes(r.class_id))
-        .map(
-          (r): LeaderboardEntry => ({
-            rank: Number(r.rank),
-            displayName: r.display_name,
-            classId: r.class_id as LeaderboardEntry['classId'],
-            score: r.score,
-            floor: r.floor,
-            victory: r.victory,
-          }),
-        );
+      return rows.filter((r) => (CLASS_IDS as readonly string[]).includes(r.class_id)).map(rowToEntry);
     },
   };
 

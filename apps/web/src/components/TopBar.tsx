@@ -58,8 +58,8 @@ export function TopBar({ run }: { run: RunState }) {
             <span className="mono">{run.mutators.length}</span>
           </span>
         ) : null}
-        {run.daily ? (
-          <span className="stat stat--daily" tabIndex={0} aria-label="Ежедневный взлом" {...tip('Ежедневный взлом', `Одинаковый забег для всех игроков сегодня. Сид: ${run.seed}`)}>
+        {run.weekly ? (
+          <span className="stat stat--weekly" tabIndex={0} aria-label="Еженедельный вызов" {...tip('Еженедельный вызов', `Одинаковый забег для всех на неделю ${run.weekly}. Мутаторы и правило недели — в значке флага.`)}>
             <Icon name="calendar" size={16} />
           </span>
         ) : null}

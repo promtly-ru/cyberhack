@@ -5,7 +5,7 @@
  *   cyberhack:guest:*            — гость (как и раньше, ничего не переезжает)
  *   cyberhack:profiles           — список профилей [{ id, name, createdAt, pin? }]
  *   cyberhack:profiles:active    — id активного профиля (нет ключа — гость)
- *   cyberhack:local:<id>:*       — прогресс профиля: run, profile, daily
+ *   cyberhack:local:<id>:*       — прогресс профиля: run, profile, weekly
  *
  * ВАЖНО: PIN — защита от случайного входа брата/сестры, а НЕ криптографическая защита.
  * 4 цифры перебираются за доли секунды, а данные лежат в localStorage открыто.
@@ -26,7 +26,7 @@ export const NAME_MIN = 2;
 export const NAME_MAX = 20;
 export const MAX_PROFILES = 20;
 /** Части прогресса, которые хранятся под префиксом игрока */
-const DATA_SUFFIXES = ['profile', 'run', 'daily'] as const;
+const DATA_SUFFIXES = ['profile', 'run', 'weekly'] as const;
 
 const ID_RE = /^local-[\w-]{8,64}$/;
 const PIN_RE = /^\d{4}$/;
@@ -283,7 +283,7 @@ export function createDeviceAccounts(opts: DeviceAccountsOptions): DeviceAccount
       return p ? publicInfo(p) : null;
     },
     guestHasProgress() {
-      return hasProgress(guestSaves.readProfile()) || guestSaves.readRun() !== null || readJson(storage, `${GUEST_PREFIX}daily`) !== null;
+      return hasProgress(guestSaves.readProfile()) || guestSaves.readRun() !== null || readJson(storage, `${GUEST_PREFIX}weekly`) !== null;
     },
     async create({ name: rawName, pin: rawPin, importGuest = false }) {
       const name = validateName(rawName);
@@ -350,8 +350,9 @@ export function createDeviceAccounts(opts: DeviceAccountsOptions): DeviceAccount
 
   const board = (p: string) => createLocalLeaderboard(storage, opts.replay ?? engineReplay, opts.now, p);
   const leaderboard: LeaderboardApi = {
-    submitDaily: (seed, options, actions) => board(prefix()).submitDaily(seed, options, actions),
-    getDaily: (seed, limit) => board(prefix()).getDaily(seed, limit),
+    submitWeekly: (seed, options, actions, durationS) => board(prefix()).submitWeekly(seed, options, actions, durationS),
+    getWeekly: (seed, limit) => board(prefix()).getWeekly(seed, limit),
+    getWeeklyMine: (seed) => board(prefix()).getWeeklyMine(seed),
   };
 
   return {

@@ -25,7 +25,6 @@ export {
   getActiveSynergies,
   STARTING_CLASSES,
   achievementProgress,
-  dailyClassId,
   evaluateRunEnd,
   getAchievement,
   getAscensionDescriptions,
@@ -40,6 +39,18 @@ export {
   canUsePotionNow,
   MUTATORS,
   getMutator,
+  // Еженедельный вызов
+  WEEKLY_ATTEMPTS,
+  WEEKLY_RULES,
+  getWeeklyRule,
+  weeklySeed,
+  weeklyClass,
+  weeklyRule,
+  weeklyMutatorIds,
+  weeklyScoreMult,
+  weeklyResetAt,
+  prevWeeklySeed,
+  weeklyTitle,
 } from '@cyberhack/engine';
 
 const mocked = new Set<string>();
@@ -91,7 +102,6 @@ export const applyAction = withFallback('applyAction', real.applyAction, mock.ap
 export const getLegalActions = withFallback('getLegalActions', real.getLegalActions, mock.getLegalActions);
 export const replay = withFallback('replay', real.replay, mock.replay);
 export const listClasses = withFallback('listClasses', real.listClasses, mock.listClasses);
-export const dailySeed = withFallback('dailySeed', real.dailySeed, (d: Date) => `daily-${d.toISOString().slice(0, 10)}`);
 
 export const getCardDef = contentFallback('getCardDef', real.getCardDef, mock.mockFind.card);
 export const getEnemyDef = contentFallback('getEnemyDef', real.getEnemyDef, mock.mockFind.enemy);

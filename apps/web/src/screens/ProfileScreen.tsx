@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import type { ClassId } from '../game/engine';
-import { dailySeed, lockableCards, lockableRelics } from '../game/engine';
+import { lockableCards, lockableRelics } from '../game/engine';
 import { accountAction, useGame } from '../game/store';
 import type { DeviceProfile, User } from '../net/types';
 import { LocalProfileError, type LocalProfileErrorCode } from '../net/errors';
 import { Icon } from '../components/Icon';
 import { sfx } from '../audio/sfx';
-import { AchievementsPanel, CLASS_NAME, DailyBoard } from './MetaBits';
+import { AchievementsPanel, CLASS_NAME, WeeklyBoard } from './MetaBits';
 import { SelectHead } from './MenuScreens';
 
 // ---------------- Профиль / вход ----------------
@@ -151,19 +151,6 @@ function AccountPanel() {
       {open ? (
         <div className={`account-login${cloud ? '' : ' account-login--solo'}`} data-testid="account-login-panel">
           <CloudLogin busy={busy} act={act} cloud={cloud} />
-          {accounts ? (
-            <DeviceProfiles
-              profiles={accounts.profiles}
-              currentId={user?.provider === 'local' ? user.id : null}
-              canImportGuest={guest && accounts.guestHasProgress}
-              cloud={cloud}
-              cloudUser={cloudUser}
-              busy={busy}
-              act={act}
-            />
-          ) : (
-            <p className="muted">Профили на устройстве сейчас недоступны — играй как гость.</p>
-          )}
           <div className="account-login__foot">
             {!cloud ? (
               <p className="muted small" data-testid="cloud-off">
@@ -177,6 +164,52 @@ function AccountPanel() {
         </div>
       ) : null}
     </section>
+  );
+}
+
+/** Окно без кнопки «Закрыть» для старых офлайн-профилей: прогресс переедет в облако после входа по почте. */
+export function LocalMigrationGate() {
+  const user = useGame((s) => s.user);
+  const backendMode = useGame((s) => s.backendMode);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  if (backendMode !== 'supabase' || user?.provider !== 'local') return null;
+  const act: Act = async (fn, ok) => {
+    setBusy(true);
+    setMsg(null);
+    try {
+      await fn();
+      setMsg({ ok: true, text: ok });
+      return null;
+    } catch (e) {
+      sfx('error');
+      const text = errorText(e);
+      setMsg({ ok: false, text });
+      return { text, code: null };
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="modal-backdrop" data-testid="local-migration">
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="local-migration-title">
+        <div className="modal__head">
+          <h2 id="local-migration-title">Перейди на аккаунт с почтой</h2>
+        </div>
+        <div className="modal__body">
+          <p className="muted small">
+            Профили на устройстве больше не поддерживаются. Войди или зарегистрируйся по почте — весь прогресс профиля «{user.displayName}»
+            перенесётся в облако автоматически.
+          </p>
+          {msg ? (
+            <p className={`account-msg ${msg.ok ? 'ok' : 'error'}`} role={msg.ok ? 'status' : 'alert'}>
+              {msg.text}
+            </p>
+          ) : null}
+          <CloudLogin busy={busy} act={act} cloud />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -526,7 +559,6 @@ export function ProfileScreen() {
   const user = useGame((s) => s.user);
   const profile = useGame((s) => s.profile);
   const guest = isGuestUser(user);
-  const today = dailySeed(new Date());
   const totalCards = safeCount(lockableCards);
   const totalRelics = safeCount(lockableRelics);
   const lifetime = profile.lifetime ?? {};
@@ -587,9 +619,19 @@ export function ProfileScreen() {
           </dl>
         </section>
         <section className="panel">
-          <h2 className="section-title">Лидеры дня</h2>
-          <p className="muted small mono">{today}</p>
-          <DailyBoard seed={today} />
+          <h2 className="section-title">Еженедельный вызов</h2>
+          {profile.titles?.length ? (
+            <p className="profile-titles" data-testid="profile-titles">
+              Титулы: {profile.titles.map((t) => (
+                <span key={t} className="title-chip">
+                  {t}
+                </span>
+              ))}
+            </p>
+          ) : (
+            <p className="muted small">Титулов пока нет: сыграйте вызов недели, чтобы получить «Чемпион W…».</p>
+          )}
+          <WeeklyBoard limit={50} />
         </section>
         <AchievementsPanel profile={profile} />
       </div>

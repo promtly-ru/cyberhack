@@ -1,15 +1,15 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import type { ClassDef, ClassId, Difficulty } from '../game/engine';
-import { DIFFICULTY_INFO, dailySeed, isMockActive, listClasses, tryRelicDef, unlockSource } from '../game/engine';
+import { DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSource, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
 import { MAX_ASCENSION, useGame } from '../game/store';
-import { hasPlayedDaily, todayDailyClass } from '../game/meta';
+import { weeklyAttemptsLeft } from '../game/meta';
 import { Icon } from '../components/Icon';
 import { PlayerArt, CLASS_COLOR } from '../components/UnitArt';
 import { RelicIcon } from '../components/Bits';
 import { tip } from '../components/Tooltip';
 import { useUi } from '../ui/uiStore';
 import { sfx, unlockAudio } from '../audio/sfx';
-import { AscensionInfo, CLASS_NAME, DailyBoard } from './MetaBits';
+import { AscensionInfo, CLASS_NAME, WeeklyBoard, weekLabel } from './MetaBits';
 import { MutatorPicker } from './MutatorPicker';
 import { AccountChip } from './ProfileScreen';
 import { startTutorial } from '../tutorial/Tutorial';
@@ -58,9 +58,9 @@ export function MainMenu() {
   const profile = useGame((s) => s.profile);
   const activeLocal = run && run.status === 'active' ? run : null;
   const cont = activeLocal ?? savedRun?.state ?? null;
-  const today = dailySeed(new Date());
-  const dailyCls = todayDailyClass();
-  const dailyDone = hasPlayedDaily(profile, today);
+  const week = weeklySeed(new Date());
+  const weeklyCls = weeklyClassOrNull();
+  const weeklyLeft = weeklyAttemptsLeft(profile, week);
 
   const onContinue = () => {
     sfx('click');
@@ -97,13 +97,12 @@ export function MainMenu() {
               <small>{cont ? `Продолжить сохранённую игру · ${CLASS_NAME[cont.classId]}, этаж ${cont.floor}${cont.ascension > 0 ? `, сложность ${cont.ascension}` : ''}` : 'Сохранённой игры нет'}</small>
             </span>
           </button>
-          <button className="menu-btn" data-testid="menu-daily" onClick={click(() => openClassSelect(true))}>
+          <button className="menu-btn" data-testid="menu-weekly" onClick={click(() => openClassSelect(true))}>
             <Icon name="calendar" size={22} />
             <span>
-              <b>Ежедневный взлом</b>
+              <b>Еженедельный вызов</b>
               <small>
-                Один забег в день, общий для всех{dailyCls ? ` · ${CLASS_NAME[dailyCls]}` : ''}
-                {dailyDone ? ' · сыгран' : ''}
+                {weekLabel(week)} · общий для всех{weeklyCls ? ` · ${CLASS_NAME[weeklyCls]}` : ''} · попыток {weeklyLeft}/{WEEKLY_ATTEMPTS}
               </small>
             </span>
           </button>
@@ -239,8 +238,8 @@ function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selec
 }
 
 export function ClassSelect() {
-  const daily = useGame((s) => s.dailyMode);
-  return daily ? <DailySelect /> : <RegularSelect />;
+  const weekly = useGame((s) => s.weeklyMode);
+  return weekly ? <WeeklySelect /> : <RegularSelect />;
 }
 
 export function SelectHead({ eyebrow, title }: { eyebrow: string; title: string }) {
@@ -366,42 +365,53 @@ function RegularSelect() {
   );
 }
 
-function DailySelect() {
+function weeklyClassOrNull(): ClassId | null {
+  try {
+    return weeklyClass(weeklySeed(new Date()));
+  } catch {
+    return null;
+  }
+}
+
+function WeeklySelect() {
   const profile = useGame((s) => s.profile);
-  const startDaily = useGame((s) => s.startDaily);
+  const startWeekly = useGame((s) => s.startWeekly);
   const error = useGame((s) => s.error);
-  const today = dailySeed(new Date());
-  const clsId = todayDailyClass();
+  const week = weeklySeed(new Date());
+  const clsId = weeklyClassOrNull();
   const current = safeClasses().find((c) => c.id === clsId);
-  const played = hasPlayedDaily(profile, today);
+  const left = weeklyAttemptsLeft(profile, week);
+  const title = weeklyTitle(week);
 
   const start = () => {
     unlockAudio();
     sfx('select');
-    startDaily();
+    startWeekly();
   };
 
   return (
-    <div className="screen class-select" data-testid="daily-select">
-      <SelectHead eyebrow={`Ежедневный взлом · ${today}`} title="Взлом дня" />
+    <div className="screen class-select" data-testid="weekly-select">
+      <SelectHead eyebrow={`Еженедельный вызов · ${week}`} title={`Вызов недели ${weekLabel(week)}`} />
       {current ? (
-        <div className="cs-classes" role="radiogroup" aria-label="Класс дня">
+        <div className="cs-classes" role="radiogroup" aria-label="Класс недели">
           <ClassCard c={current} selected locked={false} onSelect={() => undefined} />
         </div>
       ) : null}
-      <div className="daily-info">
+      <div className="weekly-info">
         <p className="muted">
-          Один и тот же забег для всех игроков: одинаковые карта и класс, базовая сложность, все карты и импланты открыты. Одна попытка в день — результат попадает в таблицу лидеров.
+          Один и тот же забег для всех на неделю: класс, карта, два мутатора и правило недели. 3 попытки, в зачёт идёт лучшая. Участникам — эксклюзивный титул «{title}».
         </p>
-        {played ? (
+        <p data-testid="weekly-attempts" className={left > 0 ? undefined : 'error'}>
+          Попыток осталось: <b>{left}</b> из {WEEKLY_ATTEMPTS}
+        </p>
+        {left <= 0 ? (
           <p className="ok">
-            <Icon name="check" size={16} /> Сегодняшняя попытка уже использована. Новый взлом — завтра (00:00 UTC).
+            <Icon name="check" size={16} /> Все попытки использованы. Новая неделя начнётся в понедельник в 00:00 UTC.
           </p>
         ) : null}
       </div>
-      <section className="panel daily-board">
-        <h2 className="section-title">Лидеры дня</h2>
-        <DailyBoard seed={today} />
+      <section className="panel weekly-panel">
+        <WeeklyBoard limit={50} />
       </section>
       <div className="cs-foot">
         {current ? (
@@ -409,13 +419,13 @@ function DailySelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">Ежедневный · базовая сложность</small>
+              <small className="muted">Еженедельный · базовая сложность</small>
             </span>
           </div>
         ) : null}
         {error ? <p className="error">{error}</p> : null}
-        <button className="btn btn--primary btn--lg" data-testid="start-daily" onClick={start} disabled={!current || played}>
-          {played ? 'Попытка использована' : 'Начать взлом'} <Icon name={played ? 'lock' : 'play'} size={18} />
+        <button className="btn btn--primary btn--lg" data-testid="start-weekly" onClick={start} disabled={!current || left <= 0}>
+          {left <= 0 ? 'Попытки закончились' : 'Начать взлом'} <Icon name={left <= 0 ? 'lock' : 'play'} size={18} />
         </button>
       </div>
     </div>

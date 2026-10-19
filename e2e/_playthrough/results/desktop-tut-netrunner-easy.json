@@ -1,0 +1,27 @@
+{
+ "cfg": {
+  "name": "tut-netrunner-easy",
+  "cls": "netrunner",
+  "diff": "easy",
+  "tutorial": true,
+  "asc": 0,
+  "daily": false,
+  "seed": "PTtutnetrunn",
+  "rot": 0
+ },
+ "fmt": "desktop",
+ "outcome": "driver-exception act1 floor0",
+ "maxAct": 1,
+ "maxFloor": 0,
+ "issues": [
+  {
+   "sev": "баг",
+   "msg": "исключение драйвера: locator.waitFor: Timeout 10000ms exceeded."
+  }
+ ],
+ "consoleErrors": [],
+ "timeline": [],
+ "fights": [],
+ "clicksFailed": 0,
+ "log": []
+}

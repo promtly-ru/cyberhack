@@ -6,11 +6,11 @@ import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
 import { RelicGlyph, SynergyBar, firmwareNeeds } from '../components/Bits';
 import { PotionGlyph } from '../components/PotionBar';
-import { getMutator, getPotion, POTION_SLOTS } from '../game/engine';
+import { getMutator, getPotion, POTION_SLOTS, weeklyTitle } from '../game/engine';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
-import { DailyBoard, RunEndUnlocks } from './MetaBits';
+import { RunEndUnlocks, WeeklyBoard, weekLabel } from './MetaBits';
 
 function cardName(id: string | undefined): string {
   if (!id) return 'программа';
@@ -595,7 +595,7 @@ const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', ph
 export function GameOverScreen({ run, victory }: { run: RunState; victory: boolean }) {
   const toMenu = useGame((s) => s.toMenu);
   const openClassSelect = useGame((s) => s.openClassSelect);
-  const dailyResult = useGame((s) => s.dailyResult);
+  const weeklyResult = useGame((s) => s.weeklyResult);
   const runEnd = useGame((s) => s.runEnd);
   const st = run.stats;
   const rows: [string, string | number][] = [
@@ -622,9 +622,15 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
           <span className="score__label">Счёт</span>
           <span className="score__value mono">{run.score.toLocaleString('ru-RU')}</span>
         </div>
-        {run.daily ? (
-          <p className="muted center">
-            {dailyResult === null ? 'Отправка в таблицу лидеров…' : dailyResult.accepted ? `Ежедневный рейтинг: место ${dailyResult.rank ?? '—'}` : 'Результат сохранён локально (сервер недоступен)'}
+        {run.weekly ? (
+          <p className="muted center" data-testid="weekly-result">
+            {weeklyResult === null
+              ? 'Отправка в таблицу лидеров…'
+              : weeklyResult.accepted
+                ? `Вызов ${weekLabel(run.weekly)}: место ${weeklyResult.rank ?? '—'}${weeklyResult.attemptsLeft !== undefined ? ` · попыток осталось ${weeklyResult.attemptsLeft}` : ''} · титул «${weeklyTitle(run.weekly)}» получен`
+                : weeklyResult.reason === 'attempts_exhausted'
+                  ? 'Все 3 попытки недели использованы: результат не засчитан'
+                  : 'Результат сохранён локально (сервер недоступен)'}
           </p>
         ) : null}
         {runEnd ? <RunEndUnlocks info={runEnd} /> : null}
@@ -636,11 +642,12 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
             </div>
           ))}
         </dl>
-        {run.daily ? (
-          <section className="daily-board" aria-label="Лидеры дня">
-            <h2 className="section-title">Лидеры дня</h2>
-            {dailyResult === null ? <p className="muted">Ожидание результата…</p> : <DailyBoard seed={run.seed} reloadKey={dailyResult} />}
-          </section>
+        {run.weekly ? (
+          weeklyResult === null ? (
+            <p className="muted">Ожидание результата…</p>
+          ) : (
+            <WeeklyBoard limit={10} reloadKey={weeklyResult} showRules={false} />
+          )
         ) : null}
         <div className="actions">
           <button

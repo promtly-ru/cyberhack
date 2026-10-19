@@ -63,7 +63,7 @@ describe('newRun', () => {
     expect(newRun({ ...OPTS, ascension: 99 }).ascension).toBe(15);
     expect(newRun({ ...OPTS, ascension: -3 }).ascension).toBe(0);
     expect(newRun({ ...OPTS, ascension: Number.NaN }).ascension).toBe(0);
-    expect(newRun({ ...OPTS, daily: true }).daily).toBe(true);
+    expect(newRun({ ...OPTS, weekly: '2026-W43' }).weekly).toBe('2026-W43');
     const bad = fixtureContent();
     bad.classes[0]!.startingDeck = ['nope'];
     setContentForTests(bad);

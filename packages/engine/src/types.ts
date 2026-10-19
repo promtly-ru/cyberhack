@@ -327,7 +327,8 @@ export interface RunState {
   ascension: number; // 0..15
   /** Режим сложности (поверх Ascension); нет поля = normal */
   difficulty?: Difficulty;
-  daily: boolean;
+  /** Еженедельный вызов: id недели ('2026-W43'); нет поля = обычный забег */
+  weekly?: string;
   act: 1 | 2 | 3 | 4;
   floor: number; // общий счётчик пройденных узлов
   hp: number;
@@ -443,13 +444,14 @@ export interface NewRunOptions {
   classId: ClassId;
   ascension?: number;
   difficulty?: Difficulty;
-  daily?: boolean;
+  /** Еженедельный вызов: id недели; мутаторы и правило недели выводятся из него */
+  weekly?: string;
   /**
    * Метапрогрессия: открытые игроком карты/реликвии из числа закрываемых (см. unlocks.ts).
-   * Не передано — открыто всё (тесты, симулятор, ежедневный забег).
+   * Не передано — открыто всё (тесты, симулятор, еженедельный вызов).
    */
   unlocked?: { cards?: readonly string[]; relics?: readonly string[] };
-  /** Мутаторы забега (id из mutators.ts); в ежедневном забеге игнорируются */
+  /** Мутаторы забега (id из mutators.ts); в еженедельном вызове игнорируются (задаются неделей) */
   mutators?: readonly string[];
 }
 

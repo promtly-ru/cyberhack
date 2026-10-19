@@ -1,23 +1,24 @@
 /**
- * Edge Function submit-daily: приём результата ежедневного забега.
+ * Edge Function submit-weekly: приём результата еженедельного вызова.
  *
  * 1. Проверяет JWT пользователя (auth.getUser на сервере Auth, не просто декодирование).
- * 2. Принимает только сегодняшний daily (UTC) или вчерашний в первые 2 часа.
+ * 2. Принимает только текущую ISO-неделю (UTC) или прошлую в первые 2 часа понедельника.
  * 3. Пересчитывает забег через replay() движка; score/floor/victory — только из пересчёта.
- * 4. Пишет в daily_results через service role. Одна попытка на seed (unique в БД).
+ * 4. Пишет в weekly_results через service role. До 3 попыток на неделю (unique user+seed+attempt_no).
  *
  * Движок подключается бандлом: перед деплоем `node supabase/scripts/bundle-engine.mjs`
  * (см. supabase/README.md).
  */
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
-import { InvalidActionError, replay } from '../_shared/engine/index.js';
+import { InvalidActionError, replay, weeklyClass } from '../_shared/engine/index.js';
 import {
+  MAX_ATTEMPTS,
   MAX_BODY_BYTES,
   extractResult,
   isSeedAllowed,
   parsePayload,
   type ReplayedState,
-} from '../_shared/daily.ts';
+} from '../_shared/weekly.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -56,7 +57,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders(req) });
   if (req.method !== 'POST') return json(req, 405, { error: 'method not allowed' });
   if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
-    console.error('submit-daily: не заданы SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY');
+    console.error('submit-weekly: не заданы SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY');
     return json(req, 500, { error: 'server misconfigured' });
   }
 
@@ -82,22 +83,23 @@ Deno.serve(async (req) => {
   }
   const parsed = parsePayload(body);
   if (!parsed.ok) return json(req, 400, { error: parsed.error });
-  const { seed, options, actions } = parsed.value;
+  const { seed, options, actions, durationS } = parsed.value;
 
   if (!isSeedAllowed(seed, new Date())) return reject(req, 'seed_not_active');
+  if (weeklyClass(seed) !== options.classId) return reject(req, 'wrong_class');
 
-  // ---------- 3. Уже отправлял? (дёшево, до тяжёлого replay) ----------
-  const existing = await admin
-    .from('daily_results')
-    .select('id')
+  // ---------- 3. Лимит попыток (дёшево, до тяжёлого replay) ----------
+  const used = await admin
+    .from('weekly_results')
+    .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id)
-    .eq('seed', seed)
-    .maybeSingle();
-  if (existing.error) {
-    console.error('submit-daily: select failed', existing.error.code);
+    .eq('seed', seed);
+  if (used.error) {
+    console.error('submit-weekly: count failed', used.error.code);
     return json(req, 500, { error: 'database error' });
   }
-  if (existing.data) return reject(req, 'already_submitted');
+  const attemptNo = (used.count ?? 0) + 1;
+  if (attemptNo > MAX_ATTEMPTS) return reject(req, 'attempts_exhausted');
 
   // ---------- 4. Пересчёт забега ----------
   let state: ReplayedState;
@@ -105,7 +107,7 @@ Deno.serve(async (req) => {
     state = replay(options, actions) as unknown as ReplayedState;
   } catch (e) {
     if (e instanceof InvalidActionError) return reject(req, 'invalid_run');
-    console.error('submit-daily: replay crashed', e instanceof Error ? e.message : String(e));
+    console.error('submit-weekly: replay crashed', e instanceof Error ? e.message : String(e));
     return reject(req, 'invalid_run');
   }
   const result = extractResult(state, options);
@@ -114,29 +116,20 @@ Deno.serve(async (req) => {
 
   // ---------- 5. Запись ----------
   const inserted = await admin
-    .from('daily_results')
-    .insert({ user_id: user.id, seed, class_id: classId, score, floor, victory, actions })
+    .from('weekly_results')
+    .insert({ user_id: user.id, seed, attempt_no: attemptNo, class_id: classId, score, floor, victory, duration_s: durationS, actions })
     .select('created_at')
     .single();
   if (inserted.error) {
-    if (inserted.error.code === '23505') return reject(req, 'already_submitted');
-    console.error('submit-daily: insert failed', inserted.error.code);
+    if (inserted.error.code === '23505') return reject(req, 'attempts_exhausted');
+    console.error('submit-weekly: insert failed', inserted.error.code);
     return json(req, 500, { error: 'database error' });
   }
   const createdAt = (inserted.data as { created_at: string }).created_at;
 
   // ---------- 6. Место в таблице ----------
-  const [better, tiedEarlier] = await Promise.all([
-    admin.from('daily_results').select('id', { count: 'exact', head: true }).eq('seed', seed).gt('score', score),
-    admin
-      .from('daily_results')
-      .select('id', { count: 'exact', head: true })
-      .eq('seed', seed)
-      .eq('score', score)
-      .lt('created_at', createdAt),
-  ]);
-  const rank =
-    better.error || tiedEarlier.error ? undefined : (better.count ?? 0) + (tiedEarlier.count ?? 0) + 1;
+  const board = await admin.from('weekly_leaderboard').select('rank').eq('seed', seed).eq('score', score).eq('created_at', createdAt).maybeSingle();
+  const rank = board.error || !board.data ? undefined : (board.data as { rank: number }).rank;
 
-  return json(req, 200, { accepted: true, rank, score, floor, victory });
+  return json(req, 200, { accepted: true, rank, score, floor, victory, attempt: attemptNo, attemptsLeft: MAX_ATTEMPTS - attemptNo });
 });

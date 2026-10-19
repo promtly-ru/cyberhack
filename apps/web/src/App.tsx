@@ -4,7 +4,7 @@ import { devScenario, type DevScenario } from './game/engine';
 import { FxHost } from './fx/FxHost';
 import { TooltipLayer } from './components/Tooltip';
 import { MainMenu, ClassSelect } from './screens/MenuScreens';
-import { ProfileScreen } from './screens/ProfileScreen';
+import { LocalMigrationGate, ProfileScreen } from './screens/ProfileScreen';
 import { HowToPlay } from './tutorial/HowToPlay';
 import { DownloadScreen } from './download/DownloadScreen';
 import { TutorialLayer } from './tutorial/Tutorial';
@@ -75,6 +75,7 @@ export function App() {
         </div>
       ) : null}
       {settingsOpen ? <SettingsModal /> : null}
+      <LocalMigrationGate />
       <TutorialLayer />
       <TooltipLayer />
     </>

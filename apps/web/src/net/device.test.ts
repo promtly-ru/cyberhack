@@ -7,7 +7,7 @@ import { defaultProfile } from './profile';
 import type { Backend, Profile, User } from './types';
 import { FullStorage, fakeReplay, fakeRun } from './test-helpers';
 
-const SEED = 'daily-2026-10-18';
+const SEED = '2026-W43';
 const progress = (over: Partial<Profile> = {}): Profile => ({
   ...defaultProfile(),
   totalRuns: 5,
@@ -153,23 +153,23 @@ describe('офлайн-профили: прогресс', () => {
     expect(await saves.loadRun()).toBeNull();
     await saves.saveProfile(progress({ totalRuns: 7 }));
     await saves.saveRun(fakeRun('2026-10-18T11:00:00.000Z', { floor: 9 }));
-    await leaderboard.submitDaily(SEED, { seed: SEED, classId: 'ghost' }, []);
-    expect(await leaderboard.getDaily(SEED)).toHaveLength(1);
+    await leaderboard.submitWeekly(SEED, { seed: SEED, classId: 'ghost' }, []);
+    expect(await leaderboard.getWeekly(SEED)).toHaveLength(1);
 
     await profiles.create({ name: 'Тринити' });
     expect((await saves.loadProfile()).totalRuns).toBe(0);
     expect(await saves.loadRun()).toBeNull();
-    expect(await leaderboard.getDaily(SEED)).toEqual([]);
+    expect(await leaderboard.getWeekly(SEED)).toEqual([]);
 
     await backend.auth.signOut();
     expect((await saves.loadProfile()).totalRuns).toBe(1);
     expect((await saves.loadRun())!.state.floor).toBe(1);
-    expect(await leaderboard.getDaily(SEED)).toEqual([]);
+    expect(await leaderboard.getWeekly(SEED)).toEqual([]);
 
     await profiles.signIn(neo.id);
     expect((await saves.loadProfile()).totalRuns).toBe(7);
     expect((await saves.loadRun())!.state.floor).toBe(9);
-    expect(await leaderboard.getDaily(SEED)).toHaveLength(1);
+    expect(await leaderboard.getWeekly(SEED)).toHaveLength(1);
   });
 
   it('другая вкладка переключила профиль — эта пишет своему игроку до перезагрузки', async () => {
@@ -187,13 +187,13 @@ describe('офлайн-профили: прогресс', () => {
     await backend.saves.saveProfile(progress({ totalRuns: 4 }));
     const run = fakeRun('2026-10-18T10:00:00.000Z', { floor: 6 });
     await backend.saves.saveRun(run);
-    await backend.leaderboard.submitDaily(SEED, { seed: SEED, classId: 'ghost' }, []);
+    await backend.leaderboard.submitWeekly(SEED, { seed: SEED, classId: 'ghost' }, []);
     expect(profiles.guestHasProgress()).toBe(true);
 
     await profiles.create({ name: 'Нео', importGuest: true });
     expect((await backend.saves.loadProfile()).totalRuns).toBe(4);
     expect(await backend.saves.loadRun()).toEqual(run);
-    expect(await backend.leaderboard.getDaily(SEED)).toHaveLength(1);
+    expect(await backend.leaderboard.getWeekly(SEED)).toHaveLength(1);
 
     await backend.auth.signOut();
     expect(profiles.guestHasProgress()).toBe(false);
@@ -259,7 +259,7 @@ describe('миграция: старые данные гостя', () => {
     const oldRun = fakeRun('2026-10-17T10:00:00.000Z', { floor: 14 });
     storage.setItem(`${GUEST_PREFIX}run`, JSON.stringify(oldRun));
     storage.setItem(
-      `${GUEST_PREFIX}daily`,
+      `${GUEST_PREFIX}weekly`,
       JSON.stringify([
         {
           seed: SEED,
@@ -279,7 +279,7 @@ describe('миграция: старые данные гостя', () => {
     });
     expect((await backend.saves.loadProfile()).totalRuns).toBe(12);
     expect(await backend.saves.loadRun()).toEqual(oldRun);
-    expect(await backend.leaderboard.getDaily(SEED)).toHaveLength(1);
+    expect(await backend.leaderboard.getWeekly(SEED)).toHaveLength(1);
     expect(profiles.list()).toEqual([]);
 
     // профиль без переноса не трогает старые ключи гостя

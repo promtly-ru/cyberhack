@@ -146,7 +146,7 @@ class FakeQuery implements PromiseLike<{ data: unknown; error: unknown; status: 
     if (db.failWith) {
       return { data: null, error: { message: 'violates check constraint', code: db.failWith.code }, status: db.failWith.status };
     }
-    if (this.table === 'daily_leaderboard') {
+    if (this.table === 'weekly_leaderboard') {
       const rows = db.leaderboard.filter((r) => this.match(r)).slice(0, this.limitN);
       return { data: rows, error: null, status: 200 };
     }
@@ -436,47 +436,47 @@ describe('перенос гостевого прогресса при перво
 });
 
 describe('supabase leaderboard', () => {
-  const SEED = 'daily-2026-10-18';
+  const SEED = '2026-W43';
   const opts = { seed: SEED, classId: 'ghost' as const };
 
-  it('submitDaily зовёт Edge Function с журналом действий', async () => {
+  it('submitWeekly зовёт Edge Function с журналом действий', async () => {
     const { fake, backend } = setup({ signedIn: 'u1' });
     const actions = [{ type: 'end_turn' as const }];
-    expect(await backend.leaderboard.submitDaily(SEED, opts, actions)).toEqual({ accepted: true, rank: 3 });
-    expect(fake.functions.invoke).toHaveBeenCalledWith('submit-daily', { body: { seed: SEED, options: opts, actions } });
+    expect(await backend.leaderboard.submitWeekly(SEED, opts, actions)).toEqual({ accepted: true, rank: 3 });
+    expect(fake.functions.invoke).toHaveBeenCalledWith('submit-weekly', { body: { seed: SEED, options: opts, actions } });
   });
 
   it('ошибки функции: 401 → AuthRequiredError, 4xx → отказ, сеть → NetworkError', async () => {
     const { fake, backend } = setup({ signedIn: 'u1' });
     fake.functions.invoke.mockResolvedValueOnce({ data: null, error: { name: 'FunctionsHttpError', context: { status: 401 } } });
-    await expect(backend.leaderboard.submitDaily(SEED, opts, [])).rejects.toBeInstanceOf(AuthRequiredError);
+    await expect(backend.leaderboard.submitWeekly(SEED, opts, [])).rejects.toBeInstanceOf(AuthRequiredError);
     fake.functions.invoke.mockResolvedValueOnce({ data: null, error: { name: 'FunctionsHttpError', context: { status: 400 } } });
-    expect(await backend.leaderboard.submitDaily(SEED, opts, [])).toEqual({ accepted: false });
+    expect(await backend.leaderboard.submitWeekly(SEED, opts, [])).toEqual({ accepted: false });
     fake.functions.invoke.mockResolvedValueOnce({ data: null, error: { name: 'FunctionsFetchError', context: {} } });
-    await expect(backend.leaderboard.submitDaily(SEED, opts, [])).rejects.toBeInstanceOf(NetworkError);
-    fake.functions.invoke.mockResolvedValueOnce({ data: { accepted: false, reason: 'already_submitted' }, error: null });
-    expect(await backend.leaderboard.submitDaily(SEED, opts, [])).toEqual({ accepted: false });
+    await expect(backend.leaderboard.submitWeekly(SEED, opts, [])).rejects.toBeInstanceOf(NetworkError);
+    fake.functions.invoke.mockResolvedValueOnce({ data: { accepted: false, reason: 'attempts_exhausted' }, error: null });
+    expect(await backend.leaderboard.submitWeekly(SEED, opts, [])).toEqual({ accepted: false, reason: 'attempts_exhausted' });
   });
 
   it('гость в supabase-режиме пишет результат локально', async () => {
     const { fake, backend } = setup();
-    expect(await backend.leaderboard.submitDaily(SEED, opts, [])).toEqual({ accepted: true, rank: 1 });
+    expect(await backend.leaderboard.submitWeekly(SEED, opts, [])).toEqual({ accepted: true, rank: 1 });
     expect(fake.functions.invoke).not.toHaveBeenCalled();
   });
 
-  it('getDaily читает view и маппит строки', async () => {
+  it('getWeekly читает view и маппит строки', async () => {
     const { fake, backend } = setup();
     fake.leaderboard = [
       { seed: SEED, rank: 1, display_name: 'bob_gh', class_id: 'netrunner', score: 900, floor: 51, victory: true },
       { seed: SEED, rank: 2, display_name: 'Хакер-111111', class_id: 'ghost', score: 500, floor: 20, victory: false },
-      { seed: 'daily-2026-10-17', rank: 1, display_name: 'old', class_id: 'ghost', score: 1, floor: 1, victory: false },
+      { seed: '2026-W42', rank: 1, display_name: 'old', class_id: 'ghost', score: 1, floor: 1, victory: false },
     ];
-    expect(await backend.leaderboard.getDaily(SEED)).toEqual([
-      { rank: 1, displayName: 'bob_gh', classId: 'netrunner', score: 900, floor: 51, victory: true },
-      { rank: 2, displayName: 'Хакер-111111', classId: 'ghost', score: 500, floor: 20, victory: false },
+    expect(await backend.leaderboard.getWeekly(SEED)).toEqual([
+      { rank: 1, displayName: 'bob_gh', classId: 'netrunner', score: 900, floor: 51, victory: true, durationS: null },
+      { rank: 2, displayName: 'Хакер-111111', classId: 'ghost', score: 500, floor: 20, victory: false, durationS: null },
     ]);
     fake.offline = true;
-    await expect(backend.leaderboard.getDaily(SEED)).rejects.toBeInstanceOf(NetworkError);
+    await expect(backend.leaderboard.getWeekly(SEED)).rejects.toBeInstanceOf(NetworkError);
   });
 });
 

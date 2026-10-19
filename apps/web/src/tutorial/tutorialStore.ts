@@ -126,7 +126,7 @@ export function beginTutorial(classId: ClassId = 'netrunner', difficulty: Diffic
   } catch {
     unlocked = undefined;
   }
-  const opts: NewRunOptions = { seed: TUTORIAL_SEED, classId, ascension: 0, difficulty, daily: false, ...(unlocked ? { unlocked } : {}) };
+  const opts: NewRunOptions = { seed: TUTORIAL_SEED, classId, ascension: 0, difficulty, ...(unlocked ? { unlocked } : {}) };
   useTutorial.setState({ confirm: false, setup: false, inviteClosed: true });
   g.startRun(opts);
   if (useGame.getState().run?.seed !== TUTORIAL_SEED) return; // движок вернул ошибку — её покажет тост

@@ -785,7 +785,7 @@ export function newRun(opts: NewRunOptions): RunState {
   const cls = getClassDef(opts.classId);
   const h = hashStr(opts.seed);
   const s: RunState = {
-    version: 1, seed: opts.seed, classId: opts.classId, ascension: opts.ascension ?? 0, daily: opts.daily ?? false,
+    version: 1, seed: opts.seed, classId: opts.classId, ascension: opts.ascension ?? 0, ...(opts.weekly ? { weekly: opts.weekly } : {}),
     act: 1, floor: 0, hp: cls.maxHp, maxHp: cls.maxHp, gold: cls.startingGold, deck: [], relics: [cls.startingRelic],
     map: [], currentNodeId: null, visited: [], screen: { kind: 'map' }, combat: null,
     rng: { map: h ^ 1, combat: h ^ 2, cards: h ^ 3, rewards: h ^ 4, events: h ^ 5, shop: h ^ 6, ai: h ^ 7 },

@@ -1,7 +1,8 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { fixtureContent } from '../__fixtures__/content';
 import {
-  dailySeed,
+  weeklySeed,
+  weeklyResetAt,
   describeCard,
   getCardDef,
   getClassDef,
@@ -145,8 +146,14 @@ describe('content', () => {
     expect(() => describeCard('nope', false)).toThrow();
   });
 
-  it('dailySeed', () => {
-    expect(dailySeed(new Date('2026-10-18T12:00:00Z'))).toBe('daily-2026-10-18');
+  it('weeklySeed: ISO-неделя UTC', () => {
+    expect(weeklySeed(new Date('2026-10-20T12:00:00Z'))).toBe('2026-W43');
+    expect(weeklySeed(new Date('2026-10-19T00:00:00Z'))).toBe('2026-W43'); // пн
+    expect(weeklySeed(new Date('2026-10-25T23:59:59Z'))).toBe('2026-W43'); // вс
+    expect(weeklySeed(new Date('2026-10-26T00:00:00Z'))).toBe('2026-W44');
+    expect(weeklySeed(new Date('2021-01-03T12:00:00Z'))).toBe('2020-W53');
+    expect(weeklySeed(new Date('2024-12-30T12:00:00Z'))).toBe('2025-W01');
+    expect(weeklyResetAt(new Date('2026-10-20T12:00:00Z')).toISOString()).toBe('2026-10-26T00:00:00.000Z');
   });
 
   it('buildIndex строит индексы по id', async () => {

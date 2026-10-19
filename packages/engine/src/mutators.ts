@@ -1,7 +1,7 @@
 /**
  * Мутаторы забега — добровольные испытания, выбираются при старте (NewRunOptions.mutators).
  * Часть правил ложится на AscensionMods (как режимы сложности), остальное — MutatorMods,
- * которые читают бой и награды. В ежедневном забеге мутаторов нет.
+ * которые читают бой и награды. В еженедельном вызове мутаторы и правило недели задаются неделей (weekly.ts).
  */
 import type { AscensionMods } from './ascension';
 
@@ -30,6 +30,10 @@ export interface MutatorMods {
   potionChanceBonus: number;
   /** В начале каждого хода — минимум 1 Эхо */
   turnEcho: boolean;
+  /** Добавка к добору карт каждый ход */
+  bonusDraw: number;
+  /** В начале забега выдаётся дополнительный случайный реликт */
+  bonusStartRelic: boolean;
 }
 
 interface MutatorSpec extends MutatorDef {
@@ -121,10 +125,79 @@ const SPECS: readonly MutatorSpec[] = [
   },
 ];
 
+/**
+ * Правила недели (только для еженедельного вызова): id 'wk_*', не входят в MUTATORS и normalizeMutators.
+ * Ложатся на те же AscensionMods/MutatorMods, что и обычные мутаторы.
+ */
+export const WEEKLY_RULES: readonly MutatorSpec[] = [
+  {
+    id: 'wk_cursed_gift',
+    name: 'Проклятый дар',
+    description: 'Забег начинается с проклятием в колоде, но с бонусным реликтом.',
+    scoreBonus: 0.1,
+    mods: (m) => (m.curseInDeck = true),
+    extra: (x) => (x.bonusStartRelic = true),
+  },
+  {
+    id: 'wk_sprint',
+    name: 'Перегруз канала',
+    description: 'На 1 энергию меньше каждый ход, зато на 1 карту больше в руке.',
+    scoreBonus: 0.1,
+    extra: (x) => {
+      x.bonusEnergy -= 1;
+      x.bonusDraw += 1;
+    },
+  },
+  {
+    id: 'wk_elites_only',
+    name: 'Зона элит',
+    description: 'Путь кишит элитными стражами: их на карте в разы больше.',
+    scoreBonus: 0.2,
+    mods: (m) => (m.eliteWeightMult *= 6),
+  },
+  {
+    id: 'wk_gold_rush',
+    name: 'Золотая лихорадка',
+    description: 'Золота за бои вдвое больше, но чёрный рынок просит вдвое дороже.',
+    scoreBonus: 0,
+    mods: (m) => {
+      m.goldMult *= 2;
+      m.shopPriceMult *= 2;
+    },
+  },
+  {
+    id: 'wk_iron_nerves',
+    name: 'Стальные нервы',
+    description: 'Каждый бой начинается с 2 Барьера, но у врагов на 15% больше HP.',
+    scoreBonus: 0.05,
+    mods: (m) => {
+      m.normalHpMult *= 1.15;
+      m.eliteHpMult *= 1.15;
+      m.bossHpMult *= 1.15;
+    },
+    extra: (x) => (x.playerCombatStatuses.barrier = (x.playerCombatStatuses.barrier ?? 0) + 2),
+  },
+  {
+    id: 'wk_field_hospital',
+    name: 'Полевой госпиталь',
+    description: 'Старт с 70% HP, но отдых восстанавливает 50% HP.',
+    scoreBonus: 0.05,
+    mods: (m) => {
+      m.startHpPct = 0.7;
+      m.restHealPct = 0.5;
+    },
+  },
+];
+
 /** Публичный список мутаторов (для UI). */
 export const MUTATORS: readonly MutatorDef[] = SPECS.map(({ id, name, description, scoreBonus }) => ({ id, name, description, scoreBonus }));
 
-const BY_ID = new Map(SPECS.map((m) => [m.id, m] as const));
+const BY_ID = new Map([...SPECS, ...WEEKLY_RULES].map((m) => [m.id, m] as const));
+
+export function getWeeklyRule(id: string): MutatorDef | undefined {
+  const m = WEEKLY_RULES.find((r) => r.id === id);
+  return m ? { id: m.id, name: m.name, description: m.description, scoreBonus: m.scoreBonus } : undefined;
+}
 
 export function getMutator(id: string): MutatorDef | undefined {
   const m = BY_ID.get(id);
@@ -155,6 +228,8 @@ const NO_MUTATORS: MutatorMods = Object.freeze({
   extraCardChoices: 0,
   potionChanceBonus: 0,
   turnEcho: false,
+  bonusDraw: 0,
+  bonusStartRelic: false,
 });
 
 export function getMutatorMods(ids: readonly string[] | undefined): MutatorMods {

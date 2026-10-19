@@ -7,8 +7,8 @@
 ```
 supabase/
   migrations/0001_init.sql        таблицы, RLS, триггеры, view лидерборда
-  functions/submit-daily/         Edge Function: проверка и запись результата дня
-  functions/_shared/daily.ts      чистая логика проверки (покрыта vitest)
+  functions/submit-weekly/         Edge Function: проверка и запись результата недели
+  functions/_shared/weekly.ts      чистая логика проверки (покрыта vitest)
   functions/_shared/engine/       бандл движка (генерируется, в git не хранится)
   scripts/bundle-engine.mjs       сборка бандла движка
   tests/rls.sql                   pgTAP-тесты RLS
@@ -19,14 +19,14 @@ supabase/
 
 ```
  браузер ──anon key + JWT──► PostgREST ──RLS──► profiles, saved_runs   (только свои строки)
-    │                            └────────────► daily_leaderboard (view, только чтение)
+    │                            └────────────► weekly_leaderboard (view, только чтение)
     │
-    └──JWT──► Edge Function submit-daily
+    └──JWT──► Edge Function submit-weekly
                  │ 1. auth.getUser(JWT)      проверка пользователя
-                 │ 2. seed == daily сегодня  (или вчера, если сейчас 00:00–02:00 UTC)
+                 │ 2. seed == текущая ISO-неделя (или прошлая, в первые 2 ч понедельника UTC), класс == класс недели, до 3 попыток
                  │ 3. replay(options, actions)  пересчёт забега движком
                  │ 4. score/floor/victory берутся из пересчёта
-                 └─► service role ──► daily_results (клиентам закрыта полностью)
+                 └─► service role ──► weekly_results (клиентам закрыта полностью)
 ```
 
 - **profiles**: метапрогрессия (`data jsonb`) и `display_name` для лидерборда. Создаётся триггером
@@ -34,9 +34,9 @@ supabase/
   Email и ФИО в лидерборд не попадают.
 - **saved_runs**: один текущий забег на игрока. Если устройства сохраняли в разное время, побеждает
   запись с более поздним `updated_at`. Это обеспечивает триггер, клиент на него не влияет.
-- **daily_results**: одна попытка на seed для каждого игрока (`unique(user_id, seed)`). Клиенты не
+- **weekly_results**: до 3 попыток на неделю для каждого игрока (`unique(user_id, seed, attempt_no)`), в рейтинг идёт лучшая. Старые `daily_*` таблицы (миграции 0001–0002) оставлены как архив. Клиенты не
   могут ни читать, ни писать эту таблицу. Публичное чтение идёт только через view
-  `daily_leaderboard`, в котором нет `user_id` и `actions`.
+  `weekly_leaderboard`, в котором нет `user_id` и `actions`.
 - Офлайн-очередь на клиенте: если сеть пропала, сейв и профиль кладутся в localStorage и
   досылаются по событию `online` или при следующем успешном запросе. Профиль при отправке
   сливается с серверным (разблокировки объединяются, по числам берётся максимум), поэтому
@@ -121,7 +121,7 @@ npx supabase db push
 ```
 
 После применения открой **Advisors → Security Advisor**. Предупреждение `security_definer_view`
-для `daily_leaderboard` ожидаемо: view специально читает закрытые таблицы, но отдаёт только
+для `weekly_leaderboard` ожидаемо: view специально читает закрытые таблицы, но отдаёт только
 безопасные колонки. Других ошибок быть не должно.
 
 ### 8. Задеплоить Edge Function
@@ -134,7 +134,7 @@ npx supabase db push
 
 ```powershell
 node supabase/scripts/bundle-engine.mjs
-npx supabase functions deploy submit-daily
+npx supabase functions deploy submit-weekly
 ```
 
 - `verify_jwt = false` в `config.toml` выставлен намеренно: JWT проверяется внутри функции через
@@ -151,7 +151,7 @@ npx supabase functions deploy submit-daily
 1. `npm run dev`, открой игру и войди через email, GitHub или Google.
 2. В **Table Editor → profiles** появилась строка с твоим `user_id`.
 3. Сыграй и сохранись: строка появилась в `saved_runs`.
-4. Заверши ежедневный забег: строка появилась в `daily_results`, игра показывает место в таблице.
+4. Заверши еженедельный вызов: строка появилась в `weekly_results`, игра показывает место в таблице.
 
 ## Тесты
 
@@ -166,10 +166,10 @@ npx supabase functions deploy submit-daily
 
 ## Известные ограничения
 
-- Игрок может сыграть daily несколько раз локально и отправить лучшую попытку: сервер проверяет
+- Игрок может сыграть вызов несколько раз локально и отправить лучшую попытку: сервер проверяет
   честность забега, но не то, первая ли это попытка. Чтобы это закрыть, нужен серверный старт
-  забега (отдельная функция `start-daily`, которая фиксирует время начала).
-- Rate limiting на `submit-daily` нет. Повторные отправки дёшевы (проверка `already_submitted`
+  забега (отдельная функция `start-weekly`, которая фиксирует время начала).
+- Rate limiting на `submit-weekly` нет. Повторные отправки дёшевы (проверка лимита попыток
   идёт до replay), но некорректные журналы каждый раз пересчитываются. Защиту дают лимит тела
   1 MB, лимит в 20 000 действий и CPU-лимит Edge Functions.
 - `display_name` пользователь может менять сам (длина 1–32 символа). UI должен выводить его как

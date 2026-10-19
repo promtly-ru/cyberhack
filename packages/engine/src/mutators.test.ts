@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { weeklyMutatorIds } from './weekly';
 import { enterCombat, OPTS, play, setupCombat, useContent } from './__fixtures__/helpers';
 import { mechanicsContent } from './__fixtures__/mechanics';
 import { applyMutators, getMutatorMods, MUTATORS, mutatorScoreMult, normalizeMutators } from './mutators';
@@ -29,8 +30,21 @@ describe('мутаторы: список и нормализация', () => {
     expect(newRun(withMut('plague', 'fog')).mutators).toEqual(['fog', 'plague']);
   });
 
-  it('ежедневный забег — без мутаторов', () => {
-    expect(newRun({ ...withMut('fog'), daily: true }).mutators).toBeUndefined();
+  it('еженедельный вызов — мутаторы задаёт неделя, а не игрок', () => {
+    const r = newRun({ ...withMut('fog'), weekly: '2026-W43' });
+    expect(r.mutators).toEqual(weeklyMutatorIds('2026-W43'));
+    expect(r.mutators).toHaveLength(3);
+  });
+
+  it('правила недели: детерминированный забег и эффекты модов', () => {
+    const a = newRun({ ...OPTS, weekly: '2026-W43' });
+    const b = newRun({ ...OPTS, weekly: '2026-W43' });
+    expect(a).toEqual(b);
+    expect(computeScore(a)).toBe(a.score);
+    expect(getMutatorMods(['wk_sprint'])).toMatchObject({ bonusEnergy: -1, bonusDraw: 1 });
+    expect(modsOf({ ascension: 0, difficulty: 'normal', mutators: ['wk_elites_only'] }).eliteWeightMult).toBe(6);
+    expect(modsOf({ ascension: 0, difficulty: 'normal', mutators: ['wk_gold_rush'] })).toMatchObject({ goldMult: 2, shopPriceMult: 2 });
+    expect(getMutatorMods(['wk_cursed_gift']).bonusStartRelic).toBe(true);
   });
 
   it('без мутаторов модификаторы не меняются', () => {
