@@ -630,3 +630,31 @@ html[data-motion='reduced'] .menu::after, html[data-motion='reduced'] .map-scree
   .logo__sub { padding: 0; }
   .showcase__item span { font-size: 9px; overflow-wrap: anywhere; }
 }
+
+/* ---------- Исправление меню: сетка классов, малые экраны, производительность ---------- */
+.showcase { grid-template-columns: repeat(4, 1fr); }
+.showcase__item span { overflow-wrap: normal; word-break: normal; hyphens: none; font-size: 10px; }
+@media (min-width: 1100px) { .showcase { grid-template-columns: repeat(8, 1fr); } .showcase__item span { font-size: 10px; } }
+@media (min-width: 900px) and (max-width: 1099px) { .showcase { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 899px) {
+  .menu { justify-content: flex-start; padding-top: 64px; }
+  .showcase { grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .showcase__item { padding: 5px 0 3px; border-radius: 8px; }
+  .showcase__item .unit-art { height: 34px; filter: none; }
+  .showcase__item span { font-size: 0; line-height: 0; height: 0; overflow: hidden; }
+  .showcase__item::after { display: none; }
+  .menu-btn { backdrop-filter: none; }
+  .menu::after { display: none; }
+  .menu::before { animation: none; }
+}
+/* Низкие экраны (телефон в альбомной ориентации): без showcase, две колонки кнопок */
+@media (max-height: 520px) {
+  .menu { padding-top: 12px; padding-bottom: 12px; }
+  .showcase { display: none; }
+  .menu__inner { width: min(900px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; }
+  .menu__hero .logo__word { font-size: clamp(28px, 9vh, 48px); }
+  .menu__nav { gap: 5px; }
+  .menu-btn { min-height: 44px; padding-top: 4px; padding-bottom: 4px; }
+  .menu-btn small { display: none; }
+}
+@media (max-width: 380px) { .menu-btn b { font-size: 16px; } .menu-btn small { font-size: 12px; } }
