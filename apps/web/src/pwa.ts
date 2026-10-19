@@ -21,6 +21,16 @@ export function isNativeShell(w: Window = window): boolean {
 export function registerServiceWorker(): void {
   if (import.meta.env.DEV || !('serviceWorker' in navigator) || isNativeShell()) return;
   void import('virtual:pwa-register')
-    .then(({ registerSW }) => registerSW({ immediate: true }))
+    .then(({ registerSW }) => {
+      const hadController = !!navigator.serviceWorker.controller;
+      registerSW({ immediate: true });
+      // Новая версия взяла управление, перезагружаем страницу, чтобы сразу показать свежую игру
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || reloaded) return;
+        reloaded = true;
+        window.location.reload();
+      });
+    })
     .catch(() => undefined);
 }
