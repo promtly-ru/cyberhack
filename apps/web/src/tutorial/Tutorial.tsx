@@ -4,6 +4,8 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useGame } from '../game/store';
+import { DIFFICULTY_INFO, listClasses, type ClassDef, type ClassId, type Difficulty } from '../game/engine';
+import { CLASS_STYLE } from '../screens/MenuScreens';
 import { isReducedMotion } from '../ui/settings';
 import { sfx } from '../audio/sfx';
 import { COUNTED, STEPS, type Step } from './steps';
@@ -13,7 +15,7 @@ import { ScreenHint, TopPlaque } from './hints';
 /** Запустить обучение (из меню или из приглашения при первом запуске). */
 export function startTutorial(): void {
   if (hasActiveRun()) useTutorial.setState({ confirm: true });
-  else beginTutorial();
+  else useTutorial.setState({ setup: true });
 }
 
 /** Слой обучения: смонтирован в App поверх всех экранов. */
@@ -22,6 +24,7 @@ export function TutorialLayer() {
     <>
       <Invite />
       <ConfirmRestart />
+      <Setup />
       <Coach />
       <ScreenHint />
     </>
@@ -369,7 +372,91 @@ function ConfirmRestart() {
         <button className="btn btn--ghost" onClick={cancel}>
           Отмена
         </button>
-        <button className="btn btn--primary" data-testid="confirm-tutorial" onClick={beginTutorial}>
+        <button className="btn btn--primary" data-testid="confirm-tutorial" onClick={() => useTutorial.setState({ confirm: false, setup: true })}>
+          Начать обучение
+        </button>
+      </div>
+    </TutModal>
+  );
+}
+
+function Setup() {
+  const open = useTutorial((s) => s.setup);
+  const unlockedIds = useGame((s) => s.profile.unlockedClasses);
+  const [cls, setCls] = useState<ClassId>('netrunner');
+  const [diff, setDiff] = useState<Difficulty>('normal');
+  if (!open) return null;
+  let classes: ClassDef[] = [];
+  try {
+    classes = listClasses().filter((c) => unlockedIds.includes(c.id));
+  } catch {
+    classes = [];
+  }
+  const current = classes.find((c) => c.id === cls) ?? classes[0];
+  const cancel = () => useTutorial.setState({ setup: false });
+  return (
+    <TutModal title="Выбери класс и режим" onEsc={cancel} testId="tutorial-setup">
+      <p className="tut-modal__text">
+        <b>Класс</b> — твой стиль игры: свои карты, здоровье и стартовый имплант. Новичкам проще всего с Нетраннером: прямой урон и понятные карты.
+      </p>
+      <div className="asc-chips" role="radiogroup" aria-label="Класс">
+        {classes.map((c) => (
+          <button
+            key={c.id}
+            role="radio"
+            aria-checked={(current?.id ?? cls) === c.id}
+            data-testid={`tut-class-${c.id}`}
+            className={`asc-chip${(current?.id ?? cls) === c.id ? ' is-selected' : ''}`}
+            style={{ width: 'auto', padding: '0 14px' }}
+            onClick={() => {
+              sfx('click');
+              setCls(c.id);
+            }}
+          >
+            {c.name}
+          </button>
+        ))}
+      </div>
+      {current ? (
+        <p className="tut-modal__text muted small">
+          {CLASS_STYLE[current.id] ? `Стиль: ${CLASS_STYLE[current.id]} ` : ''}
+          {current.maxHp} HP, {current.startingGold} кр.
+        </p>
+      ) : null}
+      <p className="tut-modal__text">
+        <b>Режим</b> — общая сила врагов. Лёгкий прощает ошибки, обычный — как задумано, сложный для опытных. Выше есть ещё уровни Ascension: они открываются победами и делают врагов сильнее.
+      </p>
+      <div className="asc-chips" role="radiogroup" aria-label="Режим">
+        {(['easy', 'normal', 'hard'] as Difficulty[]).map((d) => (
+          <button
+            key={d}
+            role="radio"
+            aria-checked={diff === d}
+            data-testid={`tut-diff-${d}`}
+            className={`asc-chip${diff === d ? ' is-selected' : ''}`}
+            style={{ width: 'auto', padding: '0 16px' }}
+            onClick={() => {
+              sfx('click');
+              setDiff(d);
+            }}
+          >
+            {DIFFICULTY_INFO[d].name}
+          </button>
+        ))}
+      </div>
+      <p className="tut-modal__text muted small">{DIFFICULTY_INFO[diff].description}</p>
+      <div className="tut-modal__actions">
+        <button className="btn btn--ghost" onClick={cancel}>
+          Отмена
+        </button>
+        <button
+          className="btn btn--primary"
+          data-testid="tutorial-setup-start"
+          onClick={() => {
+            sfx('select');
+            beginTutorial(current?.id ?? cls, diff);
+          }}
+        >
           Начать обучение
         </button>
       </div>

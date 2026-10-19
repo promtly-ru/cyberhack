@@ -119,6 +119,14 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     return m;
   }, [run, playerPhase]);
 
+  const isBlockCard = useCallback((c: CardInstance) => {
+    try {
+      const d = cardStats(c.defId, c.upgraded).def;
+      return d.target !== 'enemy' && d.effects.some((e) => e.type === 'block');
+    } catch {
+      return false;
+    }
+  }, []);
   const isTargeted = useCallback((c: CardInstance) => {
     try {
       return cardStats(c.defId, c.upgraded).def.target === 'enemy';
@@ -532,6 +540,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
                 data-def={c.defId}
                 data-playable={playable ? '1' : '0'}
                 data-targeted={isTargeted(c) ? '1' : '0'}
+                data-block={isBlockCard(c) ? '1' : '0'}
                 aria-label={cardLabel(c, playable)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {

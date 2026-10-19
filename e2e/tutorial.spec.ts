@@ -31,6 +31,7 @@ test('чистый профиль: приглашение в обучение, �
 test('обучение: от карты до конца первого боя и снова на карту', async ({ page, act }) => {
   await page.goto('./');
   await act(page.getByTestId('invite-accept'));
+  await act(page.getByTestId('tutorial-setup-start'));
 
   // Карта
   await expect(page.getByTestId('map')).toBeVisible();
@@ -40,7 +41,7 @@ test('обучение: от карты до конца первого боя и
 
   // Бой: пояснения
   await expect(page.getByTestId('combat')).toHaveAttribute('data-phase', 'player');
-  for (const id of ['player', 'enemy', 'intent', 'energy', 'hand']) await next(page, act, id);
+  for (const id of ['player', 'class', 'enemy', 'intent', 'energy', 'hand']) await next(page, act, id);
 
   // «Пинг» во врага
   await expect(step(page, 'ping')).toBeVisible();
@@ -82,6 +83,7 @@ test('обучение: от карты до конца первого боя и
   // Снова карта: типы узлов и финал
   await expect(page.getByTestId('map')).toBeVisible();
   await next(page, act, 'map-kinds');
+  await next(page, act, 'difficulty');
   await expect(step(page, 'done')).toBeVisible();
   await expect(bubble(page)).toContainText('Готово!');
   expect(await page.evaluate((k) => localStorage.getItem(k), TUTORIAL_KEY)).toBe('done');
@@ -94,6 +96,7 @@ test('обучение: от карты до конца первого боя и
 test('«Пропустить обучение» работает, флаг переживает перезагрузку', async ({ page, act }) => {
   await page.goto('./');
   await act(page.getByTestId('invite-accept'));
+  await act(page.getByTestId('tutorial-setup-start'));
   await expect(step(page, 'map-intro')).toBeVisible();
   await act(page.getByTestId('tutorial-skip'));
   await expect(page.getByTestId('tutorial')).toHaveCount(0);
@@ -112,6 +115,7 @@ test('Esc пропускает обучение', async ({ page, act }, testInfo
   test.skip(!!testInfo.project.use.hasTouch, 'клавиатура — только десктоп');
   await page.goto('./');
   await act(page.getByTestId('invite-accept'));
+  await act(page.getByTestId('tutorial-setup-start'));
   await expect(step(page, 'map-intro')).toBeVisible();
   await page.keyboard.press('Enter');
   await expect(step(page, 'map-node')).toBeVisible();
@@ -137,6 +141,7 @@ test('«Как играть» открывается из меню и ведёт
   await expect(page.getByTestId('menu')).toBeVisible();
   await act(page.getByTestId('menu-howto'));
   await act(page.getByTestId('howto-tutorial'));
+  await act(page.getByTestId('tutorial-setup-start'));
   await expect(page.getByTestId('map')).toBeVisible();
   await expect(step(page, 'map-intro')).toBeVisible();
 });

@@ -4,7 +4,8 @@
  */
 import type { ReactNode } from 'react';
 import type { CombatState, MapNodeKind, RunState } from '../game/engine';
-import { cardStats, getEnemyDef } from '../game/engine';
+import { DIFFICULTY_INFO, cardStats, getEnemyDef, listClasses } from '../game/engine';
+import { CLASS_STYLE } from '../screens/MenuScreens';
 import { NODE_LABEL } from '../screens/MapScreen';
 import { Icon } from '../components/Icon';
 
@@ -93,8 +94,10 @@ const exists = (sel: string) => typeof document !== 'undefined' && !!document.qu
 const PING_SEL = '[data-testid="hand-card"][data-playable="1"][data-def="nr_ping"]';
 const ANY_ATTACK_SEL = '[data-testid="hand-card"][data-playable="1"][data-targeted="1"]';
 const FIREWALL_SEL = '[data-testid="hand-card"][data-playable="1"][data-def="nr_firewall"]';
+const ANY_BLOCK_SEL = '[data-testid="hand-card"][data-playable="1"][data-block="1"]';
 const SELECTED_TARGETED = '[data-testid="hand-card"][aria-pressed="true"][data-targeted="1"]';
 const SELECTED_FIREWALL = '[data-testid="hand-card"][aria-pressed="true"][data-def="nr_firewall"]';
+const SELECTED_BLOCK = '[data-testid="hand-card"][aria-pressed="true"][data-block="1"]';
 
 const LEGEND_SEL = '.map-legend';
 
@@ -151,6 +154,23 @@ export const STEPS: Step[] = [
     screens: ['combat'],
     title: 'Это ты',
     text: (c) => `Полоска под тобой — здоровье (HP), сейчас ${c.combat?.player.hp ?? 0} из ${c.combat?.player.maxHp ?? 0}. Упадёт до нуля — забег окончен.`,
+    target: () => ['[data-tut="player"] .unit', '[data-tut="player"]'],
+  },
+  {
+    id: 'class',
+    mode: 'coach',
+    screens: ['combat'],
+    title: 'Твой класс',
+    text: (c) => {
+      let name = c.run.classId as string;
+      try {
+        name = listClasses().find((k) => k.id === c.run.classId)?.name ?? name;
+      } catch {
+        /* имя по id */
+      }
+      const style = CLASS_STYLE[c.run.classId];
+      return `Ты играешь за класс «${name}». Класс задаёт стартовую колоду, здоровье и имплант на весь забег.${style ? ` Стиль: ${style}` : ''} Остальные классы открываются победами, их видно в «Новый взлом».`;
+    },
     target: () => ['[data-tut="player"] .unit', '[data-tut="player"]'],
   },
   {
@@ -211,13 +231,14 @@ export const STEPS: Step[] = [
     screens: ['combat'],
     title: 'Защищайся',
     text: () => {
-      if (exists(SELECTED_FIREWALL)) return 'Нажми на карту ещё раз — она сработает.';
+      if (exists(SELECTED_BLOCK)) return 'Нажми на карту ещё раз — она сработает.';
+      if (!exists(FIREWALL_SEL)) return 'Попал! Теперь защита: возьми карту с блоком. Блок поглощает урон до начала твоего следующего хода. Нажми на карту два раза.';
       const f = cardInfo('nr_firewall', 'block', 'Файрвол');
       return `Попал! Теперь защита: «${f.name}» даёт ${f.amount ?? 'немного'} блока. Блок поглощает урон до начала твоего следующего хода. Нажми на карту два раза.`;
     },
-    target: () => [SELECTED_FIREWALL, FIREWALL_SEL],
+    target: () => [SELECTED_BLOCK, FIREWALL_SEL, ANY_BLOCK_SEL],
     done: (c) => (c.combat?.player.block ?? 0) > c.snap.block,
-    canAct: () => exists(FIREWALL_SEL) || exists(SELECTED_FIREWALL),
+    canAct: () => exists(ANY_BLOCK_SEL) || exists(SELECTED_BLOCK),
   },
   {
     id: 'end-turn',
@@ -306,6 +327,16 @@ export const STEPS: Step[] = [
         </>
       ),
     target: () => (legendVisible() ? [LEGEND_SEL] : null),
+  },
+  {
+    id: 'difficulty',
+    mode: 'coach',
+    screens: ['map'],
+    title: 'Режим и сложность',
+    text: (c) => {
+      const d = c.run.difficulty ?? 'normal';
+      return `Сейчас режим «${DIFFICULTY_INFO[d].name}»: ${DIFFICULTY_INFO[d].description} Перед забегом режим выбираешь сам: лёгкий, обычный или сложный. А уровни Ascension открываются победами: каждый добавляет врагам силы.`;
+    },
   },
   {
     id: 'done',

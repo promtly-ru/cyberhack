@@ -3,7 +3,7 @@
  * Шаги двигаются подпиской на useGame: сыграл карту, нажал «Конец хода», сменился экран.
  */
 import { create } from 'zustand';
-import { unlockedOptions, type NewRunOptions } from '../game/engine';
+import { unlockedOptions, type ClassId, type Difficulty, type NewRunOptions } from '../game/engine';
 import { useGame } from '../game/store';
 import { readTutorialFlag, writeTutorialFlag, type TutorialFlag } from './storage';
 import { STEPS, TUTORIAL_SEED, makeSnap, type Ctx, type ScreenKey, type Snap } from './steps';
@@ -15,6 +15,8 @@ interface TutorialState {
   pre: { block: number; hp: number };
   /** Спросить, можно ли затереть незаконченный забег */
   confirm: boolean;
+  /** Окно выбора класса и режима перед обучением */
+  setup: boolean;
   /** Приглашение закрыто в этой сессии (Esc) */
   inviteClosed: boolean;
   /** Копия флага из localStorage */
@@ -29,6 +31,7 @@ export const useTutorial = create<TutorialState>(() => ({
   snap: EMPTY_SNAP,
   pre: { block: 0, hp: 0 },
   confirm: false,
+  setup: false,
   inviteClosed: false,
   flag: readTutorialFlag(),
 }));
@@ -111,11 +114,11 @@ function onGameChange(g: GameState): void {
 function stop(): void {
   unsubscribe?.();
   unsubscribe = null;
-  useTutorial.setState({ active: false, index: 0, confirm: false });
+  useTutorial.setState({ active: false, index: 0, confirm: false, setup: false });
 }
 
-/** Начать обучение: обычный забег с фиксированным сидом, Нетраннер, A0. */
-export function beginTutorial(): void {
+/** Начать обучение: обычный забег с фиксированным сидом, выбранные класс и режим, A0. */
+export function beginTutorial(classId: ClassId = 'netrunner', difficulty: Difficulty = 'normal'): void {
   const g = useGame.getState();
   let unlocked: NewRunOptions['unlocked'];
   try {
@@ -123,8 +126,8 @@ export function beginTutorial(): void {
   } catch {
     unlocked = undefined;
   }
-  const opts: NewRunOptions = { seed: TUTORIAL_SEED, classId: 'netrunner', ascension: 0, daily: false, ...(unlocked ? { unlocked } : {}) };
-  useTutorial.setState({ confirm: false, inviteClosed: true });
+  const opts: NewRunOptions = { seed: TUTORIAL_SEED, classId, ascension: 0, difficulty, daily: false, ...(unlocked ? { unlocked } : {}) };
+  useTutorial.setState({ confirm: false, setup: false, inviteClosed: true });
   g.startRun(opts);
   if (useGame.getState().run?.seed !== TUTORIAL_SEED) return; // движок вернул ошибку — её покажет тост
   unsubscribe?.();
