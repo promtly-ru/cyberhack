@@ -149,11 +149,49 @@ export interface ClassDef {
   startingRelic: string;
 }
 
-export interface EventOption {
-  label: string;
+export type EventSpecial =
+  | 'remove_card'
+  | 'upgrade_card'
+  | 'random_relic'
+  | 'random_card'
+  | 'fight'
+  | 'fight_elite'
+  | 'transform_card'
+  | 'lose_potion'
+  | 'remove_curse';
+
+/** Условие доступности варианта события */
+export interface EventRequires {
+  /** не меньше N кредитов */
+  gold?: number;
+  /** HP строго больше N */
+  hp?: number;
+  /** есть хотя бы один расходник */
+  potion?: boolean;
+  /** в колоде есть карта этого типа */
+  cardType?: string;
+  /** есть улучшаемая карта */
+  upgradable?: boolean;
+  /** флаг цепочки событий выставлен / не выставлен */
+  flag?: string;
+  noFlag?: string;
+}
+
+export interface EventResult {
   effects: Effect[]; // плюс специальные: удалить/улучшить карту — через screen
   /** Специальное действие после эффектов */
-  special?: 'remove_card' | 'upgrade_card' | 'random_relic' | 'random_card' | 'fight';
+  special?: EventSpecial;
+  /** Запомнить выбор (для цепочек событий) */
+  setFlag?: string;
+  /** Текст итога, показывается на карте */
+  text?: string;
+}
+
+export interface EventOption extends EventResult {
+  label: string;
+  requires?: EventRequires;
+  /** Исходы с вероятностями (по весам, поток ГСЧ events); вместо effects/special */
+  outcomes?: (EventResult & { weight: number })[];
 }
 
 export interface EventDef {
@@ -161,6 +199,9 @@ export interface EventDef {
   name: string;
   text: string;
   act?: 1 | 2 | 3 | 4;
+  /** Событие появляется только если флаг выставлен / не выставлен */
+  requiresFlag?: string;
+  excludesFlag?: string;
   options: EventOption[];
 }
 
@@ -211,7 +252,7 @@ export interface CombatState {
 
 // ---------- Карта забега ----------
 
-export type MapNodeKind = 'combat' | 'elite' | 'event' | 'shop' | 'rest' | 'treasure' | 'boss';
+export type MapNodeKind = 'combat' | 'elite' | 'event' | 'shop' | 'rest' | 'treasure' | 'boss' | 'lab' | 'blackbox' | 'relay' | 'ambush';
 
 export interface MapNode {
   id: string; // `${act}-${row}-${col}`
@@ -232,10 +273,16 @@ export type RewardItem =
   | { kind: 'potion'; potionId: string };
 
 export interface ShopItem {
-  kind: 'card' | 'relic' | 'remove' | 'potion';
+  kind: 'card' | 'relic' | 'remove' | 'potion' | 'upgrade' | 'refresh';
   id?: string; // id карты/реликвии/расходника
   price: number;
   sold: boolean;
+  /** Распродажа (−30%); price — уже со скидкой */
+  sale?: boolean;
+  /** Цена без скидки */
+  basePrice?: number;
+  /** refresh: сколько обновлений уже сделано */
+  n?: number;
 }
 
 export type Screen =
@@ -245,8 +292,11 @@ export type Screen =
   | { kind: 'card_pick'; cardIds: string[]; rewardIndex: number }
   | { kind: 'shop'; items: ShopItem[] }
   | { kind: 'rest' }
+  | { kind: 'lab' }
+  | { kind: 'blackbox' }
+  | { kind: 'relay' }
   | { kind: 'event'; eventId: string }
-  | { kind: 'select_deck_card'; purpose: 'remove' | 'upgrade'; returnTo: 'map' | 'shop'; /** uid карт, из которых можно выбрать улучшение (1 из 3) */ offer?: string[] }
+  | { kind: 'select_deck_card'; purpose: 'remove' | 'upgrade' | 'transform'; returnTo: 'map' | 'shop'; /** uid карт, из которых можно выбрать улучшение (1 из 3) */ offer?: string[] }
   | { kind: 'game_over'; victory: boolean };
 
 // ---------- Забег ----------
@@ -317,6 +367,12 @@ export interface RunState {
   mutators?: string[];
   /** Дополнительные потоки ГСЧ, создаются лениво (старые сохранения их не имеют) */
   rngExt?: Record<string, number>;
+  /** Флаги цепочек событий */
+  flags?: string[];
+  /** Итог последнего события/узла (показывается на карте) */
+  eventResult?: string;
+  /** Сколько раз улучшали карту в магазине */
+  shopUpgrades?: number;
 }
 
 // ---------- Действия игрока ----------
@@ -334,6 +390,9 @@ export type Action =
   | { type: 'rest_upgrade' } // переводит на select_deck_card
   | { type: 'select_deck_card'; cardUid: string | null }
   | { type: 'event_choice'; index: number }
+  /** Выбор на экране lab / blackbox / relay */
+  | { type: 'node_choice'; index: number }
+  | { type: 'leave_node' }
   /** Выпить расходник из слота; в бою — любой, вне боя — только лечебные. targetUid — для расходников на врага */
   | { type: 'use_potion'; slot: number; targetUid?: string }
   | { type: 'discard_potion'; slot: number };

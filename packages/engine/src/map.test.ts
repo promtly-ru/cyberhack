@@ -41,12 +41,14 @@ describe('генерация карты', () => {
         if (n.row === 0) expect(n.kind).toBe('combat');
         if (n.row === TREASURE_ROW) expect(n.kind).toBe('treasure');
         if (n.row === REST_ROW) expect(n.kind).toBe('rest');
+        if (n.row === 13) expect(n.kind).toBe('shop');
+        if (n.kind !== 'combat') for (const id of n.next) expect(byId.get(id)!.kind).not.toBe(n.kind);
         if (n.kind === 'elite') expect(n.row).toBeGreaterThanOrEqual(MIN_ELITE_ROW);
         if (n.kind === 'rest' && n.row !== REST_ROW) {
           expect(n.row).toBeGreaterThanOrEqual(MIN_REST_ROW);
           for (const id of n.next) expect(byId.get(id)!.kind).not.toBe('rest');
         }
-        expect(['combat', 'elite', 'event', 'shop', 'rest', 'treasure']).toContain(n.kind);
+        expect(['combat', 'elite', 'event', 'shop', 'rest', 'treasure', 'lab', 'blackbox', 'relay', 'ambush']).toContain(n.kind);
       }
 
       // Каждая строка 0..14 содержит хотя бы один узел; в ряду 0 минимум 2 старта.
@@ -81,7 +83,7 @@ describe('генерация карты', () => {
     const count = (mult: number) => {
       const t: Record<string, number> = {};
       for (let i = 0; i < 200; i++)
-        for (const n of mapFor(`dist-${i}`, 1, mult)) if (n.row > 0 && n.row !== TREASURE_ROW && n.row !== REST_ROW && n.kind !== 'boss') t[n.kind] = (t[n.kind] ?? 0) + 1;
+        for (const n of mapFor(`dist-${i}`, 1, mult)) if (n.row > 0 && n.row !== TREASURE_ROW && n.row !== REST_ROW && n.row !== 13 && n.kind !== 'boss') t[n.kind] = (t[n.kind] ?? 0) + 1;
       return t;
     };
     const base = count(1);

@@ -259,17 +259,19 @@ describe('магазин', () => {
     expect(cards).toHaveLength(7);
     expect(shop.filter((i) => i.kind === 'relic')).toHaveLength(3);
     expect(shop.filter((i) => i.kind === 'remove')).toEqual([{ kind: 'remove', price: 75, sold: false }]);
+    expect(shop.filter((i) => i.sale)).toHaveLength(1);
+    expect(shop.filter((i) => i.kind === 'upgrade' || i.kind === 'refresh')).toHaveLength(2);
     const neutral = cards.slice(5).map((c) => c.id);
     for (const id of neutral) expect(id!.startsWith('n_')).toBe(true);
     for (const c of cards) {
       const def = fixtureContent().cards.find((d) => d.id === c.id)!;
       const [lo, hi] = def.rarity === 'common' ? [45, 55] : def.rarity === 'uncommon' ? [68, 82] : [135, 165];
-      expect(c.price).toBeGreaterThanOrEqual(lo);
-      expect(c.price).toBeLessThanOrEqual(hi);
+      expect(c.basePrice ?? c.price).toBeGreaterThanOrEqual(lo);
+      expect(c.basePrice ?? c.price).toBeLessThanOrEqual(hi);
     }
     for (const r of shop.filter((i) => i.kind === 'relic')) {
-      expect(r.price).toBeGreaterThanOrEqual(150);
-      expect(r.price).toBeLessThanOrEqual(300);
+      expect(r.basePrice ?? r.price).toBeGreaterThanOrEqual(150);
+      expect(r.basePrice ?? r.price).toBeLessThanOrEqual(300);
     }
   });
 

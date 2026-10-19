@@ -9,14 +9,29 @@ import { ACT_NAMES } from '../ui/uiStore';
 import { sfx } from '../audio/sfx';
 
 export const NODE_LABEL: Record<MapNodeKind, { name: string; text: string }> = {
-  combat: { name: 'Сервер', text: 'Обычный бой с защитными программами.' },
-  elite: { name: 'Элитная защита', text: 'Опасный страж. Награда — имплант.' },
-  event: { name: 'Неизвестный сигнал', text: 'Случайное событие.' },
-  shop: { name: 'Чёрный рынок', text: 'Купить карты и импланты, удалить карту.' },
-  rest: { name: 'Безопасный узел', text: 'Восстановить здоровье или улучшить карту.' },
-  treasure: { name: 'Тайник данных', text: 'Сундук с наградой.' },
+  combat: { name: 'Сервер', text: 'Обычный бой. Даёт: кредиты, выбор карты, иногда расходник.' },
+  elite: { name: 'Элитная защита', text: 'Опасный бой. Даёт: имплант, редкие карты, расходник.' },
+  event: { name: 'Неизвестный сигнал', text: 'Событие с выбором и риском. Исход бывает разным.' },
+  shop: { name: 'Чёрный рынок', text: 'Карты, импланты, расходники, улучшение и удаление карт.' },
+  rest: { name: 'Безопасный узел', text: 'Лечение или улучшение карты.' },
+  treasure: { name: 'Тайник данных', text: 'Сундук с имплантом.' },
   boss: { name: 'Ядро системы', text: 'Финальный страж акта.' },
+  lab: { name: 'Лаборатория', text: 'Улучшить карту (1 из 3) или трансформировать в другую редкость.' },
+  blackbox: { name: 'Чёрный ящик', text: 'Риск за награду: потеряй HP и получи имплант. Взлом может выйти бесплатно.' },
+  relay: { name: 'Ретранслятор', text: 'Бесплатно: небольшое лечение и расходник.' },
+  ambush: { name: 'Охотничья засада', text: 'Сложный бой. Даёт: больше кредитов, карты как с элиты, расходник.' },
 };
+
+/** Метки ожидаемой награды на узле (без спойлера конкретных предметов) */
+export const NODE_REWARD_MARKS: Partial<Record<MapNodeKind, string[]>> = {
+  combat: ['deck'],
+  elite: ['crown', 'deck'],
+  ambush: ['deck', 'potion', 'gold'],
+  treasure: ['crown'],
+  relay: ['potion'],
+  blackbox: ['crown'],
+};
+const MARK_NAME: Record<string, string> = { deck: 'карты', crown: 'имплант', potion: 'расходник', gold: 'кредиты' };
 
 const ROW_H = 84;
 const PAD_TOP = 110;
@@ -51,6 +66,32 @@ export function MapScreen({ run }: { run: RunState }) {
   }, [run.currentNodeId, run.screen.kind, nodes, byId]);
 
   const height = PAD_TOP + 15 * ROW_H + PAD_BOTTOM;
+
+  // Рекомендуемый безопасный путь: от текущей позиции вперёд, избегая элит и засад
+  const safePath = useMemo(() => {
+    const out = new Set<string>();
+    const cost = (k: MapNodeKind) => (k === 'elite' ? 4 : k === 'ambush' ? 3 : k === 'blackbox' ? 1.5 : k === 'combat' ? 1 : k === 'rest' || k === 'relay' ? -1 : 0);
+    const memo = new Map<string, number>();
+    const best = (id: string): number => {
+      const m = memo.get(id);
+      if (m !== undefined) return m;
+      const n = byId.get(id);
+      if (!n) return 0;
+      const v = cost(n.kind) + (n.next.length ? Math.min(...n.next.map(best)) : 0);
+      memo.set(id, v);
+      return v;
+    };
+    const starts = available.size > 0 ? [...available] : [];
+    if (starts.length === 0) return out;
+    const first = starts.reduce((a, b) => (best(b) < best(a) ? b : a));
+    let id: string | undefined = first;
+    while (id) {
+      out.add(id);
+      const n = byId.get(id);
+      id = n && n.next.length ? n.next.reduce((a, b) => (best(b) < best(a) ? b : a)) : undefined;
+    }
+    return out;
+  }, [available, byId]);
 
   // Скролл к текущему узлу
   useEffect(() => {
@@ -98,6 +139,11 @@ export function MapScreen({ run }: { run: RunState }) {
             Выбери следующий узел — пульсирующие доступны. Что значат значки — в легенде.
           </p>
         ) : null}
+        {run.eventResult ? (
+          <p className="map-result" data-testid="map-result" role="status">
+            {run.eventResult}
+          </p>
+        ) : null}
       </div>
       <div className="map-body">
         <div className="map-scroll" ref={scrollRef}>
@@ -116,7 +162,8 @@ export function MapScreen({ run }: { run: RunState }) {
             {edges.map(({ from, to, state }) => {
               const a = pos.get(from.id)!;
               const b = pos.get(to.id)!;
-              return <line key={`${from.id}>${to.id}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`map-edge is-${state}`} />;
+              const rec = state !== 'visited' && safePath.has(to.id) && (safePath.has(from.id) || from.id === run.currentNodeId);
+              return <line key={`${from.id}>${to.id}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`map-edge is-${state}${rec ? ' is-safe' : ''}`} />;
             })}
             {/* Доступные узлы рисуем последними, чтобы их зона тапа была поверх соседей */}
             {[...nodes].sort((a, b) => Number(available.has(a.id)) - Number(available.has(b.id))).map((n) => {
@@ -146,6 +193,7 @@ export function MapScreen({ run }: { run: RunState }) {
                     }
                   }}
                   {...tip(label.name, label.text)}
+                  data-safe={safePath.has(n.id) && !isVisited ? 'true' : undefined}
                 >
                   {/* Невидимая зона тапа: на 360 px узел ~29 px, а нужно ≥ 44 px */}
                   {isAvail ? <circle r={Math.max(r + 10, HIT_R)} className="map-node__hit" data-testid="map-node-hit" /> : null}
@@ -155,6 +203,17 @@ export function MapScreen({ run }: { run: RunState }) {
                   <g transform={`translate(${-r * 0.62} ${-r * 0.62}) scale(${(r * 1.24) / 24})`}>
                     <Icon name={n.kind} size={24} strokeWidth={n.kind === 'boss' ? 1.4 : 1.9} />
                   </g>
+                  {!isVisited
+                    ? (NODE_REWARD_MARKS[n.kind] ?? []).map((m, mi, arr) => (
+                        <g key={m} className="map-node__mark" data-testid="node-mark" transform={`translate(${(mi - (arr.length - 1) / 2) * 13 - 5.5} ${r + 3})`}>
+                          <title>{`Награда: ${MARK_NAME[m] ?? m}`}</title>
+                          <rect x="-1" y="-1" width="13" height="13" rx="3" className="map-node__mark-bg" />
+                          <g transform="scale(0.4167)">
+                            <Icon name={m} size={24} strokeWidth={2.4} />
+                          </g>
+                        </g>
+                      ))
+                    : null}
                   {isVisited && !isCurrent ? <path d={`M${r * 0.35} ${-r * 0.95}l4 4 7-8`} className="map-node__check" /> : null}
                 </g>
               );
@@ -176,7 +235,7 @@ export function MapScreen({ run }: { run: RunState }) {
               </li>
             ))}
           </ul>
-          <p className="muted small">Пульсирующие узлы доступны для перехода. Идти можно только по линиям вверх.</p>
+          <p className="muted small">Пульсирующие узлы доступны для перехода. Идти можно только по линиям вверх. Значки под узлом — ожидаемая награда (карты, имплант, расходник, кредиты). Зелёная пунктирная линия — рекомендуемый безопасный путь.</p>
         </aside>
       </div>
     </div>

@@ -55,7 +55,7 @@
   },
   {
     "id": "ph_ping",
-    "name": "Пинг",
+    "name": "Зонд",
     "classId": "phreaker",
     "type": "attack",
     "rarity": "starter",
@@ -64,26 +64,38 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 6,
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 1,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 6 урона.",
+    "description": "Нанеси 5 урона. Наложи 1 Вируса.",
     "upgrade": {
-      "name": "Пинг+",
+      "name": "Зонд+",
       "effects": [
         {
           "type": "damage",
-          "amount": 9,
+          "amount": 7,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 2,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 9 урона."
+      "description": "Нанеси 7 урона. Наложи 2 Вируса."
     }
   },
   {
     "id": "ph_firewall",
-    "name": "Файрвол",
+    "name": "Карантин",
     "classId": "phreaker",
     "type": "skill",
     "rarity": "starter",
@@ -97,7 +109,7 @@
     ],
     "description": "Получи 6 блока.",
     "upgrade": {
-      "name": "Файрвол+",
+      "name": "Карантин+",
       "effects": [
         {
           "type": "block",
@@ -109,7 +121,7 @@
   },
   {
     "id": "gh_ping",
-    "name": "Пинг",
+    "name": "Тихий укол",
     "classId": "ghost",
     "type": "attack",
     "rarity": "starter",
@@ -118,26 +130,26 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 6,
+        "amount": 5,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 6 урона.",
+    "description": "Нанеси 5 урона.",
     "upgrade": {
-      "name": "Пинг+",
+      "name": "Тихий укол+",
       "effects": [
         {
           "type": "damage",
-          "amount": 9,
+          "amount": 8,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 9 урона."
+      "description": "Нанеси 8 урона."
     }
   },
   {
     "id": "gh_firewall",
-    "name": "Файрвол",
+    "name": "Маскировка",
     "classId": "ghost",
     "type": "skill",
     "rarity": "starter",
@@ -146,20 +158,21 @@
     "effects": [
       {
         "type": "block",
-        "amount": 6
+        "amount": 7
       }
     ],
-    "description": "Получи 6 блока.",
+    "description": "Получи 7 блока. Эфемерная.",
     "upgrade": {
-      "name": "Файрвол+",
+      "name": "Маскировка+",
       "effects": [
         {
           "type": "block",
-          "amount": 9
+          "amount": 10
         }
       ],
-      "description": "Получи 9 блока."
-    }
+      "description": "Получи 10 блока. Эфемерная."
+    },
+    "ethereal": true
   },
   {
     "id": "nr_overload",

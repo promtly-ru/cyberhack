@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import type { CardInstance, RewardItem, RunState, Screen, ShopItem } from '../game/engine';
-import { getEventDef, getFirmware, tryRelicDef, cardStats } from '../game/engine';
+import { getEventDef, getFirmware, tryRelicDef, cardStats, getLegalActions, blackboxForceCost, blackboxHackCost, RELAY_HEAL_PCT, MAX_SHOP_REFRESHES } from '../game/engine';
 import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
@@ -176,19 +176,29 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
   const potionItems = indexed.filter((x) => x.it.kind === 'potion');
   const potionsFull = (run.potions?.length ?? 0) >= POTION_SLOTS;
   const price = (it: ShopItem) => (
-    <span className={`price mono${it.price > run.gold && !it.sold ? ' is-expensive' : ''}`}>
+    <span className={`price mono${it.price > run.gold && !it.sold ? ' is-expensive' : ''}${it.sale && !it.sold ? ' is-sale' : ''}`}>
       <Icon name="gold" size={15} />
-      {it.sold ? 'продано' : it.price}
+      {it.sold ? 'продано' : it.sale && it.basePrice ? (
+        <>
+          <s className="price__old">{it.basePrice}</s> {it.price}
+        </>
+      ) : it.price}
     </span>
   );
+  const saleTag = (it: ShopItem) => (it.sale && !it.sold ? <span className="sale-tag" data-testid="sale-tag"><Icon name="sale" size={13} /> −30%</span> : null);
+  const upgrades = indexed.filter((x) => x.it.kind === 'upgrade');
+  const refreshes = indexed.filter((x) => x.it.kind === 'refresh');
+  const canUpgrade = run.deck.some((c) => !c.upgraded);
+  const quote = TRADER_QUOTES[Math.min(run.act, 4) - 1] ?? TRADER_QUOTES[0]!;
   return (
     <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты, импланты и расходники за кредиты или удали лишнюю карту из колоды. Импланты — бонусы на весь забег, расходники — разовые.">
-      <p className="flavor">«Всё чистое, без закладок. Почти». — брокер по кличке Ноль</p>
+      <p className="flavor" data-testid="trader-quote">{quote}</p>
       <section>
         <h2 className="section-title">Карты</h2>
         <div className="shop-cards">
           {cards.map(({ it, i }) => (
-            <button key={i} className={`shop-item${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={it.sold ? `«${cardName(it.id)}» — продано` : `Купить «${cardName(it.id)}» за ${it.price}`}>
+            <button key={i} className={`shop-item${it.sold ? ' is-sold' : ''}${it.sale ? ' is-sale' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={it.sold ? `«${cardName(it.id)}» — продано` : `Купить «${cardName(it.id)}» за ${it.price}${it.sale ? ' (распродажа)' : ''}`}>
+              {saleTag(it)}
               {it.id ? <Card defId={it.id} /> : null}
               {price(it)}
             </button>
@@ -202,9 +212,10 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
             {relics.map(({ it, i }) => {
               const d = it.id ? tryRelicDef(it.id) : null;
               return (
-                <button key={i} className={`shop-relic${it.sold ? ' is-sold' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}${it.sold ? ' — продано' : `, цена ${it.price}`}`} {...tip(d?.name ?? '', d?.description ?? '')}>
+                <button key={i} className={`shop-relic${it.sold ? ' is-sold' : ''}${it.sale ? ' is-sale' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}${it.sold ? ' — продано' : `, цена ${it.price}`}`} {...tip(d?.name ?? '', d?.description ?? '')}>
                   <span className="shop-relic__icon">{it.id ? <RelicGlyph id={it.id} /> : null}</span>
                   <span className="shop-relic__name">{d?.name ?? it.id}</span>
+                  {saleTag(it)}
                   {price(it)}
                 </button>
               );
@@ -224,6 +235,29 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
               {price(it)}
             </button>
           ))}
+          {upgrades.map(({ it, i }) => (
+            <button key={i} className={`shop-service shop-service--up${it.sold ? ' is-sold' : ''}`} data-testid="shop-upgrade" onClick={() => buy(i, it)} disabled={it.sold || !canUpgrade}>
+              <Icon name="upgrade" size={26} />
+              <span>
+                <b>Улучшить карту</b>
+                <small>{canUpgrade ? 'Выбрать 1 из 3 случайных карт' : 'Все карты уже улучшены'}</small>
+              </span>
+              {price(it)}
+            </button>
+          ))}
+          {refreshes.map(({ it, i }) => (
+            <button key={i} className={`shop-service shop-service--refresh${it.sold ? ' is-sold' : ''}`} data-testid="shop-refresh" onClick={() => buy(i, it)} disabled={it.sold}>
+              <Icon name="refresh" size={26} />
+              <span>
+                <b>Обновить ассортимент</b>
+                <small>{it.sold ? 'Лимит обновлений исчерпан' : `Новые товары. Обновлений: ${it.n ?? 0} из ${MAX_SHOP_REFRESHES}`}</small>
+              </span>
+              <span className={`price mono${it.price > run.gold && !it.sold ? ' is-expensive' : ''}`}>
+                <Icon name="gold" size={15} />
+                {it.sold ? 'лимит' : it.price}
+              </span>
+            </button>
+          ))}
           {potionItems.length ? (
             <>
               <h2 className="section-title shop-potions__title">Расходники</h2>
@@ -234,7 +268,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
                   return (
                     <button
                       key={i}
-                      className={`shop-potion${it.sold ? ' is-sold' : ''}${blocked ? ' is-blocked' : ''}`}
+                      className={`shop-potion${it.sold ? ' is-sold' : ''}${blocked ? ' is-blocked' : ''}${it.sale ? ' is-sale' : ''}`}
                       data-testid="shop-potion"
                       onClick={() => buy(i, it)}
                       disabled={it.sold || blocked}
@@ -243,7 +277,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
                     >
                       {it.id ? <PotionGlyph id={it.id} size={24} /> : null}
                       <span className="shop-potion__text">
-                        <b>{p?.name ?? it.id}</b>
+                        <b>{p?.name ?? it.id} {saleTag(it)}</b>
                         <small>{p?.description ?? ''}</small>
                       </span>
                       {price(it)}
@@ -266,6 +300,90 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
           Уйти <Icon name="play" size={16} />
         </button>
       </div>
+    </Shell>
+  );
+}
+
+const TRADER_QUOTES = [
+  '«Всё чистое, без закладок. Почти». — брокер по кличке Ноль',
+  '«Здесь, в глубине сети, цены выше. Зато и товар без пломб». — торговец Мираж',
+  '«Ядро близко, а значит, и моя скидка тоже. Выбирай быстрее». — торговка Эхо',
+  '«За последней дверью берут всё. Что берёшь с собой — решай сейчас». — безымянный скупщик',
+];
+
+// ---------------- Узлы: лаборатория, чёрный ящик, ретранслятор ----------------
+
+export function NodeScreen({ run, kind }: { run: RunState; kind: 'lab' | 'blackbox' | 'relay' }) {
+  const dispatch = useGame((s) => s.dispatch);
+  const legal = getLegalActions(run);
+  const can = (i: number) => legal.some((a) => a.type === 'node_choice' && a.index === i);
+  const choose = (i: number, snd: 'select' | 'heal' | 'buff' = 'select') => {
+    sfx(snd);
+    dispatch({ type: 'node_choice', index: i });
+  };
+  const leave = (
+    <div className="actions">
+      <button className="btn btn--ghost" data-testid="leave-node" onClick={() => { sfx('click'); dispatch({ type: 'leave_node' }); }}>
+        Уйти
+      </button>
+    </div>
+  );
+  if (kind === 'lab') {
+    return (
+      <Shell run={run} className="lab-screen" eyebrow="Исследовательский сектор" title="Лаборатория" hint="Выбери одно: улучшить карту (1 из 3 случайных) или трансформировать карту в случайную другой редкости.">
+        <p className="flavor center">Стойки с образцами чужого кода. Здесь любую программу можно разобрать и собрать иначе.</p>
+        <div className="rest-options">
+          <button className="choice choice--upgrade" disabled={!can(0)} onClick={() => choose(0)} data-testid="lab-upgrade">
+            <Icon name="upgrade" size={34} />
+            <b>Улучшение</b>
+            <small>{can(0) ? 'Улучшить одну из трёх карт' : 'Все карты уже улучшены'}</small>
+          </button>
+          <button className="choice choice--lab" disabled={!can(1)} onClick={() => choose(1)} data-testid="lab-transform">
+            <Icon name="lab" size={34} />
+            <b>Трансформация</b>
+            <small>Заменить карту (1 из 3) на случайную другой редкости</small>
+          </button>
+        </div>
+        {leave}
+      </Shell>
+    );
+  }
+  if (kind === 'blackbox') {
+    const force = blackboxForceCost(run);
+    const hack = blackboxHackCost(run);
+    return (
+      <Shell run={run} className="blackbox-screen" eyebrow="Запертый контейнер" title="Чёрный ящик" hint="Риск за награду. Вскрыть силой: гарантированный имплант за здоровье. Взломать: 50% бесплатно, иначе удар током и только расходник.">
+        <p className="flavor center">Ящик без маркировки гудит так, будто внутри что-то живое.</p>
+        <div className="rest-options">
+          <button className="choice choice--danger" disabled={!can(0)} onClick={() => choose(0)} data-testid="blackbox-force">
+            <Icon name="hp" size={34} />
+            <b>Вскрыть силой</b>
+            <small>−{force} HP, гарантированный имплант</small>
+          </button>
+          <button className="choice choice--blackbox" onClick={() => choose(1)} data-testid="blackbox-hack">
+            <Icon name="blackbox" size={34} />
+            <b>Взломать аккуратно</b>
+            <small>50%: имплант без потерь. Иначе −{hack} HP и расходник</small>
+          </button>
+        </div>
+        {leave}
+      </Shell>
+    );
+  }
+  const heal = Math.min(Math.floor(run.maxHp * RELAY_HEAL_PCT), run.maxHp - run.hp);
+  return (
+    <Shell run={run} className="relay-screen" eyebrow="Свободный узел связи" title="Ретранслятор" hint="Бесплатная подзарядка: небольшое лечение и расходник. Если слоты расходников заняты, вместо него +25 кредитов.">
+      <p className="flavor center">Заброшенная антенна ещё держит канал и делится запасами с проходящими.</p>
+      <div className="rest-options">
+        <button className="choice choice--heal" onClick={() => choose(0, 'heal')} data-testid="relay-take">
+          <Icon name="relay" size={34} />
+          <b>Подключиться</b>
+          <small>
+            <span className="mono">+{heal}</span> HP и расходник
+          </small>
+        </button>
+      </div>
+      {leave}
     </Shell>
   );
 }
@@ -319,6 +437,19 @@ export function RestScreen({ run }: { run: RunState }) {
   );
 }
 
+function requiresText(r: import('../game/engine').EventRequires | undefined, effects: import('../game/engine').Effect[]): string {
+  const parts: string[] = [];
+  const cost = effects.reduce((s, e) => (e.type === 'gain_gold' && e.amount < 0 ? s - e.amount : s), 0);
+  const gold = Math.max(r?.gold ?? 0, cost);
+  if (gold) parts.push(`нужно ${gold} кредитов`);
+  if (r?.hp) parts.push(`HP больше ${r.hp}`);
+  if (r?.potion) parts.push('нужен расходник');
+  if (r?.cardType) parts.push(r.cardType === 'curse' ? 'нужна проклятая карта' : r.cardType === 'attack' ? 'нужна атакующая карта' : `нужна карта типа ${r.cardType}`);
+  if (r?.upgradable) parts.push('нужна неулучшенная карта');
+  if (r?.flag || r?.noFlag) parts.push('условие не выполнено');
+  return parts.join(', ') || 'условие не выполнено';
+}
+
 // ---------------- Событие ----------------
 
 export function EventScreen({ run, screen }: { run: RunState; screen: Extract<Screen, { kind: 'event' }> }) {
@@ -329,6 +460,7 @@ export function EventScreen({ run, screen }: { run: RunState; screen: Extract<Sc
   } catch {
     ev = null;
   }
+  const legalIdx = new Set(getLegalActions(run).flatMap((a) => (a.type === 'event_choice' ? [a.index] : [])));
   return (
     <Shell run={run} className="event-screen" eyebrow="Неизвестный сигнал" title={ev?.name ?? 'Помехи'} hint="Прочитай сообщение и выбери один из вариантов ниже.">
       <div className="terminal" role="log">
@@ -348,14 +480,18 @@ export function EventScreen({ run, screen }: { run: RunState; screen: Extract<Sc
         {(ev?.options ?? []).map((o, i) => (
           <li key={i}>
             <button
-              className="event-option"
+              className={`event-option${o.outcomes ? ' is-gamble' : ''}`}
+              disabled={!legalIdx.has(i)}
               onClick={() => {
                 sfx('select');
                 dispatch({ type: 'event_choice', index: i });
               }}
             >
               <span className="mono opt-n">[{i + 1}]</span>
-              <span>{o.label}</span>
+              <span>
+                {o.label}
+                {!legalIdx.has(i) ? <small className="event-option__req"> — недоступно: {requiresText(o.requires, o.effects)}</small> : null}
+              </span>
             </button>
           </li>
         ))}
@@ -370,9 +506,10 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
   const dispatch = useGame((s) => s.dispatch);
   const [chosen, setChosen] = useState<CardInstance | null>(null);
   const upgrade = screen.purpose === 'upgrade';
+  const transform = screen.purpose === 'transform';
   const cards = useMemo(
-    () => run.deck.filter((c) => !upgrade || (!c.upgraded && (!screen.offer || screen.offer.includes(c.uid)))),
-    [run.deck, upgrade, screen.offer],
+    () => run.deck.filter((c) => (!upgrade || !c.upgraded) && (screen.purpose === 'remove' || !screen.offer || screen.offer.includes(c.uid))),
+    [run.deck, upgrade, screen.offer, screen.purpose],
   );
   const hasUpgrade = (c: CardInstance) => {
     try {
@@ -385,9 +522,9 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
     <Shell
       run={run}
       className="deck-select-screen"
-      eyebrow={upgrade ? 'Оптимизация' : 'Очистка'}
-      title={upgrade ? 'Улучшить карту' : 'Удалить карту'}
-      hint={upgrade ? `Тебе предложены ${cards.length} из колоды — выбери одну. Справа появится улучшенная версия.` : 'Выбери карту, которую навсегда уберёшь из колоды.'}
+      eyebrow={upgrade ? 'Оптимизация' : transform ? 'Мутация' : 'Очистка'}
+      title={upgrade ? 'Улучшить карту' : transform ? 'Трансформировать карту' : 'Удалить карту'}
+      hint={upgrade ? `Тебе предложены ${cards.length} из колоды — выбери одну. Справа появится улучшенная версия.` : transform ? 'Выбери карту: она превратится в случайную другую (обычно иной редкости). Результат заранее неизвестен.' : 'Выбери карту, которую навсегда уберёшь из колоды.'}
     >
       <SynergyBar deck={run.deck} />
       <div className="card-grid card-grid--select">
@@ -416,6 +553,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
           ) : (
             <div className="upgrade-preview">
               <Card defId={chosen.defId} upgraded={chosen.upgraded} className="is-doomed" />
+              {transform ? <span className="mono">→ ???</span> : null}
             </div>
           )}
           <div className="actions">
@@ -423,13 +561,13 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
               Назад
             </button>
             <button
-              className={`btn ${upgrade ? 'btn--primary' : 'btn--danger'}`}
+              className={`btn ${upgrade || transform ? 'btn--primary' : 'btn--danger'}`}
               onClick={() => {
-                sfx(upgrade ? 'buff' : 'death');
+                sfx(upgrade || transform ? 'buff' : 'death');
                 dispatch({ type: 'select_deck_card', cardUid: chosen.uid });
               }}
             >
-              {upgrade ? 'Улучшить' : 'Удалить'}
+              {upgrade ? 'Улучшить' : transform ? 'Трансформировать' : 'Удалить'}
             </button>
           </div>
         </div>

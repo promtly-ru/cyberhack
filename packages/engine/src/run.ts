@@ -18,7 +18,7 @@ import { getContent } from './content';
 import { generateMap } from './map';
 import { applyMutators, normalizeMutators } from './mutators';
 import { addPotion, gainPotions, getPotion, hasFreePotionSlot, potionsOf } from './potions';
-import { buildCombatRewards, buildShop, rollRelic, rewardCardPool, type CombatTier } from './rewards';
+import { buildCombatRewards, buildShop, refreshShop, rollRelic, rewardCardPool, MAX_SHOP_REFRESHES, type CombatTier } from './rewards';
 import { createRngStore, rngOf } from './rng';
 import { computeScore } from './score';
 import {
@@ -29,6 +29,8 @@ import {
   type CardInstance,
   type Effect,
   type EventOption,
+  type EventRequires,
+  type EventResult,
   type GameEvent,
   type MapNode,
   type NewRunOptions,
@@ -152,6 +154,18 @@ function enterNode(s: RunState, node: MapNode, ev: GameEvent[]): void {
     case 'boss':
       startEncounter(s, 'boss', ev);
       return;
+    case 'ambush':
+      startEncounter(s, 'normal', ev, true);
+      return;
+    case 'lab':
+      s.screen = { kind: 'lab' };
+      return;
+    case 'blackbox':
+      s.screen = { kind: 'blackbox' };
+      return;
+    case 'relay':
+      s.screen = { kind: 'relay' };
+      return;
     case 'event':
       enterEvent(s, ev);
       return;
@@ -176,7 +190,7 @@ function enterNode(s: RunState, node: MapNode, ev: GameEvent[]): void {
 
 // ---------- бой ----------
 
-function pickEncounterEnemies(s: RunState, tier: CombatTier): string[] {
+function pickEncounterEnemies(s: RunState, tier: CombatTier, hard = false): string[] {
   const content = getContent();
   if (tier === 'boss' && s.bossEncounterId) {
     const enc = content.encounters.get(s.bossEncounterId);
@@ -191,7 +205,8 @@ function pickEncounterEnemies(s: RunState, tier: CombatTier): string[] {
     ).length;
     const early = pool.filter((e) => e.early);
     const late = pool.filter((e) => !e.early);
-    if (fought < 3 && early.length > 0) pool = early;
+    if (hard && late.length > 0) pool = late;
+    else if (fought < 3 && early.length > 0) pool = early;
     else if (fought >= 3 && late.length > 0) pool = late;
   }
   if (pool.length === 0) pool = all.filter((e) => e.tier === tier);
@@ -206,8 +221,8 @@ function pickEncounterEnemies(s: RunState, tier: CombatTier): string[] {
   return [rng.pick(ep).id];
 }
 
-function startEncounter(s: RunState, tier: CombatTier, ev: GameEvent[]): void {
-  const enemyIds = pickEncounterEnemies(s, tier);
+function startEncounter(s: RunState, tier: CombatTier, ev: GameEvent[], hard = false): void {
+  const enemyIds = pickEncounterEnemies(s, tier, hard);
   s.screen = { kind: 'combat' };
   const ctx = startCombat(s, enemyIds, ev, modsOf(s));
   afterCombatStep(s, ctx, ev);
@@ -244,7 +259,8 @@ function onCombatWon(s: RunState, ctx: CombatCtx, ev: GameEvent[]): void {
     s.screen = { kind: 'game_over', victory: true };
     return;
   }
-  s.screen = { kind: 'reward', items: buildCombatRewards(s, tier, modsOf(s)) };
+  const ambush = currentNode(s)?.kind === 'ambush' && tier === 'normal';
+  s.screen = { kind: 'reward', items: buildCombatRewards(s, tier, modsOf(s), ambush) };
 }
 
 function defeat(s: RunState): void {
@@ -349,8 +365,13 @@ function upgradeScreen(s: RunState): Screen {
 }
 
 function enterEvent(s: RunState, ev: GameEvent[]): void {
+  const flags = s.flags ?? [];
   const events = getContent().data.events.filter(
-    (e) => (e.act === undefined || e.act === s.act) && e.options.length > 0,
+    (e) =>
+      (e.act === undefined || e.act === s.act) &&
+      e.options.length > 0 &&
+      (!e.requiresFlag || flags.includes(e.requiresFlag)) &&
+      (!e.excludesFlag || !flags.includes(e.excludesFlag)),
   );
   const seen = s.seenEvents ?? [];
   const fresh = events.filter((e) => !seen.includes(e.id));
@@ -368,12 +389,28 @@ function eventOptionCost(opt: EventOption): number {
   return opt.effects.reduce((sum, e) => (e.type === 'gain_gold' && e.amount < 0 ? sum - e.amount : sum), 0);
 }
 
-/** Индексы доступных вариантов; если по золоту недоступно ничего — доступны все (без тупиков). */
+/** Выполнены ли условия варианта события. */
+export function meetsRequires(s: RunState, r: EventRequires | undefined): boolean {
+  if (!r) return true;
+  if (r.gold !== undefined && s.gold < r.gold) return false;
+  if (r.hp !== undefined && s.hp <= r.hp) return false;
+  if (r.potion && potionsOf(s).length === 0) return false;
+  if (r.cardType && !s.deck.some((c) => resolveCard(c.defId, c.upgraded).type === r.cardType)) return false;
+  if (r.upgradable && upgradableCards(s).length === 0) return false;
+  if (r.flag && !(s.flags ?? []).includes(r.flag)) return false;
+  if (r.noFlag && (s.flags ?? []).includes(r.noFlag)) return false;
+  return true;
+}
+
+/** Индексы доступных вариантов; если недоступно ничего — смягчаем условия (без тупиков). */
 function legalEventOptions(s: RunState, eventId: string): number[] {
   const def = getContent().events.get(eventId);
   if (!def) return [];
-  const legal = def.options.map((o, i) => (s.gold >= eventOptionCost(o) ? i : -1)).filter((i) => i >= 0);
-  return legal.length > 0 ? legal : def.options.map((_, i) => i);
+  const idx = (f: (o: EventOption) => boolean) => def.options.map((o, i) => (f(o) ? i : -1)).filter((i) => i >= 0);
+  const full = idx((o) => s.gold >= eventOptionCost(o) && meetsRequires(s, o.requires));
+  if (full.length > 0) return full;
+  const noGold = idx((o) => meetsRequires(s, o.requires));
+  return noGold.length > 0 ? noGold : def.options.map((_, i) => i);
 }
 
 function goToMap(s: RunState): void {
@@ -402,6 +439,7 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       if (s.screen.kind !== 'map') invalid('choose_node is only allowed on the map');
       const node = availableNodes(s).find((n) => n.id === action.nodeId);
       if (!node) invalid(`Node ${action.nodeId} is not reachable`);
+      delete s.eventResult;
       enterNode(s, node, ev);
       break;
     }
@@ -486,6 +524,14 @@ export function applyAction(state: RunState, action: Action): ActionResult {
         if (s.deck.length === 0) invalid('Deck is empty');
         s.savedShop = items;
         s.screen = { kind: 'select_deck_card', purpose: 'remove', returnTo: 'shop' };
+      } else if (item.kind === 'upgrade') {
+        if (upgradableCards(s).length === 0) invalid('No cards to upgrade');
+        s.savedShop = items;
+        s.screen = { ...(upgradeScreen(s) as Extract<Screen, { kind: 'select_deck_card' }>), returnTo: 'shop' };
+      } else if (item.kind === 'refresh') {
+        if ((item.n ?? 0) >= MAX_SHOP_REFRESHES) invalid('Refresh limit reached');
+        s.gold -= item.price;
+        s.screen = { kind: 'shop', items: refreshShop(s, items, rngOf(s, 'shop'), modsOf(s)) };
       } else invalid('Malformed shop item');
       break;
     }
@@ -518,6 +564,13 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       applyEventOption(s, opt, ev);
       break;
     }
+    case 'node_choice':
+      nodeChoice(s, action.index, ev);
+      break;
+    case 'leave_node':
+      if (s.screen.kind !== 'lab' && s.screen.kind !== 'blackbox' && s.screen.kind !== 'relay') invalid('Nothing to leave');
+      goToMap(s);
+      break;
     case 'use_potion':
       usePotion(s, action.slot, action.targetUid, ev);
       break;
@@ -539,21 +592,59 @@ export function applyAction(state: RunState, action: Action): ActionResult {
   return { state: s, events: ev };
 }
 
+/** Куда вернуться при отмене выбора карты (узлы с собственным экраном). */
+function backScreen(s: RunState, returnTo: 'map' | 'shop'): Screen | null {
+  if (returnTo !== 'map') return null;
+  const k = currentNode(s)?.kind;
+  return k === 'rest' ? { kind: 'rest' } : k === 'lab' ? { kind: 'lab' } : null;
+}
+
+const TRANSFORM_OFFER_SIZE = 3;
+function transformScreen(s: RunState): Screen {
+  const offer = rngOf(s, 'cards').shuffle([...s.deck]).slice(0, TRANSFORM_OFFER_SIZE).map((c) => c.uid);
+  return { kind: 'select_deck_card', purpose: 'transform', returnTo: 'map', offer };
+}
+
+/** Превратить карту в случайную другой редкости (пул класса; для проклятий — любая). */
+function transformCard(s: RunState, card: CardInstance, ev: GameEvent[]): void {
+  const rng = rngOf(s, 'cards');
+  const oldRarity = getContent().cards.get(card.defId)?.rarity;
+  const pool = rewardCardPool(s.classId, s);
+  const other = pool.filter((c) => c.rarity !== oldRarity && c.id !== card.defId);
+  const cands = other.length > 0 ? other : pool.filter((c) => c.id !== card.defId);
+  ev.push({ type: 'card_removed', cardUid: card.uid, defId: card.defId });
+  s.deck.splice(s.deck.findIndex((c) => c.uid === card.uid), 1);
+  if (cands.length > 0) addCardToDeck(s, rng.pick(cands).id, ev);
+}
+
 function selectDeckCard(s: RunState, cardUid: string | null, ev: GameEvent[]): void {
   if (s.screen.kind !== 'select_deck_card') invalid('Not selecting a deck card');
   const { purpose, returnTo } = s.screen;
-  const fromRest = purpose === 'upgrade' && returnTo === 'map' && currentNode(s)?.kind === 'rest';
+  const back = backScreen(s, returnTo);
+  const fromRest = purpose === 'upgrade' && back?.kind === 'rest';
   if (cardUid === null) {
-    if (fromRest) s.screen = { kind: 'rest' };
+    if (back) s.screen = back;
     else returnFromDeckSelect(s, returnTo);
     return;
   }
   const idx = s.deck.findIndex((c) => c.uid === cardUid);
   const card = s.deck[idx];
   if (!card) invalid(`Card ${cardUid} is not in deck`);
+  if (s.screen.offer && purpose !== 'remove' && !s.screen.offer.includes(cardUid)) invalid(`Card ${cardUid} is not offered`);
+  if (purpose === 'transform') {
+    transformCard(s, card, ev);
+    goToMap(s);
+    return;
+  }
   if (purpose === 'upgrade') {
     if (!canUpgrade(card.defId, card.upgraded)) invalid(`Card ${cardUid} cannot be upgraded`);
-    if (s.screen.offer && !s.screen.offer.includes(cardUid)) invalid(`Card ${cardUid} is not offered`);
+    if (returnTo === 'shop' && s.savedShop) {
+      const item = s.savedShop.find((i) => i.kind === 'upgrade' && !i.sold);
+      if (!item || s.gold < item.price) invalid('Card upgrade is not available');
+      s.gold -= item.price;
+      item.sold = true;
+      s.shopUpgrades = (s.shopUpgrades ?? 0) + 1;
+    }
     card.upgraded = true;
     ev.push({ type: 'card_upgraded', cardUid, defId: card.defId });
     if (fromRest) triggerOutOfCombatRelics(s, 'rest', ev);
@@ -572,6 +663,77 @@ function selectDeckCard(s: RunState, cardUid: string | null, ev: GameEvent[]): v
   s.deck.splice(idx, 1);
   ev.push({ type: 'card_removed', cardUid, defId: card.defId });
   returnFromDeckSelect(s, returnTo);
+}
+
+// ---------- узлы: лаборатория, чёрный ящик, ретранслятор ----------
+
+export const BLACKBOX_FORCE_HP_PCT = 0.15;
+export const BLACKBOX_HACK_HP_PCT = 0.08;
+export const RELAY_HEAL_PCT = 0.15;
+
+export function blackboxForceCost(s: Pick<RunState, 'maxHp'>): number {
+  return Math.max(6, Math.round(s.maxHp * BLACKBOX_FORCE_HP_PCT));
+}
+export function blackboxHackCost(s: Pick<RunState, 'maxHp'>): number {
+  return Math.max(4, Math.round(s.maxHp * BLACKBOX_HACK_HP_PCT));
+}
+
+function giveRelicOrGold(s: RunState, ev: GameEvent[]): string {
+  const relicId = rollRelic(s, rngOf(s, 'events'));
+  if (relicId) {
+    obtainRelic(s, relicId, ev);
+    return 'Реликвия получена.';
+  }
+  s.gold += 60;
+  return 'Реликвий не осталось: +60 кредитов.';
+}
+
+function nodeChoice(s: RunState, index: number, ev: GameEvent[]): void {
+  switch (s.screen.kind) {
+    case 'lab':
+      if (index === 0) {
+        if (upgradableCards(s).length === 0) invalid('No cards to upgrade');
+        s.screen = upgradeScreen(s);
+      } else if (index === 1) {
+        if (s.deck.length === 0) invalid('Deck is empty');
+        s.screen = transformScreen(s);
+      } else invalid(`No lab option ${index}`);
+      return;
+    case 'blackbox': {
+      if (index === 0) {
+        const cost = blackboxForceCost(s);
+        if (s.hp <= cost) invalid('Not enough HP');
+        applyOutOfCombatEffects(s, [{ type: 'lose_hp', amount: cost }], ev);
+        s.eventResult = `Ящик вскрыт силой (−${cost} HP). ${giveRelicOrGold(s, ev)}`;
+      } else if (index === 1) {
+        if (rngOf(s, 'events').next() < 0.5) {
+          s.eventResult = `Взлом удался без потерь. ${giveRelicOrGold(s, ev)}`;
+        } else {
+          const cost = blackboxHackCost(s);
+          if (s.hp > cost) applyOutOfCombatEffects(s, [{ type: 'lose_hp', amount: cost }], ev);
+          const before = potionsOf(s).length;
+          gainPotions(s, 1, undefined, ev);
+          if (potionsOf(s).length === before) s.gold += 40;
+          s.eventResult = `Защита ящика ударила током (−${cost} HP). В обломках нашёлся расходник.`;
+        }
+      } else invalid(`No blackbox option ${index}`);
+      if (s.hp <= 0) return defeat(s);
+      goToMap(s);
+      return;
+    }
+    case 'relay': {
+      if (index !== 0) invalid(`No relay option ${index}`);
+      healRun(s, s.maxHp * RELAY_HEAL_PCT, ev);
+      const before = potionsOf(s).length;
+      gainPotions(s, 1, undefined, ev);
+      if (potionsOf(s).length === before) s.gold += 25;
+      s.eventResult = 'Ретранслятор подзарядил тебя и выдал расходник.';
+      goToMap(s);
+      return;
+    }
+    default:
+      invalid('No node choice here');
+  }
 }
 
 // ---------- расходники ----------
@@ -609,9 +771,15 @@ function usePotion(s: RunState, slot: number, targetUid: string | undefined, ev:
 }
 
 function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void {
-  applyOutOfCombatEffects(s, opt.effects, ev);
+  let res: EventResult = opt;
+  if (opt.outcomes && opt.outcomes.length > 0) {
+    res = rngOf(s, 'events').weighted(opt.outcomes.map((o) => [o, o.weight] as [EventResult, number]));
+  }
+  if (res.setFlag) s.flags = [...(s.flags ?? []).filter((f) => f !== res.setFlag), res.setFlag];
+  if (res.text) s.eventResult = res.text;
+  applyOutOfCombatEffects(s, res.effects, ev);
   if (s.hp <= 0) return defeat(s);
-  switch (opt.special) {
+  switch (res.special) {
     case 'remove_card':
       if (s.deck.length > 0) s.screen = { kind: 'select_deck_card', purpose: 'remove', returnTo: 'map' };
       else goToMap(s);
@@ -620,6 +788,29 @@ function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void 
       if (upgradableCards(s).length > 0) s.screen = upgradeScreen(s);
       else goToMap(s);
       return;
+    case 'transform_card':
+      if (s.deck.length > 0) s.screen = transformScreen(s);
+      else goToMap(s);
+      return;
+    case 'lose_potion': {
+      const p = potionsOf(s)[0];
+      if (p !== undefined) {
+        s.potions = potionsOf(s).slice(1);
+        ev.push({ type: 'potion_discarded', potionId: p, slot: 0 });
+      }
+      goToMap(s);
+      return;
+    }
+    case 'remove_curse': {
+      const i = s.deck.findIndex((c) => resolveCard(c.defId, c.upgraded).type === 'curse');
+      const c = s.deck[i];
+      if (c) {
+        s.deck.splice(i, 1);
+        ev.push({ type: 'card_removed', cardUid: c.uid, defId: c.defId });
+      }
+      goToMap(s);
+      return;
+    }
     case 'random_relic': {
       const relicId = rollRelic(s, rngOf(s, 'events'));
       if (relicId) obtainRelic(s, relicId, ev);
@@ -635,6 +826,9 @@ function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void 
     }
     case 'fight':
       startEncounter(s, 'normal', ev);
+      return;
+    case 'fight_elite':
+      startEncounter(s, 'elite', ev);
       return;
     default:
       goToMap(s);
@@ -681,10 +875,24 @@ export function getLegalActions(state: RunState): Action[] {
       screen.items.forEach((item, index) => {
         if (item.sold || s.gold < item.price) return;
         if (item.kind === 'remove' && s.deck.length === 0) return;
+        if (item.kind === 'upgrade' && upgradableCards(s).length === 0) return;
         if (item.kind === 'potion' && !hasFreePotionSlot(s)) return;
         actions.push({ type: 'shop_buy', index });
       });
       actions.push({ type: 'leave_shop' });
+      break;
+    case 'lab':
+      if (upgradableCards(s).length > 0) actions.push({ type: 'node_choice', index: 0 });
+      if (s.deck.length > 0) actions.push({ type: 'node_choice', index: 1 });
+      actions.push({ type: 'leave_node' });
+      break;
+    case 'blackbox':
+      if (s.hp > blackboxForceCost(s)) actions.push({ type: 'node_choice', index: 0 });
+      actions.push({ type: 'node_choice', index: 1 });
+      actions.push({ type: 'leave_node' });
+      break;
+    case 'relay':
+      actions.push({ type: 'node_choice', index: 0 }, { type: 'leave_node' });
       break;
     case 'rest':
       actions.push({ type: 'rest_heal' });
@@ -694,7 +902,8 @@ export function getLegalActions(state: RunState): Action[] {
       for (const index of legalEventOptions(s, screen.eventId)) actions.push({ type: 'event_choice', index });
       break;
     case 'select_deck_card': {
-      const cards = screen.purpose === 'upgrade' ? upgradableCards(s).filter((c) => !screen.offer || screen.offer.includes(c.uid)) : s.deck;
+      const base = screen.purpose === 'upgrade' ? upgradableCards(s) : s.deck;
+      const cards = screen.purpose === 'remove' ? base : base.filter((c) => !screen.offer || screen.offer.includes(c.uid));
       for (const c of cards) actions.push({ type: 'select_deck_card', cardUid: c.uid });
       actions.push({ type: 'select_deck_card', cardUid: null });
       break;

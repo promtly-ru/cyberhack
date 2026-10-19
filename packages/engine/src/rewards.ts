@@ -41,8 +41,16 @@ export const RELIC_PRICES: Record<RelicDef['rarity'], [number, number]> = {
   boss: [300, 300],
 };
 
+/** Засада: золото ×1.6, карты как с элиты, гарантированный расходник */
+export const AMBUSH_GOLD_MULT = 1.6;
 export const REMOVE_BASE_PRICE = 75;
 export const REMOVE_PRICE_STEP = 25;
+export const UPGRADE_BASE_PRICE = 70;
+export const UPGRADE_PRICE_STEP = 20;
+export const REFRESH_BASE_PRICE = 35;
+export const REFRESH_PRICE_STEP = 30;
+export const MAX_SHOP_REFRESHES = 2;
+export const SALE_DISCOUNT = 0.3;
 
 function isRewardRarity(r: string): r is RewardRarity {
   return r === 'common' || r === 'uncommon' || r === 'rare';
@@ -122,10 +130,10 @@ export function rollBossRelic(s: RunState, rng: Rng): string | undefined {
 }
 
 /** Золото и реликвии — поток rewards, карты — поток cards. */
-export function buildCombatRewards(s: RunState, tier: CombatTier, mods: AscensionMods): RewardItem[] {
+export function buildCombatRewards(s: RunState, tier: CombatTier, mods: AscensionMods, ambush = false): RewardItem[] {
   const rng = rngOf(s, 'rewards');
-  const items: RewardItem[] = [{ kind: 'gold', amount: rollGold(rng, tier, mods) }];
-  const cards = rollCardChoice(s, rngOf(s, 'cards'), tier, mods);
+  const items: RewardItem[] = [{ kind: 'gold', amount: Math.floor(rollGold(rng, tier, mods) * (ambush ? AMBUSH_GOLD_MULT : 1)) }];
+  const cards = rollCardChoice(s, rngOf(s, 'cards'), ambush ? 'elite' : tier, mods);
   if (cards.length > 0) items.push({ kind: 'card_choice', cardIds: cards });
   const relicId = tier === 'boss' ? rollBossRelic(s, rng) : tier === 'elite' ? rollRelic(s, rng) : undefined;
   if (relicId) items.push({ kind: 'relic', relicId });
@@ -137,7 +145,7 @@ export function buildCombatRewards(s: RunState, tier: CombatTier, mods: Ascensio
   }
   // Расходник: свой поток ГСЧ (не сдвигает остальные награды); в конце списка — индексы прежних наград не меняются
   const potionChance = POTION_DROP_CHANCE[tier] + getMutatorMods(s.mutators).potionChanceBonus;
-  if (extRng(s, 'potions').next() < potionChance) items.push({ kind: 'potion', potionId: rollPotion(s) });
+  if (ambush || extRng(s, 'potions').next() < potionChance) items.push({ kind: 'potion', potionId: rollPotion(s) });
   return items;
 }
 
@@ -145,12 +153,20 @@ function price(rng: Rng, range: [number, number], mods: AscensionMods): number {
   return Math.round(rng.int(range[0], range[1]) * mods.shopPriceMult);
 }
 
+export function upgradePrice(s: RunState, mods: AscensionMods): number {
+  return Math.round((UPGRADE_BASE_PRICE + UPGRADE_PRICE_STEP * (s.shopUpgrades ?? 0)) * mods.shopPriceMult);
+}
+
+export function refreshPrice(n: number, mods: AscensionMods): number {
+  return Math.round((REFRESH_BASE_PRICE + REFRESH_PRICE_STEP * n) * mods.shopPriceMult);
+}
+
 export function removePrice(s: RunState, mods: AscensionMods): number {
   return Math.round((REMOVE_BASE_PRICE + REMOVE_PRICE_STEP * (s.cardRemovals ?? 0)) * mods.shopPriceMult);
 }
 
 /** Магазин: 5 карт класса + 2 нейтральные, 3 реликвии, удаление карты. */
-export function buildShop(s: RunState, rng: Rng, mods: AscensionMods): ShopItem[] {
+export function buildShop(s: RunState, rng: Rng, mods: AscensionMods, refreshes = 0): ShopItem[] {
   const items: ShopItem[] = [];
   const classCards = rollCards(rng, rewardCardPool(s.classId, s), 5, CARD_RARITY_WEIGHTS.shop);
   const neutralCards = rollCards(rng, rewardCardPool('neutral', s), 2, CARD_RARITY_WEIGHTS.shop);
@@ -174,6 +190,27 @@ export function buildShop(s: RunState, rng: Rng, mods: AscensionMods): ShopItem[
     if (!p) continue;
     const [lo, hi] = POTION_PRICES[p.rarity];
     items.push({ kind: 'potion', id, price: Math.round(prng.int(lo, hi) * mods.shopPriceMult), sold: false });
+  }
+  // Услуги: улучшение карты и обновление ассортимента
+  items.push({ kind: 'upgrade', price: upgradePrice(s, mods), sold: false });
+  items.push({ kind: 'refresh', price: refreshPrice(refreshes, mods), sold: refreshes >= MAX_SHOP_REFRESHES, n: refreshes });
+  // Распродажа: одна случайная позиция −30%
+  const goods = items.map((it, i) => (it.kind === 'card' || it.kind === 'relic' || it.kind === 'potion' ? i : -1)).filter((i) => i >= 0);
+  if (goods.length > 0) {
+    const it = items[rng.pick(goods)]!;
+    it.basePrice = it.price;
+    it.price = Math.max(1, Math.round(it.price * (1 - SALE_DISCOUNT)));
+    it.sale = true;
+  }
+  return items;
+}
+
+/** Обновление ассортимента: новые товары, услуги сохраняют состояние «продано». */
+export function refreshShop(s: RunState, old: readonly ShopItem[], rng: Rng, mods: AscensionMods): ShopItem[] {
+  const n = (old.find((i) => i.kind === 'refresh')?.n ?? 0) + 1;
+  const items = buildShop(s, rng, mods, n);
+  for (const it of items) {
+    if (it.kind === 'remove' || it.kind === 'upgrade') it.sold = old.find((o) => o.kind === it.kind)?.sold ?? false;
   }
   return items;
 }

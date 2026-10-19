@@ -230,7 +230,12 @@ export function validateContent(data: ContentData = current.data): string[] {
   for (const ev of data.events) {
     const w = `event "${ev.id}"`;
     if (!Array.isArray(ev.options) || ev.options.length === 0) errors.push(`${w}: нет options`);
-    else ev.options.forEach((o, i) => checkEffects(`${w}.options[${i}]`, o.effects));
+    else
+      ev.options.forEach((o, i) => {
+        checkEffects(`${w}.options[${i}]`, o.effects);
+        o.outcomes?.forEach((r, j) => checkEffects(`${w}.options[${i}].outcomes[${j}]`, r.effects));
+        if (o.outcomes && o.outcomes.some((r) => !(r.weight > 0))) errors.push(`${w}.options[${i}]: вес исхода должен быть > 0`);
+      });
   }
 
   for (const enc of data.encounters) {

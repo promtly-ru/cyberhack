@@ -36,7 +36,8 @@ export { FIRMWARES, getFirmware, firmwareProgress, isFirmwareActive } from './fi
 export type { FirmwareDef } from './firmware';
 export { SYNERGIES, getActiveSynergies } from './synergies';
 export type { SynergyDef } from './synergies';
-export { availableNodes, canUsePotionNow, currentNode } from './run';
+export { availableNodes, blackboxForceCost, blackboxHackCost, canUsePotionNow, currentNode, meetsRequires, RELAY_HEAL_PCT } from './run';
+export { MAX_SHOP_REFRESHES } from './rewards';
 export { POTIONS, POTION_SLOTS, getPotion } from './potions';
 export type { PotionDef } from './potions';
 export { MUTATORS, getMutator } from './mutators';

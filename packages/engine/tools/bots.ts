@@ -12,7 +12,7 @@ import { getPotion, POTION_SLOTS, potionsOf } from '../src/potions';
 import { getLegalActions } from '../src/run';
 import { hashString, mulberry32 } from '../src/rng';
 import { getStatus } from '../src/statuses';
-import type { Action, CardInstance, CombatState, Effect, EnemyState, MapNode, RunState, ShopItem } from '../src/types';
+import type { Action, CardInstance, CombatState, Effect, EnemyState, EventResult, MapNode, RunState, ShopItem } from '../src/types';
 
 export type BotKind = 'novice' | 'expert';
 
@@ -166,7 +166,7 @@ class NoviceBot implements Bot {
         return { type: 'pick_card', cardId: this.rng.pick(sc.cardIds) };
       case 'shop': {
         const buys = legal.filter(
-          (a) => a.type === 'shop_buy' && sc.items[a.index]?.kind !== 'remove',
+          (a) => a.type === 'shop_buy' && !['remove', 'upgrade', 'refresh'].includes(sc.items[a.index]?.kind ?? ''),
         );
         return buys.length > 0 ? this.rng.pick(buys) : { type: 'leave_shop' };
       }
@@ -350,6 +350,10 @@ class ExpertBot implements Bot {
         return this.rest(s);
       case 'event':
         return this.event(s, sc.eventId);
+      case 'lab':
+      case 'blackbox':
+      case 'relay':
+        return this.nodeScreen(s);
       case 'select_deck_card':
         return this.selectDeck(s, sc.purpose);
       default:
@@ -436,7 +440,29 @@ class ExpertBot implements Bot {
     return best;
   }
 
-  private selectDeck(s: RunState, purpose: 'remove' | 'upgrade'): Action {
+  private nodeScreen(s: RunState): Action {
+    const legal = getLegalActions(s).filter((a) => a.type === 'node_choice') as Extract<Action, { type: 'node_choice' }>[];
+    const has = (i: number) => legal.some((a) => a.index === i);
+    const ratio = s.hp / s.maxHp;
+    if (s.screen.kind === 'relay') return { type: 'node_choice', index: 0 };
+    if (s.screen.kind === 'lab') {
+      if (has(0)) return { type: 'node_choice', index: 0 };
+      if (has(1) && this.worstCard(s) && isStarterBasic(this.worstCard(s)!.defId)) return { type: 'node_choice', index: 1 };
+      return { type: 'leave_node' };
+    }
+    // blackbox
+    if (ratio < 0.4) return { type: 'leave_node' };
+    if (has(0) && ratio > 0.8) return { type: 'node_choice', index: 0 };
+    return { type: 'node_choice', index: 1 };
+  }
+
+  private selectDeck(s: RunState, purpose: 'remove' | 'upgrade' | 'transform'): Action {
+    if (purpose === 'transform') {
+      const offer = s.screen.kind === 'select_deck_card' ? s.screen.offer : undefined;
+      const cands = s.deck.filter((c) => !offer || offer.includes(c.uid));
+      const w = cands.sort((x, y) => cardScore(x.defId, x.upgraded, s.classId) - cardScore(y.defId, y.upgraded, s.classId))[0];
+      return { type: 'select_deck_card', cardUid: w && (isStarterBasic(w.defId) || isJunk(w.defId)) ? w.uid : null };
+    }
     const c = purpose === 'upgrade' ? this.bestUpgrade(s) : this.worstCard(s);
     return { type: 'select_deck_card', cardUid: c?.uid ?? null };
   }
@@ -471,7 +497,7 @@ class ExpertBot implements Bot {
     let best = -1;
     let bestV = 0;
     items.forEach((it, i) => {
-      if (!legal.has(i) || it.kind === 'remove' || !it.id) return;
+      if (!legal.has(i) || it.kind === 'remove' || it.kind === 'upgrade' || it.kind === 'refresh' || !it.id) return;
       let v: number;
       if (it.kind === 'relic') v = this.relicValue(it.id) * 2.2;
       else if (it.kind === 'potion') {
@@ -489,6 +515,8 @@ class ExpertBot implements Bot {
       }
     });
     if (best >= 0) return { type: 'shop_buy', index: best };
+    const upIdx = items.findIndex((it, i) => it.kind === 'upgrade' && legal.has(i));
+    if (upIdx >= 0 && s.gold >= (items[upIdx]?.price ?? 1e9) + 30) return { type: 'shop_buy', index: upIdx };
     return { type: 'leave_shop' };
   }
 
@@ -512,24 +540,37 @@ class ExpertBot implements Bot {
     for (const i of legal) {
       const o = def.options[i];
       if (!o) continue;
-      let v = 0;
-      let hpLoss = 0;
-      for (const e of o.effects) {
-        if (e.type === 'gain_gold') v += e.amount * 0.12;
-        if (e.type === 'lose_hp' || e.type === 'damage') hpLoss += e.amount;
-        if (e.type === 'heal') v += Math.min(e.amount, s.maxHp - s.hp) * 0.6;
-        if (e.type === 'add_card') v += isJunk(e.cardId) ? -14 : 4;
-        if (e.type === 'heal_pct') v += Math.min((s.maxHp * e.amount) / 100, s.maxHp - s.hp) * 0.6;
-        if (e.type === 'gain_max_hp') v += e.amount * 1.5;
-        if (e.type === 'gain_potion') v += potionsOf(s).length < POTION_SLOTS ? 5 * e.amount : 0;
-      }
-      if (hpLoss >= s.hp) continue;
-      v -= hpLoss * (0.4 + (1 - ratio) * 1.6);
-      if (o.special === 'random_relic') v += 14;
-      if (o.special === 'random_card') v += 3;
-      if (o.special === 'remove_card') v += 9;
-      if (o.special === 'upgrade_card') v += 7;
-      if (o.special === 'fight') v -= ratio > 0.6 ? 2 : 12;
+      const score = (res: EventResult): number => {
+        let v = 0;
+        let hpLoss = 0;
+        for (const e of res.effects) {
+          if (e.type === 'gain_gold') v += e.amount * 0.12;
+          if (e.type === 'lose_hp' || e.type === 'damage') hpLoss += e.amount;
+          if (e.type === 'heal') v += Math.min(e.amount, s.maxHp - s.hp) * 0.6;
+          if (e.type === 'add_card') v += isJunk(e.cardId) ? -14 : 4;
+          if (e.type === 'heal_pct') v += Math.min((s.maxHp * e.amount) / 100, s.maxHp - s.hp) * 0.6;
+          if (e.type === 'gain_max_hp') v += e.amount * 1.5;
+          if (e.type === 'gain_potion') v += potionsOf(s).length < POTION_SLOTS ? 5 * e.amount : 0;
+        }
+        if (hpLoss >= s.hp) return -100;
+        v -= hpLoss * (0.4 + (1 - ratio) * 1.6);
+        if (res.special === 'random_relic') v += 14;
+        if (res.special === 'random_card') v += 3;
+        if (res.special === 'remove_card') v += 9;
+        if (res.special === 'upgrade_card') v += 7;
+        if (res.special === 'transform_card') v += 3;
+        if (res.special === 'remove_curse') v += 8;
+        if (res.special === 'lose_potion') v -= 3;
+        if (res.special === 'fight') v -= ratio > 0.6 ? 2 : 12;
+        if (res.special === 'fight_elite') v += ratio > 0.75 ? 4 : -16;
+        return v;
+      };
+      let v: number;
+      if (o.outcomes && o.outcomes.length > 0) {
+        const tw = o.outcomes.reduce((x, y) => x + y.weight, 0);
+        v = o.outcomes.reduce((x, y) => x + (score(y) * y.weight) / tw, 0);
+      } else v = score(o);
+      if (v <= -100) continue;
       if (v > bv) {
         bv = v;
         best = i;
@@ -559,6 +600,14 @@ class ExpertBot implements Bot {
           return 1.4;
         case 'treasure':
           return 3;
+        case 'lab':
+          return 2.6;
+        case 'relay':
+          return r < 0.7 ? 3 : 1.5;
+        case 'blackbox':
+          return r > 0.7 ? 2.4 : -1;
+        case 'ambush':
+          return strong && r > 0.65 ? 2.2 : r > 0.5 ? 0.4 : -2;
         default:
           return 0;
       }

@@ -238,3 +238,29 @@
   .class-card__style { font-size: 13px; }
 }
 .cs-foot { position: sticky; bottom: 0; z-index: 15; padding: 10px 0; background: linear-gradient(to top, rgba(5, 6, 15, 0.97) 70%, transparent); }
+
+/* ---------- Новые узлы карты, метки наград, магазин ---------- */
+.map-node.kind-lab { color: #7df9c2; }
+.map-node.kind-blackbox { color: #ffd23f; }
+.map-node.kind-relay { color: #5ec8ff; }
+.map-node.kind-ambush { color: #ff5470; }
+.map-legend .kind-lab { color: #7df9c2; } .map-legend .kind-blackbox { color: #ffd23f; } .map-legend .kind-relay { color: #5ec8ff; } .map-legend .kind-ambush { color: #ff5470; }
+.map-node.kind-ambush .map-node__bg { stroke-dasharray: 4 3; }
+.map-node__mark { color: var(--text-dim, #9aa6c8); pointer-events: none; }
+.map-node__mark-bg { fill: #0a0d1f; stroke: currentColor; stroke-width: 1; opacity: 0.92; }
+.map-node.is-available .map-node__mark { color: var(--acid, #d8ff3e); }
+.map-edge.is-safe:not(.is-visited) { stroke: rgba(80, 255, 160, 0.55); stroke-dasharray: 6 4; stroke-width: 2.4; }
+.map-result { margin: 6px 0 0; padding: 6px 10px; border-left: 3px solid var(--cyan, #00f0ff); background: var(--panel); border-radius: 6px; font-size: 13px; }
+.sale-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; font-size: 11px; font-weight: 700; color: #0a0d1f; background: var(--acid, #d8ff3e); border-radius: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.shop-item.is-sale { position: relative; filter: drop-shadow(0 0 10px rgba(216, 255, 62, 0.55)); }
+.shop-item.is-sale .sale-tag { position: absolute; top: -6px; right: 2px; z-index: 2; }
+.shop-relic.is-sale, .shop-potion.is-sale { box-shadow: 0 0 14px rgba(216, 255, 62, 0.45); border-color: var(--acid, #d8ff3e); }
+.price.is-sale { color: var(--acid, #d8ff3e); }
+.price__old { opacity: 0.55; font-size: 0.85em; margin-right: 2px; }
+.shop-service--up { color: #7df9c2; border-color: rgba(125, 249, 194, 0.4); margin-top: 8px; }
+.shop-service--refresh { color: #5ec8ff; border-color: rgba(94, 200, 255, 0.4); margin-top: 8px; }
+.choice--lab { color: #7df9c2; } .choice--blackbox { color: #ffd23f; } .choice--danger { color: #ff5470; }
+.event-option:disabled { opacity: 0.5; cursor: not-allowed; }
+.event-option__req { color: var(--text-dim, #9aa6c8); font-size: 12px; }
+.event-option.is-gamble .opt-n { color: #ffd23f; }
+@media (max-width: 640px) { .rest-options { grid-template-columns: 1fr; } }

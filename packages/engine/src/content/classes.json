@@ -63,7 +63,7 @@
     "id": "samurai",
     "name": "Кибер-самурай",
     "description": "Воин ближнего боя: Разгон, быстрые серии ударов и Контрудар. Чем дольше бой, тем опаснее.",
-    "maxHp": 72,
+    "maxHp": 77,
     "startingGold": 99,
     "startingDeck": [
       "sm_slash",
@@ -103,7 +103,7 @@
     "id": "biohacker",
     "name": "Биохакер",
     "description": "Рискованный мутант: жертвует HP ради мощи, лечится Самовосстановлением и душит врагов Вирусом.",
-    "maxHp": 88,
+    "maxHp": 93,
     "startingGold": 99,
     "startingDeck": [
       "bh_scalpel",

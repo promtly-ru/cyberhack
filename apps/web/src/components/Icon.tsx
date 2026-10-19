@@ -46,6 +46,50 @@ const P: Record<string, ReactNode> = {
       <path d="M7.5 9.5l4.5 2.5" opacity=".5" />
     </>
   ),
+  lab: (
+    <>
+      <path d="M9 2h6M10 2v6L4.5 19a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8V2" />
+      <path d="M7.5 15h9" />
+      <circle cx="10.5" cy="18" r="1" fill="currentColor" stroke="none" />
+      <circle cx="14" cy="12" r=".8" fill="currentColor" stroke="none" />
+    </>
+  ),
+  blackbox: (
+    <>
+      <rect x="3.5" y="6" width="17" height="14" rx="2" />
+      <path d="M3.5 11h17M12 11v3" />
+      <circle cx="12" cy="16" r="1.4" fill="currentColor" stroke="none" />
+      <path d="M8 6V4.5a4 4 0 0 1 8 0V6" opacity=".7" />
+    </>
+  ),
+  relay: (
+    <>
+      <path d="M12 21v-9" />
+      <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none" />
+      <path d="M7.6 5.6a6.2 6.2 0 0 0 0 8.8M16.4 5.6a6.2 6.2 0 0 1 0 8.8M4.6 2.8a10.2 10.2 0 0 0 0 14.4M19.4 2.8a10.2 10.2 0 0 1 0 14.4" />
+      <path d="M8 21h8" />
+    </>
+  ),
+  ambush: (
+    <>
+      <path d="M12 3L2.5 20h19z" />
+      <path d="M12 9.5v5" />
+      <circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none" />
+      <path d="M12 1v1.5M5 4l1 1M19 4l-1 1" opacity=".6" />
+    </>
+  ),
+  refresh: (
+    <>
+      <path d="M20 11a8 8 0 0 0-14.5-4M4 4v4h4" />
+      <path d="M4 13a8 8 0 0 0 14.5 4M20 20v-4h-4" />
+    </>
+  ),
+  sale: (
+    <>
+      <path d="M3 12V4h8l10 10-8 8z" />
+      <circle cx="7.5" cy="8.5" r="1.3" fill="currentColor" stroke="none" />
+    </>
+  ),
   boss: (
     <>
       <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />

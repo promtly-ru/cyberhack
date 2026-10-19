@@ -768,7 +768,13 @@ function makeShop(s: RunState): ShopItem[] {
     const r = randomRelic(s);
     if (r && !relics.some((x) => x.id === r)) relics.push({ kind: 'relic', id: r, price: 140 + rndInt(s, 'shop', 0, 60), sold: false });
   }
-  return [...cards, ...relics, { kind: 'remove', price: 75, sold: false }];
+  const sale = cards[1];
+  if (sale) {
+    sale.basePrice = sale.price;
+    sale.price = Math.round(sale.price * 0.7);
+    sale.sale = true;
+  }
+  return [...cards, ...relics, { kind: 'remove', price: 75, sold: false }, { kind: 'upgrade', price: 70, sold: false }, { kind: 'refresh', price: 35, sold: false, n: 0 }];
 }
 
 // ---------------------------------------------------------------------------
