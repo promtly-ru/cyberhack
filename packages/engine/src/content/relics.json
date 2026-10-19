@@ -1164,5 +1164,377 @@
       }
     ],
     "every": 8
+  },
+  {
+    "id": "r_scrap_armor",
+    "name": "Броня из хлама",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В начале боя получи 6 блока и 1 Контрудар.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 1,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_energy_drink",
+    "name": "Энергетик",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждый 4-й ход получи 1 энергию и восстанови 2 HP.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "heal",
+        "amount": 2
+      }
+    ],
+    "every": 4
+  },
+  {
+    "id": "r_cyber_eye",
+    "name": "Кибер-глаз",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "Каждая 7-я сыгранная карта даёт 5 блока.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      }
+    ],
+    "every": 7
+  },
+  {
+    "id": "r_ice_pick",
+    "name": "Ледоруб",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждая 5-я сыгранная атака накладывает 1 Брешь на случайного врага.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "random_enemy"
+      }
+    ],
+    "every": 5
+  },
+  {
+    "id": "r_rust_shield",
+    "name": "Ржавый щит",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В начале боя получи 4 блока и 1 Броня-патч.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 4
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_old_modem",
+    "name": "Старый модем",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "При получении: +40 кредитов и +10 HP.",
+    "trigger": "pickup",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 40
+      },
+      {
+        "type": "heal",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "id": "r_neon_tattoo",
+    "name": "Неоновая татуировка",
+    "rarity": "common",
+    "classId": "neutral",
+    "description": "В конце боя получи 5 кредитов и восстанови 2 HP.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": 5
+      },
+      {
+        "type": "heal",
+        "amount": 2
+      }
+    ]
+  },
+  {
+    "id": "r_trauma_kit",
+    "name": "Набор травматолога",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Привал приносит ещё 8 HP и 15 кредитов.",
+    "trigger": "rest",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 8
+      },
+      {
+        "type": "gain_gold",
+        "amount": 15
+      }
+    ]
+  },
+  {
+    "id": "r_overflow_valve",
+    "name": "Предохранительный клапан",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "Каждый 2-й ход в конце хода получи 6 блока.",
+    "trigger": "turn_end",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_chain_lightning",
+    "name": "Цепная молния",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "Каждая 5-я сыгранная атака наносит 6 урона всем врагам.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "all_enemies"
+      }
+    ],
+    "every": 5
+  },
+  {
+    "id": "r_dead_mans_switch",
+    "name": "Рубильник",
+    "rarity": "rare",
+    "classId": "neutral",
+    "description": "В начале боя получи 1 Разгон и 1 Шифрование, но потеряй 3 HP.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 3
+      }
+    ]
+  },
+  {
+    "id": "r_mirror_mask",
+    "name": "Зеркальная маска",
+    "rarity": "uncommon",
+    "classId": "neutral",
+    "description": "В начале боя получи 2 Контрудара и 4 блока.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 4
+      }
+    ]
+  },
+  {
+    "id": "r_neuro_overload",
+    "name": "Нейроперегрузка",
+    "rarity": "boss",
+    "classId": "neutral",
+    "description": "В начале хода возьми 1 карту и получи 1 Лаг.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 1
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "self"
+      }
+    ]
+  },
+  {
+    "id": "r_kamikaze_core",
+    "name": "Ядро камикадзе",
+    "rarity": "boss",
+    "classId": "neutral",
+    "description": "В начале боя получи 3 Разгона, но потеряй 8 HP.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 3,
+        "target": "self"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 8
+      }
+    ]
+  },
+  {
+    "id": "r_dr_remote",
+    "name": "Пульт оператора",
+    "rarity": "starter",
+    "classId": "droneop",
+    "description": "Каждый 2-й ход добавляет в руку Дрона-стрелка.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_dr_charging_dock",
+    "name": "Зарядная станция",
+    "rarity": "common",
+    "classId": "droneop",
+    "description": "В начале боя добавляет в руку 2 Дрона-щита.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_shield",
+        "to": "hand",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "id": "r_dr_hive_core",
+    "name": "Ядро улья",
+    "rarity": "boss",
+    "classId": "droneop",
+    "description": "В начале хода добавляет в руку Дрона-подрывника, но ты теряешь 1 HP.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_bomb",
+        "to": "hand",
+        "count": 1
+      },
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": "r_ch_chronometer",
+    "name": "Хронометр",
+    "rarity": "starter",
+    "classId": "chrono",
+    "description": "Каждый 2-й ход получи 1 энергию и возьми 1 карту.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "every": 2
+  },
+  {
+    "id": "r_ch_flux_coil",
+    "name": "Катушка потока",
+    "rarity": "common",
+    "classId": "chrono",
+    "description": "В начале боя накладывает 1 Лаг на всех врагов и даёт 4 блока.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      },
+      {
+        "type": "block",
+        "amount": 4
+      }
+    ]
+  },
+  {
+    "id": "r_ch_paradox_engine",
+    "name": "Парадокс-движок",
+    "rarity": "boss",
+    "classId": "chrono",
+    "description": "В начале хода получи 1 энергию, но потеряй 2 HP.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "lose_hp",
+        "amount": 2
+      }
+    ]
   }
 ]

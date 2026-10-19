@@ -60,6 +60,31 @@ export function CardTerms({ defId, upgraded = false, compact }: { defId: string;
   );
 }
 
+/** Флаги-ключевые слова карты в порядке показа. */
+const FLAG_KEYWORDS = ['innate', 'retain', 'ethereal', 'exhaust'] as const;
+
+/**
+ * Плашки ключевых слов (Врождённая, Удержание, Эфемерная, Сжигается) — только те, что заданы флагами карты,
+ * но не упомянуты в её тексте (чтобы не дублировать).
+ */
+function CardKeywords({ stats, text }: { stats: ReturnType<typeof cardStats>; text: string }) {
+  const inText = new Set(splitKeywords(text).flatMap((p) => (typeof p === 'string' ? [] : [p.termId])));
+  const ids = FLAG_KEYWORDS.filter((id) => stats[id] && !inText.has(id));
+  if (!ids.length) return null;
+  return (
+    <span className="card__keywords" data-testid="card-keywords">
+      {ids.map((id) => {
+        const term = getTerm(id);
+        return (
+          <b key={id} className={`kw card__kw card__kw--${id}`} {...(term ? tip(term.name, term.desc) : {})}>
+            {term?.name ?? id}
+          </b>
+        );
+      })}
+    </span>
+  );
+}
+
 export interface CardProps {
   defId: string;
   upgraded?: boolean;
@@ -92,6 +117,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
     'card',
     `card--${def.type}`,
     `rarity--${def.rarity}`,
+    `card-cls--${def.classId}`,
     upgraded ? 'is-upgraded' : '',
     playable ? '' : 'is-unplayable',
     compact ? 'is-compact' : '',
@@ -106,7 +132,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
       <div className="card__frame">
         <div className="card__glow" aria-hidden="true" />
         <div className="card__art">
-          <CardArt id={def.id} />
+          <CardArt id={def.id} upgraded={upgraded} />
         </div>
         <div className="card__name">
           <span>{name}</span>
@@ -118,6 +144,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
         </div>
         <div className="card__text">
           <span>{formatCardText(text, upgraded)}</span>
+          <CardKeywords stats={stats} text={text} />
         </div>
         <div className="card__corner" aria-hidden="true" />
       </div>

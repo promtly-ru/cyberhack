@@ -327,8 +327,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      94,
-      99
+      98,
+      103
     ],
     "moves": [
       {
@@ -393,8 +393,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      41,
-      46
+      43,
+      48
     ],
     "moves": [
       {
@@ -437,8 +437,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      41,
-      46
+      43,
+      48
     ],
     "moves": [
       {
@@ -481,8 +481,8 @@
     "tier": "boss",
     "act": 1,
     "hp": [
-      129,
-      133
+      134,
+      138
     ],
     "moves": [
       {
@@ -881,8 +881,8 @@
     "tier": "elite",
     "act": 2,
     "hp": [
-      150,
-      161
+      156,
+      167
     ],
     "moves": [
       {
@@ -948,8 +948,8 @@
     "tier": "boss",
     "act": 2,
     "hp": [
-      207,
-      218
+      215,
+      227
     ],
     "moves": [
       {
@@ -1077,7 +1077,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9,
+            "amount": 10,
             "times": 2
           }
         ]
@@ -1126,7 +1126,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 25
+            "amount": 28
           }
         ]
       }
@@ -1169,7 +1169,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 15
+            "amount": 16
           }
         ]
       },
@@ -1180,7 +1180,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9
+            "amount": 10
           },
           {
             "type": "apply_status",
@@ -1234,7 +1234,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 22
+            "amount": 24
           }
         ]
       },
@@ -1245,7 +1245,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7,
+            "amount": 8,
             "times": 3
           }
         ]
@@ -1295,7 +1295,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 20
+            "amount": 22
           }
         ]
       },
@@ -1306,7 +1306,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 13
+            "amount": 14
           },
           {
             "type": "add_card",
@@ -1333,8 +1333,8 @@
     "tier": "elite",
     "act": 3,
     "hp": [
-      178,
-      190
+      185,
+      198
     ],
     "moves": [
       {
@@ -1362,7 +1362,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 9,
+            "amount": 10,
             "times": 3
           }
         ]
@@ -1374,7 +1374,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 27
+            "amount": 30
           }
         ]
       }
@@ -1396,8 +1396,8 @@
     "tier": "boss",
     "act": 3,
     "hp": [
-      316,
-      328
+      329,
+      341
     ],
     "moves": [
       {
@@ -1447,7 +1447,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11,
+            "amount": 12,
             "times": 3
           }
         ]
@@ -1459,7 +1459,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 17
+            "amount": 19
           },
           {
             "type": "apply_status",
@@ -1494,7 +1494,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 38
+            "amount": 42
           }
         ]
       }
@@ -1701,8 +1701,8 @@
     "tier": "elite",
     "act": 2,
     "hp": [
-      121,
-      129
+      126,
+      134
     ],
     "moves": [
       {
@@ -1792,7 +1792,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 7,
+            "amount": 8,
             "times": 2
           }
         ]
@@ -1830,8 +1830,8 @@
     "tier": "elite",
     "act": 3,
     "hp": [
-      195,
-      207
+      203,
+      215
     ],
     "moves": [
       {
@@ -1858,7 +1858,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 25
+            "amount": 28
           }
         ]
       },
@@ -1869,7 +1869,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 12
+            "amount": 13
           },
           {
             "type": "apply_status",
@@ -1901,8 +1901,8 @@
     "tier": "boss",
     "act": 1,
     "hp": [
-      129,
-      136
+      134,
+      141
     ],
     "moves": [
       {
@@ -1984,8 +1984,8 @@
     "tier": "boss",
     "act": 2,
     "hp": [
-      218,
-      230
+      227,
+      239
     ],
     "moves": [
       {
@@ -2088,8 +2088,8 @@
     "tier": "boss",
     "act": 3,
     "hp": [
-      339,
-      351
+      353,
+      365
     ],
     "moves": [
       {
@@ -2122,7 +2122,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 4
           }
         ]
@@ -2151,7 +2151,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 16
+            "amount": 18
           },
           {
             "type": "apply_status",
@@ -2167,7 +2167,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 36
+            "amount": 40
           }
         ]
       }
@@ -2222,7 +2222,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 18
+            "amount": 19
           }
         ]
       },
@@ -2266,7 +2266,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11
+            "amount": 12
           },
           {
             "type": "apply_status",
@@ -2299,7 +2299,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 16
+            "amount": 17
           }
         ]
       }
@@ -2348,7 +2348,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 3
           }
         ]
@@ -2415,7 +2415,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 30
+            "amount": 32
           }
         ]
       },
@@ -2483,7 +2483,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 23
+            "amount": 25
           }
         ]
       },
@@ -2599,7 +2599,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 25
+            "amount": 27
           }
         ]
       },
@@ -2610,7 +2610,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 12
+            "amount": 13
           },
           {
             "type": "apply_status",
@@ -2671,7 +2671,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 14
+            "amount": 15
           }
         ]
       },
@@ -2682,7 +2682,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 11
+            "amount": 12
           },
           {
             "type": "add_card",
@@ -2709,8 +2709,8 @@
     "tier": "elite",
     "act": 4,
     "hp": [
-      221,
-      235
+      230,
+      244
     ],
     "moves": [
       {
@@ -2737,7 +2737,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 28
+            "amount": 30
           }
         ]
       },
@@ -2765,7 +2765,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10,
+            "amount": 11,
             "times": 3
           }
         ]
@@ -2789,8 +2789,8 @@
     "tier": "elite",
     "act": 4,
     "hp": [
-      204,
-      218
+      212,
+      227
     ],
     "moves": [
       {
@@ -2817,7 +2817,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 26
+            "amount": 28
           }
         ]
       },
@@ -2828,7 +2828,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 12
+            "amount": 13
           },
           {
             "type": "apply_status",
@@ -2855,8 +2855,8 @@
     "tier": "boss",
     "act": 4,
     "hp": [
-      312,
-      328
+      324,
+      341
     ],
     "moves": [
       {
@@ -2906,7 +2906,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10,
+            "amount": 11,
             "times": 4
           }
         ]
@@ -2918,7 +2918,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 19
+            "amount": 20
           },
           {
             "type": "apply_status",
@@ -2953,7 +2953,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 39
+            "amount": 42
           }
         ]
       }
@@ -2980,8 +2980,8 @@
     "tier": "boss",
     "act": 4,
     "hp": [
-      309,
-      323
+      321,
+      336
     ],
     "moves": [
       {
@@ -2991,7 +2991,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 15,
+            "amount": 16,
             "times": 3
           }
         ]
@@ -3020,7 +3020,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 20
+            "amount": 21
           },
           {
             "type": "apply_status",
@@ -3084,7 +3084,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 46
+            "amount": 49
           }
         ]
       }
@@ -3209,8 +3209,8 @@
     "tier": "elite",
     "act": 1,
     "hp": [
-      96,
-      108
+      100,
+      112
     ],
     "moves": [
       {
@@ -3401,8 +3401,8 @@
     "tier": "elite",
     "act": 2,
     "hp": [
-      150,
-      164
+      156,
+      171
     ],
     "moves": [
       {
@@ -3496,7 +3496,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 18
+            "amount": 20
           }
         ]
       },
@@ -3507,7 +3507,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 10
+            "amount": 11
           },
           {
             "type": "add_card",
@@ -3562,7 +3562,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 20
+            "amount": 22
           }
         ]
       }
@@ -3583,8 +3583,8 @@
     "tier": "elite",
     "act": 3,
     "hp": [
-      220,
-      236
+      229,
+      245
     ],
     "moves": [
       {
@@ -3594,7 +3594,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 30
+            "amount": 33
           }
         ]
       },
@@ -3622,7 +3622,7 @@
         "effects": [
           {
             "type": "damage",
-            "amount": 14
+            "amount": 15
           },
           {
             "type": "apply_status",
@@ -3647,5 +3647,1893 @@
       ]
     },
     "description": "Элита акта 3: медленный, но разрушительный."
+  },
+  {
+    "id": "a1_glitch_kitten",
+    "name": "Глитч-котёнок",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      20,
+      24
+    ],
+    "moves": [
+      {
+        "id": "scratch",
+        "name": "Царапины",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 4,
+            "times": 2
+          }
+        ]
+      },
+      {
+        "id": "pounce",
+        "name": "Прыжок",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          }
+        ]
+      },
+      {
+        "id": "static",
+        "name": "Статика",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 3
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "scratch": 40,
+        "pounce": 35,
+        "static": 25
+      }
+    },
+    "description": "Баг в форме зверька. Пачкает колоду статикой."
+  },
+  {
+    "id": "a1_mine_layer",
+    "name": "Минёр-скрипт",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      28,
+      33
+    ],
+    "moves": [
+      {
+        "id": "plant",
+        "name": "Закладка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "draw",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "jab",
+        "name": "Тычок",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "detonate",
+        "name": "Подрыв",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 13
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "plant",
+        "jab",
+        "detonate",
+        "jab"
+      ]
+    },
+    "description": "Закладывает мусор в колоду и взрывает всё одним ударом."
+  },
+  {
+    "id": "a1_firewall_sprite",
+    "name": "Спрайт файрвола",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      18,
+      22
+    ],
+    "moves": [
+      {
+        "id": "shell",
+        "name": "Оболочка",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 6
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "poke",
+        "name": "Укол",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "shell",
+        "poke",
+        "poke"
+      ]
+    },
+    "description": "Мелкий охранный огонёк. Обжигает того, кто бьёт по нему."
+  },
+  {
+    "id": "a1_kernel_leech",
+    "name": "Пиявка ядра",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      38,
+      44
+    ],
+    "moves": [
+      {
+        "id": "leech",
+        "name": "Присоска",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6
+          },
+          {
+            "type": "heal",
+            "amount": 4
+          }
+        ]
+      },
+      {
+        "id": "slap",
+        "name": "Шлепок",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          }
+        ]
+      },
+      {
+        "id": "swell",
+        "name": "Набухание",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 8
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "leech": 40,
+        "slap": 35,
+        "swell": 25
+      }
+    },
+    "description": "Паразит, питающийся тактами процессора."
+  },
+  {
+    "id": "a1_dust_golem",
+    "name": "Пыльный голем",
+    "tier": "normal",
+    "act": 1,
+    "hp": [
+      56,
+      62
+    ],
+    "moves": [
+      {
+        "id": "crush",
+        "name": "Сокрушение",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 12
+          }
+        ]
+      },
+      {
+        "id": "harden",
+        "name": "Уплотнение",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "crush",
+        "harden",
+        "crush",
+        "crush"
+      ]
+    },
+    "description": "Груда старых кэшей, склеенная пылью. Медленный и прочный."
+  },
+  {
+    "id": "a1_gatekeeper",
+    "name": "Привратник шлюза",
+    "tier": "elite",
+    "act": 1,
+    "hp": [
+      92,
+      100
+    ],
+    "moves": [
+      {
+        "id": "lockdown",
+        "name": "Блокировка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "barrage",
+        "name": "Шквал пакетов",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 5,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "hammer",
+        "name": "Молот доступа",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 14
+          }
+        ]
+      },
+      {
+        "id": "raise",
+        "name": "Поднять шлагбаум",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 12
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "lockdown",
+        "barrage",
+        "hammer",
+        "raise",
+        "barrage"
+      ]
+    },
+    "description": "Решает, кто пройдёт. Тебя — нет."
+  },
+  {
+    "id": "boss_taskmaster",
+    "name": "ДИСПЕТЧЕР ЗАДАЧ",
+    "tier": "boss",
+    "act": 1,
+    "hp": [
+      139,
+      146
+    ],
+    "moves": [
+      {
+        "id": "boot",
+        "name": "Запуск процессов",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "spawn",
+        "name": "Мусорный процесс",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "spam",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "thrash",
+        "name": "Перегруз потоков",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "kill",
+        "name": "Kill -9",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 16
+          }
+        ]
+      },
+      {
+        "id": "throttle",
+        "name": "Троттлинг",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "boot",
+        "spawn",
+        "thrash",
+        "kill",
+        "throttle",
+        "thrash",
+        "kill"
+      ]
+    },
+    "description": "Планировщик системы. Убивает всё, что тормозит очередь."
+  },
+  {
+    "id": "a2_phish_kit",
+    "name": "Фишинг-комплекс",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      44,
+      52
+    ],
+    "moves": [
+      {
+        "id": "lure",
+        "name": "Приманка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "hook",
+        "name": "Крючок",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10
+          },
+          {
+            "type": "add_card",
+            "cardId": "spam",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "harvest",
+        "name": "Сбор данных",
+        "intent": "attack_defend",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7,
+            "times": 2
+          },
+          {
+            "type": "block",
+            "amount": 4
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "lure": 30,
+        "hook": 40,
+        "harvest": 30
+      }
+    },
+    "description": "Вежливо просит пароль. Потом берёт силой."
+  },
+  {
+    "id": "a2_cipher_golem",
+    "name": "Шифр-голем",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      70,
+      80
+    ],
+    "moves": [
+      {
+        "id": "encrypt",
+        "name": "Шифрование",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 16
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "bash",
+        "name": "Дешифровка вдребезги",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 14
+          }
+        ]
+      },
+      {
+        "id": "rekey",
+        "name": "Смена ключа",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "encrypt",
+        "bash",
+        "bash",
+        "rekey"
+      ]
+    },
+    "description": "Каменная реализация AES. Ломается только изнутри."
+  },
+  {
+    "id": "a2_dark_courier",
+    "name": "Тёмный курьер",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      34,
+      40
+    ],
+    "moves": [
+      {
+        "id": "dash",
+        "name": "Рывок",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "smuggle",
+        "name": "Контрабанда",
+        "intent": "attack_defend",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 4
+          },
+          {
+            "type": "block",
+            "amount": 8
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "stab",
+        "name": "Заражённый нож",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "dash": 40,
+        "smuggle": 30,
+        "stab": 30
+      }
+    },
+    "description": "Доставляет неприятности по любому адресу."
+  },
+  {
+    "id": "a2_bug_nest",
+    "name": "Гнездо багов",
+    "tier": "normal",
+    "act": 2,
+    "hp": [
+      46,
+      54
+    ],
+    "moves": [
+      {
+        "id": "hatch",
+        "name": "Вылупление",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 6
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "sting",
+        "name": "Рой жал",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 4,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "bite",
+        "name": "Укус",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "hatch",
+        "sting",
+        "bite",
+        "sting"
+      ]
+    },
+    "description": "Из каждого ужаленного места лезет новый глюк."
+  },
+  {
+    "id": "a2_bounty_hunter",
+    "name": "Охотник за головами",
+    "tier": "elite",
+    "act": 2,
+    "hp": [
+      137,
+      148
+    ],
+    "moves": [
+      {
+        "id": "mark",
+        "name": "Метка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "shoot",
+        "name": "Очередь",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 8,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "execute",
+        "name": "Контрольный",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 19
+          }
+        ]
+      },
+      {
+        "id": "reload",
+        "name": "Перезарядка",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 12
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "mark",
+        "shoot",
+        "execute",
+        "reload",
+        "shoot"
+      ]
+    },
+    "description": "Корпорация назначила за тебя награду. Он пришёл её получить."
+  },
+  {
+    "id": "boss_architect",
+    "name": "АРХИТЕКТОР",
+    "tier": "boss",
+    "act": 2,
+    "hp": [
+      214,
+      225
+    ],
+    "moves": [
+      {
+        "id": "blueprint",
+        "name": "Чертёж",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 18
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "rivet",
+        "name": "Клёпка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "corrode",
+        "name": "Коррозия",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "demolish",
+        "name": "Снос",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 21
+          }
+        ]
+      },
+      {
+        "id": "expand",
+        "name": "Расширение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "blueprint",
+        "rivet",
+        "corrode",
+        "demolish",
+        "expand",
+        "rivet",
+        "demolish"
+      ]
+    },
+    "description": "Строитель сети. Считает тебя ошибкой в проекте."
+  },
+  {
+    "id": "a3_sniper_node",
+    "name": "Снайперский узел",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      62,
+      72
+    ],
+    "moves": [
+      {
+        "id": "aim",
+        "name": "Прицеливание",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 8
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "shot",
+        "name": "Выстрел",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 26
+          }
+        ]
+      },
+      {
+        "id": "recoil",
+        "name": "Отдача",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "aim",
+        "shot",
+        "recoil"
+      ]
+    },
+    "description": "Один выстрел, один пробитый файрвол."
+  },
+  {
+    "id": "a3_hex_weaver",
+    "name": "Ткач хексов",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      74,
+      86
+    ],
+    "moves": [
+      {
+        "id": "curse",
+        "name": "Проклятие",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "backdoor",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "lash",
+        "name": "Хлёст",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 13
+          }
+        ]
+      },
+      {
+        "id": "hex",
+        "name": "Хекс",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "mend",
+        "name": "Штопка",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 14
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "curse": 20,
+        "lash": 35,
+        "hex": 30,
+        "mend": 15
+      }
+    },
+    "description": "Плетёт из кода тонкие, ядовитые узоры."
+  },
+  {
+    "id": "a3_forge_drone",
+    "name": "Литейный дрон",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      88,
+      100
+    ],
+    "moves": [
+      {
+        "id": "heat",
+        "name": "Разогрев",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "id": "slag",
+        "name": "Шлак",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11,
+            "times": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "pour",
+        "name": "Заливка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 20
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "heat",
+        "slag",
+        "pour",
+        "slag"
+      ]
+    },
+    "description": "Раскалённый рабочий из заброшенного цеха."
+  },
+  {
+    "id": "a3_data_scavenger",
+    "name": "Падальщик данных",
+    "tier": "normal",
+    "act": 3,
+    "hp": [
+      58,
+      68
+    ],
+    "moves": [
+      {
+        "id": "scavenge",
+        "name": "Подбор",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9
+          },
+          {
+            "type": "heal",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "bite",
+        "name": "Рывок челюстей",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15
+          }
+        ]
+      },
+      {
+        "id": "swarm",
+        "name": "Налёт",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "scavenge": 35,
+        "bite": 35,
+        "swarm": 30
+      }
+    },
+    "description": "Питается остатками чужих взломов."
+  },
+  {
+    "id": "a3_silent_executioner",
+    "name": "Тихий палач",
+    "tier": "elite",
+    "act": 3,
+    "hp": [
+      177,
+      189
+    ],
+    "moves": [
+      {
+        "id": "shadow",
+        "name": "Тень приговора",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "flurry",
+        "name": "Серия",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 7,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "execute",
+        "name": "Казнь",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 29
+          }
+        ]
+      },
+      {
+        "id": "evade",
+        "name": "Уход в тень",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 16
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "shadow",
+        "flurry",
+        "execute",
+        "evade",
+        "flurry"
+      ]
+    },
+    "description": "Приходит без уведомления."
+  },
+  {
+    "id": "boss_sentinel_prime",
+    "name": "СТРАЖ-ПРАЙМ",
+    "tier": "boss",
+    "act": 3,
+    "hp": [
+      343,
+      358
+    ],
+    "moves": [
+      {
+        "id": "shield",
+        "name": "Протокол щита",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 28
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "scan",
+        "name": "Полный скан",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "strike",
+        "name": "Тройной залп",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 15,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "overload",
+        "name": "Перегрузка",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 21
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 4
+          }
+        ]
+      },
+      {
+        "id": "charge",
+        "name": "Накачка",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "purge",
+        "name": "Чистка",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 11,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "verdict",
+        "name": "Приговор",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 40
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "shield",
+        "scan",
+        "strike",
+        "overload",
+        "charge",
+        "purge",
+        "verdict",
+        "strike",
+        "verdict"
+      ]
+    },
+    "description": "Эталонная охранная система. Заменил собой отдел кадров."
+  },
+  {
+    "id": "a4_glitch_prophet",
+    "name": "Пророк глитча",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      64,
+      74
+    ],
+    "moves": [
+      {
+        "id": "prophecy",
+        "name": "Пророчество",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "id": "smite",
+        "name": "Кара",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 21
+          }
+        ]
+      },
+      {
+        "id": "vision",
+        "name": "Видение",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 9,
+            "times": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "prophecy": 30,
+        "smite": 35,
+        "vision": 35
+      }
+    },
+    "description": "Видит будущее. Оно всегда заканчивается ошибкой."
+  },
+  {
+    "id": "a4_void_crawler",
+    "name": "Пустотный ползун",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      80,
+      92
+    ],
+    "moves": [
+      {
+        "id": "crawl",
+        "name": "Ползок",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 13
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "curl",
+        "name": "Свёртывание",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 18
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "lash",
+        "name": "Хлёст щупалец",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10,
+            "times": 3
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "crawl",
+        "curl",
+        "lash"
+      ]
+    },
+    "description": "Живёт в тёмных секторах диска."
+  },
+  {
+    "id": "a4_echo_unit",
+    "name": "Эхо-юнит",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      58,
+      68
+    ],
+    "moves": [
+      {
+        "id": "echo",
+        "name": "Эхо",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "times": 4
+          }
+        ]
+      },
+      {
+        "id": "mimic",
+        "name": "Подражание",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 10
+          },
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 2,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "resonance",
+        "name": "Резонанс",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 17
+          },
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "random",
+      "weights": {
+        "echo": 40,
+        "mimic": 25,
+        "resonance": 35
+      }
+    },
+    "description": "Повторяет каждый твой шаг, только громче."
+  },
+  {
+    "id": "a4_ice_titan",
+    "name": "Титан-лёд",
+    "tier": "normal",
+    "act": 4,
+    "hp": [
+      118,
+      132
+    ],
+    "moves": [
+      {
+        "id": "freeze",
+        "name": "Заморозка",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "avalanche",
+        "name": "Лавина",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 26
+          }
+        ]
+      },
+      {
+        "id": "shell",
+        "name": "Ледяной панцирь",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 26
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "freeze",
+        "avalanche",
+        "shell",
+        "avalanche"
+      ]
+    },
+    "description": "Стена льда высотой в три этажа."
+  },
+  {
+    "id": "a4_data_reaper",
+    "name": "Жнец данных",
+    "tier": "elite",
+    "act": 4,
+    "hp": [
+      214,
+      229
+    ],
+    "moves": [
+      {
+        "id": "harvest",
+        "name": "Жатва",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 17
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "scythe",
+        "name": "Серп",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10,
+            "times": 3
+          }
+        ]
+      },
+      {
+        "id": "eclipse",
+        "name": "Затмение",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "reap",
+        "name": "Последний сбор",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 32
+          }
+        ]
+      },
+      {
+        "id": "wall",
+        "name": "Саван",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 24
+          },
+          {
+            "type": "apply_status",
+            "status": "thorns",
+            "amount": 3,
+            "target": "self"
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "eclipse",
+        "harvest",
+        "scythe",
+        "reap",
+        "wall",
+        "scythe"
+      ]
+    },
+    "description": "Собирает урожай из чужих профилей."
+  },
+  {
+    "id": "boss_zero_hour",
+    "name": "НУЛЕВОЙ ЧАС",
+    "tier": "boss",
+    "act": 4,
+    "hp": [
+      318,
+      333
+    ],
+    "moves": [
+      {
+        "id": "countdown",
+        "name": "Обратный отсчёт",
+        "intent": "defend",
+        "effects": [
+          {
+            "type": "block",
+            "amount": 34
+          },
+          {
+            "type": "apply_status",
+            "status": "plating",
+            "amount": 4,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "panic",
+        "name": "Паника",
+        "intent": "debuff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 3
+          },
+          {
+            "type": "apply_status",
+            "status": "frail",
+            "amount": 3
+          },
+          {
+            "type": "add_card",
+            "cardId": "glitch",
+            "to": "discard",
+            "count": 2
+          },
+          {
+            "type": "add_card",
+            "cardId": "backdoor",
+            "to": "discard",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "id": "salvo",
+        "name": "Залп",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 10,
+            "times": 5
+          }
+        ]
+      },
+      {
+        "id": "rewrite",
+        "name": "Перезапись",
+        "intent": "attack_debuff",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 22
+          },
+          {
+            "type": "apply_status",
+            "status": "virus",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "ascend",
+        "name": "Вознесение",
+        "intent": "buff",
+        "effects": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 4,
+            "target": "self"
+          },
+          {
+            "type": "apply_status",
+            "status": "ritual",
+            "amount": 1,
+            "target": "self"
+          }
+        ]
+      },
+      {
+        "id": "delete",
+        "name": "Удаление",
+        "intent": "attack",
+        "effects": [
+          {
+            "type": "damage",
+            "amount": 45
+          }
+        ]
+      }
+    ],
+    "ai": {
+      "kind": "cycle",
+      "order": [
+        "countdown",
+        "panic",
+        "salvo",
+        "rewrite",
+        "ascend",
+        "salvo",
+        "delete",
+        "rewrite",
+        "delete"
+      ]
+    },
+    "description": "Когда часы пробьют ноль, система перезагрузится без тебя."
   }
 ]

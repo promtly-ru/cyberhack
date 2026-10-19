@@ -4,6 +4,8 @@ import { Icon } from './Icon';
 import { FirmwareBar, RelicIcon } from './Bits';
 import { tip } from './Tooltip';
 import { CardGridModal } from './CardGridModal';
+import { PotionBar } from './PotionBar';
+import { getMutator } from '../game/engine';
 import { useUi, ACT_NAMES } from '../ui/uiStore';
 import { sfx } from '../audio/sfx';
 
@@ -44,6 +46,18 @@ export function TopBar({ run }: { run: RunState }) {
             <span className="mono">{run.ascension}</span>
           </span>
         ) : null}
+        {run.mutators?.length ? (
+          <span
+            className="stat stat--mutators"
+            data-testid="stat-mutators"
+            tabIndex={0}
+            aria-label={`Мутаторы: ${run.mutators.map((id) => getMutator(id)?.name ?? id).join(', ')}`}
+            {...tip(`Мутаторы забега (${run.mutators.length})`, run.mutators.map((id) => { const m = getMutator(id); return m ? `${m.name}: ${m.description}` : id; }).join(' • '))}
+          >
+            <Icon name="flag" size={16} />
+            <span className="mono">{run.mutators.length}</span>
+          </span>
+        ) : null}
         {run.daily ? (
           <span className="stat stat--daily" tabIndex={0} aria-label="Ежедневный взлом" {...tip('Ежедневный взлом', `Одинаковый забег для всех игроков сегодня. Сид: ${run.seed}`)}>
             <Icon name="calendar" size={16} />
@@ -62,6 +76,7 @@ export function TopBar({ run }: { run: RunState }) {
       </div>
       <FirmwareBar firmwares={run.firmwares ?? []} deck={run.deck} />
       <div className="topbar__actions">
+        <PotionBar run={run} />
         <button
           className="icon-btn icon-btn--count"
           onClick={() => {

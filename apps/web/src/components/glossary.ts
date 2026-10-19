@@ -46,6 +46,9 @@ const SPECS: TermSpec[] = [
   { id: 'exhaust', group: 'card', name: 'Сжигается', icon: 'exhaust', desc: 'После розыгрыша карта уходит в «Сожжено» и до конца боя не вернётся. «Сожги карту» — то же самое для карты из руки.', forms: ['Сжигается', 'Сгорает', 'Сожги'] },
   { id: 'ethereal', group: 'card', name: 'Эфемерная', desc: 'Если карта осталась в руке в конце хода — она сгорает.', forms: ['Эфемерная', 'Эфемерна'] },
   { id: 'unplayable', group: 'card', name: 'Неиграбельна', desc: 'Эту карту нельзя сыграть. Она просто занимает место в руке.', forms: ['Неиграбельна'] },
+  { id: 'retain', group: 'card', name: 'Удержание', icon: 'retain', desc: 'В конце хода карта не уходит в сброс, а остаётся в руке до следующего хода.', forms: ['Удержани[еяю]', 'Удерживается'] },
+  { id: 'innate', group: 'card', name: 'Врождённая', icon: 'innate', desc: 'В начале каждого боя карта сразу оказывается в стартовой руке.', forms: ['Врожд[её]нн(?:ая|ой|ую|ые)'] },
+  { id: 'potion', group: 'basic', name: 'Расходник', icon: 'potion', desc: 'Разовый модуль-инъекция. Хранится в слотах на верхней панели (до 3). В бою можно выпить любой — это не тратит энергию; вне боя — только лечебные. Лишний можно выбросить.', forms: ['Расходник(?:а|и|ов|ом)?', 'расходник(?:а|и|ов|ом)?'] },
   { id: 'x_cost', group: 'card', name: 'Цена X', desc: 'Карта тратит всю оставшуюся энергию. Эффект повторяется столько раз, сколько энергии потрачено.' },
   { id: 'power', group: 'card', name: 'Модуль', desc: 'Тип карты. Сыгранный модуль работает до конца боя и больше не попадает в руку.' },
   { id: 'aoe', group: 'card', name: 'По всем врагам', desc: 'Действует сразу на всех врагов — цель выбирать не нужно.', forms: ['ВСЕМ'] },
@@ -60,6 +63,10 @@ const SPECS: TermSpec[] = [
   { id: 'weak', group: 'status', status: 'weak', forms: ['Лаг(?:а|ов)?', 'Слабост(?:ь|и)'] },
   { id: 'frail', group: 'status', status: 'frail', forms: ['Фрагментаци[яи]', 'Хрупкост(?:ь|и)'] },
   { id: 'virus', group: 'status', status: 'virus', forms: ['Вирус(?:а|ов)?'] },
+  { id: 'echo', group: 'status', status: 'echo', forms: ['Эхо'] },
+  { id: 'barrier', group: 'status', status: 'barrier', forms: ['Барьер(?:а|ов|ом)?'] },
+  { id: 'bleed', group: 'status', status: 'bleed', forms: ['Утечк(?:а|и|у|ой)'] },
+  { id: 'mark', group: 'status', status: 'mark', forms: ['Метк(?:а|и|у|ой)', 'Меток'] },
 ];
 
 /** Запасные имена статусов, если движок о них не знает. */
@@ -74,6 +81,10 @@ const STATUS_FALLBACK_NAME: Record<string, string> = {
   weak: 'Лаг',
   frail: 'Фрагментация',
   virus: 'Вирус',
+  echo: 'Эхо',
+  barrier: 'Барьер',
+  bleed: 'Утечка',
+  mark: 'Метка',
 };
 
 function resolve(spec: TermSpec): GlossaryTerm {
@@ -153,6 +164,9 @@ export function cardTerms(defId: string, upgraded = false, { basics = true }: { 
     if (st.def.type === 'power') add('power');
     if (st.def.target === 'all_enemies') add('aoe');
     if (st.exhaust) add('exhaust');
+    if (st.ethereal) add('ethereal');
+    if (st.retain) add('retain');
+    if (st.innate) add('innate');
   } catch {
     return [];
   }

@@ -8,7 +8,7 @@ export const SAVE_VERSION = 1 as const;
 
 // ---------- Базовые идентификаторы ----------
 
-export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer' | 'biohacker';
+export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer' | 'biohacker' | 'droneop' | 'chrono';
 export type Difficulty = 'easy' | 'normal' | 'hard';
 export type CardType = 'attack' | 'skill' | 'power' | 'status' | 'curse';
 export type Rarity = 'starter' | 'common' | 'uncommon' | 'rare' | 'special';
@@ -28,7 +28,24 @@ export type Effect =
   | { type: 'lose_hp'; amount: number }
   | { type: 'add_card'; cardId: string; to: 'hand' | 'draw' | 'discard'; count?: number }
   | { type: 'exhaust_random_hand'; amount: number }
-  | { type: 'gain_gold'; amount: number };
+  | { type: 'gain_gold'; amount: number }
+  // ---- Расширения механик (см. mechanics.test.ts) ----
+  /** Просмотреть amount верхних карт добора: статусы и проклятия среди них уходят в сброс */
+  | { type: 'scry'; amount: number }
+  /** Сбросить руку и взять столько же карт + amount */
+  | { type: 'discard_hand_draw'; amount: number }
+  /** Улучшить amount случайных карт в руке до конца боя */
+  | { type: 'upgrade_random_hand'; amount: number }
+  /** +amount к максимуму HP (и столько же HP); работает и вне боя */
+  | { type: 'gain_max_hp'; amount: number }
+  /** Лечение на amount% от максимума HP; работает и вне боя */
+  | { type: 'heal_pct'; amount: number }
+  /** Следующие amount сыгранных карт срабатывают дважды (статус «Эхо») */
+  | { type: 'double_next'; amount: number }
+  /** Снять с игрока до amount разных дебаффов (99 — все) */
+  | { type: 'cleanse'; amount: number }
+  /** Получить amount расходников (potionId — конкретный, иначе случайный); при полных слотах — ничего */
+  | { type: 'gain_potion'; amount: number; potionId?: string };
 
 // ---------- Определения контента (JSON-данные) ----------
 
@@ -45,12 +62,18 @@ export interface CardDef {
   description: string;
   exhaust?: boolean;
   ethereal?: boolean;
+  /** Удержание: не сбрасывается из руки в конце хода */
+  retain?: boolean;
+  /** Врождённая: всегда в стартовой руке боя */
+  innate?: boolean;
   upgrade?: {
     name?: string;
     cost?: number;
     effects?: Effect[];
     description?: string;
     exhaust?: boolean;
+    retain?: boolean;
+    innate?: boolean;
   };
 }
 
@@ -205,11 +228,12 @@ export type RewardItem =
   | { kind: 'gold'; amount: number }
   | { kind: 'card_choice'; cardIds: string[] }
   | { kind: 'relic'; relicId: string }
-  | { kind: 'firmware'; firmwareId: string };
+  | { kind: 'firmware'; firmwareId: string }
+  | { kind: 'potion'; potionId: string };
 
 export interface ShopItem {
-  kind: 'card' | 'relic' | 'remove';
-  id?: string; // id карты/реликвии
+  kind: 'card' | 'relic' | 'remove' | 'potion';
+  id?: string; // id карты/реликвии/расходника
   price: number;
   sold: boolean;
 }
@@ -287,6 +311,12 @@ export interface RunState {
   seenEvents?: string[];
   /** Встреча с боссом текущего акта (известна заранее для UI) */
   bossEncounterId?: string;
+  /** Расходники («Модули-инъекции»), до POTION_SLOTS штук; нет поля = пусто */
+  potions?: string[];
+  /** Мутаторы забега (см. mutators.ts); нет поля = без мутаторов */
+  mutators?: string[];
+  /** Дополнительные потоки ГСЧ, создаются лениво (старые сохранения их не имеют) */
+  rngExt?: Record<string, number>;
 }
 
 // ---------- Действия игрока ----------
@@ -303,7 +333,10 @@ export type Action =
   | { type: 'rest_heal' }
   | { type: 'rest_upgrade' } // переводит на select_deck_card
   | { type: 'select_deck_card'; cardUid: string | null }
-  | { type: 'event_choice'; index: number };
+  | { type: 'event_choice'; index: number }
+  /** Выпить расходник из слота; в бою — любой, вне боя — только лечебные. targetUid — для расходников на врага */
+  | { type: 'use_potion'; slot: number; targetUid?: string }
+  | { type: 'discard_potion'; slot: number };
 
 // ---------- События для анимаций UI ----------
 
@@ -330,7 +363,16 @@ export type GameEvent =
   | { type: 'card_obtained'; defId: string }
   | { type: 'card_removed'; cardUid: string; defId: string }
   | { type: 'card_upgraded'; cardUid: string; defId: string }
-  | { type: 'act_started'; act: 1 | 2 | 3 | 4 };
+  | { type: 'act_started'; act: 1 | 2 | 3 | 4 }
+  | { type: 'potion_obtained'; potionId: string }
+  | { type: 'potion_used'; potionId: string; slot: number }
+  | { type: 'potion_discarded'; potionId: string; slot: number }
+  /** Эхо: карта сработала повторно */
+  | { type: 'card_echoed'; cardUid: string }
+  /** Барьер поглотил удар */
+  | { type: 'barrier_absorbed'; targetUid: string | 'player'; amount: number }
+  /** Карты ушли из руки/добора в сброс эффектом (scry, discard_hand_draw) */
+  | { type: 'cards_discarded'; count: number };
 
 export interface ActionResult {
   state: RunState;
@@ -348,6 +390,8 @@ export interface NewRunOptions {
    * Не передано — открыто всё (тесты, симулятор, ежедневный забег).
    */
   unlocked?: { cards?: readonly string[]; relics?: readonly string[] };
+  /** Мутаторы забега (id из mutators.ts); в ежедневном забеге игнорируются */
+  mutators?: readonly string[];
 }
 
 export class InvalidActionError extends Error {

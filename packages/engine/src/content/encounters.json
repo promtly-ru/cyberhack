@@ -583,5 +583,299 @@
     "enemies": [
       "a3_elite_colossus"
     ]
+  },
+  {
+    "id": "a1_e_kitten",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_glitch_kitten"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_e_sprites",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_firewall_sprite",
+      "a1_firewall_sprite"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_e_mine",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_mine_layer"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_leech",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_kernel_leech"
+    ]
+  },
+  {
+    "id": "a1_golem",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_dust_golem"
+    ]
+  },
+  {
+    "id": "a1_kitten_pack",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_glitch_kitten",
+      "a1_glitch_kitten"
+    ]
+  },
+  {
+    "id": "a1_leech_sprite",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_kernel_leech",
+      "a1_firewall_sprite"
+    ]
+  },
+  {
+    "id": "a1_mine_kitten",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_mine_layer",
+      "a1_glitch_kitten"
+    ]
+  },
+  {
+    "id": "a1_elite_gatekeeper",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_gatekeeper"
+    ]
+  },
+  {
+    "id": "a1_boss_taskmaster",
+    "act": 1,
+    "tier": "boss",
+    "enemies": [
+      "boss_taskmaster"
+    ]
+  },
+  {
+    "id": "a2_e_courier",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_dark_courier"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_e_phish",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_phish_kit"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_e_nest",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_bug_nest"
+    ],
+    "early": true
+  },
+  {
+    "id": "a2_cipher",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_cipher_golem"
+    ]
+  },
+  {
+    "id": "a2_courier_phish",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_dark_courier",
+      "a2_phish_kit"
+    ]
+  },
+  {
+    "id": "a2_nest_courier",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_bug_nest",
+      "a2_dark_courier"
+    ]
+  },
+  {
+    "id": "a2_elite_bounty",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_bounty_hunter"
+    ]
+  },
+  {
+    "id": "a2_boss_architect",
+    "act": 2,
+    "tier": "boss",
+    "enemies": [
+      "boss_architect"
+    ]
+  },
+  {
+    "id": "a3_e_sniper",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_sniper_node"
+    ],
+    "early": true
+  },
+  {
+    "id": "a3_e_scavenger",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_data_scavenger"
+    ],
+    "early": true
+  },
+  {
+    "id": "a3_e_forge",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_forge_drone"
+    ],
+    "early": true
+  },
+  {
+    "id": "a3_hex",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_hex_weaver"
+    ]
+  },
+  {
+    "id": "a3_sniper_scav",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_sniper_node",
+      "a3_data_scavenger"
+    ]
+  },
+  {
+    "id": "a3_hex_forge",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_hex_weaver",
+      "a3_forge_drone"
+    ]
+  },
+  {
+    "id": "a3_elite_executioner",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_silent_executioner"
+    ]
+  },
+  {
+    "id": "a3_boss_sentinel",
+    "act": 3,
+    "tier": "boss",
+    "enemies": [
+      "boss_sentinel_prime"
+    ]
+  },
+  {
+    "id": "a4_e_echo",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_echo_unit"
+    ],
+    "early": true
+  },
+  {
+    "id": "a4_e_prophet",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_glitch_prophet"
+    ],
+    "early": true
+  },
+  {
+    "id": "a4_e_crawler",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_void_crawler"
+    ],
+    "early": true
+  },
+  {
+    "id": "a4_titan",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_ice_titan"
+    ]
+  },
+  {
+    "id": "a4_echo_prophet",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_echo_unit",
+      "a4_glitch_prophet"
+    ]
+  },
+  {
+    "id": "a4_crawler_echo",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_void_crawler",
+      "a4_echo_unit"
+    ]
+  },
+  {
+    "id": "a4_elite_reaper",
+    "act": 4,
+    "tier": "elite",
+    "enemies": [
+      "a4_data_reaper"
+    ]
+  },
+  {
+    "id": "a4_boss_zero_hour",
+    "act": 4,
+    "tier": "boss",
+    "enemies": [
+      "boss_zero_hour"
+    ]
   }
 ]

@@ -28,6 +28,13 @@ export {
   lockableRelics,
   unlockSource,
   unlockedOptions,
+  // Расходники и мутаторы забега
+  POTIONS,
+  POTION_SLOTS,
+  getPotion,
+  canUsePotionNow,
+  MUTATORS,
+  getMutator,
 } from '@cyberhack/engine';
 
 const mocked = new Set<string>();
@@ -125,6 +132,9 @@ export function cardStats(defId: string, upgraded: boolean) {
     name: (upgraded ? u?.name : undefined) ?? d.name,
     cost: u?.cost ?? d.cost,
     exhaust: u?.exhaust ?? d.exhaust ?? false,
+    ethereal: d.ethereal ?? false,
+    retain: u?.retain ?? d.retain ?? false,
+    innate: u?.innate ?? d.innate ?? false,
   };
 }
 

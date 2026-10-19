@@ -42,12 +42,12 @@ export function createRngStore(seed: string): RngStore {
 /** Обёртка над одним потоком; мутирует store (вызывающий код работает с клоном состояния). */
 export class Rng {
   constructor(
-    private readonly store: RngStore,
-    private readonly stream: RngStream,
+    private readonly store: Record<string, number>,
+    private readonly stream: string,
   ) {}
 
   next(): number {
-    const [v, s] = mulberry32(this.store[this.stream]);
+    const [v, s] = mulberry32(this.store[this.stream] ?? 0);
     this.store[this.stream] = s;
     return v;
   }
@@ -90,4 +90,14 @@ export class Rng {
 
 export function rngOf(state: { rng: RngStore }, stream: RngStream): Rng {
   return new Rng(state.rng, stream);
+}
+
+/**
+ * Дополнительный поток ГСЧ (расходники и т.п.): хранится в state.rngExt и создаётся лениво от сида,
+ * поэтому не сдвигает основные потоки и не ломает старые сохранения.
+ */
+export function extRng(state: { seed: string; rngExt?: Record<string, number> }, stream: string): Rng {
+  const store = (state.rngExt ??= {});
+  if (store[stream] === undefined) store[stream] = hashString(`${state.seed}::ext::${stream}`);
+  return new Rng(store, stream);
 }

@@ -36,6 +36,20 @@ export const FIRMWARES: readonly FirmwareDef[] = [
   { id: 'fw_overgrowth', name: 'Перерождение', description: 'В начале боя +4 Самовосстановления и +2 Разгона', classId: 'biohacker', needs: ['bh_overgrowth', 'bh_adrenaline', 'bh_mutation'], trigger: 'combat_start', effects: [self('regen', 4), self('strength', 2)] },
   { id: 'fw_miner', name: 'Майнинг-ферма', description: 'Каждый ход +1 карта', classId: 'neutral', needs: ['n_miner', 'n_ram_upgrade', 'n_debugger'], trigger: 'turn_start', effects: [{ type: 'draw', amount: 1 }] },
   { id: 'fw_siege', name: 'Осадный набор', description: 'В начале боя все враги получают 3 Лага и 3 Бреши', classId: 'neutral', needs: ['n_mass_scan', 'n_ddos_kit', 'n_buffer_overflow'], trigger: 'combat_start', effects: [all('weak', 3), all('vulnerable', 3)] },
+  // ---- Контент v3 ----
+  { id: 'fw_supernova', name: 'Сверхновая-прошивка', description: 'В начале боя +2 Разгона, все враги получают 2 Бреши', classId: 'netrunner', needs: ['nr_supernova', 'nr_ram_overflow', 'nr_arc_lance'], trigger: 'combat_start', effects: [self('strength', 2), all('vulnerable', 2)] },
+  { id: 'fw_contagion', name: 'Заразный код', description: 'В начале боя все враги получают 6 Вируса и 2 Лага', classId: 'phreaker', needs: ['ph_pandemic', 'ph_viral_load', 'ph_sleeper'], trigger: 'combat_start', effects: [all('virus', 6), all('weak', 2)] },
+  { id: 'fw_eclipse', name: 'Режим затмения', description: 'Каждый ход +5 блока и все враги получают 1 Лаг', classId: 'ghost', needs: ['gh_blackout', 'gh_cloak_charge', 'gh_hunter_mark'], trigger: 'turn_start', effects: [{ type: 'block', amount: 5 }, all('weak', 1)] },
+  { id: 'fw_ronin', name: 'Дух ронина', description: 'В начале боя 5 Контрудара и 10 блока', classId: 'samurai', needs: ['sm_last_stand', 'sm_counter_stance', 'sm_tsuba'], trigger: 'combat_start', effects: [self('thorns', 5), { type: 'block', amount: 10 }] },
+  { id: 'fw_war_drums', name: 'Боевые барабаны', description: 'В начале боя +2 Разгона, все враги получают 2 Лага', classId: 'samurai', needs: ['sm_war_cry', 'sm_thousand_steps', 'sm_blade_dance'], trigger: 'combat_start', effects: [self('strength', 2), all('weak', 2)] },
+  { id: 'fw_siege_doctrine', name: 'Осадная доктрина', description: 'В начале боя +2 Разгона, все враги получают 2 Бреши', classId: 'engineer', needs: ['en_siege_cannon', 'en_turret', 'en_pneumatic'], trigger: 'combat_start', effects: [self('strength', 2), all('vulnerable', 2)] },
+  { id: 'fw_overhaul', name: 'Генеральный ремонт', description: 'Каждый ход +1 Броня-патч', classId: 'engineer', needs: ['en_overhaul', 'en_scaffold', 'en_servo_arm'], trigger: 'turn_start', effects: [self('plating', 1)] },
+  { id: 'fw_chimera_dna', name: 'Геном химеры', description: 'В начале боя +2 Разгона и 3 Самовосстановления', classId: 'biohacker', needs: ['bh_chimera_blood', 'bh_leech_swarm', 'bh_panacea'], trigger: 'combat_start', effects: [self('strength', 2), self('regen', 3)] },
+  // ---- Новые классы ----
+  { id: 'fw_hive', name: 'Рой-ядро', description: 'Каждый ход Дрон-стрелок в руке', classId: 'droneop', needs: ['dr_swarm_launch', 'dr_mothership', 'dr_control_net'], trigger: 'turn_start', effects: [{ type: 'add_card', cardId: 'dr_t_gun', to: 'hand', count: 1 }] },
+  { id: 'fw_autofab', name: 'Автофабрика', description: 'В начале боя +2 Разгона и 8 блока', classId: 'droneop', needs: ['dr_hijack', 'dr_repair_swarm', 'dr_bomber_run'], trigger: 'combat_start', effects: [self('strength', 2), { type: 'block', amount: 8 }] },
+  { id: 'fw_chrono_loop', name: 'Хроно-петля', description: 'Каждый ход +1 карта', classId: 'chrono', needs: ['ch_dilation', 'ch_quantum_leap', 'ch_accelerate'], trigger: 'turn_start', effects: [{ type: 'draw', amount: 1 }] },
+  { id: 'fw_second_hand', name: 'Секундная стрелка', description: 'В начале боя все враги получают 3 Лага и 2 Бреши, +1 энергия в первый ход', classId: 'chrono', needs: ['ch_final_second', 'ch_chronostasis', 'ch_loan'], trigger: 'combat_start', effects: [all('weak', 3), all('vulnerable', 2), { type: 'gain_energy', amount: 1 }] },
 ];
 
 export function getFirmware(id: string): FirmwareDef | undefined {

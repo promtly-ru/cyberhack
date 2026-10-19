@@ -14,7 +14,7 @@ export function defaultProfile(): Profile {
     unlockedClasses: ['netrunner'] satisfies ClassId[],
     unlockedCards: [],
     unlockedRelics: [],
-    maxAscension: { netrunner: 0, phreaker: 0, ghost: 0, samurai: 0, engineer: 0, biohacker: 0 },
+    maxAscension: { netrunner: 0, phreaker: 0, ghost: 0, samurai: 0, engineer: 0, biohacker: 0, droneop: 0, chrono: 0 },
     achievements: [],
     totalRuns: 0,
     totalWins: 0,

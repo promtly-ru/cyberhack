@@ -21,6 +21,8 @@ export interface LifetimeStats {
   winsSamurai?: number;
   winsEngineer?: number;
   winsBiohacker?: number;
+  winsDroneop?: number;
+  winsChrono?: number;
   /** Высший уровень Ascension, на котором была победа */
   bestWinAscension?: number;
   bestAct?: number;
@@ -322,6 +324,55 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     value: (p) => p.totalRuns,
     unlocks: [card('ph_rootkit'), card('gh_layers'), relic('r_ph_zero_patient'), relic('r_gh_ghost_cache')],
   },
+  // ---- Контент v3 ----
+  {
+    id: 'bosses_6',
+    name: 'Укротитель боссов',
+    description: 'Победить 6 боссов (за все забеги)',
+    target: 6,
+    value: lt('bossesKilled'),
+    unlocks: [{ kind: 'class', id: 'droneop' }, card('dr_barrage')],
+  },
+  {
+    id: 'win_droneop',
+    name: 'Рой без пощады',
+    description: 'Победить за Оператора дронов',
+    target: 1,
+    value: lt('winsDroneop'),
+    unlocks: [card('dr_mothership'), card('dr_swarm_protocol')],
+  },
+  {
+    id: 'wins_3',
+    name: 'Тройная победа',
+    description: 'Победить в трёх забегах',
+    target: 3,
+    value: lt('wins'),
+    unlocks: [{ kind: 'class', id: 'chrono' }, card('ch_quantum_leap')],
+  },
+  {
+    id: 'win_chrono',
+    name: 'Время на моей стороне',
+    description: 'Победить за Хроно-хакера',
+    target: 1,
+    value: lt('winsChrono'),
+    unlocks: [card('ch_chronostasis'), card('ch_dilation')],
+  },
+  {
+    id: 'kills_500',
+    name: 'Чистильщик сети',
+    description: 'Уничтожить 500 врагов (за все забеги)',
+    target: 500,
+    value: lt('enemiesKilled'),
+    unlocks: [card('n_system_crash'), relic('r_chain_lightning')],
+  },
+  {
+    id: 'elites_in_run_3',
+    name: 'Охотник за головами',
+    description: 'Победить 3 элитных врагов за один забег',
+    target: 3,
+    value: lt('bestElitesInRun'),
+    unlocks: [card('n_black_box'), relic('r_dead_mans_switch')],
+  },
 ];
 
 const ACH_BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));
@@ -399,6 +450,8 @@ const WIN_KEY: Record<ClassId, keyof LifetimeStats> = {
   samurai: 'winsSamurai',
   engineer: 'winsEngineer',
   biohacker: 'winsBiohacker',
+  droneop: 'winsDroneop',
+  chrono: 'winsChrono',
 };
 
 function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, victory: boolean): LifetimeStats {

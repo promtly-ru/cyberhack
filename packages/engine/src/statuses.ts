@@ -15,6 +15,14 @@ export const STATUS = {
   regen: 'regen',
   ritual: 'ritual',
   plating: 'plating',
+  /** Эхо: следующая сыгранная карта срабатывает дважды (−1 за карту) */
+  echo: 'echo',
+  /** Барьер: следующий удар, пробивший блок, полностью поглощается (−1 за удар) */
+  barrier: 'barrier',
+  /** Утечка: в начале хода −N HP; не тает, снимается, когда носитель получает блок */
+  bleed: 'bleed',
+  /** Метка: каждый удар атакой по носителю наносит +N урона; −1 в конце хода */
+  mark: 'mark',
 } as const;
 
 /**
@@ -33,7 +41,14 @@ export const KNOWN_STATUSES: Record<string, 'duration' | 'intensity' | 'decay'> 
   regen: 'decay',
   ritual: 'intensity',
   plating: 'intensity',
+  echo: 'intensity',
+  barrier: 'intensity',
+  bleed: 'intensity',
+  mark: 'duration',
 };
+
+/** Дебаффы движка (для снятия эффектом cleanse, если контент не знает статус). */
+export const DEBUFF_STATUSES: ReadonlySet<string> = new Set(['vulnerable', 'weak', 'frail', 'virus', 'bleed', 'mark']);
 
 export function getStatus(c: CombatantState, id: StatusId): number {
   return c.statuses[id] ?? 0;
@@ -52,7 +67,7 @@ export function addStatus(c: CombatantState, id: StatusId, amount: number): numb
  * округление вниз, минимум 0. attacker = null — «сырой» источник без strength/weak.
  */
 export function calcAttackDamage(base: number, attacker: CombatantState | null, defender: CombatantState | null): number {
-  let d = base + (attacker ? getStatus(attacker, STATUS.strength) : 0);
+  let d = base + (attacker ? getStatus(attacker, STATUS.strength) : 0) + (defender ? Math.max(0, getStatus(defender, STATUS.mark)) : 0);
   if (attacker && getStatus(attacker, STATUS.weak) > 0) d *= 0.75;
   if (defender && getStatus(defender, STATUS.vulnerable) > 0) d *= 1.5;
   return Math.max(0, Math.floor(d));

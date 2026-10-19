@@ -21,6 +21,7 @@ import type {
   StatusDef,
 } from '../types';
 import { KNOWN_STATUSES } from '../statuses';
+import { getPotion } from '../potions';
 
 export interface ContentData {
   cards: CardDef[];
@@ -99,7 +100,7 @@ export function resetContent(): void {
 
 // ---------- Валидация ----------
 
-const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker']);
+const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono']);
 const RELIC_TRIGGERS: ReadonlySet<RelicTrigger> = new Set<RelicTrigger>([
   'combat_start',
   'turn_start',
@@ -121,6 +122,14 @@ const EFFECT_TYPES = new Set([
   'add_card',
   'exhaust_random_hand',
   'gain_gold',
+  'scry',
+  'discard_hand_draw',
+  'upgrade_random_hand',
+  'gain_max_hp',
+  'heal_pct',
+  'double_next',
+  'cleanse',
+  'gain_potion',
 ]);
 
 function checkDuplicates(kind: string, items: readonly { id: string }[], errors: string[]): void {
@@ -164,6 +173,8 @@ export function validateContent(data: ContentData = current.data): string[] {
       }
       if (e.type === 'apply_status' && !statusIds.has(e.status)) errors.push(`${at}: неизвестный статус "${e.status}"`);
       if (e.type === 'add_card' && !cardIds.has(e.cardId)) errors.push(`${at}: неизвестная карта "${e.cardId}"`);
+      if (e.type === 'gain_potion' && e.potionId !== undefined && !getPotion(e.potionId))
+        errors.push(`${at}: неизвестный расходник "${e.potionId}"`);
       if (typeof (e as { amount?: unknown }).amount !== 'number' && e.type !== 'add_card')
         errors.push(`${at}: amount не число`);
     });

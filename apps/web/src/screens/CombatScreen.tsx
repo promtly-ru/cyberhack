@@ -25,7 +25,9 @@ function enemyColor(e: EnemyState, tier: string): string {
 function enemyInfo(e: EnemyState) {
   try {
     const d = getEnemyDef(e.defId);
-    return { name: d.name, tier: d.tier, moveName: d.moves.find((m) => m.id === e.intent.moveId)?.name };
+    // Скрытое намерение (мутатор «Туман войны») — название хода тоже не раскрываем
+    const moveName = e.intent.kind === 'unknown' ? undefined : d.moves.find((m) => m.id === e.intent.moveId)?.name;
+    return { name: d.name, tier: d.tier, moveName };
   } catch {
     return { name: e.defId, tier: 'normal' as const, moveName: undefined };
   }
@@ -408,6 +410,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       style={{ '--card-w': `${cardW}px` } as CSSProperties}
       data-testid="combat"
       data-act={run.act}
+      data-tier={combat.enemies.some((e) => enemyInfo(e).tier === 'boss') ? 'boss' : combat.enemies.some((e) => enemyInfo(e).tier === 'elite') ? 'elite' : 'normal'}
       data-phase={frozen ? 'frozen' : combat.phase}
     >
       <TopBar run={run} />

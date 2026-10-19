@@ -9,7 +9,7 @@ import type { LeaderboardEntry, Profile } from '../net/types';
 import { Icon } from '../components/Icon';
 import '../styles/meta.css';
 
-export const CLASS_NAME: Record<ClassId, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер' };
+export const CLASS_NAME: Record<ClassId, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер', droneop: 'Оператор дронов', chrono: 'Хроно-хакер' };
 
 export function unlockLabel(u: Unlock): string {
   if (u.kind === 'class') return `Класс «${CLASS_NAME[u.id] ?? u.id}»`;

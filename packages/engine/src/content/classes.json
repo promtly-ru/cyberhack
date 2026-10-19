@@ -118,5 +118,45 @@
       "bh_stim"
     ],
     "startingRelic": "r_biolab"
+  },
+  {
+    "id": "droneop",
+    "name": "Оператор дронов",
+    "description": "Командир роя: запускает одноразовые дроны прямо в руку — стрелков, щитовиков, подрывников и медиков. Дроны бесплатны, но исчезают в конце хода.",
+    "maxHp": 68,
+    "startingGold": 99,
+    "startingDeck": [
+      "dr_pulse",
+      "dr_pulse",
+      "dr_pulse",
+      "dr_pulse",
+      "dr_pulse",
+      "dr_casing",
+      "dr_casing",
+      "dr_casing",
+      "dr_casing",
+      "dr_launch"
+    ],
+    "startingRelic": "r_dr_remote"
+  },
+  {
+    "id": "chrono",
+    "name": "Хроно-хакер",
+    "description": "Манипулятор тактами: копит энергию и карты, замедляет врагов Лагом и расплачивается Фрагментацией за ускорение. Бонусный такт каждые два хода.",
+    "maxHp": 90,
+    "startingGold": 99,
+    "startingDeck": [
+      "ch_tick",
+      "ch_tick",
+      "ch_tick",
+      "ch_tick",
+      "ch_tick",
+      "ch_buffer",
+      "ch_buffer",
+      "ch_buffer",
+      "ch_buffer",
+      "ch_slowdown"
+    ],
+    "startingRelic": "r_ch_chronometer"
   }
 ]

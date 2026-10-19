@@ -8,6 +8,7 @@ import { getAscensionMods } from '../src/ascension';
 import { canUpgrade, needsEnemyTarget, resolveCard, type ResolvedCard } from '../src/cards';
 import { endTurn, isPlayable, livingEnemies, playCard, type CombatCtx } from '../src/combat';
 import { getContent } from '../src/content';
+import { getPotion, POTION_SLOTS, potionsOf } from '../src/potions';
 import { getLegalActions } from '../src/run';
 import { hashString, mulberry32 } from '../src/rng';
 import { getStatus } from '../src/statuses';
@@ -81,6 +82,61 @@ function isJunk(defId: string): boolean {
   return t === 'curse' || t === 'status';
 }
 
+/** Первая награда, которую можно забрать (расходник при полных слотах — нельзя), иначе уйти. */
+function firstReward(s: RunState): Action {
+  return getLegalActions(s).find((a) => a.type === 'take_reward') ?? { type: 'leave_reward' };
+}
+
+function hardFight(c: CombatState): boolean {
+  const enemies = getContent().enemies;
+  return c.enemies.some((e) => e.hp > 0 && enemies.get(e.defId)?.tier !== 'normal');
+}
+
+/**
+ * Когда пить расходники:
+ *  - вне боя: «+макс. HP» — сразу, лечение — при низком HP;
+ *  - в бою: лечение при низком HP, защита — когда удар пробьёт блок, остальное — в начале хода в тяжёлых боях
+ *    (элита/босс), в обычных — только если слоты переполнены или грозит смерть.
+ */
+function potionDecision(s: RunState, expert: boolean): Action | null {
+  const pots = potionsOf(s);
+  if (pots.length === 0 || process.env.SIM_NO_POTIONS) return null;
+  if (s.screen.kind !== 'combat') {
+    if (s.screen.kind === 'game_over') return null;
+    const ratio = s.hp / Math.max(1, s.maxHp);
+    for (let slot = 0; slot < pots.length; slot++) {
+      const p = getPotion(pots[slot]!);
+      if (!p?.outOfCombat) continue;
+      const maxHp = p.effects.some((e) => e.type === 'gain_max_hp');
+      if (maxHp || (s.screen.kind === 'map' && ratio < (expert ? 0.4 : 0.3))) return { type: 'use_potion', slot };
+    }
+    return null;
+  }
+  const c = s.combat;
+  if (!c || c.phase !== 'player') return null;
+  const alive = livingEnemies(c);
+  if (alive.length === 0) return null;
+  const hp = c.player.hp;
+  const ratio = hp / Math.max(1, c.player.maxHp);
+  const unblocked = Math.max(0, incomingDamage(c) - c.player.block);
+  const lethal = unblocked >= hp;
+  const hard = hardFight(c);
+  const turnStart = (c.counters['$turnCards'] ?? 0) === 0;
+  const full = pots.length >= POTION_SLOTS;
+  const target = alive.reduce((m, e) => (e.hp > m.hp ? e : m), alive[0] as EnemyState);
+  for (let slot = 0; slot < pots.length; slot++) {
+    const p = getPotion(pots[slot]!);
+    if (!p) continue;
+    const use =
+      p.kind === 'heal' ? ratio < (expert ? 0.35 : 0.3) || lethal
+      : p.kind === 'defense' ? lethal || (hard && unblocked >= (expert ? 8 : 12)) || (full && unblocked >= 6)
+      : turnStart && (hard || full || lethal);
+    if (!use) continue;
+    return p.target === 'enemy' ? { type: 'use_potion', slot, targetUid: target.uid } : { type: 'use_potion', slot };
+  }
+  return null;
+}
+
 // =====================================================================
 // НОВИЧОК
 // =====================================================================
@@ -94,17 +150,17 @@ class NoviceBot implements Bot {
   }
 
   act(s: RunState): Action {
-    const legal = getLegalActions(s);
+    const potion = potionDecision(s, false);
+    if (potion) return potion;
+    const legal = getLegalActions(s).filter((a) => a.type !== 'use_potion' && a.type !== 'discard_potion');
     const sc = s.screen;
     switch (sc.kind) {
       case 'combat':
         return this.combat(s, legal);
       case 'map':
         return this.rng.pick(legal);
-      case 'reward': {
-        const i = sc.items.findIndex(() => true);
-        return i >= 0 ? { type: 'take_reward', index: i } : { type: 'leave_reward' };
-      }
+      case 'reward':
+        return firstReward(s);
       case 'card_pick':
         if (this.rng.next() < 0.3) return { type: 'pick_card', cardId: null };
         return { type: 'pick_card', cardId: this.rng.pick(sc.cardIds) };
@@ -178,6 +234,10 @@ const STATUS_CARD_VALUE: Record<string, number> = {
   regen: 3,
   ritual: 25,
   plating: 6,
+  echo: 9,
+  barrier: 7,
+  bleed: 2.5,
+  mark: 2.5,
 };
 
 function effectValue(e: Effect, cls: RunState['classId'], card: ResolvedCard): number {
@@ -211,6 +271,22 @@ function effectValue(e: Effect, cls: RunState['classId'], card: ResolvedCard): n
     }
     case 'gain_gold':
       return e.amount * 0.15;
+    case 'scry':
+      return e.amount * 0.8;
+    case 'discard_hand_draw':
+      return 5 + e.amount * 4;
+    case 'upgrade_random_hand':
+      return Math.min(e.amount, 3) * 4;
+    case 'gain_max_hp':
+      return e.amount * 2.5;
+    case 'heal_pct':
+      return e.amount * 0.6;
+    case 'double_next':
+      return e.amount * 9;
+    case 'cleanse':
+      return 3;
+    case 'gain_potion':
+      return e.amount * 5;
     default:
       return 0;
   }
@@ -226,6 +302,8 @@ export function cardScore(defId: string, upgraded: boolean, cls: RunState['class
   if (card.cost === -1) v *= 3; // X-карта ≈ 3 повтора
   if (card.type === 'power') v *= 1.0;
   if (card.def.ethereal) v *= 0.85;
+  if (card.retain) v *= 1.08;
+  if (card.innate) v *= 1.05;
   if (card.exhaust && card.type !== 'power') v *= 0.8;
   const cost = card.cost === -1 ? 3 : Math.max(0, card.cost);
   // ценность за энергию со смягчением: 0-стоимость не бесконечна
@@ -251,6 +329,11 @@ class ExpertBot implements Bot {
   }
 
   act(s: RunState): Action {
+    const potion = potionDecision(s, true);
+    if (potion) {
+      this.plan = []; // рука/энергия изменятся — перепланировать
+      return potion;
+    }
     const sc = s.screen;
     switch (sc.kind) {
       case 'combat':
@@ -362,8 +445,8 @@ class ExpertBot implements Bot {
 
   private reward(s: RunState, items: Extract<RunState['screen'], { kind: 'reward' }>['items']): Action {
     // pick_card(null) тоже снимает выбор карт с экрана, поэтому просто берём всё по очереди.
-    void s;
-    return items.length > 0 ? { type: 'take_reward', index: 0 } : { type: 'leave_reward' };
+    void items;
+    return firstReward(s);
   }
 
   private relicValue(id: string): number {
@@ -391,7 +474,11 @@ class ExpertBot implements Bot {
       if (!legal.has(i) || it.kind === 'remove' || !it.id) return;
       let v: number;
       if (it.kind === 'relic') v = this.relicValue(it.id) * 2.2;
-      else {
+      else if (it.kind === 'potion') {
+        // расходник — когда денег с запасом (не в ущерб картам/имплантам)
+        if (s.gold < it.price + 90) return;
+        v = getPotion(it.id)?.rarity === 'rare' ? 6 : 4;
+      } else {
         if (this.chooseCard(s, [it.id], 1.5) === null) return;
         v = cardScore(it.id, false, s.classId) + this.needAdjust(s, it.id);
       }
@@ -432,6 +519,9 @@ class ExpertBot implements Bot {
         if (e.type === 'lose_hp' || e.type === 'damage') hpLoss += e.amount;
         if (e.type === 'heal') v += Math.min(e.amount, s.maxHp - s.hp) * 0.6;
         if (e.type === 'add_card') v += isJunk(e.cardId) ? -14 : 4;
+        if (e.type === 'heal_pct') v += Math.min((s.maxHp * e.amount) / 100, s.maxHp - s.hp) * 0.6;
+        if (e.type === 'gain_max_hp') v += e.amount * 1.5;
+        if (e.type === 'gain_potion') v += potionsOf(s).length < POTION_SLOTS ? 5 * e.amount : 0;
       }
       if (hpLoss >= s.hp) continue;
       v -= hpLoss * (0.4 + (1 - ratio) * 1.6);
@@ -617,6 +707,8 @@ function cloneSim(s: RunState): RunState {
   return {
     ...s,
     rng: { ...s.rng },
+    ...(s.rngExt ? { rngExt: { ...s.rngExt } } : {}),
+    ...(s.potions ? { potions: s.potions.slice() } : {}),
     stats: { ...s.stats },
     combat: s.combat ? cloneCombat(s.combat) : null,
   };
@@ -637,7 +729,7 @@ interface EvalCtx {
   runHpRatio: number;
 }
 
-const PERSIST: Record<string, number> = { strength: 5, dexterity: 4, plating: 3.5, thorns: 1.5, ritual: 14, regen: 0.8 };
+const PERSIST: Record<string, number> = { strength: 5, dexterity: 4, plating: 3.5, thorns: 1.5, ritual: 14, regen: 0.8, barrier: 4, echo: 5 };
 
 function evaluate(st: RunState, ec: EvalCtx): number {
   const c0 = st.combat!;
@@ -656,7 +748,8 @@ function evaluate(st: RunState, ec: EvalCtx): number {
   let score = -lost * wHp + enemyProgress(c, ec);
   for (const [k, v] of Object.entries(c.player.statuses)) {
     if (PERSIST[k] !== undefined && v > 0) score += PERSIST[k] * v;
-    if ((k === 'weak' || k === 'frail' || k === 'vulnerable') && v > 0) score -= 2 * v;
+    if ((k === 'weak' || k === 'frail' || k === 'vulnerable' || k === 'mark') && v > 0) score -= 2 * v;
+    if (k === 'bleed' && v > 0) score -= 3 * v;
   }
   // энергию на следующий ход не переносим; неиспользованный блок бесполезен — учтено через hp
   return score;
@@ -676,6 +769,7 @@ function enemyProgress(c: CombatState, ec: EvalCtx): number {
     const vir = getStatus(e, 'virus');
     if (vir > 0) v += Math.min(e.hp, (vir * (vir + 1)) / 2) * 0.75;
     v += getStatus(e, 'vulnerable') * 2.5 + getStatus(e, 'weak') * 2 * Math.min(1, threat / 10 + 0.3);
+    v += Math.min(e.hp, getStatus(e, 'bleed') * 2) * 0.75 + getStatus(e, 'mark') * 1.5;
     v -= getStatus(e, 'strength') * 2;
   }
   return v;

@@ -5528,5 +5528,3857 @@
       ],
       "description": "Нанеси 12 урона. Наложи 4 Бреши и 4 Лага."
     }
+  },
+  {
+    "id": "dr_t_gun",
+    "name": "Дрон-стрелок",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "special",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 3 урона. Эфемерная. Сжигается.",
+    "exhaust": true,
+    "ethereal": true
+  },
+  {
+    "id": "dr_t_shield",
+    "name": "Дрон-щит",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "special",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 3
+      }
+    ],
+    "description": "Получи 3 блока. Эфемерная. Сжигается.",
+    "exhaust": true,
+    "ethereal": true
+  },
+  {
+    "id": "dr_t_bomb",
+    "name": "Дрон-подрывник",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "special",
+    "cost": 0,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 3 урона всем врагам. Эфемерная. Сжигается.",
+    "exhaust": true,
+    "ethereal": true
+  },
+  {
+    "id": "dr_t_hack",
+    "name": "Дрон-хакер",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "special",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 1 Лаг. Наложи 1 Брешь. Эфемерная. Сжигается.",
+    "exhaust": true,
+    "ethereal": true
+  },
+  {
+    "id": "dr_t_medic",
+    "name": "Дрон-медик",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "special",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 1
+      },
+      {
+        "type": "block",
+        "amount": 2
+      }
+    ],
+    "description": "Восстанови 1 HP. Получи 2 блока. Эфемерная. Сжигается.",
+    "exhaust": true,
+    "ethereal": true
+  },
+  {
+    "id": "dr_t_laser",
+    "name": "Дрон-лазер",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "special",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 7 урона. Эфемерная. Сжигается.",
+    "exhaust": true,
+    "ethereal": true
+  },
+  {
+    "id": "dr_pulse",
+    "name": "Импульс",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона.",
+    "upgrade": {
+      "name": "Импульс+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 9 урона."
+    }
+  },
+  {
+    "id": "dr_casing",
+    "name": "Кожух",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 6 блока.",
+    "upgrade": {
+      "name": "Кожух+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока."
+    }
+  },
+  {
+    "id": "dr_launch",
+    "name": "Запуск дрона",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_shield",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-стрелок», «Дрон-щит».",
+    "upgrade": {
+      "name": "Запуск дрона+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 2
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_shield",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-стрелок» ×2, «Дрон-щит»."
+    }
+  },
+  {
+    "id": "dr_swarm_launch",
+    "name": "Рой-контейнер",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 2
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-стрелок» ×2.",
+    "upgrade": {
+      "name": "Рой-контейнер+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 3
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-стрелок» ×3."
+    }
+  },
+  {
+    "id": "dr_scout",
+    "name": "Разведчик",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-стрелок». Возьми 1 карту.",
+    "upgrade": {
+      "name": "Разведчик+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 2
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-стрелок» ×2. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "dr_aegis_drone",
+    "name": "Дрон-эгида",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_shield",
+        "to": "hand",
+        "count": 2
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-щит» ×2.",
+    "upgrade": {
+      "name": "Дрон-эгида+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_shield",
+          "to": "hand",
+          "count": 3
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-щит» ×3."
+    }
+  },
+  {
+    "id": "dr_strike_wing",
+    "name": "Звено ударных",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Нанеси 5 урона. Добавь в руку: «Дрон-стрелок».",
+    "upgrade": {
+      "name": "Звено ударных+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "enemy"
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "Нанеси 7 урона. Добавь в руку: «Дрон-стрелок»."
+    }
+  },
+  {
+    "id": "dr_recon_hack",
+    "name": "Радиоэлектронная борьба",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_hack",
+        "to": "hand",
+        "count": 1
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_shield",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-хакер», «Дрон-щит».",
+    "upgrade": {
+      "name": "Радиоэлектронная борьба+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_hack",
+          "to": "hand",
+          "count": 2
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_shield",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-хакер» ×2, «Дрон-щит»."
+    }
+  },
+  {
+    "id": "dr_bomber_run",
+    "name": "Налёт подрывников",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_bomb",
+        "to": "hand",
+        "count": 2
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-подрывник» ×2.",
+    "upgrade": {
+      "name": "Налёт подрывников+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_bomb",
+          "to": "hand",
+          "count": 3
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-подрывник» ×3."
+    }
+  },
+  {
+    "id": "dr_repair_swarm",
+    "name": "Ремонтный рой",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_medic",
+        "to": "hand",
+        "count": 2
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-медик» ×2.",
+    "upgrade": {
+      "name": "Ремонтный рой+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_medic",
+          "to": "hand",
+          "count": 3
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-медик» ×3."
+    }
+  },
+  {
+    "id": "dr_overclock_drones",
+    "name": "Форсаж роя",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Получи 1 Разгон. Добавь в руку: «Дрон-стрелок».",
+    "upgrade": {
+      "name": "Форсаж роя+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 2
+        }
+      ],
+      "description": "Получи 1 Разгон. Добавь в руку: «Дрон-стрелок» ×2."
+    }
+  },
+  {
+    "id": "dr_control_net",
+    "name": "Сеть управления",
+    "classId": "droneop",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "draw",
+        "count": 2
+      }
+    ],
+    "description": "Получи 1 Разгон. Добавь в колоду: «Дрон-стрелок» ×2.",
+    "upgrade": {
+      "name": "Сеть управления+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "draw",
+          "count": 2
+        }
+      ],
+      "description": "Получи 2 Разгона. Добавь в колоду: «Дрон-стрелок» ×2."
+    }
+  },
+  {
+    "id": "dr_barrage",
+    "name": "Заградительный огонь",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "all_enemies"
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Нанеси 5 урона всем врагам. Добавь в руку: «Дрон-стрелок».",
+    "upgrade": {
+      "name": "Заградительный огонь+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "all_enemies"
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "Нанеси 7 урона всем врагам. Добавь в руку: «Дрон-стрелок»."
+    }
+  },
+  {
+    "id": "dr_hijack",
+    "name": "Перехват управления",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_laser",
+        "to": "hand",
+        "count": 1
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-лазер», «Дрон-стрелок».",
+    "upgrade": {
+      "name": "Перехват управления+",
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_laser",
+          "to": "hand",
+          "count": 1
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 2
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-лазер», «Дрон-стрелок» ×2."
+    }
+  },
+  {
+    "id": "dr_mothership",
+    "name": "Материнский корабль",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "none",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 3
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_shield",
+        "to": "hand",
+        "count": 2
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_bomb",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Добавь в руку: «Дрон-стрелок» ×3, «Дрон-щит» ×2, «Дрон-подрывник». Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Материнский корабль+",
+      "cost": 1,
+      "effects": [
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 3
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_shield",
+          "to": "hand",
+          "count": 2
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_bomb",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "Добавь в руку: «Дрон-стрелок» ×3, «Дрон-щит» ×2, «Дрон-подрывник». Сжигается."
+    }
+  },
+  {
+    "id": "dr_swarm_protocol",
+    "name": "Протокол роя",
+    "classId": "droneop",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 2
+      }
+    ],
+    "description": "Получи 1 Разгон. Получи 1 Шифрование. Добавь в руку: «Дрон-стрелок» ×2.",
+    "upgrade": {
+      "name": "Протокол роя+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 2
+        }
+      ],
+      "description": "Получи 2 Разгона. Получи 1 Шифрование. Добавь в руку: «Дрон-стрелок» ×2."
+    }
+  },
+  {
+    "id": "dr_orbital",
+    "name": "Орбитальная батарея",
+    "classId": "droneop",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": -1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "X раз: нанеси 5 урона. Добавь в руку: «Дрон-стрелок».",
+    "upgrade": {
+      "name": "Орбитальная батарея+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "enemy"
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_gun",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "X раз: нанеси 7 урона. Добавь в руку: «Дрон-стрелок»."
+    }
+  },
+  {
+    "id": "ch_tick",
+    "name": "Такт",
+    "classId": "chrono",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона.",
+    "upgrade": {
+      "name": "Такт+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 9 урона."
+    }
+  },
+  {
+    "id": "ch_buffer",
+    "name": "Буфер",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 6 блока.",
+    "upgrade": {
+      "name": "Буфер+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока."
+    }
+  },
+  {
+    "id": "ch_slowdown",
+    "name": "Замедление",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Наложи 2 Лага. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Замедление+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "enemy"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Наложи 3 Лага. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "ch_flash",
+    "name": "Вспышка такта",
+    "classId": "chrono",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Нанеси 6 урона. Получи 1 Фрагментацию.",
+    "upgrade": {
+      "name": "Вспышка такта+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "frail",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Нанеси 9 урона. Получи 1 Фрагментацию."
+    }
+  },
+  {
+    "id": "ch_freeze_frame",
+    "name": "Стоп-кадр",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 5 блока. Наложи 1 Лаг на всех врагов.",
+    "upgrade": {
+      "name": "Стоп-кадр+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 7
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 2,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Получи 7 блока. Наложи 2 Лага на всех врагов."
+    }
+  },
+  {
+    "id": "ch_sprint",
+    "name": "Рывок",
+    "classId": "chrono",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Нанеси 6 урона. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Рывок+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Нанеси 9 урона. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "ch_loan",
+    "name": "Займ такта",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 2
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 2 энергии. Получи 1 Фрагментацию. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Займ такта+",
+      "effects": [
+        {
+          "type": "gain_energy",
+          "amount": 2
+        }
+      ],
+      "description": "Получи 2 энергии. Сжигается."
+    }
+  },
+  {
+    "id": "ch_quantum_leap",
+    "name": "Квантовый скачок",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 2
+      },
+      {
+        "type": "gain_energy",
+        "amount": 1
+      }
+    ],
+    "description": "Возьми 2 карты. Получи 1 энергию. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Квантовый скачок+",
+      "effects": [
+        {
+          "type": "draw",
+          "amount": 3
+        },
+        {
+          "type": "gain_energy",
+          "amount": 1
+        }
+      ],
+      "description": "Возьми 3 карты. Получи 1 энергию. Сжигается."
+    }
+  },
+  {
+    "id": "ch_pause",
+    "name": "Пауза",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 6 блока. Наложи 2 Лага на всех врагов.",
+    "upgrade": {
+      "name": "Пауза+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Получи 9 блока. Наложи 3 Лага на всех врагов."
+    }
+  },
+  {
+    "id": "ch_echo_strike",
+    "name": "Эхо-удар",
+    "classId": "chrono",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 10,
+        "times": 2,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 10 урона 2 раза.",
+    "upgrade": {
+      "name": "Эхо-удар+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 13,
+          "times": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 13 урона 2 раза."
+    }
+  },
+  {
+    "id": "ch_debt_shot",
+    "name": "Долговой выстрел",
+    "classId": "chrono",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 14,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Нанеси 14 урона. Получи 2 Фрагментации.",
+    "upgrade": {
+      "name": "Долговой выстрел+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 18,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "frail",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Нанеси 18 урона. Получи 2 Фрагментации."
+    }
+  },
+  {
+    "id": "ch_accelerate",
+    "name": "Ускорение",
+    "classId": "chrono",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 1 Разгон. Получи 1 Шифрование. Получи 1 Фрагментацию.",
+    "upgrade": {
+      "name": "Ускорение+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 1 Разгон. Получи 1 Шифрование."
+    }
+  },
+  {
+    "id": "ch_chronostasis",
+    "name": "Хроностазис",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 12
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 3,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 3,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 12 блока. Наложи 3 Лага на всех врагов. Наложи 3 Бреши на всех врагов. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Хроностазис+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 16
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 4,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 4,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Получи 16 блока. Наложи 4 Лага на всех врагов. Наложи 4 Бреши на всех врагов. Сжигается."
+    }
+  },
+  {
+    "id": "ch_dilation",
+    "name": "Растяжение времени",
+    "classId": "chrono",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "ritual",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 1 Самообучение. Наложи 2 Лага на всех врагов.",
+    "upgrade": {
+      "name": "Растяжение времени+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "ritual",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "all_enemies"
+        },
+        {
+          "type": "block",
+          "amount": 10
+        }
+      ],
+      "description": "Получи 1 Самообучение. Наложи 3 Лага на всех врагов. Получи 10 блока."
+    }
+  },
+  {
+    "id": "ch_final_second",
+    "name": "Последняя секунда",
+    "classId": "chrono",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": -1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 11,
+        "target": "enemy"
+      }
+    ],
+    "description": "X раз: нанеси 11 урона.",
+    "upgrade": {
+      "name": "Последняя секунда+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 14,
+          "target": "enemy"
+        }
+      ],
+      "description": "X раз: нанеси 14 урона."
+    }
+  },
+  {
+    "id": "nr_buffer_smash",
+    "name": "Разбиение буфера",
+    "classId": "netrunner",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 7 урона. Наложи 1 Брешь.",
+    "upgrade": {
+      "name": "Разбиение буфера+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 10,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 1,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 10 урона. Наложи 1 Брешь."
+    }
+  },
+  {
+    "id": "nr_port_knock",
+    "name": "Стук в порт",
+    "classId": "netrunner",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Нанеси 3 урона. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Стук в порт+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 5,
+          "target": "enemy"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Нанеси 5 урона. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "nr_heat_sink",
+    "name": "Радиатор",
+    "classId": "netrunner",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 6 блока. Получи 1 Броня-патч.",
+    "upgrade": {
+      "name": "Радиатор+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 8
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 8 блока. Получи 1 Броня-патч."
+    }
+  },
+  {
+    "id": "nr_ram_overflow",
+    "name": "Переполнение ОЗУ",
+    "classId": "netrunner",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 12,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Нанеси 12 урона. Получи 1 Разгон.",
+    "upgrade": {
+      "name": "Переполнение ОЗУ+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 15,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Нанеси 15 урона. Получи 2 Разгона."
+    }
+  },
+  {
+    "id": "nr_arc_lance",
+    "name": "Дуговое копьё",
+    "classId": "netrunner",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 7 урона всем врагам. Наложи 1 Брешь на всех врагов.",
+    "upgrade": {
+      "name": "Дуговое копьё+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 10,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Нанеси 10 урона всем врагам. Наложи 2 Бреши на всех врагов."
+    }
+  },
+  {
+    "id": "nr_supernova",
+    "name": "Сверхновая",
+    "classId": "netrunner",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 5
+      },
+      {
+        "type": "damage",
+        "amount": 16,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Потеряй 5 HP. Нанеси 16 урона всем врагам.",
+    "upgrade": {
+      "name": "Сверхновая+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 5
+        },
+        {
+          "type": "damage",
+          "amount": 22,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Потеряй 5 HP. Нанеси 22 урона всем врагам."
+    }
+  },
+  {
+    "id": "ph_attachment",
+    "name": "Вложение",
+    "classId": "phreaker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 3,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 3 Вируса. Наложи 1 Лаг.",
+    "upgrade": {
+      "name": "Вложение+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 4,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 1,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 4 Вируса. Наложи 1 Лаг."
+    }
+  },
+  {
+    "id": "ph_data_leak",
+    "name": "Утечка трафика",
+    "classId": "phreaker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Наложи 2 Вируса. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Утечка трафика+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 3,
+          "target": "enemy"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Наложи 3 Вируса. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "ph_obfuscate",
+    "name": "Обход файрвола",
+    "classId": "phreaker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "block",
+        "amount": 3
+      }
+    ],
+    "description": "Нанеси 5 урона. Наложи 2 Вируса. Получи 3 блока.",
+    "upgrade": {
+      "name": "Обход файрвола+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 3,
+          "target": "enemy"
+        },
+        {
+          "type": "block",
+          "amount": 5
+        }
+      ],
+      "description": "Нанеси 7 урона. Наложи 3 Вируса. Получи 5 блока."
+    }
+  },
+  {
+    "id": "ph_sleeper",
+    "name": "Спящий агент",
+    "classId": "phreaker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 5 Вируса. Наложи 1 Фрагментацию.",
+    "upgrade": {
+      "name": "Спящий агент+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 7,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "frail",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 7 Вируса. Наложи 2 Фрагментации."
+    }
+  },
+  {
+    "id": "ph_viral_load",
+    "name": "Вирусная нагрузка",
+    "classId": "phreaker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "random_enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 3,
+        "target": "random_enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 3,
+        "target": "random_enemy"
+      }
+    ],
+    "description": "Наложи 3 Вируса на случайного врага. Наложи 3 Вируса на случайного врага.",
+    "upgrade": {
+      "name": "Вирусная нагрузка+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 4,
+          "target": "random_enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 4,
+          "target": "random_enemy"
+        }
+      ],
+      "description": "Наложи 4 Вируса на случайного врага. Наложи 4 Вируса на случайного врага."
+    }
+  },
+  {
+    "id": "ph_pandemic",
+    "name": "Пандемия",
+    "classId": "phreaker",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 12,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Наложи 12 Вируса на всех врагов. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Пандемия+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 16,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Наложи 16 Вируса на всех врагов. Сжигается."
+    }
+  },
+  {
+    "id": "gh_smoke",
+    "name": "Дымовая завеса",
+    "classId": "ghost",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 7
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Получи 7 блока. Наложи 1 Лаг.",
+    "upgrade": {
+      "name": "Дымовая завеса+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 10
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 1,
+          "target": "enemy"
+        }
+      ],
+      "description": "Получи 10 блока. Наложи 1 Лаг."
+    }
+  },
+  {
+    "id": "gh_cold_start",
+    "name": "Холодный старт",
+    "classId": "ghost",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy"
+      },
+      {
+        "type": "block",
+        "amount": 3
+      }
+    ],
+    "description": "Нанеси 3 урона. Получи 3 блока.",
+    "upgrade": {
+      "name": "Холодный старт+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 5,
+          "target": "enemy"
+        },
+        {
+          "type": "block",
+          "amount": 4
+        }
+      ],
+      "description": "Нанеси 5 урона. Получи 4 блока."
+    }
+  },
+  {
+    "id": "gh_shadow",
+    "name": "Тень",
+    "classId": "ghost",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Нанеси 5 урона. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Тень+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 8,
+          "target": "enemy"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Нанеси 8 урона. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "gh_cloak_charge",
+    "name": "Плащ-заряд",
+    "classId": "ghost",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 5
+      }
+    ],
+    "description": "Получи 1 Шифрование. Получи 5 блока.",
+    "upgrade": {
+      "name": "Плащ-заряд+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "block",
+          "amount": 8
+        }
+      ],
+      "description": "Получи 1 Шифрование. Получи 8 блока."
+    }
+  },
+  {
+    "id": "gh_hunter_mark",
+    "name": "Метка охотника",
+    "classId": "ghost",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Наложи 2 Бреши. Возьми 1 карту. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Метка охотника+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 3,
+          "target": "enemy"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Наложи 3 Бреши. Возьми 1 карту. Сжигается."
+    }
+  },
+  {
+    "id": "gh_blackout",
+    "name": "Блэкаут",
+    "classId": "ghost",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 14
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "all_enemies"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 14 блока. Наложи 2 Лага на всех врагов. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Блэкаут+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 18
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "all_enemies"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Получи 18 блока. Наложи 3 Лага на всех врагов. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "sm_parry_thrust",
+    "name": "Парирующий выпад",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Нанеси 6 урона. Получи 1 Контрудар.",
+    "upgrade": {
+      "name": "Парирующий выпад+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Нанеси 9 урона. Получи 2 Контрудара."
+    }
+  },
+  {
+    "id": "sm_tsuba",
+    "name": "Цуба",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 3
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 3 блока. Получи 3 Контрудара.",
+    "upgrade": {
+      "name": "Цуба+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 5
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 5 блока. Получи 4 Контрудара."
+    }
+  },
+  {
+    "id": "sm_lunge",
+    "name": "Выпад",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 8,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 8 урона. Наложи 1 Лаг.",
+    "upgrade": {
+      "name": "Выпад+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 11,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 1,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 11 урона. Наложи 1 Лаг."
+    }
+  },
+  {
+    "id": "sm_blade_dance",
+    "name": "Танец клинков",
+    "classId": "samurai",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "times": 3,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 3 урона 3 раза.",
+    "upgrade": {
+      "name": "Танец клинков+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 4,
+          "times": 3,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 4 урона 3 раза."
+    }
+  },
+  {
+    "id": "sm_counter_stance",
+    "name": "Встречная стойка",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 10
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 10 блока. Получи 3 Контрудара.",
+    "upgrade": {
+      "name": "Встречная стойка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 13
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 13 блока. Получи 4 Контрудара."
+    }
+  },
+  {
+    "id": "sm_war_cry",
+    "name": "Боевой клич",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 1 Разгон. Наложи 1 Лаг на всех врагов.",
+    "upgrade": {
+      "name": "Боевой клич+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 1,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Получи 2 Разгона. Наложи 1 Лаг на всех врагов."
+    }
+  },
+  {
+    "id": "sm_thousand_steps",
+    "name": "Тысяча шагов",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "draw",
+        "amount": 2
+      }
+    ],
+    "description": "Получи 2 Разгона. Возьми 2 карты.",
+    "upgrade": {
+      "name": "Тысяча шагов+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "draw",
+          "amount": 2
+        }
+      ],
+      "description": "Получи 3 Разгона. Возьми 2 карты."
+    }
+  },
+  {
+    "id": "sm_last_stand",
+    "name": "Последний рубеж",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 22
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 5,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 22 блока. Получи 5 Контрударов.",
+    "upgrade": {
+      "name": "Последний рубеж+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 28
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 7,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 28 блока. Получи 7 Контрударов."
+    }
+  },
+  {
+    "id": "en_welding_torch",
+    "name": "Сварочный резак",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "enemy"
+      },
+      {
+        "type": "block",
+        "amount": 3
+      }
+    ],
+    "description": "Нанеси 7 урона. Получи 3 блока.",
+    "upgrade": {
+      "name": "Сварочный резак+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 10,
+          "target": "enemy"
+        },
+        {
+          "type": "block",
+          "amount": 4
+        }
+      ],
+      "description": "Нанеси 10 урона. Получи 4 блока."
+    }
+  },
+  {
+    "id": "en_scaffold",
+    "name": "Леса",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 6 блока. Получи 1 Броня-патч.",
+    "upgrade": {
+      "name": "Леса+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 8
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 8 блока. Получи 1 Броня-патч."
+    }
+  },
+  {
+    "id": "en_pneumatic",
+    "name": "Пневмомолот",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 13,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 2,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 13 урона. Наложи 2 Фрагментации.",
+    "upgrade": {
+      "name": "Пневмомолот+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 17,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "frail",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 17 урона. Наложи 2 Фрагментации."
+    }
+  },
+  {
+    "id": "en_turret",
+    "name": "Автотурель",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Нанеси 5 урона всем врагам. Получи 2 Контрудара.",
+    "upgrade": {
+      "name": "Автотурель+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 7,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Нанеси 7 урона всем врагам. Получи 3 Контрудара."
+    }
+  },
+  {
+    "id": "en_servo_arm",
+    "name": "Серво-рука",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 1 Разгон. Получи 1 Броня-патч.",
+    "upgrade": {
+      "name": "Серво-рука+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 1 Разгон. Получи 2 Броня-патча."
+    }
+  },
+  {
+    "id": "en_slag_shield",
+    "name": "Шлаковый щит",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 9
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 9 блока. Получи 2 Контрудара.",
+    "upgrade": {
+      "name": "Шлаковый щит+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 12
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 12 блока. Получи 2 Контрудара."
+    }
+  },
+  {
+    "id": "en_siege_cannon",
+    "name": "Осадное орудие",
+    "classId": "engineer",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 18,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 18 урона всем врагам.",
+    "upgrade": {
+      "name": "Осадное орудие+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 24,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Нанеси 24 урона всем врагам."
+    }
+  },
+  {
+    "id": "en_overhaul",
+    "name": "Капитальный ремонт",
+    "classId": "engineer",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 3,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 3 Броня-патча. Получи 2 Шифрования.",
+    "upgrade": {
+      "name": "Капитальный ремонт+",
+      "cost": 1,
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 3 Броня-патча. Получи 2 Шифрования."
+    }
+  },
+  {
+    "id": "bh_suture",
+    "name": "Шов",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      },
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 6 блока. Получи 1 Самовосстановление.",
+    "upgrade": {
+      "name": "Шов+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 8
+        },
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 8 блока. Получи 2 Самовосстановления."
+    }
+  },
+  {
+    "id": "bh_culture",
+    "name": "Культура",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 4,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Наложи 4 Вируса. Получи 1 Самовосстановление.",
+    "upgrade": {
+      "name": "Культура+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 5,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Наложи 5 Вируса. Получи 2 Самовосстановления."
+    }
+  },
+  {
+    "id": "bh_adren_shot",
+    "name": "Укол адреналина",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 1
+      },
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Потеряй 1 HP. Нанеси 6 урона.",
+    "upgrade": {
+      "name": "Укол адреналина+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 1
+        },
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Потеряй 1 HP. Нанеси 9 урона."
+    }
+  },
+  {
+    "id": "bh_leech_swarm",
+    "name": "Пиявки",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      },
+      {
+        "type": "heal",
+        "amount": 2
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 2,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона. Восстанови 2 HP. Наложи 2 Вируса.",
+    "upgrade": {
+      "name": "Пиявки+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 8,
+          "target": "enemy"
+        },
+        {
+          "type": "heal",
+          "amount": 3
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 3,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 8 урона. Восстанови 3 HP. Наложи 3 Вируса."
+    }
+  },
+  {
+    "id": "bh_hormones",
+    "name": "Гормональный выброс",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 3
+      },
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Потеряй 3 HP. Получи 1 Разгон. Получи 1 Шифрование.",
+    "upgrade": {
+      "name": "Гормональный выброс+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 3
+        },
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Потеряй 3 HP. Получи 2 Разгона. Получи 1 Шифрование."
+    }
+  },
+  {
+    "id": "bh_scar_tissue",
+    "name": "Рубцовая ткань",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 1
+      },
+      {
+        "type": "block",
+        "amount": 7
+      },
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Потеряй 1 HP. Получи 7 блока. Получи 1 Броня-патч.",
+    "upgrade": {
+      "name": "Рубцовая ткань+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 1
+        },
+        {
+          "type": "block",
+          "amount": 10
+        },
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Потеряй 1 HP. Получи 10 блока. Получи 1 Броня-патч."
+    }
+  },
+  {
+    "id": "bh_panacea",
+    "name": "Панацея",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 10
+      },
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 4,
+        "target": "self"
+      }
+    ],
+    "description": "Восстанови 10 HP. Получи 4 Самовосстановления. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Панацея+",
+      "effects": [
+        {
+          "type": "heal",
+          "amount": 14
+        },
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 5,
+          "target": "self"
+        }
+      ],
+      "description": "Восстанови 14 HP. Получи 5 Самовосстановлений. Сжигается."
+    }
+  },
+  {
+    "id": "bh_chimera_blood",
+    "name": "Кровь химеры",
+    "classId": "biohacker",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 6
+      },
+      {
+        "type": "damage",
+        "amount": 18,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 4,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Потеряй 6 HP. Нанеси 18 урона всем врагам. Наложи 4 Вируса на всех врагов.",
+    "upgrade": {
+      "name": "Кровь химеры+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 6
+        },
+        {
+          "type": "damage",
+          "amount": 24,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 6,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Потеряй 6 HP. Нанеси 24 урона всем врагам. Наложи 6 Вируса на всех врагов."
+    }
+  },
+  {
+    "id": "n_scan_and_shield",
+    "name": "Сканирование с прикрытием",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 7,
+        "target": "enemy"
+      },
+      {
+        "type": "block",
+        "amount": 3
+      }
+    ],
+    "description": "Нанеси 7 урона. Получи 3 блока.",
+    "upgrade": {
+      "name": "Сканирование с прикрытием+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        },
+        {
+          "type": "block",
+          "amount": 4
+        }
+      ],
+      "description": "Нанеси 9 урона. Получи 4 блока."
+    }
+  },
+  {
+    "id": "n_cooling_pad",
+    "name": "Кулер",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 8
+      }
+    ],
+    "description": "Получи 8 блока.",
+    "upgrade": {
+      "name": "Кулер+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 11
+        }
+      ],
+      "description": "Получи 11 блока."
+    }
+  },
+  {
+    "id": "n_macro",
+    "name": "Макрос",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 4,
+        "times": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "block",
+        "amount": 2
+      }
+    ],
+    "description": "Нанеси 4 урона 2 раза. Получи 2 блока.",
+    "upgrade": {
+      "name": "Макрос+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 5,
+          "times": 2,
+          "target": "enemy"
+        },
+        {
+          "type": "block",
+          "amount": 3
+        }
+      ],
+      "description": "Нанеси 5 урона 2 раза. Получи 3 блока."
+    }
+  },
+  {
+    "id": "n_vpn_hop",
+    "name": "VPN-прыжок",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Получи 5 блока. Наложи 1 Лаг.",
+    "upgrade": {
+      "name": "VPN-прыжок+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 7
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Получи 7 блока. Наложи 2 Лага."
+    }
+  },
+  {
+    "id": "n_overdrive_patch",
+    "name": "Патч на ходу",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 2 Броня-патча. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Патч на ходу+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Получи 3 Броня-патча. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "n_logic_trap",
+    "name": "Логическая ловушка",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 4
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 4 блока. Получи 3 Контрудара.",
+    "upgrade": {
+      "name": "Логическая ловушка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 6
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 6 блока. Получи 4 Контрудара."
+    }
+  },
+  {
+    "id": "n_coolant_flush",
+    "name": "Промывка контура",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 5
+      },
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Восстанови 5 HP. Получи 6 блока.",
+    "upgrade": {
+      "name": "Промывка контура+",
+      "effects": [
+        {
+          "type": "heal",
+          "amount": 7
+        },
+        {
+          "type": "block",
+          "amount": 8
+        }
+      ],
+      "description": "Восстанови 7 HP. Получи 8 блока."
+    }
+  },
+  {
+    "id": "n_zero_trust",
+    "name": "Нулевое доверие",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 12
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Получи 12 блока. Наложи 1 Лаг на всех врагов. Наложи 1 Брешь на всех врагов.",
+    "upgrade": {
+      "name": "Нулевое доверие+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 15
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 2,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Получи 15 блока. Наложи 2 Лага на всех врагов. Наложи 2 Бреши на всех врагов."
+    }
+  },
+  {
+    "id": "n_heavy_payload",
+    "name": "Тяжёлая нагрузка",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 15,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 15 урона. Наложи 1 Брешь.",
+    "upgrade": {
+      "name": "Тяжёлая нагрузка+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 20,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 1,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 20 урона. Наложи 1 Брешь."
+    }
+  },
+  {
+    "id": "n_black_box",
+    "name": "Чёрный ящик",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "none",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 3
+      },
+      {
+        "type": "gain_energy",
+        "amount": 1
+      }
+    ],
+    "description": "Возьми 3 карты. Получи 1 энергию. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Чёрный ящик+",
+      "effects": [
+        {
+          "type": "draw",
+          "amount": 4
+        },
+        {
+          "type": "gain_energy",
+          "amount": 1
+        }
+      ],
+      "description": "Возьми 4 карты. Получи 1 энергию. Сжигается."
+    }
+  },
+  {
+    "id": "n_system_crash",
+    "name": "Крах системы",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 3,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 12,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 12 урона всем врагам. Наложи 2 Бреши на всех врагов. Наложи 2 Лага на всех врагов. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Крах системы+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 16,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 3,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Нанеси 16 урона всем врагам. Наложи 3 Бреши на всех врагов. Наложи 3 Лага на всех врагов. Сжигается."
+    }
+  },
+  {
+    "id": "n_backup_core",
+    "name": "Резервное ядро",
+    "classId": "neutral",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 2 Броня-патча. Получи 3 Самовосстановления.",
+    "upgrade": {
+      "name": "Резервное ядро+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "plating",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "regen",
+          "amount": 4,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 3 Броня-патча. Получи 4 Самовосстановления."
+    }
+  },
+  {
+    "id": "ch_echo_time",
+    "name": "Эхо времени",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "double_next",
+        "amount": 1
+      }
+    ],
+    "description": "Следующая карта срабатывает дважды.",
+    "upgrade": {
+      "name": "Эхо времени+",
+      "effects": [
+        {
+          "type": "double_next",
+          "amount": 1
+        }
+      ],
+      "description": "Следующая карта срабатывает дважды. Удержание.",
+      "retain": true
+    }
+  },
+  {
+    "id": "ch_storyboard",
+    "name": "Раскадровка",
+    "classId": "chrono",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "none",
+    "effects": [
+      {
+        "type": "double_next",
+        "amount": 2
+      }
+    ],
+    "description": "Следующие 2 карты срабатывают дважды. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Раскадровка+",
+      "cost": 1,
+      "effects": [
+        {
+          "type": "double_next",
+          "amount": 2
+        }
+      ],
+      "description": "Следующие 2 карты срабатывают дважды. Сжигается."
+    }
+  },
+  {
+    "id": "dr_sentry_mode",
+    "name": "Режим часового",
+    "classId": "droneop",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 7
+      },
+      {
+        "type": "add_card",
+        "cardId": "dr_t_shield",
+        "to": "hand",
+        "count": 1
+      }
+    ],
+    "description": "Получи 7 блока. Добавь в руку: «Дрон-щит». Удержание.",
+    "retain": true,
+    "upgrade": {
+      "name": "Режим часового+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 10
+        },
+        {
+          "type": "add_card",
+          "cardId": "dr_t_shield",
+          "to": "hand",
+          "count": 1
+        }
+      ],
+      "description": "Получи 10 блока. Добавь в руку: «Дрон-щит». Удержание."
+    }
+  },
+  {
+    "id": "gh_foresight",
+    "name": "Предвидение",
+    "classId": "ghost",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 0,
+    "target": "none",
+    "effects": [
+      {
+        "type": "scry",
+        "amount": 3
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Убери мусор из 3 верхних карт добора. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Предвидение+",
+      "effects": [
+        {
+          "type": "scry",
+          "amount": 5
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Убери мусор из 5 верхних карт добора. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "nr_hot_reload",
+    "name": "Горячая перезагрузка",
+    "classId": "netrunner",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "discard_hand_draw",
+        "amount": 0
+      }
+    ],
+    "description": "Сбрось руку и возьми столько же карт.",
+    "upgrade": {
+      "name": "Горячая перезагрузка+",
+      "effects": [
+        {
+          "type": "discard_hand_draw",
+          "amount": 1
+        }
+      ],
+      "description": "Сбрось руку и возьми столько же карт и ещё 1."
+    }
+  },
+  {
+    "id": "sm_ward",
+    "name": "Оберег",
+    "classId": "samurai",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "barrier",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 1 Барьер. Получи 2 Контрудара.",
+    "upgrade": {
+      "name": "Оберег+",
+      "cost": 1,
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "barrier",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 2,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 1 Барьер. Получи 2 Контрудара."
+    }
+  },
+  {
+    "id": "en_force_field",
+    "name": "Силовое поле",
+    "classId": "engineer",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "barrier",
+        "amount": 2,
+        "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 2 Барьера. Получи 6 блока. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Силовое поле+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "barrier",
+          "amount": 3,
+          "target": "self"
+        },
+        {
+          "type": "block",
+          "amount": 8
+        }
+      ],
+      "description": "Получи 3 Барьера. Получи 8 блока. Сжигается."
+    }
+  },
+  {
+    "id": "bh_detox",
+    "name": "Детокс",
+    "classId": "biohacker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "cleanse",
+        "amount": 99
+      },
+      {
+        "type": "heal",
+        "amount": 4
+      },
+      {
+        "type": "block",
+        "amount": 4
+      }
+    ],
+    "description": "Сними с себя все дебаффы. Восстанови 4 HP. Получи 4 блока.",
+    "upgrade": {
+      "name": "Детокс+",
+      "effects": [
+        {
+          "type": "cleanse",
+          "amount": 99
+        },
+        {
+          "type": "heal",
+          "amount": 6
+        },
+        {
+          "type": "block",
+          "amount": 6
+        }
+      ],
+      "description": "Сними с себя все дебаффы. Восстанови 6 HP. Получи 6 блока."
+    }
+  },
+  {
+    "id": "ph_leak_exploit",
+    "name": "Эксплуатация утечки",
+    "classId": "phreaker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "bleed",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 6 Утечек.",
+    "upgrade": {
+      "name": "Эксплуатация утечки+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "bleed",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 9 Утечек."
+    }
+  },
+  {
+    "id": "n_mark_target",
+    "name": "Метка цели",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "mark",
+        "amount": 4,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 4 Метки.",
+    "upgrade": {
+      "name": "Метка цели+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "mark",
+          "amount": 6,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 6 Меток."
+    }
+  },
+  {
+    "id": "n_nano_vaccine",
+    "name": "Нанопрививка",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "heal_pct",
+        "amount": 15
+      }
+    ],
+    "description": "Восстанови 15% максимума HP. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Нанопрививка+",
+      "effects": [
+        {
+          "type": "heal_pct",
+          "amount": 20
+        }
+      ],
+      "description": "Восстанови 20% максимума HP. Сжигается."
+    }
+  },
+  {
+    "id": "n_implant_core",
+    "name": "Имплантат-ядро",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 1,
+    "target": "none",
+    "effects": [
+      {
+        "type": "gain_max_hp",
+        "amount": 6
+      }
+    ],
+    "description": "Максимум HP +6. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Имплантат-ядро+",
+      "effects": [
+        {
+          "type": "gain_max_hp",
+          "amount": 9
+        }
+      ],
+      "description": "Максимум HP +9. Сжигается."
+    }
   }
 ]

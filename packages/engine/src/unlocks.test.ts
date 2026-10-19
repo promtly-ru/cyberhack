@@ -26,7 +26,7 @@ function freshProfile(): MetaProfile {
     unlockedClasses: ['netrunner'],
     unlockedCards: [],
     unlockedRelics: [],
-    maxAscension: { netrunner: 0, phreaker: 0, ghost: 0, samurai: 0, engineer: 0, biohacker: 0 },
+    maxAscension: { netrunner: 0, phreaker: 0, ghost: 0, samurai: 0, engineer: 0, biohacker: 0, droneop: 0, chrono: 0 },
     achievements: [],
     totalRuns: 0,
     totalWins: 0,
@@ -62,7 +62,7 @@ describe('каталог разблокировок', () => {
     expect(cards.length / cardPool.length).toBeLessThan(0.4);
     expect(relics.length / relicPool.length).toBeGreaterThan(0.2);
     expect(relics.length / relicPool.length).toBeLessThan(0.4);
-    expect(lockableClasses().sort()).toEqual(['biohacker', 'engineer', 'ghost', 'phreaker', 'samurai']);
+    expect(lockableClasses().sort()).toEqual(['biohacker', 'chrono', 'droneop', 'engineer', 'ghost', 'phreaker', 'samurai']);
   });
 
   it('lockedContent: открытое исключается из закрытого', () => {

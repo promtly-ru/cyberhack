@@ -12,7 +12,9 @@ import './styles/screens.css';
 import './styles/tutorial.css';
 import './styles/accounts.css';
 import './styles/download.css';
+import './styles/skies.css';
 import './styles/polish.css';
+import './styles/mechanics.css';
 
 applyToDocument();
 void initBackend();

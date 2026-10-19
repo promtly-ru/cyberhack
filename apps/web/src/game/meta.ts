@@ -24,8 +24,22 @@ export function randomSeed(): string {
 }
 
 /** Обычный забег: открытые карты/реликвии из профиля. */
-export function regularRunOptions(profile: Profile, classId: ClassId, ascension: number, difficulty: Difficulty = 'normal'): NewRunOptions {
-  return { seed: randomSeed(), classId, ascension, difficulty, daily: false, unlocked: unlockedOptions(profile) };
+export function regularRunOptions(
+  profile: Profile,
+  classId: ClassId,
+  ascension: number,
+  difficulty: Difficulty = 'normal',
+  mutators: readonly string[] = [],
+): NewRunOptions {
+  return {
+    seed: randomSeed(),
+    classId,
+    ascension,
+    difficulty,
+    daily: false,
+    unlocked: unlockedOptions(profile),
+    ...(mutators.length ? { mutators: [...mutators] } : {}),
+  };
 }
 
 /** Ежедневный забег: сид дня, класс по дате, A0, всё содержимое открыто (одинаково для всех). */

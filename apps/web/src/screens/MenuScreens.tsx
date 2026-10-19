@@ -10,6 +10,7 @@ import { tip } from '../components/Tooltip';
 import { useUi } from '../ui/uiStore';
 import { sfx, unlockAudio } from '../audio/sfx';
 import { AscensionInfo, CLASS_NAME, DailyBoard } from './MetaBits';
+import { MutatorPicker } from './MutatorPicker';
 import { AccountChip } from './ProfileScreen';
 import { startTutorial } from '../tutorial/Tutorial';
 import { isInstalledApp } from '../download/DownloadScreen';
@@ -177,6 +178,8 @@ const CLASS_STYLE: Record<string, string> = {
   samurai: 'ближний бой — Разгон, серии ударов и Контрудар.',
   biohacker: 'риск и мутации — жертвуй HP, лечись Самовосстановлением, души Вирусом.',
   engineer: 'крепкая броня — Броня-патчи, Контрудар и тяжёлые орудия.',
+  droneop: 'рой дронов — карты-дроны бесплатно появляются в руке и исчезают в конце хода.',
+  chrono: 'управление временем — энергия, добор, Лаг врагам; плата за скорость — Фрагментация.',
 };
 
 function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selected: boolean; locked: boolean; onSelect: () => void; hint?: string }) {
@@ -272,13 +275,14 @@ function RegularSelect() {
   const maxAsc = Math.min(MAX_ASCENSION, profile.maxAscension[cls] ?? 0);
   const [asc, setAsc] = useState(0);
   const [diff, setDiff] = useState<Difficulty>('normal');
+  const [mutators, setMutators] = useState<string[]>([]);
   useEffect(() => setAsc((a) => Math.min(a, maxAsc)), [maxAsc]);
   const current = classes.find((c) => c.id === cls);
 
   const start = () => {
     unlockAudio();
     sfx('select');
-    startRegular(cls, asc, diff);
+    startRegular(cls, asc, diff, mutators);
   };
 
   return (
@@ -312,6 +316,7 @@ function RegularSelect() {
           ))}
         </div>
       </section>
+      <MutatorPicker value={mutators} onChange={setMutators} />
       <section className="cs-asc" aria-label="Уровень сложности">
         <div className="cs-asc__head">
           <h2 className="section-title">Ascension (открывается победами)</h2>
@@ -348,7 +353,7 @@ function RegularSelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">{`${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}`}</small>
+              <small className="muted">{`${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}${mutators.length ? ` · мутаторов: ${mutators.length}` : ''}`}</small>
             </span>
           </div>
         ) : null}

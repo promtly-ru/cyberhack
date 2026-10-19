@@ -4,7 +4,9 @@ import { rollableFirmwares } from './firmware';
  */
 import type { AscensionMods } from './ascension';
 import { getContent } from './content';
-import { rngOf, type Rng } from './rng';
+import { getMutatorMods } from './mutators';
+import { getPotion, POTION_DROP_CHANCE, POTION_PRICES, rollPotion } from './potions';
+import { extRng, rngOf, type Rng } from './rng';
 import type { CardDef, ClassId, RelicDef, RewardItem, RunState, ShopItem } from './types';
 
 export type CombatTier = 'normal' | 'elite' | 'boss';
@@ -89,7 +91,8 @@ export function rollCards(
 }
 
 export function rollCardChoice(s: RunState, rng: Rng, tier: CombatTier, mods: AscensionMods): string[] {
-  return rollCards(rng, rewardCardPool(s.classId, s), 3, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult).map((c) => c.id);
+  const count = 3 + getMutatorMods(s.mutators).extraCardChoices;
+  return rollCards(rng, rewardCardPool(s.classId, s), count, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult).map((c) => c.id);
 }
 
 function relicAvailable(s: RunState, r: RelicDef): boolean {
@@ -132,6 +135,9 @@ export function buildCombatRewards(s: RunState, tier: CombatTier, mods: Ascensio
   if (fwPool.length > 0 && rngOf(s, 'rewards').next() < fwChance) {
     items.push({ kind: 'firmware', firmwareId: rngOf(s, 'rewards').pick(fwPool).id });
   }
+  // Расходник: свой поток ГСЧ (не сдвигает остальные награды); в конце списка — индексы прежних наград не меняются
+  const potionChance = POTION_DROP_CHANCE[tier] + getMutatorMods(s.mutators).potionChanceBonus;
+  if (extRng(s, 'potions').next() < potionChance) items.push({ kind: 'potion', potionId: rollPotion(s) });
   return items;
 }
 
@@ -160,5 +166,16 @@ export function buildShop(s: RunState, rng: Rng, mods: AscensionMods): ShopItem[
     items.push({ kind: 'relic', id: r.id, price: price(rng, RELIC_PRICES[r.rarity], mods), sold: false });
   }
   items.push({ kind: 'remove', price: removePrice(s, mods), sold: false });
+  // SHOP_POTIONS расходников (поток 'potions'), в конце списка
+  const prng = extRng(s, 'potions');
+  for (let i = 0; i < SHOP_POTIONS; i++) {
+    const id = rollPotion(s);
+    const p = getPotion(id);
+    if (!p) continue;
+    const [lo, hi] = POTION_PRICES[p.rarity];
+    items.push({ kind: 'potion', id, price: Math.round(prng.int(lo, hi) * mods.shopPriceMult), sold: false });
+  }
   return items;
 }
+
+export const SHOP_POTIONS = 2;

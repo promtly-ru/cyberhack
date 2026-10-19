@@ -46,7 +46,7 @@ interface GameStore {
   openClassSelect(daily: boolean): void;
   startRun(opts: NewRunOptions): void;
   /** Обычный забег с учётом разблокировок профиля */
-  startRegular(classId: ClassId, ascension: number, difficulty?: Difficulty): void;
+  startRegular(classId: ClassId, ascension: number, difficulty?: Difficulty, mutators?: readonly string[]): void;
   /** Ежедневный забег (одна попытка в день). false — попытка уже использована */
   startDaily(): boolean;
   /** Загрузить готовое состояние (продолжение или dev-сценарий) */
@@ -113,14 +113,14 @@ export const useGame = create<GameStore>((set, get) => ({
     }
   },
 
-  startRegular(classId, ascension, difficulty) {
+  startRegular(classId, ascension, difficulty, mutators) {
     const { profile } = get();
     if (!profile.unlockedClasses.includes(classId)) {
       set({ error: 'Класс ещё не открыт' });
       return;
     }
     const max = Math.min(MAX_ASCENSION, profile.maxAscension[classId] ?? 0);
-    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max)), difficulty));
+    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max)), difficulty, mutators));
   },
 
   startDaily() {

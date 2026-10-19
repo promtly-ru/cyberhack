@@ -304,6 +304,121 @@ const P: Record<string, ReactNode> = {
       <path d="M22 9v6" />
     </>
   ),
+  // --- Статусы и ключевые слова (дополнительные) ---
+  virus: (
+    <>
+      <circle cx="12" cy="12" r="4.5" />
+      <path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.3 5.3l2.8 2.8M15.9 15.9l2.8 2.8M18.7 5.3l-2.8 2.8M8.1 15.9l-2.8 2.8" />
+      <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+    </>
+  ),
+  ritual: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 3.5l5.5 14.5L5 9.5h14L6.5 18z" />
+    </>
+  ),
+  plating: (
+    <>
+      <path d="M12 2.5l8 3v6.2c0 4.6-3.2 8-8 9.8-4.8-1.8-8-5.2-8-9.8V5.5z" />
+      <path d="M8 9.5h8M8 13h8M10 16.5h4" />
+    </>
+  ),
+  echo: (
+    <>
+      <circle cx="9" cy="12" r="3.5" />
+      <path d="M14.5 7.5a6.5 6.5 0 010 9M17.5 4.5a10.5 10.5 0 010 15" />
+    </>
+  ),
+  barrier: (
+    <>
+      <path d="M4 20V9a8 8 0 0116 0v11" />
+      <path d="M8 20v-9a4 4 0 018 0v9M12 7v13M2.5 20h19" />
+    </>
+  ),
+  bleed: (
+    <>
+      <path d="M12 2.5s6 6.4 6 11a6 6 0 01-12 0c0-4.6 6-11 6-11z" />
+      <path d="M9.5 14.5a2.7 2.7 0 002.5 2.5" />
+    </>
+  ),
+  mark: (
+    <>
+      <circle cx="12" cy="12" r="7.5" />
+      <circle cx="12" cy="12" r="2.2" />
+      <path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5" />
+    </>
+  ),
+  potion: (
+    <>
+      <path d="M9.5 3h5M10.5 3v5.2L5.2 17.6A2.4 2.4 0 007.3 21h9.4a2.4 2.4 0 002.1-3.4L13.5 8.2V3" />
+      <path d="M7.4 15h9.2" />
+      <circle cx="11" cy="17.6" r=".8" fill="currentColor" stroke="none" />
+      <circle cx="14" cy="16.6" r=".6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  consumable: (
+    <>
+      <rect x="6" y="7" width="12" height="14" rx="2.5" />
+      <path d="M9 7V3.5h6V7M9 12h6M12 9.5v5" />
+    </>
+  ),
+  slot: (
+    <>
+      <path d="M5 8V5h3M16 5h3v3M19 16v3h-3M8 19H5v-3" />
+      <path d="M9 12h6" strokeDasharray="1.5 2.5" />
+    </>
+  ),
+  firmware: (
+    <>
+      <rect x="6" y="6" width="12" height="12" rx="1.5" />
+      <rect x="9.5" y="9.5" width="5" height="5" />
+      <path d="M9 2.5v3.5M15 2.5v3.5M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5" />
+    </>
+  ),
+  chip: (
+    <>
+      <rect x="5" y="5" width="14" height="14" rx="2" />
+      <path d="M9 9h6v6H9zM3 9h2M3 15h2M19 9h2M19 15h2M9 3v2M15 3v2M9 19v2M15 19v2" />
+    </>
+  ),
+  retain: (
+    <>
+      <rect x="6.5" y="3.5" width="11" height="17" rx="1.8" />
+      <path d="M12 8.5l3 1.4v2.6c0 1.9-1.3 3.2-3 3.9-1.7-.7-3-2-3-3.9V9.9z" />
+    </>
+  ),
+  innate: (
+    <>
+      <rect x="6.5" y="3.5" width="11" height="17" rx="1.8" />
+      <path d="M12 7v6.5M12 16.8v.2" strokeWidth="2.4" />
+    </>
+  ),
+  replay: (
+    <>
+      <path d="M4 12a8 8 0 0113.7-5.6L20 8.5" />
+      <path d="M20 3.5v5h-5M20 12a8 8 0 01-13.7 5.6L4 15.5" />
+      <path d="M4 20.5v-5h5" />
+    </>
+  ),
+  crown: (
+    <>
+      <path d="M3.5 18.5L2.5 7l5.5 5 4-7 4 7 5.5-5-1 11.5z" />
+      <path d="M4 21.5h16" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2 12s3.7-6.5 10-6.5S22 12 22 12s-3.7 6.5-10 6.5S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  shard: (
+    <>
+      <path d="M12 2.5l6 7.5-6 11.5L6 10z" />
+      <path d="M6 10h12M12 2.5v19" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof P;

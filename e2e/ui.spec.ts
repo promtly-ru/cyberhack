@@ -69,9 +69,10 @@ test('бой: превью карты показывает термины', asyn
   const preview = page.getByTestId('card-preview');
 
   if (testInfo.project.use.hasTouch) {
+    await card.scrollIntoViewIfNeeded();
     const box = (await card.boundingBox())!;
     const cdp = await page.context().newCDPSession(page);
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: box.x + box.width / 2, y: box.y + box.height / 2 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: box.x + box.width * 0.2, y: box.y + box.height / 2 }] });
     await expect(preview).toBeVisible();
     await expect(preview.getByTestId('card-terms')).toBeVisible();
     await expect(preview.getByTestId('card-terms')).toContainText('Термины');

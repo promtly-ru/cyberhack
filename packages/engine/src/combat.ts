@@ -4,12 +4,14 @@
  */
 import { chooseMove } from './ai';
 import type { AscensionMods } from './ascension';
-import { COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, type ResolvedCard } from './cards';
+import { canUpgrade, COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, type ResolvedCard } from './cards';
 import { getContent } from './content';
 import { rngOf } from './rng';
 import { getActiveSynergies } from './synergies';
 import { FIRMWARES, isFirmwareActive } from './firmware';
-import { addStatus, calcAttackDamage, calcBlock, getStatus, KNOWN_STATUSES, STATUS } from './statuses';
+import { getMutatorMods, type MutatorMods } from './mutators';
+import { gainPotions, type PotionDef } from './potions';
+import { addStatus, calcAttackDamage, calcBlock, DEBUFF_STATUSES, getStatus, KNOWN_STATUSES, STATUS } from './statuses';
 import {
   InvalidActionError,
   type CardInstance,
@@ -42,6 +44,11 @@ export interface CombatCtx {
 export type Unit = 'player' | EnemyState;
 
 // ---------- helpers ----------
+
+/** Модификаторы мутаторов забега (без мутаторов — общий константный объект). */
+function mutMods(ctx: CombatCtx): MutatorMods {
+  return getMutatorMods(ctx.s.mutators);
+}
 
 function unitState(ctx: CombatCtx, u: Unit): CombatantState {
   return u === 'player' ? ctx.c.player : u;
@@ -108,7 +115,13 @@ export function hit(ctx: CombatCtx, u: Unit, amount: number, ignoreBlock = false
     blocked = Math.min(t.block, amt);
     t.block -= blocked;
   }
-  const dmg = amt - blocked;
+  let dmg = amt - blocked;
+  // Барьер: удар, пробивший блок, поглощается целиком (Вирус/Утечка/потеря HP — ignoreBlock — не поглощаются)
+  if (dmg > 0 && !ignoreBlock && getStatus(t, STATUS.barrier) > 0) {
+    addStatus(t, STATUS.barrier, -1);
+    ctx.ev.push({ type: 'barrier_absorbed', targetUid: unitUid(u), amount: dmg });
+    dmg = 0;
+  }
   const before = t.hp;
   t.hp = Math.max(0, t.hp - dmg);
   ctx.ev.push({ type: 'damage', targetUid: unitUid(u), amount: dmg, blocked });
@@ -121,7 +134,11 @@ export function hit(ctx: CombatCtx, u: Unit, amount: number, ignoreBlock = false
 function attack(ctx: CombatCtx, source: Unit | null, target: Unit, base: number, applyDefender = true): void {
   const tState = unitState(ctx, target);
   if (tState.hp <= 0) return;
-  const dmg = calcAttackDamage(base, source ? unitState(ctx, source) : null, applyDefender ? tState : null);
+  let dmg = calcAttackDamage(base, source ? unitState(ctx, source) : null, applyDefender ? tState : null);
+  if (source === 'player') {
+    const m = mutMods(ctx).playerDamageMult;
+    if (m !== 1) dmg = Math.floor(dmg * m + 1e-9);
+  }
   const lost = hit(ctx, target, dmg);
   if (source === 'player' && target !== 'player' && lost > (ctx.s.stats.maxHit ?? 0)) ctx.s.stats.maxHit = lost;
   if (source) {
@@ -136,6 +153,32 @@ export function gainBlock(ctx: CombatCtx, u: Unit, base: number, raw = false): v
   const amount = raw ? Math.max(0, base) : calcBlock(base, t);
   t.block += amount;
   ctx.ev.push({ type: 'block_gained', targetUid: unitUid(u), amount });
+  // Утечка снимается, как только носитель получает блок
+  if (amount > 0 && getStatus(t, STATUS.bleed) > 0) {
+    const v = getStatus(t, STATUS.bleed);
+    addStatus(t, STATUS.bleed, -v);
+    ctx.ev.push({ type: 'status_applied', targetUid: unitUid(u), status: STATUS.bleed, amount: -v });
+  }
+}
+
+/** Дебафф ли статус: по контенту, по списку движка или отрицательные Разгон/Шифрование. */
+function isDebuff(id: string, value: number): boolean {
+  if ((id === STATUS.strength || id === STATUS.dexterity) && value < 0) return true;
+  const def = getContent().statuses.get(id);
+  return def ? def.kind === 'debuff' : DEBUFF_STATUSES.has(id);
+}
+
+/** Снять с бойца до amount разных дебаффов. */
+function cleanse(ctx: CombatCtx, u: Unit, amount: number): void {
+  const t = unitState(ctx, u);
+  let left = amount;
+  for (const [id, v] of Object.entries(t.statuses)) {
+    if (left <= 0) break;
+    if (v === 0 || !isDebuff(id, v)) continue;
+    delete t.statuses[id];
+    ctx.ev.push({ type: 'status_applied', targetUid: unitUid(u), status: id, amount: -v });
+    left--;
+  }
 }
 
 export function applyStatus(ctx: CombatCtx, u: Unit, status: StatusId, amount: number): void {
@@ -230,9 +273,64 @@ function applyPlayerUtilityEffect(ctx: CombatCtx, eff: Effect): boolean {
     case 'gain_gold':
       ctx.s.gold = Math.max(0, ctx.s.gold + eff.amount);
       return true;
+    case 'scry': {
+      // Упрощённый «просмотр»: статусы и проклятия среди верхних карт добора уходят в сброс
+      const c = ctx.c;
+      const top = c.drawPile.slice(0, Math.max(0, eff.amount));
+      const junk = top.filter((card) => isJunkCard(card.defId));
+      if (junk.length > 0) {
+        c.drawPile = c.drawPile.filter((card) => !junk.includes(card));
+        c.discardPile.push(...junk);
+        ctx.ev.push({ type: 'cards_discarded', count: junk.length });
+      }
+      return true;
+    }
+    case 'discard_hand_draw': {
+      const c = ctx.c;
+      const n = c.hand.length;
+      if (n > 0) {
+        c.discardPile.push(...c.hand);
+        c.hand = [];
+        ctx.ev.push({ type: 'cards_discarded', count: n });
+      }
+      drawCards(ctx, n + Math.max(0, eff.amount));
+      return true;
+    }
+    case 'upgrade_random_hand': {
+      const rng = rngOf(ctx.s, 'combat');
+      const pool = ctx.c.hand.filter((card) => canUpgrade(card.defId, card.upgraded));
+      for (let i = 0; i < eff.amount && pool.length > 0; i++) {
+        const [card] = pool.splice(rng.int(0, pool.length - 1), 1);
+        if (card) card.upgraded = true; // экземпляр боя — колода забега не меняется
+      }
+      return true;
+    }
+    case 'gain_max_hp': {
+      const amt = Math.max(0, Math.floor(eff.amount));
+      ctx.c.player.maxHp += amt;
+      heal(ctx, 'player', amt);
+      return true;
+    }
+    case 'heal_pct':
+      heal(ctx, 'player', (ctx.c.player.maxHp * eff.amount) / 100);
+      return true;
+    case 'double_next':
+      applyStatus(ctx, 'player', STATUS.echo, eff.amount);
+      return true;
+    case 'cleanse':
+      cleanse(ctx, 'player', eff.amount);
+      return true;
+    case 'gain_potion':
+      gainPotions(ctx.s, eff.amount, eff.potionId, ctx.ev);
+      return true;
     default:
       return false;
   }
+}
+
+function isJunkCard(defId: string): boolean {
+  const t = getContent().cards.get(defId)?.type;
+  return t === 'status' || t === 'curse';
 }
 
 function enemyTargets(ctx: CombatCtx, kind: string, chosen: EnemyState | undefined): EnemyState[] {
@@ -322,6 +420,18 @@ function applyEnemyEffect(ctx: CombatCtx, enemy: EnemyState, def: EnemyDef, eff:
     case 'heal':
       heal(ctx, enemy, eff.amount);
       return;
+    case 'heal_pct':
+      heal(ctx, enemy, (enemy.maxHp * eff.amount) / 100);
+      return;
+    case 'gain_max_hp': {
+      const amt = Math.max(0, Math.floor(eff.amount));
+      enemy.maxHp += amt;
+      heal(ctx, enemy, amt);
+      return;
+    }
+    case 'cleanse':
+      cleanse(ctx, enemy, eff.amount);
+      return;
     case 'lose_hp':
       hit(ctx, 'player', eff.amount, true);
       return;
@@ -329,7 +439,7 @@ function applyEnemyEffect(ctx: CombatCtx, enemy: EnemyState, def: EnemyDef, eff:
       addCardToCombat(ctx, eff.cardId, eff.to, eff.count ?? 1);
       return;
     default:
-      // draw / gain_energy / exhaust_random_hand / gain_gold у врагов игнорируются
+      // draw / gain_energy / exhaust_random_hand / gain_gold / scry / echo и пр. у врагов игнорируются
       return;
   }
 }
@@ -365,6 +475,14 @@ function tickVirus(ctx: CombatCtx, u: Unit): void {
   addStatus(t, STATUS.virus, -1);
 }
 
+/** Утечка: в начале хода носителя −N HP мимо блока; не тает (снимается блоком, см. gainBlock). */
+function tickBleed(ctx: CombatCtx, u: Unit): void {
+  const t = unitState(ctx, u);
+  const b = getStatus(t, STATUS.bleed);
+  if (b <= 0 || t.hp <= 0) return;
+  hit(ctx, u, b, true);
+}
+
 function endOfTurnStatuses(ctx: CombatCtx, u: Unit): void {
   const t = unitState(ctx, u);
   if (t.hp <= 0) return;
@@ -391,6 +509,11 @@ export function refreshIntent(ctx: CombatCtx, e: EnemyState): void {
   const def = enemyDefOf(e);
   const move = def.moves.find((m) => m.id === e.intent.moveId) ?? def.moves[0];
   if (!move) return;
+  // Мутатор «Туман войны»: намерения обычных врагов скрыты
+  if (def.tier === 'normal' && mutMods(ctx).hideNormalIntents) {
+    e.intent = { kind: 'unknown', moveId: move.id };
+    return;
+  }
   const dmg = move.effects.find((f) => f.type === 'damage' && f.target !== 'self');
   e.intent = { kind: move.intent, moveId: move.id };
   if (dmg && dmg.type === 'damage') {
@@ -430,12 +553,16 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
       moveHistory: [],
     };
   });
+  const mm = getMutatorMods(s.mutators);
+  const shuffled = rng.shuffle(s.deck.map((card) => ({ ...card })));
+  // Врождённые карты — наверх добора (порядок среди них сохраняется), чтобы попасть в стартовую руку
+  const isInnate = (card: CardInstance): boolean => resolveCard(card.defId, card.upgraded).innate;
   const c: CombatState = {
     turn: 0,
     energy: 0,
-    maxEnergy: BASE_ENERGY,
+    maxEnergy: BASE_ENERGY + mm.bonusEnergy,
     hand: [],
-    drawPile: rng.shuffle(s.deck.map((card) => ({ ...card }))),
+    drawPile: [...shuffled.filter(isInnate), ...shuffled.filter((card) => !isInnate(card))],
     discardPile: [],
     exhaustPile: [],
     player: { hp: s.hp, maxHp: s.maxHp, block: 0, statuses: {} },
@@ -445,6 +572,9 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
   };
   s.combat = c;
   const ctx: CombatCtx = { s, c, ev, mods };
+  // Мутаторы: стартовые статусы врагов и игрока
+  for (const [id, n] of Object.entries(mm.enemyCombatStatuses)) for (const e of enemies) applyStatus(ctx, e, id, n);
+  for (const [id, n] of Object.entries(mm.playerCombatStatuses)) applyStatus(ctx, 'player', id, n);
   for (const e of enemies) planNextMove(ctx, e);
   startPlayerTurn(ctx);
   return ctx;
@@ -480,12 +610,17 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   c.player.block = 0;
   tickVirus(ctx, 'player');
   if (isOver(ctx)) return;
+  tickBleed(ctx, 'player');
+  if (isOver(ctx)) return;
   c.energy = c.maxEnergy;
+  if (mutMods(ctx).turnEcho && getStatus(c.player, STATUS.echo) < 1) applyStatus(ctx, 'player', STATUS.echo, 1);
   triggerRelics(ctx, 'turn_start');
   if (isOver(ctx)) return;
   applyFirmwares(ctx, 'turn_start');
   if (isOver(ctx)) return;
-  drawCards(ctx, DRAW_PER_TURN);
+  // Ход 1: все врождённые карты (они наверху добора) попадают в руку, даже если их больше 5
+  const innate = c.turn === 1 ? c.drawPile.filter((card) => resolveCard(card.defId, card.upgraded).innate).length : 0;
+  drawCards(ctx, Math.max(DRAW_PER_TURN, innate));
   if (c.turn === 1) {
     triggerRelics(ctx, 'combat_start');
     applySynergies(ctx);
@@ -528,10 +663,19 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   c.counters[COUNTER_TURN_CARDS] = inTurn;
   if (inTurn > (ctx.s.stats.maxCardsInTurn ?? 0)) ctx.s.stats.maxCardsInTurn = inTurn;
 
-  for (let r = 0; r < repeats && !isOver(ctx); r++) {
-    for (const eff of card.effects) {
-      if (isOver(ctx)) break;
-      applyCardEffect(ctx, eff, card, chosen);
+  // Эхо: карта срабатывает дважды, снимается 1 Эхо (проверяется до эффектов — Эхо от самой карты не тратится)
+  let passes = 1;
+  if (getStatus(c.player, STATUS.echo) > 0) {
+    addStatus(c.player, STATUS.echo, -1);
+    passes = 2;
+  }
+  for (let p = 0; p < passes && !isOver(ctx); p++) {
+    if (p > 0) ctx.ev.push({ type: 'card_echoed', cardUid: inst.uid });
+    for (let r = 0; r < repeats && !isOver(ctx); r++) {
+      for (const eff of card.effects) {
+        if (isOver(ctx)) break;
+        applyCardEffect(ctx, eff, card, chosen);
+      }
     }
   }
 
@@ -552,11 +696,15 @@ export function endTurn(ctx: CombatCtx): void {
   if (isOver(ctx)) return;
 
   const hand = c.hand;
+  const kept: CardInstance[] = [];
   c.hand = [];
   for (const inst of hand) {
-    if (resolveCard(inst.defId, inst.upgraded).ethereal) exhaustCard(ctx, inst);
+    const rc = resolveCard(inst.defId, inst.upgraded);
+    if (rc.retain) kept.push(inst); // Удержание: остаётся в руке
+    else if (rc.ethereal) exhaustCard(ctx, inst);
     else c.discardPile.push(inst);
   }
+  c.hand = kept;
 
   endOfTurnStatuses(ctx, 'player');
   if (isOver(ctx)) return;
@@ -565,6 +713,8 @@ export function endTurn(ctx: CombatCtx): void {
     if (e.hp <= 0) continue;
     e.block = 0;
     tickVirus(ctx, e);
+    if (isOver(ctx)) return;
+    tickBleed(ctx, e);
     if (isOver(ctx)) return;
     if (e.hp <= 0) continue;
     const def = enemyDefOf(e);
@@ -585,4 +735,31 @@ export function endTurn(ctx: CombatCtx): void {
     }
   }
   startPlayerTurn(ctx);
+}
+
+// ---------- расходники ----------
+
+/**
+ * Выпить расходник в бою. Урон расходников «сырой» (без Разгона/Лага игрока), но Брешь и Метка цели учитываются.
+ * Эффекты с target 'enemy' бьют по выбранной цели (targetUid обязателен у potion.target === 'enemy').
+ */
+export function usePotionInCombat(ctx: CombatCtx, potion: PotionDef, targetUid: string | undefined): void {
+  let chosen: EnemyState | undefined;
+  if (potion.target === 'enemy') {
+    chosen = ctx.c.enemies.find((e) => e.uid === targetUid && e.hp > 0);
+    if (!chosen) throw new InvalidActionError(`Potion ${potion.id} needs a living enemy target`);
+  }
+  for (const eff of potion.effects) {
+    if (isOver(ctx)) break;
+    const kind = 'target' in eff ? eff.target : undefined;
+    const enemyKind = kind === 'enemy' || kind === 'all_enemies' || kind === 'random_enemy';
+    if (eff.type === 'damage' && enemyKind) {
+      for (let t = 0; t < (eff.times ?? 1) && !isOver(ctx); t++) {
+        for (const e of enemyTargets(ctx, kind, chosen)) attack(ctx, null, e, eff.amount, true);
+      }
+    } else if (eff.type === 'apply_status' && enemyKind) {
+      for (const e of enemyTargets(ctx, kind, chosen)) applyStatus(ctx, e, eff.status, eff.amount);
+    } else applyRelicEffect(ctx, eff);
+  }
+  if (!isOver(ctx)) refreshIntents(ctx);
 }

@@ -11,10 +11,13 @@ import {
   playCard,
   startCombat,
   triggerRelics,
+  usePotionInCombat,
   type CombatCtx,
 } from './combat';
 import { getContent } from './content';
 import { generateMap } from './map';
+import { applyMutators, normalizeMutators } from './mutators';
+import { addPotion, gainPotions, getPotion, hasFreePotionSlot, potionsOf } from './potions';
 import { buildCombatRewards, buildShop, rollRelic, rewardCardPool, type CombatTier } from './rewards';
 import { createRngStore, rngOf } from './rng';
 import { computeScore } from './score';
@@ -36,8 +39,9 @@ import {
 import { lockedContent } from './unlocks';
 import { makeCard } from './util';
 
-function modsOf(s: RunState): AscensionMods {
-  return applyDifficulty(getAscensionMods(s.ascension), s.difficulty);
+/** Итоговые модификаторы: Ascension → режим сложности → мутаторы забега. */
+export function modsOf(s: Pick<RunState, 'ascension' | 'difficulty' | 'mutators'>): AscensionMods {
+  return applyMutators(applyDifficulty(getAscensionMods(s.ascension), s.difficulty), s.mutators);
 }
 
 function invalid(msg: string): never {
@@ -51,7 +55,9 @@ export function newRun(opts: NewRunOptions): RunState {
   const cls = content.classes.get(opts.classId);
   if (!cls) throw new Error(`Unknown class id: ${opts.classId}`);
   const ascension = clampAscension(opts.ascension);
-  const mods = applyDifficulty(getAscensionMods(ascension), opts.difficulty);
+  // Мутаторы — только в обычном забеге (ежедневный одинаков для всех)
+  const mutators = opts.daily ? [] : normalizeMutators(opts.mutators);
+  const mods = modsOf({ ascension, ...(opts.difficulty ? { difficulty: opts.difficulty } : {}), mutators });
   const maxHp = Math.max(1, cls.maxHp - Math.floor(cls.maxHp * mods.maxHpPenaltyPct));
 
   const s: RunState = {
@@ -60,6 +66,7 @@ export function newRun(opts: NewRunOptions): RunState {
     classId: opts.classId,
     ascension,
     ...(opts.difficulty && opts.difficulty !== 'normal' ? { difficulty: opts.difficulty } : {}),
+    ...(mutators.length > 0 ? { mutators } : {}),
     daily: opts.daily ?? false,
     act: 1,
     floor: 0,
@@ -305,6 +312,18 @@ function applyOutOfCombatEffect(s: RunState, eff: Effect, ev: GameEvent[]): void
     case 'add_card':
       for (let i = 0; i < (eff.count ?? 1); i++) addCardToDeck(s, eff.cardId, ev);
       return;
+    case 'heal_pct':
+      healRun(s, (s.maxHp * eff.amount) / 100, ev);
+      return;
+    case 'gain_max_hp': {
+      const amt = Math.max(0, Math.floor(eff.amount));
+      s.maxHp += amt;
+      healRun(s, amt, ev);
+      return;
+    }
+    case 'gain_potion':
+      gainPotions(s, eff.amount, eff.potionId, ev);
+      return;
     default:
       return; // блок, статусы, добор, энергия вне боя не действуют
   }
@@ -413,6 +432,10 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       } else if (item.kind === 'relic') {
         items.splice(action.index, 1);
         obtainRelic(s, item.relicId, ev);
+      } else if (item.kind === 'potion') {
+        if (!hasFreePotionSlot(s)) invalid('No free potion slot');
+        items.splice(action.index, 1);
+        addPotion(s, item.potionId, ev);
       } else {
         s.pendingRewards = items;
         s.screen = { kind: 'card_pick', cardIds: item.cardIds, rewardIndex: action.index };
@@ -454,6 +477,11 @@ export function applyAction(state: RunState, action: Action): ActionResult {
         item.sold = true;
         obtainRelic(s, item.id, ev);
         if (s.hp <= 0) defeat(s);
+      } else if (item.kind === 'potion' && item.id) {
+        if (!hasFreePotionSlot(s)) invalid('No free potion slot');
+        s.gold -= item.price;
+        item.sold = true;
+        addPotion(s, item.id, ev);
       } else if (item.kind === 'remove') {
         if (s.deck.length === 0) invalid('Deck is empty');
         s.savedShop = items;
@@ -488,6 +516,16 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       if (!opt) invalid(`No event option ${action.index}`);
       if (!legalEventOptions(s, def.id).includes(action.index)) invalid('Not enough gold for this option');
       applyEventOption(s, opt, ev);
+      break;
+    }
+    case 'use_potion':
+      usePotion(s, action.slot, action.targetUid, ev);
+      break;
+    case 'discard_potion': {
+      const id = potionsOf(s)[action.slot];
+      if (id === undefined) invalid(`No potion in slot ${action.slot}`);
+      s.potions = potionsOf(s).filter((_, i) => i !== action.slot);
+      ev.push({ type: 'potion_discarded', potionId: id, slot: action.slot });
       break;
     }
     default:
@@ -534,6 +572,40 @@ function selectDeckCard(s: RunState, cardUid: string | null, ev: GameEvent[]): v
   s.deck.splice(idx, 1);
   ev.push({ type: 'card_removed', cardUid, defId: card.defId });
   returnFromDeckSelect(s, returnTo);
+}
+
+// ---------- расходники ----------
+
+/** Можно ли выпить этот расходник на текущем экране (без учёта цели): в бою — любой, вне боя — только outOfCombat. */
+export function canUsePotionNow(s: RunState, potionId: string): boolean {
+  const p = getPotion(potionId);
+  if (!p || s.status !== 'active') return false;
+  if (s.screen.kind === 'combat') return !!s.combat && s.combat.phase === 'player';
+  if (s.screen.kind === 'game_over') return false;
+  return !!p.outOfCombat;
+}
+
+function usePotion(s: RunState, slot: number, targetUid: string | undefined, ev: GameEvent[]): void {
+  const id = potionsOf(s)[slot];
+  if (id === undefined) invalid(`No potion in slot ${slot}`);
+  const potion = getPotion(id);
+  if (!potion) invalid(`Unknown potion id: ${id}`);
+  // Слот освобождается до эффектов (эффект может выдать новый расходник)
+  const consume = (): void => {
+    s.potions = potionsOf(s).filter((_, i) => i !== slot);
+    ev.push({ type: 'potion_used', potionId: id, slot });
+  };
+  if (s.screen.kind === 'combat') {
+    const ctx = combatCtx(s, ev);
+    consume();
+    usePotionInCombat(ctx, potion, targetUid);
+    afterCombatStep(s, ctx, ev);
+    return;
+  }
+  if (!canUsePotionNow(s, id)) invalid(`Potion ${id} can only be used in combat`);
+  consume();
+  applyOutOfCombatEffects(s, potion.effects, ev);
+  if (s.hp <= 0) defeat(s);
 }
 
 function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void {
@@ -595,7 +667,10 @@ export function getLegalActions(state: RunState): Action[] {
       break;
     }
     case 'reward':
-      screen.items.forEach((_, index) => actions.push({ type: 'take_reward', index }));
+      screen.items.forEach((item, index) => {
+        if (item.kind === 'potion' && !hasFreePotionSlot(s)) return; // слоты заняты — сначала выпей/выброси
+        actions.push({ type: 'take_reward', index });
+      });
       actions.push({ type: 'leave_reward' });
       break;
     case 'card_pick':
@@ -606,6 +681,7 @@ export function getLegalActions(state: RunState): Action[] {
       screen.items.forEach((item, index) => {
         if (item.sold || s.gold < item.price) return;
         if (item.kind === 'remove' && s.deck.length === 0) return;
+        if (item.kind === 'potion' && !hasFreePotionSlot(s)) return;
         actions.push({ type: 'shop_buy', index });
       });
       actions.push({ type: 'leave_shop' });
@@ -626,7 +702,24 @@ export function getLegalActions(state: RunState): Action[] {
     case 'game_over':
       break;
   }
+  pushPotionActions(s, actions);
   return actions;
+}
+
+/** use_potion (в бою — любые, с целью для каждого живого врага; вне боя — лечебные) и discard_potion. */
+function pushPotionActions(s: RunState, actions: Action[]): void {
+  const potions = potionsOf(s);
+  if (potions.length === 0 || s.screen.kind === 'game_over') return;
+  const inCombat = s.screen.kind === 'combat';
+  if (inCombat && (!s.combat || s.combat.phase !== 'player')) return;
+  potions.forEach((id, slot) => {
+    const p = getPotion(id);
+    if (!p || !canUsePotionNow(s, id)) return;
+    if (inCombat && p.target === 'enemy') {
+      for (const e of livingEnemies(s.combat!)) actions.push({ type: 'use_potion', slot, targetUid: e.uid });
+    } else actions.push({ type: 'use_potion', slot });
+  });
+  potions.forEach((_, slot) => actions.push({ type: 'discard_potion', slot }));
 }
 
 export function replay(opts: NewRunOptions, actions: readonly Action[]): RunState {

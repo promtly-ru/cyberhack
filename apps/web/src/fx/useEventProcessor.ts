@@ -29,6 +29,9 @@ function gap(ev: GameEvent): number {
     case 'combat_won':
     case 'combat_lost':
       return 250;
+    case 'barrier_absorbed':
+    case 'card_echoed':
+      return 90;
     default:
       return 0;
   }
@@ -140,6 +143,27 @@ function handle(ev: GameEvent): void {
     case 'combat_lost':
       sfx('defeat');
       break;
+    // ---- Новые механики ----
+    case 'barrier_absorbed': {
+      const el = target(ev.targetUid);
+      if (el) fx.statusPop(spriteRect(el), `Барьер: −${ev.amount} поглощено`, false);
+      sfx('block');
+      break;
+    }
+    case 'card_echoed': {
+      const el = target('player');
+      if (el) fx.statusPop(spriteRect(el), 'Эхо!', false);
+      sfx('buff');
+      break;
+    }
+    case 'potion_used': {
+      const el = document.querySelector('[data-fx-target="player"]') ?? document.querySelector('.potion-bar');
+      if (el) {
+        const r = el.getBoundingClientRect();
+        fx.spark(r.left + r.width / 2, r.top + r.height / 2, 0x7dffb0);
+      }
+      break;
+    }
     default:
       break;
   }

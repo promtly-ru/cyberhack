@@ -16,6 +16,10 @@ export interface ResolvedCard {
   effects: Effect[];
   exhaust: boolean;
   ethereal: boolean;
+  /** Удержание: остаётся в руке в конце хода */
+  retain: boolean;
+  /** Врождённая: всегда в стартовой руке боя */
+  innate: boolean;
   description: string;
 }
 
@@ -37,6 +41,8 @@ export function resolveCard(defId: string, upgraded: boolean): ResolvedCard {
     effects: up?.effects ?? def.effects,
     exhaust: up?.exhaust ?? def.exhaust ?? false,
     ethereal: def.ethereal ?? false,
+    retain: up?.retain ?? def.retain ?? false,
+    innate: up?.innate ?? def.innate ?? false,
     description: up?.description ?? def.description,
   };
 }
@@ -95,6 +101,30 @@ function placeholderValues(effects: Effect[]): Record<string, string> {
         break;
       case 'gain_gold':
         setOnce('gold', e.amount);
+        break;
+      case 'scry':
+        setOnce('scry', e.amount);
+        break;
+      case 'discard_hand_draw':
+        setOnce('extra', e.amount);
+        break;
+      case 'upgrade_random_hand':
+        setOnce('upgrade', e.amount);
+        break;
+      case 'gain_max_hp':
+        setOnce('max_hp', e.amount);
+        break;
+      case 'heal_pct':
+        setOnce('heal_pct', e.amount);
+        break;
+      case 'double_next':
+        setOnce('echo', e.amount);
+        break;
+      case 'cleanse':
+        setOnce('cleanse', e.amount);
+        break;
+      case 'gain_potion':
+        setOnce('potions', e.amount);
         break;
     }
   }

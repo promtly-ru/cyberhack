@@ -129,3 +129,504 @@
 @media (prefers-reduced-motion: reduce) {
   .menu::before, .card:hover .card__frame::after { animation: none; }
 }
+
+/* ============================================================
+   ЧАСТЬ 2. Арт: анимации SVG, карты, враги, персонаж
+   ============================================================ */
+.art-pulse { animation: art-pulse calc(2.2s / var(--speed)) ease-in-out infinite; }
+@keyframes art-pulse { 50% { opacity: 0.55; filter: brightness(1.5); } }
+.art-twinkle { animation: art-twinkle calc(2.6s / var(--speed)) ease-in-out infinite; }
+@keyframes art-twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 1; } }
+.art-sway { animation: art-sway calc(3.6s / var(--speed)) ease-in-out infinite; }
+@keyframes art-sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+.art-leg { animation: art-leg calc(1.4s / var(--speed)) ease-in-out infinite alternate; }
+@keyframes art-leg { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+.art-seg { animation: art-seg calc(1.8s / var(--speed)) ease-in-out infinite; }
+@keyframes art-seg { 50% { transform: scale(1.1); } }
+.art-swarm { animation: art-swarm calc(2.4s / var(--speed)) ease-in-out infinite; }
+@keyframes art-swarm { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(2px, -3px) scale(1.15); } 66% { transform: translate(-3px, 2px) scale(0.9); } }
+.art-ghost { animation: art-ghost calc(4s / var(--speed)) ease-in-out infinite; }
+@keyframes art-ghost { 0%, 100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(-6px); opacity: 0.72; } }
+.art-aim { animation: art-aim calc(5s / var(--speed)) ease-in-out infinite; }
+@keyframes art-aim { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+.art-ring { animation: art-ring calc(2.8s / var(--speed)) ease-in-out infinite; }
+@keyframes art-ring { 50% { transform: scale(1.06); opacity: 0.5; } }
+.art-rise { animation: art-rise calc(3s / var(--speed)) ease-in infinite; }
+@keyframes art-rise { 0% { transform: translateY(14px); opacity: 0; } 30% { opacity: 0.9; } 100% { transform: translateY(-8px); opacity: 0; } }
+.art-scan { animation: art-scan calc(3s / var(--speed)) linear infinite; }
+@keyframes art-scan { from { transform: translateY(0); opacity: 0.9; } to { transform: translateY(50px); opacity: 0; } }
+.art-crown { animation: art-crown calc(3.4s / var(--speed)) ease-in-out infinite; filter: drop-shadow(0 0 4px currentColor); }
+@keyframes art-crown { 50% { transform: translateY(-3px); } }
+.art-breathe { animation: art-breathe calc(3.6s / var(--speed)) ease-in-out infinite; }
+@keyframes art-breathe { 50% { transform: scaleY(1.03) scaleX(0.99); } }
+.art-visor-scan { animation: art-visor calc(2.8s / var(--speed)) ease-in-out infinite alternate; }
+@keyframes art-visor { from { transform: translateX(0); } to { transform: translateX(26px); } }
+.art-spin { animation: spin calc(16s / var(--speed)) linear infinite; }
+.art-spin--rev { animation-direction: reverse; animation-duration: calc(11s / var(--speed)); }
+
+/* Враги: тиры */
+.unit-art--enemy { filter: drop-shadow(0 0 7px currentColor) drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)); }
+.tier-art-elite { filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 22px color-mix(in srgb, currentColor 50%, transparent)); }
+.tier-art-boss { filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 34px color-mix(in srgb, currentColor 55%, transparent)); }
+.unit-art--player { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)); }
+.tier-boss .unit__sprite::after { height: 22px; bottom: -12px; left: -6%; right: -6%; }
+.tier-elite .unit__name, .tier-boss .unit__name { text-shadow: 0 0 10px color-mix(in srgb, var(--unit-color) 70%, transparent); }
+.tier-boss .unit__name { font-size: clamp(13px, 1.4vw, 18px); letter-spacing: 0.04em; }
+
+/* Карты: арт */
+.card-art { filter: drop-shadow(0 0 2px currentColor); }
+.card-art .art-hero { filter: drop-shadow(0 0 2.4px currentColor); }
+.card-art .art-holo { opacity: 0.2; mix-blend-mode: color-dodge; animation: art-holo calc(6s / var(--speed)) linear infinite; }
+@keyframes art-holo { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+.card-art .art-up { filter: drop-shadow(0 0 2px #3dff8a); }
+
+.card__art {
+  background:
+    radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px),
+    #04050c;
+}
+.card__art::before, .card__art::after { content: ''; position: absolute; width: 10%; aspect-ratio: 1; z-index: 2; pointer-events: none; border: solid var(--accent); opacity: 0.9; }
+.card__art::before { left: 2%; top: 3%; border-width: 1.5px 0 0 1.5px; }
+.card__art::after { right: 2%; bottom: 3%; border-width: 0 1.5px 1.5px 0; }
+.card__type {
+  padding: 0.8cqw 2.4cqw; border-radius: 1cqw;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+  border-left: 0.9cqw solid var(--accent);
+}
+.card__text { background: linear-gradient(to bottom, rgba(0, 0, 0, 0.28), transparent 70%); border-top: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+.card__cost {
+  background: radial-gradient(circle at 32% 30%, #fff 0, #f6ff9a 22%, var(--acid) 58%, #8fa000 100%);
+  box-shadow: 0 0 0 0.7cqw rgba(232, 255, 58, 0.35), 0 0 5cqw rgba(232, 255, 58, 0.7), inset 0 -1.2cqw 2cqw rgba(0, 0, 0, 0.25);
+}
+.card__name { text-shadow: 0 0 3cqw color-mix(in srgb, var(--accent) 70%, transparent), 0 1px 0 #000; }
+
+/* Класс-метка: тонкая полоса внизу рамки */
+.card { --cls: transparent; }
+.card-cls--netrunner { --cls: #00f0ff; } .card-cls--phreaker { --cls: #e8ff3a; } .card-cls--ghost { --cls: #b48cff; }
+.card-cls--samurai { --cls: #ff5a36; } .card-cls--engineer { --cls: #ff9d1c; } .card-cls--biohacker { --cls: #3dff8a; } .card-cls--droneop { --cls: #4da3ff; } .card-cls--chrono { --cls: #ff4fd8; }
+.card-cls--neutral { --cls: #8d97b5; }
+.card__frame { box-shadow: inset 0 -1.2cqw 0 -0.2cqw var(--cls), inset 0 0 6cqw color-mix(in srgb, var(--accent) 25%, transparent); }
+.rarity--uncommon .card__frame { box-shadow: inset 0 -1.2cqw 0 -0.2cqw var(--cls), inset 0 0 6cqw color-mix(in srgb, var(--accent) 32%, transparent), 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); }
+.rarity--rare .card__frame { box-shadow: inset 0 -1.2cqw 0 -0.2cqw var(--cls), inset 0 0 8cqw color-mix(in srgb, var(--accent) 45%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 40%, transparent); }
+
+/* Фольга у редких */
+.rarity--rare .card__glow {
+  background:
+    linear-gradient(115deg, transparent 18%, rgba(255, 43, 214, 0.16) 32%, rgba(255, 229, 58, 0.14) 40%, rgba(61, 255, 138, 0.14) 48%, rgba(0, 240, 255, 0.16) 58%, transparent 72%) 0 0 / 260% 100%,
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+  mix-blend-mode: screen; animation: foil-slide calc(7s / var(--speed)) ease-in-out infinite alternate;
+}
+@keyframes foil-slide { from { background-position: 0% 0, 0 0; } to { background-position: 100% 0, 0 0; } }
+.rarity--rare .card__name span:first-child { text-shadow: 0 0 3cqw var(--acid), 0 1px 0 #000; }
+.rarity--rare .card__name span.card__plus { color: var(--green); }
+
+/* Улучшенные карты: зелёное свечение, метка и «заводской» блеск */
+.card.is-upgraded .card__frame {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--green));
+  box-shadow: inset 0 -1.2cqw 0 -0.2cqw var(--cls), inset 0 0 7cqw rgba(61, 255, 138, 0.3), 0 0 14px rgba(61, 255, 138, 0.32);
+}
+.card.is-upgraded .card__corner { background: var(--green); opacity: 1; }
+.card.is-upgraded .card__plus { text-shadow: 0 0 3cqw var(--green), 0 0 6cqw var(--green); animation: plus-glow calc(2.4s / var(--speed)) ease-in-out infinite; }
+@keyframes plus-glow { 50% { filter: brightness(1.6); } }
+.card.is-upgraded .card__art { border-color: rgba(61, 255, 138, 0.7); box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.7), 0 0 10px rgba(61, 255, 138, 0.4); }
+.card.is-upgraded .card__art::before, .card.is-upgraded .card__art::after { border-color: var(--green); }
+.card.is-upgraded .card__text .num { text-shadow: 0 0 6px rgba(61, 255, 138, 0.7); }
+
+/* ============================================================
+   ЧАСТЬ 3. Бой: фоны актов, параллакс, частицы, туман
+   ============================================================ */
+.combat { position: relative; isolation: isolate; background: var(--bg); }
+.combat::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    var(--sky-far) repeat-x 0 58% / auto 34%,
+    radial-gradient(ellipse 70% 45% at 50% 62%, rgba(var(--act-a), 0.2), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(var(--act-b), 0.16), transparent 70%),
+    linear-gradient(to bottom, #04050e 0%, #070a1c 55%, #05060f 100%);
+  animation: sky-far calc(180s / var(--speed)) linear infinite;
+}
+@keyframes sky-far { to { background-position: -1200px 58%, 0 0, 0 0, 0 0; } }
+/* Частицы и туман */
+.combat::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.8;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(var(--act-a), 0.9) 0 1px, transparent 2px) 0 0 / 130px 150px,
+    radial-gradient(circle at 70% 30%, rgba(var(--act-b), 0.9) 0 1.2px, transparent 2.4px) 0 0 / 190px 170px,
+    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.7) 0 0.8px, transparent 1.8px) 0 0 / 110px 130px,
+    linear-gradient(to top, rgba(var(--act-a), 0.14), transparent 28%);
+  animation: motes calc(26s / var(--speed)) linear infinite;
+}
+@keyframes motes { to { background-position: 40px -150px, -60px -170px, 30px -130px, 0 0; } }
+.battlefield { z-index: 1; background: none; }
+.battlefield__grid {
+  background:
+    linear-gradient(to top, rgba(var(--act-a), 0.34) 1px, transparent 1px) 0 0 / 100% 40px,
+    linear-gradient(to right, rgba(var(--act-b), 0.34) 1px, transparent 1px) 0 0 / 60px 100%;
+  filter: drop-shadow(0 0 3px rgba(var(--act-a), 0.5));
+}
+.battlefield::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 43%; height: 40%; pointer-events: none; opacity: 0.9;
+  background: var(--sky-near) repeat-x 0 100% / auto 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent); mask-image: linear-gradient(to top, #000 55%, transparent);
+  animation: sky-near calc(90s / var(--speed)) linear infinite;
+}
+@keyframes sky-near { to { background-position: -1200px 100%; } }
+/* свечение горизонта */
+.battlefield::before { height: 3px; opacity: 0.55; box-shadow: 0 0 22px 4px rgba(var(--act-a), 0.45); background: linear-gradient(90deg, transparent, rgba(var(--act-b), 1), rgba(var(--act-a), 1), transparent); }
+
+/* Акт 1 — корпоративные башни: сетка-неон */
+/* Акт 2 — серверный зал: плотная зелёная сетка + точки-узлы */
+.combat[data-act='2'] .battlefield__grid {
+  background:
+    radial-gradient(circle, rgba(var(--act-a), 0.8) 0 1.5px, transparent 2px) 0 0 / 60px 40px,
+    linear-gradient(to top, rgba(var(--act-a), 0.3) 1px, transparent 1px) 0 0 / 100% 20px,
+    linear-gradient(to right, rgba(var(--act-b), 0.3) 1px, transparent 1px) 0 0 / 30px 100%;
+}
+/* Акт 3 — ICE: ромбовидная кристаллическая решётка */
+.combat[data-act='3'] .battlefield__grid {
+  background:
+    repeating-linear-gradient(60deg, rgba(var(--act-a), 0.34) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(-60deg, rgba(var(--act-b), 0.34) 0 1px, transparent 1px 48px);
+  animation: none;
+}
+/* Акт 4 — пустота: концентрические кольца вместо сетки, нет пола */
+.combat[data-act='4'] .battlefield__grid {
+  background: repeating-radial-gradient(ellipse at 50% 100%, rgba(var(--act-a), 0.36) 0 1px, transparent 1px 38px), conic-gradient(from 0deg at 50% 100%, transparent 0 8%, rgba(var(--act-b), 0.12) 8% 9%, transparent 9% 18%, rgba(var(--act-b), 0.12) 18% 19%, transparent 19% 100%);
+  animation: void-breathe calc(6s / var(--speed)) ease-in-out infinite alternate;
+}
+@keyframes void-breathe { to { opacity: 0.55; } }
+.combat[data-act='4']::after { background: radial-gradient(circle at 20% 80%, rgba(180, 140, 255, 0.9) 0 1px, transparent 2px) 0 0 / 90px 110px, radial-gradient(circle at 70% 30%, rgba(255, 59, 92, 0.8) 0 1.4px, transparent 2.4px) 0 0 / 140px 120px, radial-gradient(circle at 40% 60%, #fff 0 1px, transparent 2px) 0 0 / 70px 90px; }
+.combat[data-act='4']::before { background:
+    var(--sky-far) repeat-x 0 40% / auto 40%,
+    radial-gradient(circle at 70% 36%, #000 0 6%, rgba(255, 59, 92, 0.32) 7%, rgba(180, 140, 255, 0.16) 14%, transparent 30%),
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(var(--act-b), 0.2), transparent 70%),
+    linear-gradient(to bottom, #02020a 0%, #0a0616 60%, #05030c 100%); }
+
+/* Элита / босс: красный тон и пульс */
+.combat[data-tier='elite'] { --act-b: 255, 159, 28; }
+.combat[data-tier='boss'] { --act-b: 255, 43, 80; }
+.combat[data-tier='elite'] .battlefield::before, .combat[data-tier='boss'] .battlefield::before { opacity: 0.9; }
+.combat[data-tier='elite']::after, .combat[data-tier='boss']::after {
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255, 90, 60, 0.9) 0 1px, transparent 2px) 0 0 / 130px 150px,
+    radial-gradient(circle at 70% 30%, rgba(255, 43, 80, 0.9) 0 1.2px, transparent 2.4px) 0 0 / 190px 170px,
+    linear-gradient(to top, rgba(255, 43, 80, 0.2), transparent 30%);
+}
+.combat[data-tier='boss'] .battlefield { box-shadow: inset 0 0 90px 10px rgba(255, 30, 70, 0.28); animation: boss-alarm calc(2.6s / var(--speed)) ease-in-out infinite; }
+.combat[data-tier='elite'] .battlefield { box-shadow: inset 0 0 70px 4px rgba(255, 140, 20, 0.2); animation: elite-alarm calc(3.4s / var(--speed)) ease-in-out infinite; }
+@keyframes boss-alarm { 50% { box-shadow: inset 0 0 130px 24px rgba(255, 30, 70, 0.42); } }
+@keyframes elite-alarm { 50% { box-shadow: inset 0 0 100px 12px rgba(255, 140, 20, 0.32); } }
+
+/* Платформа под юнитами — кольцо с подсветкой */
+.unit__sprite::after {
+  height: 16px; bottom: -9px;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--unit-color, var(--cyan)) 70%, transparent), color-mix(in srgb, var(--unit-color, var(--cyan)) 18%, transparent) 55%, transparent 72%);
+}
+.unit__sprite::before {
+  content: ''; position: absolute; left: 4%; right: 4%; bottom: -6px; height: 10px; border-radius: 50%; z-index: -1;
+  border: 1px solid color-mix(in srgb, var(--unit-color, var(--cyan)) 70%, transparent); opacity: 0.6;
+}
+@media (max-width: 767px) { .battlefield::after { height: 34%; bottom: 40%; } }
+
+/* ============================================================
+   ЧАСТЬ 4. Интерфейс: кнопки, панели, топбар, бой-HUD
+   ============================================================ */
+@keyframes ui-rise { from { opacity: 0; transform: translateY(14px); } }
+.menu__nav > * { animation: ui-rise calc(480ms / var(--speed)) cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.menu__nav > *:nth-child(2) { animation-delay: 70ms; } .menu__nav > *:nth-child(3) { animation-delay: 140ms; }
+.menu__nav > *:nth-child(4) { animation-delay: 210ms; } .menu__nav > *:nth-child(5) { animation-delay: 280ms; } .menu__nav > *:nth-child(6) { animation-delay: 350ms; }
+.reward-list > li, .pick-row > *, .event-options > li, .shop-cards > * { animation: ui-rise calc(420ms / var(--speed)) ease-out both; }
+.reward-list > li:nth-child(2), .pick-row > *:nth-child(2), .event-options > li:nth-child(2) { animation-delay: 80ms; }
+.reward-list > li:nth-child(3), .pick-row > *:nth-child(3), .event-options > li:nth-child(3) { animation-delay: 160ms; }
+.reward-list > li:nth-child(4), .event-options > li:nth-child(4) { animation-delay: 240ms; }
+
+/* Кнопки */
+.btn {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: linear-gradient(180deg, rgba(0, 240, 255, 0.14), rgba(0, 240, 255, 0.04)), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 6px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -8px 14px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s, box-shadow 0.2s, transform 0.12s, border-color 0.15s;
+}
+.btn::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; transform: translateX(-130%);
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%); transition: transform 0.55s;
+}
+.btn:hover:not(:disabled)::after { transform: translateX(130%); }
+.btn:hover:not(:disabled) { border-color: var(--cyan); transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: translateY(1px) scale(0.985); box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.45); }
+.btn--primary {
+  background: linear-gradient(180deg, #5ffaff 0%, #00e0f2 48%, #00a6bd 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -10px 16px rgba(0, 70, 90, 0.35), 0 0 22px rgba(0, 240, 255, 0.35);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.btn--primary:hover:not(:disabled) { background: linear-gradient(180deg, #a8fcff 0%, #3ff2ff 48%, #00bcd4 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 0 34px rgba(0, 240, 255, 0.6); }
+.btn--danger { background: linear-gradient(180deg, rgba(255, 59, 92, 0.26), rgba(255, 59, 92, 0.08)); }
+.btn--danger:hover:not(:disabled) { border-color: var(--red); background: rgba(255, 59, 92, 0.32); }
+.btn--ghost { background: transparent; box-shadow: none; }
+.icon-btn { background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)); transition: transform 0.12s, border-color 0.15s, color 0.15s, box-shadow 0.15s; }
+.icon-btn:hover { box-shadow: 0 0 14px rgba(0, 240, 255, 0.3); transform: translateY(-1px); }
+.icon-btn:active { transform: scale(0.95); }
+
+/* Меню-кнопки */
+.menu-btn {
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), rgba(11, 15, 34, 0.85) 60%), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 2px, transparent 2px 7px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); border-left-width: 4px;
+}
+.menu-btn:hover:not(:disabled) { box-shadow: inset 0 0 24px rgba(0, 240, 255, 0.14), 0 0 20px rgba(0, 240, 255, 0.18); border-color: var(--cyan); }
+.menu-btn--primary { background: linear-gradient(90deg, rgba(255, 43, 214, 0.34), rgba(255, 43, 214, 0.06) 70%, rgba(11, 15, 34, 0.85)), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 7px); box-shadow: 0 0 24px rgba(255, 43, 214, 0.2); }
+.menu-btn--primary:hover:not(:disabled) { box-shadow: inset 0 0 28px rgba(255, 43, 214, 0.25), 0 0 28px rgba(255, 43, 214, 0.4); border-color: var(--magenta); }
+.menu-btn .icon { filter: drop-shadow(0 0 5px currentColor); transition: transform 0.2s; }
+.menu-btn:hover:not(:disabled) .icon { transform: scale(1.18) rotate(-4deg); }
+
+/* Панели и модалки */
+.panel, .gameover__inner, .map-legend {
+  position: relative;
+  background:
+    linear-gradient(160deg, rgba(0, 240, 255, 0.07), transparent 38%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 9px),
+    var(--panel);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.panel::before, .modal::before, .gameover__inner::before {
+  content: ''; position: absolute; inset: 5px; pointer-events: none; border-radius: 10px; z-index: 0;
+  background:
+    linear-gradient(var(--cyan), var(--cyan)) 0 0 / 14px 1.5px no-repeat, linear-gradient(var(--cyan), var(--cyan)) 0 0 / 1.5px 14px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 100% 100% / 14px 1.5px no-repeat, linear-gradient(var(--cyan), var(--cyan)) 100% 100% / 1.5px 14px no-repeat;
+  opacity: 0.55;
+}
+.modal {
+  position: relative;
+  background: linear-gradient(165deg, rgba(0, 240, 255, 0.09), transparent 36%), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 9px), var(--panel-solid);
+  box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 50px rgba(0, 240, 255, 0.14);
+  animation: modal-in calc(260ms / var(--speed)) cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+@keyframes modal-in { from { opacity: 0; transform: translateY(16px) scale(0.96); } }
+.modal__head { background: linear-gradient(90deg, rgba(0, 240, 255, 0.14), transparent 70%); border-bottom: 1px solid var(--line); position: relative; z-index: 1; }
+.modal__head h2 { text-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
+.modal__body { position: relative; z-index: 1; }
+.modal-backdrop { background: radial-gradient(ellipse at center, rgba(8, 12, 30, 0.7), rgba(2, 3, 10, 0.88)); }
+
+/* Топбар: стат-плашки */
+.topbar {
+  background: linear-gradient(to bottom, rgba(5, 6, 15, 0.97), rgba(8, 10, 26, 0.82)), repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.03) 0 1px, transparent 1px 24px);
+  border-bottom: 1px solid transparent; border-image: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent) 1; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
+}
+.stat {
+  position: relative; background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)); border: 1px solid var(--line-2); border-left: 3px solid currentColor;
+  border-radius: 4px 10px 4px 10px; box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.35);
+}
+.stat--hp .mono, .stat--gold .mono, .stat--floor .mono { text-shadow: 0 0 8px currentColor; }
+.stat .icon { filter: drop-shadow(0 0 4px currentColor); }
+.relic { background: radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.18), rgba(0, 240, 255, 0.04)); box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5); transition: transform 0.15s, box-shadow 0.15s; }
+.relic:hover { transform: translateY(-2px) scale(1.08); box-shadow: 0 0 14px currentColor; }
+
+/* HP / блок */
+.hpbar { border-radius: 6px; background: linear-gradient(to bottom, #0a0408, #1f0a14); box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 59, 92, 0.15); }
+.hpbar__fill { background: linear-gradient(to bottom, #ff7a92 0%, #ff3b5c 45%, #a0102c 100%); box-shadow: 0 0 10px rgba(255, 59, 92, 0.6); }
+.hpbar__fill::after { content: ''; position: absolute; inset: 0 0 55% 0; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.35), transparent); border-radius: 3px 3px 0 0; }
+.has-block .hpbar__fill { background: linear-gradient(to bottom, #9bf0ff 0%, #31c4e0 45%, #08788c 100%); box-shadow: 0 0 10px rgba(0, 240, 255, 0.6); }
+.hpbar__block { background: linear-gradient(160deg, #0a3a46, #04222b); }
+
+/* Энергия */
+.energy { filter: drop-shadow(0 0 14px rgba(232, 255, 58, 0.25)); }
+.energy__ring2 { fill: url(#none); fill: rgba(8, 9, 4, 0.92); }
+.energy__core { animation: energy-throb calc(2.4s / var(--speed)) ease-in-out infinite; }
+@keyframes energy-throb { 50% { fill: rgba(232, 255, 58, 0.3); } }
+.pile__box { background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(5, 6, 15, 0.9) 60%); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 10px color-mix(in srgb, currentColor 22%, transparent); transition: transform 0.15s, box-shadow 0.15s; }
+.pile:hover .pile__box { transform: translateY(-3px); box-shadow: 0 0 18px color-mix(in srgb, currentColor 45%, transparent); }
+
+/* Конец хода */
+.btn--end {
+  background: linear-gradient(180deg, rgba(255, 90, 230, 0.55), rgba(255, 43, 214, 0.22)), repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0 6px, transparent 6px 12px);
+  text-shadow: 0 0 10px rgba(255, 43, 214, 0.9); animation: end-glow calc(2.6s / var(--speed)) ease-in-out infinite;
+}
+@keyframes end-glow { 50% { box-shadow: 0 0 34px rgba(255, 43, 214, 0.6), inset 0 0 14px rgba(255, 43, 214, 0.25); } }
+.btn--end:hover:not(:disabled) { background: linear-gradient(180deg, rgba(255, 120, 235, 0.75), rgba(255, 43, 214, 0.45)); }
+.btn--end:disabled { animation: none; }
+
+/* Намерения и статусы */
+.intent { background: linear-gradient(180deg, rgba(20, 24, 48, 0.96), rgba(5, 6, 15, 0.94)); border-radius: 4px 10px 4px 10px; border: 1px solid color-mix(in srgb, currentColor 45%, transparent); box-shadow: 0 0 12px color-mix(in srgb, currentColor 28%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.intent--attack { box-shadow: 0 0 16px rgba(255, 59, 92, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.status { background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.6)); box-shadow: 0 0 8px color-mix(in srgb, currentColor 30%, transparent); transition: transform 0.12s; }
+.status:hover { transform: scale(1.12); }
+.status--buff { box-shadow: 0 0 9px rgba(232, 255, 58, 0.3); }
+.status--debuff { box-shadow: 0 0 9px rgba(180, 140, 255, 0.3); }
+.synergy { background: linear-gradient(90deg, #cfe800, var(--acid)); }
+
+/* ============================================================
+   ЧАСТЬ 5. Меню: живой логотип, частицы, класс-карточки
+   ============================================================ */
+.menu::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(0, 240, 255, 0.95) 0 1px, transparent 2px) 0 0 / 120px 160px,
+    radial-gradient(circle at 70% 30%, rgba(255, 43, 214, 0.95) 0 1.4px, transparent 2.6px) 0 0 / 170px 190px,
+    radial-gradient(circle at 40% 60%, rgba(232, 255, 58, 0.8) 0 1px, transparent 2px) 0 0 / 210px 140px,
+    linear-gradient(to top, rgba(0, 240, 255, 0.1), transparent 22%),
+    repeating-linear-gradient(to right, rgba(0, 240, 255, 0.05) 0 1px, transparent 1px 64px);
+  animation: motes calc(30s / var(--speed)) linear infinite; opacity: 0.75;
+}
+.logo { position: relative; }
+.logo::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: min(120%, 520px); aspect-ratio: 1; translate: -50% -52%; z-index: -1; pointer-events: none;
+  background: conic-gradient(from 0deg, transparent, rgba(0, 240, 255, 0.12), transparent 30%, rgba(255, 43, 214, 0.12), transparent 62%);
+  -webkit-mask-image: radial-gradient(circle, transparent 38%, #000 40%, #000 56%, transparent 58%); mask-image: radial-gradient(circle, transparent 38%, #000 40%, #000 56%, transparent 58%);
+  animation: spin calc(24s / var(--speed)) linear infinite;
+}
+.menu__hero .logo::before { left: 40%; }
+.logo__word { animation: logo-glow calc(5s / var(--speed)) ease-in-out infinite; }
+@keyframes logo-glow {
+  0%, 100% { text-shadow: 0 0 18px rgba(0, 240, 255, 0.8), 0 0 40px rgba(255, 43, 214, 0.45); }
+  50% { text-shadow: 0 0 26px rgba(0, 240, 255, 1), 0 0 56px rgba(255, 43, 214, 0.7); }
+}
+.logo__sub { position: relative; padding: 0 22px; }
+.logo__sub::before, .logo__sub::after { content: ''; position: absolute; top: 50%; width: 14px; height: 1px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.logo__sub::before { left: 0; } .logo__sub::after { right: 0; }
+.menu__hero .logo__sub::before { display: none; }
+.menu__hero .logo__sub { padding-left: 0; }
+
+.showcase__item { background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--class-color) 30%, transparent), rgba(5, 6, 15, 0.5) 70%); position: relative; overflow: hidden; }
+.showcase__item::after { content: ''; position: absolute; left: 20%; right: 20%; bottom: 14px; height: 6px; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--class-color) 70%, transparent), transparent 70%); }
+.showcase__item .unit-art { position: relative; z-index: 1; }
+
+.class-card {
+  background:
+    radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--class-color) 16%, transparent), transparent 70%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 9px), rgba(11, 15, 34, 0.9);
+  border-radius: 6px 20px 6px 20px; overflow: hidden;
+}
+.class-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, var(--class-color), transparent); opacity: 0.8;
+}
+.class-card__art { position: relative; }
+.class-card__art::after { content: ''; position: absolute; left: 15%; right: 15%; bottom: 0; height: 10px; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--class-color) 60%, transparent), transparent 70%); }
+.class-card__art svg { position: relative; z-index: 1; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--class-color) 55%, transparent)); transition: transform 0.25s; }
+.class-card:hover:not(:disabled) .class-card__art svg { transform: translateY(-3px) scale(1.04); }
+.class-card:hover:not(:disabled) { border-color: color-mix(in srgb, var(--class-color) 60%, transparent); box-shadow: 0 8px 30px color-mix(in srgb, var(--class-color) 25%, transparent); }
+.class-card.is-selected::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 40%, color-mix(in srgb, var(--class-color) 18%, transparent) 50%, transparent 60%) 0 0 / 250% 100%; animation: foil-slide calc(3.5s / var(--speed)) linear infinite; }
+.asc-chip { clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); border: 0; background: linear-gradient(180deg, rgba(0, 240, 255, 0.28), rgba(0, 240, 255, 0.08)); box-shadow: inset 0 0 0 1px var(--line); transition: transform 0.12s, background 0.15s; width: 46px; height: 44px; color: var(--text); }
+.asc-chip:hover:not(.is-locked) { transform: translateY(-2px); background: linear-gradient(180deg, rgba(0, 240, 255, 0.5), rgba(0, 240, 255, 0.15)); }
+.asc-chip.is-selected { background: linear-gradient(180deg, #ffbd5c, var(--orange)); color: #05060f; }
+.asc-chip.is-locked { background: rgba(255, 255, 255, 0.05); }
+@media (max-width: 767px) { .asc-chip { width: 46px; height: 44px; } }
+
+/* ============================================================
+   ЧАСТЬ 6. Карта забега
+   ============================================================ */
+.map-screen { position: relative; isolation: isolate; }
+.map-screen::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(var(--act-a), 0.9) 0 1px, transparent 2px) 0 0 / 140px 170px,
+    radial-gradient(circle at 70% 30%, rgba(var(--act-b), 0.9) 0 1.3px, transparent 2.5px) 0 0 / 200px 180px,
+    var(--sky-far) repeat-x 0 100% / auto 30%,
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(var(--act-b), 0.2), transparent 70%),
+    linear-gradient(to bottom, #04050e, #070a1c 60%, #05060f);
+  animation: map-motes calc(34s / var(--speed)) linear infinite;
+}
+@keyframes map-motes { to { background-position: 40px -170px, -60px -180px, -1200px 100%, 0 0, 0 0; } }
+.map-head { position: relative; }
+.map-head::after { content: ''; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; height: 1px; background: linear-gradient(90deg, rgba(var(--act-a), 0.8), rgba(var(--act-b), 0.6), transparent); }
+.map-title { text-shadow: 0 0 16px rgba(var(--act-a), 0.7); }
+.map-scroll {
+  border-color: rgba(var(--act-a), 0.3);
+  background:
+    linear-gradient(to bottom, rgba(5, 6, 15, 0.78), rgba(5, 6, 15, 0.55)),
+    repeating-linear-gradient(0deg, rgba(var(--act-a), 0.05) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgba(var(--act-a), 0.05) 0 1px, transparent 1px 40px);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(var(--act-a), 0.1);
+}
+.map-gridline { stroke: rgba(var(--act-a), 0.08); }
+.map-edge { stroke: rgba(154, 166, 200, 0.4); }
+.map-edge.is-visited { stroke: rgb(var(--act-a)); filter: drop-shadow(0 0 5px rgb(var(--act-a))); }
+.map-edge.is-open { filter: drop-shadow(0 0 4px var(--acid)); }
+.map-node__bg { fill: #0a0d1f; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)); transition: fill 0.15s; }
+.map-node.is-available { filter: drop-shadow(0 0 9px currentColor); }
+.map-node.is-available:hover { filter: drop-shadow(0 0 16px currentColor); }
+.map-node.is-available .map-node__bg { fill: color-mix(in srgb, currentColor 26%, #0a0d1f); }
+.kind-boss .map-node__bg { filter: drop-shadow(0 0 10px var(--magenta)); }
+.kind-elite .map-node__bg { stroke-dasharray: 0; }
+.map-node.is-current .map-node__halo { stroke-dasharray: 5 4; animation: spin calc(8s / var(--speed)) linear infinite; transform-box: fill-box; transform-origin: center; }
+.legend-icon { background: radial-gradient(circle at 50% 30%, color-mix(in srgb, currentColor 25%, #0a0d1f), #0a0d1f); box-shadow: 0 0 10px color-mix(in srgb, currentColor 35%, transparent); }
+
+/* ============================================================
+   ЧАСТЬ 7. Награды, магазин, отдых, события, итоги
+   ============================================================ */
+.run-screen__body { position: relative; }
+.panel-head h1::after { content: ''; display: block; width: 120px; height: 2px; margin: 10px auto 0; background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent); }
+.reward {
+  position: relative; overflow: hidden; border-left: 4px solid var(--cyan); border-radius: 4px 14px 4px 14px;
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.12), transparent 60%), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 8px), var(--panel);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+.reward::after { content: ''; position: absolute; inset: 0; pointer-events: none; transform: translateX(-130%); background: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, 0.12) 50%, transparent 65%); transition: transform 0.6s; }
+.reward:hover::after { transform: translateX(130%); }
+.reward:hover { box-shadow: 0 0 24px rgba(0, 240, 255, 0.25); border-color: var(--cyan); }
+.reward--gold { border-left-color: var(--acid); background: linear-gradient(90deg, rgba(232, 255, 58, 0.14), transparent 60%), var(--panel); }
+.reward--relic { border-left-color: var(--magenta); background: linear-gradient(90deg, rgba(255, 43, 214, 0.14), transparent 60%), var(--panel); }
+.reward--firmware { border-left-color: var(--acid); }
+.reward__icon { border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, currentColor 22%, transparent), transparent 70%); filter: drop-shadow(0 0 6px currentColor); }
+.pick-card:hover, .select-card:hover, .shop-item:hover:not(:disabled) { filter: drop-shadow(0 8px 18px rgba(0, 240, 255, 0.35)); }
+.pick-row .card { transition: transform 0.18s; }
+
+.shop-relic, .shop-service {
+  background: linear-gradient(160deg, color-mix(in srgb, currentColor 12%, transparent), transparent 60%), var(--panel); border-radius: 4px 14px 4px 14px; transition: transform 0.15s, box-shadow 0.15s;
+}
+.shop-relic:hover:not(.is-sold), .shop-service:hover:not(.is-sold) { transform: translateY(-3px); box-shadow: 0 0 20px color-mix(in srgb, currentColor 35%, transparent); }
+.price { padding: 2px 10px; border-radius: 99px; background: rgba(232, 255, 58, 0.1); border: 1px solid rgba(232, 255, 58, 0.4); text-shadow: 0 0 8px rgba(232, 255, 58, 0.5); }
+.price.is-expensive { background: rgba(255, 59, 92, 0.1); border-color: rgba(255, 59, 92, 0.4); text-shadow: none; }
+
+.choice { position: relative; overflow: hidden; border-radius: 6px 20px 6px 20px; background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, currentColor 18%, transparent), transparent 70%), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 8px), var(--panel); }
+.choice:hover:not(:disabled) { box-shadow: 0 8px 28px color-mix(in srgb, currentColor 28%, transparent); }
+.rest-core { filter: drop-shadow(0 0 22px rgba(61, 255, 138, 0.35)); }
+
+.terminal { position: relative; background: #02040a; border-color: rgba(61, 255, 138, 0.35); box-shadow: 0 0 34px rgba(61, 255, 138, 0.12), inset 0 0 60px rgba(0, 0, 0, 0.8); }
+.terminal::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(61, 255, 138, 0.045) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55)); }
+.terminal__bar { background: linear-gradient(90deg, rgba(61, 255, 138, 0.18), transparent); }
+.terminal__bar span:nth-child(2) { background: var(--orange); } .terminal__bar span:nth-child(3) { background: var(--green); }
+.terminal__text { color: #d8ffe8; text-shadow: 0 0 6px rgba(61, 255, 138, 0.45); }
+.event-option { border-radius: 4px 12px 4px 12px; background: linear-gradient(90deg, rgba(180, 140, 255, 0.14), transparent 60%), var(--panel); transition: transform 0.15s, background 0.15s, box-shadow 0.15s; }
+.event-option:hover:not(:disabled) { transform: translateX(5px); box-shadow: 0 0 18px rgba(180, 140, 255, 0.28); }
+
+/* Победа / поражение */
+.gameover { position: relative; overflow: hidden; }
+.gameover::before { content: ''; position: absolute; inset: -30%; pointer-events: none; z-index: 0; }
+.gameover__inner { z-index: 1; border-radius: 8px 28px 8px 28px; }
+.is-victory::before {
+  background: repeating-conic-gradient(from 0deg at 50% 40%, rgba(232, 255, 58, 0.09) 0 6deg, transparent 6deg 18deg), radial-gradient(circle at 50% 40%, rgba(232, 255, 58, 0.25), transparent 50%);
+  animation: spin calc(90s / var(--speed)) linear infinite; mask-image: radial-gradient(circle at 50% 40%, #000, transparent 70%); -webkit-mask-image: radial-gradient(circle at 50% 40%, #000, transparent 70%);
+}
+.is-defeat::before { background: repeating-linear-gradient(to bottom, rgba(255, 59, 92, 0.07) 0 2px, transparent 2px 5px), radial-gradient(circle at 50% 40%, rgba(255, 59, 92, 0.22), transparent 60%); animation: boss-alarm-bg calc(3s / var(--speed)) ease-in-out infinite alternate; inset: 0; }
+@keyframes boss-alarm-bg { to { opacity: 0.55; } }
+.is-defeat .gameover__inner { background: linear-gradient(160deg, rgba(255, 59, 92, 0.12), transparent 40%), var(--panel); }
+.is-victory .gameover__inner { background: linear-gradient(160deg, rgba(232, 255, 58, 0.13), transparent 40%), var(--panel); }
+.stats div { transition: background 0.15s; }
+.stats div:hover { background: rgba(255, 255, 255, 0.03); }
+
+/* Карточки-превью, ачивки, подсказки, фокус */
+.ach { background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent), rgba(255, 255, 255, 0.02); border-radius: 4px 12px 4px 12px; }
+.tooltip { background: linear-gradient(160deg, rgba(0, 240, 255, 0.1), transparent 40%), rgba(8, 10, 24, 0.98); border-radius: 4px 12px 4px 12px; }
+.card-terms { background: linear-gradient(160deg, rgba(0, 240, 255, 0.08), transparent 40%), rgba(8, 11, 26, 0.97); border-radius: 4px 12px 4px 12px; }
+.badge { background: rgba(255, 255, 255, 0.03); }
+.toast { background: linear-gradient(90deg, rgba(255, 59, 92, 0.3), #2a0b14 60%); box-shadow: 0 0 24px rgba(255, 59, 92, 0.3); }
+.target-arrow path:not([d='']) { stroke-width: 6; }
+
+/* Прокрутка */
+* { scrollbar-width: thin; scrollbar-color: rgba(0, 240, 255, 0.35) transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .combat::before, .combat::after, .battlefield::after, .menu::after, .map-screen::before, .logo::before, .logo__word, .btn--end,
+  .combat[data-tier] .battlefield, .rarity--rare .card__glow, .card-art .art-holo { animation: none; }
+}
+html[data-motion='reduced'] .combat::before, html[data-motion='reduced'] .combat::after, html[data-motion='reduced'] .battlefield::after,
+html[data-motion='reduced'] .menu::after, html[data-motion='reduced'] .map-screen::before { animation: none; }
+
+/* Персонаж: оттенок капюшона по классу, обводка-подсветка */
+.unit-art--player .fill-deep { fill: color-mix(in srgb, currentColor 9%, #070914); }
+.unit-art--player .fill-void { fill: #02030a; }
+@media (max-width: 560px) {
+  .logo__sub::before, .logo__sub::after { display: none; }
+  .logo__sub { padding: 0; }
+  .showcase__item span { font-size: 9px; overflow-wrap: anywhere; }
+}

@@ -5,6 +5,8 @@ import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
 import { RelicGlyph, SynergyBar, firmwareNeeds } from '../components/Bits';
+import { PotionGlyph } from '../components/PotionBar';
+import { getMutator, getPotion, POTION_SLOTS } from '../game/engine';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
@@ -49,6 +51,7 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
     sfx(item.kind === 'gold' ? 'buy' : 'select');
     dispatch({ type: 'take_reward', index: i });
   };
+  const slotsFull = (run.potions?.length ?? 0) >= POTION_SLOTS;
   return (
     <Shell run={run} className="reward-screen" eyebrow="Доступ получен" title="Трофеи" hint="Нажми на награду, чтобы забрать её. Когда закончишь — «Дальше»." glitch>
       <ul className="reward-list">
@@ -69,6 +72,11 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
             icon = <span className="reward__fw">⚡</span>;
             label = `Прошивка «${fw?.name ?? item.firmwareId}»`;
             sub = `${fw?.description ?? ''}. Нужны: ${firmwareNeeds(item.firmwareId, run.deck)}`;
+          } else if (item.kind === 'potion') {
+            const p = getPotion(item.potionId);
+            icon = <PotionGlyph id={item.potionId} size={26} />;
+            label = `Расходник «${p?.name ?? item.potionId}»`;
+            sub = slotsFull ? 'Слоты заняты — выпей или выброси расходник на панели сверху' : (p?.description ?? '');
           } else {
             icon = <Icon name="deck" size={26} />;
             label = 'Новая карта в колоду';
@@ -76,13 +84,13 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
           }
           return (
             <li key={`${item.kind}-${i}`}>
-              <button className={`reward reward--${item.kind}`} data-testid="reward-item" data-kind={item.kind} onClick={() => take(i, item)}>
+              <button className={`reward reward--${item.kind}${item.kind === 'potion' && slotsFull ? ' is-blocked' : ''}`} data-testid="reward-item" data-kind={item.kind} disabled={item.kind === 'potion' && slotsFull} onClick={() => take(i, item)}>
                 <span className="reward__icon">{icon}</span>
                 <span className="reward__text">
                   <b>{label}</b>
                   {sub ? <small>{sub}</small> : null}
                 </span>
-                <span className="reward__cta">Забрать</span>
+                <span className="reward__cta">{item.kind === 'potion' && slotsFull ? 'Нет места' : 'Забрать'}</span>
               </button>
             </li>
           );
@@ -165,6 +173,8 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
   const cards = indexed.filter((x) => x.it.kind === 'card');
   const relics = indexed.filter((x) => x.it.kind === 'relic');
   const services = indexed.filter((x) => x.it.kind === 'remove');
+  const potionItems = indexed.filter((x) => x.it.kind === 'potion');
+  const potionsFull = (run.potions?.length ?? 0) >= POTION_SLOTS;
   const price = (it: ShopItem) => (
     <span className={`price mono${it.price > run.gold && !it.sold ? ' is-expensive' : ''}`}>
       <Icon name="gold" size={15} />
@@ -172,7 +182,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
     </span>
   );
   return (
-    <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты и импланты за кредиты или удали лишнюю карту из колоды. Импланты — бонусы на весь забег.">
+    <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты, импланты и расходники за кредиты или удали лишнюю карту из колоды. Импланты — бонусы на весь забег, расходники — разовые.">
       <p className="flavor">«Всё чистое, без закладок. Почти». — брокер по кличке Ноль</p>
       <section>
         <h2 className="section-title">Карты</h2>
@@ -214,6 +224,35 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
               {price(it)}
             </button>
           ))}
+          {potionItems.length ? (
+            <>
+              <h2 className="section-title shop-potions__title">Расходники</h2>
+              <div className="shop-potions">
+                {potionItems.map(({ it, i }) => {
+                  const p = it.id ? getPotion(it.id) : undefined;
+                  const blocked = !it.sold && potionsFull;
+                  return (
+                    <button
+                      key={i}
+                      className={`shop-potion${it.sold ? ' is-sold' : ''}${blocked ? ' is-blocked' : ''}`}
+                      data-testid="shop-potion"
+                      onClick={() => buy(i, it)}
+                      disabled={it.sold || blocked}
+                      aria-label={`${p?.name ?? 'Расходник'}${it.sold ? ' — продано' : blocked ? ' — нет свободного слота' : `, цена ${it.price}`}`}
+                      {...tip(p?.name ?? '', `${p?.description ?? ''}${blocked ? ' Слоты заняты.' : ''}`)}
+                    >
+                      {it.id ? <PotionGlyph id={it.id} size={24} /> : null}
+                      <span className="shop-potion__text">
+                        <b>{p?.name ?? it.id}</b>
+                        <small>{p?.description ?? ''}</small>
+                      </span>
+                      {price(it)}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
         </div>
       </section>
       <div className="actions">
@@ -413,7 +452,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
 
 // ---------------- Конец забега ----------------
 
-const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер' };
+const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер', droneop: 'Оператор дронов', chrono: 'Хроно-хакер' };
 
 export function GameOverScreen({ run, victory }: { run: RunState; victory: boolean }) {
   const toMenu = useGame((s) => s.toMenu);
@@ -424,6 +463,7 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
   const rows: [string, string | number][] = [
     ['Класс', CLASS_NAME[run.classId] ?? run.classId],
     ['Сложность', `Уровень ${run.ascension}`],
+    ...(run.mutators?.length ? [['Мутаторы', run.mutators.map((id) => getMutator(id)?.name ?? id).join(', ')] as [string, string]] : []),
     ['Этаж', run.floor],
     ['Врагов уничтожено', st.enemiesKilled],
     ['Элитных стражей', st.elitesKilled],

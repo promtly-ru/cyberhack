@@ -3,7 +3,7 @@
  * Используется Edge Function submit-daily.
  */
 
-export const CLASS_IDS = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker'] as const;
+export const CLASS_IDS = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono'] as const;
 export type ClassId = (typeof CLASS_IDS)[number];
 
 export const MAX_ACTIONS = 20_000;
