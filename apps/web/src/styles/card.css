@@ -10,11 +10,11 @@
   user-select: none;
   text-align: left;
 }
-.card--attack { --accent: #ff2bd6; --accent-2: #ff8af0; --frame-bg: #150818; }
+.card--attack { --accent: #ff3b4e; --accent-2: #ff8a5c; --frame-bg: #1a0709; }
 .card--skill { --accent: #00f0ff; --accent-2: #7cf9ff; --frame-bg: #06121c; }
 .card--power { --accent: #e8ff3a; --accent-2: #ffb13a; --frame-bg: #121407; }
 .card--status { --accent: #8d97b5; --accent-2: #5b6380; --frame-bg: #0d0f17; }
-.card--curse { --accent: #ff3b5c; --accent-2: #7a1023; --frame-bg: #17060b; }
+.card--curse { --accent: #a45bff; --accent-2: #4a1f7a; --frame-bg: #10071a; }
 
 .card__frame {
   position: absolute; inset: 0;
