@@ -2,7 +2,7 @@
  * Одноразовые подсказки «что здесь делать» при первом попадании на экран
  * и общая плашка под верхней панелью (её же использует обучение для мини-напоминаний).
  */
-import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import type { Screen } from '../game/engine';
 import { useGame } from '../game/store';
 import { Icon } from '../components/Icon';
@@ -57,8 +57,21 @@ function useTopOffset(dep: unknown): number {
 export function TopPlaque({ title, text, onClose, closeLabel, closeText, kind, testId }: { title?: string; text: ReactNode; onClose: () => void; closeLabel: string; closeText?: string; kind: 'hint' | 'tutorial'; testId: string }) {
   const top = useTopOffset(text);
   const style = kind === 'tutorial' ? { top } : undefined;
+  const ref = useRef<HTMLDivElement>(null);
+  // Плашка резервирует место (--plaque-h снизу / --plaque-top сверху), чтобы не перекрывать кнопки и заголовок экрана
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const prop = kind === 'hint' ? '--plaque-h' : '--plaque-top';
+    const apply = () => root.style.setProperty(prop, `${(ref.current?.offsetHeight ?? 0) + (kind === 'hint' ? 24 : 4)}px`);
+    apply();
+    window.addEventListener('resize', apply);
+    return () => {
+      window.removeEventListener('resize', apply);
+      root.style.removeProperty(prop);
+    };
+  }, [kind, text]);
   return (
-    <div className={`tut-plaque tut-plaque--${kind}`} style={style} role="status" data-testid={testId}>
+    <div ref={ref} className={`tut-plaque tut-plaque--${kind}`} style={style} role="status" data-testid={testId}>
       <span className="tut-plaque__icon" aria-hidden="true">
         <Icon name={kind === 'hint' ? 'help' : 'graduation'} size={20} />
       </span>

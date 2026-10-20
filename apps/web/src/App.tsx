@@ -12,6 +12,7 @@ import { MapScreen } from './screens/MapScreen';
 import { CombatScreen } from './screens/CombatScreen';
 import { RewardScreen, CardPickScreen, ShopScreen, RestScreen, NodeScreen, EventScreen, DeckSelectScreen, GameOverScreen } from './screens/RunScreens';
 import { SettingsModal } from './screens/SettingsModal';
+import { useHistoryNav } from './game/historyNav';
 import { useUi } from './ui/uiStore';
 
 function RunView() {
@@ -50,6 +51,7 @@ export function App() {
   const view = useGame((s) => s.view);
   const settingsOpen = useUi((s) => s.settingsOpen);
   const error = useGame((s) => s.error);
+  useHistoryNav();
 
   useEffect(() => {
     // Dev-сценарии: ?dev=combat|map|shop|reward|card_pick|rest|event|deck|defeat|victory

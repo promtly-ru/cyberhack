@@ -8,3 +8,4 @@ tmp/
 !tmp/plans/
 test-results/
 playwright-report/
+e2e/_playthrough/

@@ -341,7 +341,7 @@ function Invite() {
   if (!want || !ready) return null;
   return (
     <TutModal title="Впервые в CyberHack?" onEsc={() => useTutorial.setState({ inviteClosed: true })} testId="tutorial-invite">
-      <p className="tut-modal__text">Короткое обучение, 2 минуты: один бой с подсказками, и ты в деле. Забег после него продолжится как обычный.</p>
+      <p className="tut-modal__text">Короткое обучение, около 5 минут: один бой с подсказками, и ты в деле. Забег после него продолжится как обычный.</p>
       <div className="tut-modal__actions">
         <button className="btn btn--ghost" data-testid="invite-decline" onClick={declineInvite}>
           Я уже умею играть
@@ -395,7 +395,9 @@ function Setup() {
   const current = classes.find((c) => c.id === cls) ?? classes[0];
   const cancel = () => useTutorial.setState({ setup: false });
   return (
-    <TutModal title="Выбери класс и режим" onEsc={cancel} testId="tutorial-setup">
+    <TutModal title={classes.length > 1 ? 'Выбери класс и режим' : 'Выбери режим'} onEsc={cancel} testId="tutorial-setup">
+      {classes.length > 1 ? (
+        <>
       <p className="tut-modal__text">
         <b>Класс</b> — твой стиль игры: свои карты, здоровье и стартовый имплант. Новичкам проще всего с Нетраннером: прямой урон и понятные карты.
       </p>
@@ -422,6 +424,8 @@ function Setup() {
           {CLASS_STYLE[current.id] ? `Стиль: ${CLASS_STYLE[current.id]} ` : ''}
           {current.maxHp} HP, {current.startingGold} кр.
         </p>
+      ) : null}
+        </>
       ) : null}
       <p className="tut-modal__text">
         <b>Режим</b> — общая сила врагов. Лёгкий прощает ошибки, обычный — как задумано, сложный для опытных. Выше есть ещё уровни Ascension: они открываются победами и делают врагов сильнее.

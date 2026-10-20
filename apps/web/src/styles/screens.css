@@ -132,7 +132,7 @@
 }
 
 /* ---------- Экраны забега ---------- */
-.run-screen__body { width: min(1100px, 100%); margin: 0 auto; padding: 20px var(--gutter) 32px; display: flex; flex-direction: column; gap: 18px; }
+.run-screen__body { width: min(1100px, 100%); margin: 0 auto; padding: calc(20px + var(--plaque-top, 0px)) var(--gutter) 32px; display: flex; flex-direction: column; gap: 18px; }
 .panel-head { text-align: center; }
 /* Короткая инструкция «что здесь сделать» под заголовком экрана */
 .screen-hint { margin: 8px auto 0; max-width: 60ch; font-size: 15px; line-height: 1.4; color: #dfe6ff; }
@@ -208,7 +208,7 @@
 
 .card-grid--select .select-card { width: 100%; max-width: 150px; --card-w: 100%; }
 .select-card.is-chosen { outline: 2px solid var(--acid); outline-offset: 4px; }
-.confirm-bar { position: sticky; bottom: 0; z-index: 20; padding: 14px; background: rgba(5, 6, 15, 0.96); border: 1px solid var(--line); border-radius: 14px; }
+.confirm-bar { position: sticky; bottom: var(--plaque-h, 0px); z-index: 20; padding: 14px; background: rgba(5, 6, 15, 0.96); border: 1px solid var(--line); border-radius: 14px; }
 .upgrade-preview { display: flex; align-items: center; justify-content: center; gap: 16px; --card-w: clamp(120px, 30vw, 180px); }
 .upgrade-preview .arrow { color: var(--green); }
 
@@ -237,7 +237,7 @@
   .class-card__name { font-size: 19px; }
   .class-card__style { font-size: 13px; }
 }
-.cs-foot { position: sticky; bottom: 0; z-index: 15; padding: 10px 0; background: linear-gradient(to top, rgba(5, 6, 15, 0.97) 70%, transparent); }
+.cs-foot { position: sticky; bottom: var(--plaque-h, 0px); z-index: 15; padding: 10px 0; background: linear-gradient(to top, rgba(5, 6, 15, 0.97) 70%, transparent); }
 
 /* ---------- Новые узлы карты, метки наград, магазин ---------- */
 .map-node.kind-lab { color: #7df9c2; }
@@ -310,4 +310,12 @@ a[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
 @media (max-width: 420px) { .menu-group { grid-template-columns: 1fr; } .menu-tile { flex-direction: row; flex-wrap: wrap; align-items: center; } .menu-tile small { flex-basis: 100%; } }
 
 /* Выбор класса: кнопка старта всегда под рукой */
-.cs-foot { position: sticky; bottom: 0; z-index: 5; padding: 12px 0; background: linear-gradient(to top, var(--bg, #05060f) 70%, transparent); }
+.cs-foot { position: sticky; bottom: var(--plaque-h, 0px); z-index: 5; padding: 12px 0; background: linear-gradient(to top, var(--bg, #05060f) 70%, transparent); }
+
+/* Закрытые классы — компактные строки, чтобы режим и Ascension были ближе */
+.class-card.is-locked { min-height: 0; padding: 10px 14px; }
+.class-card.is-locked .class-card__art, .class-card.is-locked .class-card__body { display: none; }
+.class-card.is-locked .class-card__lock { position: static; background: none; padding: 0; flex-direction: row; justify-content: flex-start; gap: 12px; text-align: left; }
+.class-card.is-locked .class-card__lock small { max-width: none; }
+@media (min-width: 768px) { .class-card.is-locked .class-card__lock { flex-direction: column; align-items: flex-start; gap: 4px; } }
+.cs-classes { align-items: start; }

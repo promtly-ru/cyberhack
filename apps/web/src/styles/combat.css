@@ -312,3 +312,10 @@
 .hpbar--friendly.has-block .hpbar__fill { background: linear-gradient(to bottom, #9bf0ff 0%, #31c4e0 45%, #08788c 100%); box-shadow: 0 0 10px rgba(0, 240, 255, 0.6); }
 .stat--hp { color: #7dffb8; }
 .stat--hp.is-low { color: #ff8da1; }
+
+/* Телефон горизонтально: больше места полю боя */
+@media (max-height: 520px) and (orientation: landscape) {
+  .unit, .unit--player, .enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: 62px; }
+  .tier-boss { --unit-size: 92px; }
+  .combat-hud .hud-hint { display: none; }
+}
