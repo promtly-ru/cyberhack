@@ -22,7 +22,7 @@ const SCREENS = [
   'blackbox-screen', 'relay-screen', 'rest-screen', 'event-screen', 'deck-select-screen', 'gameover', 'profile', 'howto',
 ];
 
-export const ALL_CLASSES = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono'];
+export const ALL_CLASSES = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono', 'vabanker'];
 
 export function profileInit(): string {
   const maxAscension: Record<string, number> = {};
@@ -62,21 +62,46 @@ export class Bot {
 
   note(s: string) {
     this.log.push(`[${this.cfg.name}] ${s}`);
+    try {
+      fs.appendFileSync(path.join(RESULTS, `${this.fmt}-${this.cfg.name}.live.log`), `${new Date().toISOString().slice(11, 19)} ${s}
+`);
+    } catch {
+      /* ignore */
+    }
   }
   issue(sev: string, msg: string, screen?: string, shot?: string) {
     if (this.issues.some((i) => i.msg === msg)) return;
     this.issues.push({ sev, msg, ...(screen ? { screen } : {}), ...(shot ? { shot } : {}) });
   }
 
-  async tap(loc: Locator, what = ''): Promise<boolean> {
+  async tap(loc: Locator, what = '', retry = false): Promise<boolean> {
     try {
       await loc.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
-      if (this.touch) await loc.tap({ timeout: 4000 });
-      else await loc.click({ timeout: 4000 });
+      if (this.touch) await loc.tap({ timeout: 2500 });
+      else await loc.click({ timeout: 2500 });
       return true;
     } catch (e) {
       this.clicksFailed++;
-      this.note(`click failed ${what}: ${String((e as Error).message).split('\n')[0]}`);
+      const full = String((e as Error).message).split('\n');
+      const msg = full.filter((l) => /intercept|not visible|outside|disabled|detached|stable|enabled/i.test(l)).slice(0, 2).join(' / ');
+      this.note(`click failed ${what}: ${msg || full[0]}`);
+      await this.shot(`${this.fmt}-${this.cfg.name}-clickfail-${what.replace(/[^A-Za-z0-9]+/g, '_').slice(0, 30)}`);
+      if (!retry) {
+        const covered = await this.page.evaluate((idx) => {
+          void idx;
+          const pl = document.querySelector('.tut-plaque') as HTMLElement | null;
+          return pl ? pl.innerText.slice(0, 50) : null;
+        }, 0);
+        if (covered) {
+          const shot = await this.shot(`${this.fmt}-${this.cfg.name}-plaque-covers-${what.replace(/[^A-Za-z0-9]+/g, '_').slice(0, 20)}`, true);
+          this.issue('UX', `подсказка-плашка ("${covered.replace(/\s+/g, ' ')}...") перекрывает/мешает кликнуть «${what}»`, undefined, shot);
+          const close = this.page.locator('.tut-plaque__close, .tut-plaque__skip').first();
+          if (await close.count()) {
+            await close.click({ timeout: 1500, force: true }).catch(() => {});
+            return this.tap(loc, what, true);
+          }
+        }
+      }
       return false;
     }
   }
@@ -159,11 +184,18 @@ export class Bot {
     let lastSig = '';
     let same = 0;
     let prevScreen = '';
+    const t0 = Date.now();
     for (let step = 0; step < maxSteps; step++) {
       await this.page.waitForTimeout(40);
+      if (Date.now() - t0 > 22 * 60_000) {
+        this.outcome = `timeout22min act${this.maxAct} floor${this.maxFloor}`;
+        this.issue('баг', 'бот не уложился в 22 минут (прогон слишком долгий или завис)');
+        return;
+      }
       const screen = await this.screenOf();
       if (screen !== prevScreen) {
         prevScreen = screen;
+        this.note(`screen ${screen} hp=${this.lastHp} ${this.maxAct}-${this.maxFloor}`);
         await this.onNewScreen(screen);
       }
       const st = await this.stats();
@@ -187,7 +219,7 @@ export class Bot {
         lastSig = full;
       }
       if (same === 6) await this.page.keyboard.press('Escape').catch(() => {});
-      if (same >= 12) {
+      if (same >= 10) {
         const shot = await this.shot(`${this.fmt}-${this.cfg.name}-STUCK-${screen}`, true);
         this.issue('блокер', `ЗАВИС/тупик на экране ${screen} (${st.floor}, ${st.hp}) — бот не смог продвинуться`, screen, shot);
         this.outcome = `stuck@${screen} act${this.maxAct} floor${this.maxFloor}`;

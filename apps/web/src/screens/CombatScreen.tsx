@@ -438,7 +438,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
               <PlayerArt classId={run.classId} />
             </div>
             <div className="unit__info">
-              <HpBar hp={player.hp} maxHp={player.maxHp} block={player.block} />
+              <HpBar hp={player.hp} maxHp={player.maxHp} block={player.block} friendly />
               <StatusRow statuses={player.statuses} labeled />
               <SynergyBar deck={run.deck} />
             </div>

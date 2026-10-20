@@ -88,7 +88,7 @@ export function StatusRow({ statuses, labeled = false }: { statuses: Record<stri
 
 // ---------- HP и блок ----------
 
-export function HpBar({ hp, maxHp, block }: { hp: number; maxHp: number; block: number }) {
+export function HpBar({ hp, maxHp, block, friendly }: { hp: number; maxHp: number; block: number; friendly?: boolean }) {
   const pct = Math.max(0, Math.min(1, maxHp ? hp / maxHp : 0));
   const prevPct = useRef(pct);
   const lagRef = useRef<HTMLDivElement>(null);
@@ -105,7 +105,7 @@ export function HpBar({ hp, maxHp, block }: { hp: number; maxHp: number; block: 
     prevPct.current = pct;
   }, [pct]);
   return (
-    <div className={`hpbar${block > 0 ? ' has-block' : ''}`} role="meter" aria-valuemin={0} aria-valuemax={maxHp} aria-valuenow={hp} aria-label={`Здоровье ${hp} из ${maxHp}${block ? `, блок ${block}` : ''}`}>
+    <div className={`hpbar${friendly ? ' hpbar--friendly' : ''}${friendly && maxHp > 0 && hp / maxHp <= 0.3 ? ' is-low' : ''}${block > 0 ? ' has-block' : ''}`} role="meter" aria-valuemin={0} aria-valuemax={maxHp} aria-valuenow={hp} aria-label={`Здоровье ${hp} из ${maxHp}${block ? `, блок ${block}` : ''}`}>
       <div className="hpbar__lag" ref={lagRef} />
       <div className="hpbar__fill" style={{ transform: `scaleX(${pct})` }} />
       <div className="hpbar__ticks" />

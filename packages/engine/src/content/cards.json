@@ -6941,20 +6941,20 @@
         "win": [
           {
             "type": "damage",
-            "amount": 10,
+            "amount": 12,
             "target": "enemy"
           }
         ],
         "lose": [
           {
             "type": "damage",
-            "amount": 3,
+            "amount": 4,
             "target": "enemy"
           }
         ]
       }
     ],
-    "description": "70%: нанеси 10 урона. Иначе нанеси 3 урона.",
+    "description": "70%: нанеси 12 урона. Иначе нанеси 4 урона.",
     "upgrade": {
       "name": "Орёл или решка+",
       "effects": [
@@ -6964,20 +6964,20 @@
           "win": [
             {
               "type": "damage",
-              "amount": 14,
+              "amount": 17,
               "target": "enemy"
             }
           ],
           "lose": [
             {
               "type": "damage",
-              "amount": 4,
+              "amount": 5,
               "target": "enemy"
             }
           ]
         }
       ],
-      "description": "75%: нанеси 14 урона. Иначе нанеси 4 урона."
+      "description": "75%: нанеси 17 урона. Иначе нанеси 5 урона."
     }
   },
   {
@@ -7112,14 +7112,14 @@
       },
       {
         "type": "lose_hp",
-        "amount": 2
+        "amount": 1
       },
       {
         "type": "draw",
         "amount": 1
       }
     ],
-    "description": "Нанеси 5 урона. Потеряй 2 HP. Возьми 1 карту.",
+    "description": "Нанеси 5 урона. Потеряй 1 HP. Возьми 1 карту.",
     "upgrade": {
       "name": "Шулерство+",
       "effects": [
@@ -7130,14 +7130,14 @@
         },
         {
           "type": "lose_hp",
-          "amount": 2
+          "amount": 1
         },
         {
           "type": "draw",
           "amount": 1
         }
       ],
-      "description": "Нанеси 8 урона. Потеряй 2 HP. Возьми 1 карту."
+      "description": "Нанеси 8 урона. Потеряй 1 HP. Возьми 1 карту."
     }
   },
   {
@@ -7155,7 +7155,7 @@
         "win": [
           {
             "type": "damage",
-            "amount": 13,
+            "amount": 15,
             "target": "enemy"
           }
         ],
@@ -7168,7 +7168,7 @@
         ]
       }
     ],
-    "description": "60%: нанеси 13 урона. Иначе нанеси 4 урона.",
+    "description": "60%: нанеси 15 урона. Иначе нанеси 4 урона.",
     "upgrade": {
       "name": "Крутка слота+",
       "effects": [
@@ -7205,7 +7205,7 @@
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 3
+        "amount": 2
       },
       {
         "type": "draw",
@@ -7222,14 +7222,14 @@
         ]
       }
     ],
-    "description": "Потеряй 3 HP. Возьми 2 карты. 35%: получи расходник. Сжигается.",
+    "description": "Потеряй 2 HP. Возьми 2 карты. 35%: получи расходник. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Лутбокс+",
       "effects": [
         {
           "type": "lose_hp",
-          "amount": 3
+          "amount": 2
         },
         {
           "type": "draw",
@@ -7246,7 +7246,7 @@
           ]
         }
       ],
-      "description": "Потеряй 3 HP. Возьми 3 карты. 50%: получи расходник. Сжигается."
+      "description": "Потеряй 2 HP. Возьми 3 карты. 50%: получи расходник. Сжигается."
     }
   },
   {
@@ -7264,7 +7264,7 @@
         "win": [
           {
             "type": "damage",
-            "amount": 22,
+            "amount": 26,
             "target": "enemy"
           }
         ],
@@ -7276,12 +7276,12 @@
           },
           {
             "type": "lose_hp",
-            "amount": 4
+            "amount": 3
           }
         ]
       }
     ],
-    "description": "55%: нанеси 22 урона. Иначе нанеси 6 урона и потеряй 4 HP.",
+    "description": "55%: нанеси 26 урона. Иначе нанеси 6 урона и потеряй 3 HP.",
     "upgrade": {
       "name": "Удвоить ставку+",
       "effects": [
@@ -7303,12 +7303,12 @@
             },
             {
               "type": "lose_hp",
-              "amount": 4
+              "amount": 3
             }
           ]
         }
       ],
-      "description": "60%: нанеси 28 урона. Иначе нанеси 8 урона и потеряй 4 HP."
+      "description": "60%: нанеси 28 урона. Иначе нанеси 8 урона и потеряй 3 HP."
     }
   },
   {
@@ -7322,7 +7322,7 @@
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 5
+        "amount": 3
       },
       {
         "type": "gain_energy",
@@ -7333,14 +7333,14 @@
         "amount": 1
       }
     ],
-    "description": "Потеряй 5 HP. Получи 2 энергии. Возьми 1 карту. Сжигается.",
+    "description": "Потеряй 3 HP. Получи 2 энергии. Возьми 1 карту. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Фишки из крови+",
       "effects": [
         {
           "type": "lose_hp",
-          "amount": 4
+          "amount": 2
         },
         {
           "type": "gain_energy",
@@ -7351,7 +7351,7 @@
           "amount": 2
         }
       ],
-      "description": "Потеряй 4 HP. Получи 2 энергии. Возьми 2 карты. Сжигается."
+      "description": "Потеряй 2 HP. Получи 2 энергии. Возьми 2 карты. Сжигается."
     }
   },
   {
@@ -7522,10 +7522,10 @@
       },
       {
         "type": "lose_hp",
-        "amount": 4
+        "amount": 2
       }
     ],
-    "description": "Получи 1 Разгон. Получи 1 Шифрование. Потеряй 4 HP.",
+    "description": "Получи 1 Разгон. Получи 1 Шифрование. Потеряй 2 HP.",
     "upgrade": {
       "name": "Полоса везения+",
       "effects": [
@@ -7543,10 +7543,10 @@
         },
         {
           "type": "lose_hp",
-          "amount": 4
+          "amount": 2
         }
       ],
-      "description": "Получи 2 Разгона. Получи 1 Шифрование. Потеряй 4 HP."
+      "description": "Получи 2 Разгона. Получи 1 Шифрование. Потеряй 2 HP."
     }
   },
   {
@@ -7564,7 +7564,7 @@
         "win": [
           {
             "type": "damage",
-            "amount": 8,
+            "amount": 9,
             "times": 3,
             "target": "enemy"
           }
@@ -7577,7 +7577,7 @@
         ]
       }
     ],
-    "description": "83%: нанеси 8 урона 3 раза. Иначе потеряй 10 HP.",
+    "description": "83%: нанеси 9 урона 3 раза. Иначе потеряй 10 HP.",
     "upgrade": {
       "name": "Русская рулетка+",
       "effects": [
@@ -7614,7 +7614,7 @@
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 8
+        "amount": 6
       },
       {
         "type": "gamble",
@@ -7635,14 +7635,14 @@
         ]
       }
     ],
-    "description": "Потеряй 8 HP. 70%: нанеси 40 урона. Иначе нанеси 12 урона. Сжигается.",
+    "description": "Потеряй 6 HP. 70%: нанеси 40 урона. Иначе нанеси 12 урона. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Ва-банк+",
       "effects": [
         {
           "type": "lose_hp",
-          "amount": 8
+          "amount": 6
         },
         {
           "type": "gamble",
@@ -7663,7 +7663,7 @@
           ]
         }
       ],
-      "description": "Потеряй 8 HP. 75%: нанеси 52 урона. Иначе нанеси 15 урона. Сжигается."
+      "description": "Потеряй 6 HP. 75%: нанеси 52 урона. Иначе нанеси 15 урона. Сжигается."
     }
   },
   {
@@ -7752,14 +7752,14 @@
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 6
+        "amount": 4
       },
       {
         "type": "double_next",
         "amount": 2
       }
     ],
-    "description": "Потеряй 6 HP. Следующие 2 карты срабатывают дважды. Сжигается.",
+    "description": "Потеряй 4 HP. Следующие 2 карты срабатывают дважды. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Заряженные кости+",

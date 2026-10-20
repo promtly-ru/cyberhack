@@ -1,0 +1,47 @@
+{
+ "facts": [
+  "menu-continue disabled on fresh: true",
+  "settings text: Громкость · 60% Без звука Скорость анимаций Обычная Быстрая Турбо Движение Как в системе Меньше Полное Сканлайны (эффект ЭЛТ)",
+  "settings segment buttons: 6",
+  "settings closes on Esc: true",
+  "settings persisted after reload: true -> {\"volume\":0.6,\"muted\":true,\"animSpeed\":1,\"motion\":\"system\",\"scanlines\":false}",
+  "howto hscroll: 0",
+  "profile hscroll: 0",
+  "after browser Back from profile -> menu visible: false url=about:blank",
+  "class-select hscroll: 0",
+  "map hscroll: 0",
+  "Back button during run: url=about:blank map visible=false menu visible=false",
+  "menu-continue after reload on map: enabled=true",
+  "combat hscroll: 0",
+  "resize 1440->360: state kept=false hscroll=0",
+  "landscape small 700x500: hscroll=0 end-turn visible=true hand visible=true",
+  "resize back: state kept=true",
+  "reload mid-combat: continue enabled=true",
+  "after continue: screen=combat",
+  "state before reload {\"hand\":\"nr_firewall,nr_ping,nr_ping\",\"enemy\":\"18\",\"energy\":\"0/3 ЭНЕРГИЯ\",\"hp\":\"ЗДОРОВЬЕ 90/90\",\"intent\":\"11 Атака\"}",
+  "state after reload  {\"hand\":\"nr_firewall,nr_ping,nr_ping\",\"enemy\":\"18\",\"energy\":\"0/3 ЭНЕРГИЯ\",\"hp\":\"ЗДОРОВЬЕ 90/90\",\"intent\":\"11 Атака\"}",
+  "combat state identical after reload: true",
+  "hotkey E: phase player -> player",
+  "pile-draw modal closes on Esc: true",
+  "pile-discard modal closes on Esc: true",
+  "in-run settings: Громкость · 60% Без звука Скорость анимаций Обычная Быстрая Турбо Движение Как в системе Меньше Полное Сканлайны (эффект ЭЛТ) ВЫЙТИ В МЕНЮ СДАТЬСЯ",
+  "surrender button present: 1",
+  "after surrender: screen=menu",
+  "continue after surrender: false"
+ ],
+ "issues": [
+  {
+   "sev": "UX",
+   "msg": "layout[combat-resized] offscreen-x span.card__rarity \"БАЗОВАЯ\" l=342 r=377 vw=360",
+   "screen": "combat-resized",
+   "shot": "C:\\Users\\verdict\\Downloads\\cyberhack\\e2e\\_playthrough\\shots\\desktop-misc-combat-resized-overflow1.png"
+  },
+  {
+   "sev": "UX",
+   "msg": "layout[combat-resized] offscreen-x span. \"Нанеси 6 урона.\" l=281 r=369 vw=360",
+   "screen": "combat-resized",
+   "shot": "C:\\Users\\verdict\\Downloads\\cyberhack\\e2e\\_playthrough\\shots\\desktop-misc-combat-resized-overflow2.png"
+  }
+ ],
+ "consoleErrors": []
+}

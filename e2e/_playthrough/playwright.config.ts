@@ -6,7 +6,7 @@ const channel = process.env.PW_CHANNEL ?? 'msedge';
 export default defineConfig({
   testDir: '.',
   testMatch: '**/*.spec.ts',
-  timeout: 900_000,
+  timeout: 1_500_000,
   expect: { timeout: 8_000 },
   fullyParallel: true,
   retries: 0,

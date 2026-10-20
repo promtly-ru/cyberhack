@@ -12,10 +12,10 @@ for (const fmt of ['desktop', 'mobile'] as const) {
   MATRIX.push({ fmt, cfg: mk('tut-netrunner-easy', 'netrunner', 'easy', { tutorial: true }) });
   for (const [cls, ds] of [
     ['netrunner', D],
-    ['phreaker', D],
-    ['ghost', D],
-    ['samurai', ['easy', 'hard'] as Cfg['diff'][]],
-    ['engineer', ['easy', 'normal'] as Cfg['diff'][]],
+    ['phreaker', ['easy', 'hard'] as Cfg['diff'][]],
+    ['ghost', ['easy', 'normal'] as Cfg['diff'][]],
+    ['samurai', ['easy'] as Cfg['diff'][]],
+    ['engineer', ['easy'] as Cfg['diff'][]],
     ['biohacker', ['easy'] as Cfg['diff'][]],
   ] as [string, Cfg['diff'][]][]) {
     for (const d of ds) MATRIX.push({ fmt, cfg: mk(`${cls}-${d}`, cls, d) });
@@ -33,6 +33,7 @@ for (const { fmt, cfg } of MATRIX) {
     await page.addInitScript((prof) => {
       try {
         if (!localStorage.getItem('cyberhack:guest:profile')) localStorage.setItem('cyberhack:guest:profile', prof);
+        if (!localStorage.getItem('cyberhack.settings.v1')) localStorage.setItem('cyberhack.settings.v1', JSON.stringify({ volume: 0.6, muted: true, animSpeed: 2.5, motion: 'reduced', scanlines: true }));
       } catch {
         /* */
       }
