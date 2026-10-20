@@ -81,6 +81,7 @@ export function rollCards(
   count: number,
   weights: [number, number, number],
   rareMult = 1,
+  avoid: readonly string[] = [],
 ): CardDef[] {
   const result: CardDef[] = [];
   const w: [RewardRarity, number][] = [
@@ -89,8 +90,11 @@ export function rollCards(
     ['rare', weights[2] * rareMult],
   ];
   for (let i = 0; i < count; i++) {
-    const remaining = pool.filter((c) => !result.includes(c));
-    if (remaining.length === 0) break;
+    const left = pool.filter((c) => !result.includes(c));
+    if (left.length === 0) break;
+    // Недавно предложенные карты пропускаем, пока есть из чего выбрать.
+    const fresh = left.filter((c) => !avoid.includes(c.id));
+    const remaining = fresh.length > 0 ? fresh : left;
     const rarity = rng.weighted(w);
     const ofRarity = remaining.filter((c) => c.rarity === rarity);
     result.push(rng.pick(ofRarity.length > 0 ? ofRarity : remaining));
@@ -100,7 +104,13 @@ export function rollCards(
 
 export function rollCardChoice(s: RunState, rng: Rng, tier: CombatTier, mods: AscensionMods): string[] {
   const count = 3 + getMutatorMods(s.mutators).extraCardChoices;
-  return rollCards(rng, rewardCardPool(s.classId, s), count, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult).map((c) => c.id);
+  const classPool = rewardCardPool(s.classId, s);
+  // Маленький пул класса разбавляем нейтральными картами, иначе предложения повторяются.
+  const pool = tier !== 'boss' && classPool.length < 20 ? [...classPool, ...rewardCardPool('neutral', s)] : classPool;
+  const recent = s.recentOffers ?? [];
+  const ids = rollCards(rng, pool, count, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult, recent).map((c) => c.id);
+  s.recentOffers = [...recent, ...ids].slice(-Math.min(12, Math.floor(pool.length / 2)));
+  return ids;
 }
 
 function relicAvailable(s: RunState, r: RelicDef): boolean {

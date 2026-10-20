@@ -42,7 +42,7 @@
   .menu__inner { gap: 22px; }
 }
 
-.menu-btn { position: relative; overflow: hidden; backdrop-filter: blur(4px); }
+.menu-btn { position: relative; overflow: hidden; }
 .menu-btn::after {
   content: ''; position: absolute; inset: 0; pointer-events: none; transform: translateX(-120%);
   background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.14) 50%, transparent 70%);
@@ -661,3 +661,11 @@ html[data-motion='reduced'] .menu::after, html[data-motion='reduced'] .map-scree
   .menu-btn small { display: none; }
 }
 @media (max-width: 380px) { .menu-btn b { font-size: 16px; } .menu-btn small { font-size: 12px; } }
+
+/* Производительность: убраны анимации, перерисовывающие весь экран (background-position, filter, box-shadow, mask) */
+.combat::before, .combat::after, .battlefield::after, .battlefield__grid { animation: none; }
+.battlefield__grid { filter: none; }
+.energy__core, .end-turn, .btn--end { animation: none; }
+@keyframes art-pulse { 50% { opacity: 0.55; } }
+.card-art .art-holo { animation: none; }
+.card-art .art-spin, .card:not(:hover) .art-spin { animation: none; }

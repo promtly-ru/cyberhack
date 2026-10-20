@@ -134,7 +134,7 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
   padding: 8px var(--gutter); padding-top: max(8px, env(safe-area-inset-top));
   background: linear-gradient(to bottom, rgba(5, 6, 15, 0.95), rgba(5, 6, 15, 0.75));
   border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(8px);
+
 }
 .topbar__stats { display: flex; gap: 6px; align-items: center; }
 .stat { display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line-2); font-weight: 700; font-size: 14px; white-space: nowrap; }
@@ -196,7 +196,7 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
 .tooltip__text { color: #c9d3ee; margin-top: 2px; line-height: 1.35; }
 
 /* ---------- Модалка ---------- */
-.modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(2, 3, 10, 0.78); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 16px; animation: fade-in 0.2s; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(2, 3, 10, 0.88); display: grid; place-items: center; padding: 16px; animation: fade-in 0.2s; }
 @keyframes fade-in { from { opacity: 0; } }
 .modal { width: min(460px, 100%); max-height: calc(100dvh - 32px); display: flex; flex-direction: column; background: var(--panel-solid); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 0 40px rgba(0, 240, 255, 0.15); outline: none; }
 .modal--wide { width: min(1100px, 100%); }

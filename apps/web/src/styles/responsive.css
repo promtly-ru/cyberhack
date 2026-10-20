@@ -1,0 +1,64 @@
+/* ============================================================
+   Адаптив и производительность (подключается последним)
+   ============================================================ */
+
+/* ---------- Бой: размеры юнитов зависят и от высоты экрана, чтобы интенты не уходили под топбар ---------- */
+.unit { --unit-size: clamp(80px, min(13vw, 20dvh), 190px); }
+.unit--player { --unit-size: clamp(84px, min(14vw, 20dvh), 200px); }
+.tier-elite { --unit-size: clamp(96px, min(16vw, 24dvh), 220px); }
+.tier-boss { --unit-size: clamp(110px, min(22vw, 30dvh), 290px); }
+.enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: clamp(72px, min(11vw, 18dvh), 170px); }
+.battlefield { padding-top: 40px; }
+.enemy-zone { flex-wrap: nowrap; }
+
+@media (max-width: 767px) {
+  .unit { --unit-size: clamp(76px, min(25vw, 17dvh), 120px); }
+  .unit--player { --unit-size: clamp(74px, min(24vw, 17dvh), 120px); }
+  .enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: clamp(64px, min(21vw, 15dvh), 110px); }
+  .tier-boss { --unit-size: clamp(110px, min(42vw, 24dvh), 200px); }
+  .battlefield { padding-top: 34px; }
+}
+
+/* ---------- Телефон горизонтально (низкий широкий экран) ---------- */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .topbar { display: flex; flex-wrap: nowrap; gap: 6px; padding: 4px var(--gutter); padding-top: max(4px, env(safe-area-inset-top)); }
+  .topbar__stats { flex: none; gap: 4px; }
+  .topbar .stat { padding: 3px 7px; font-size: 13px; }
+  .topbar .topbar__relics { flex: 1 1 0; min-width: 0; min-height: 0; padding: 0 !important; }
+  .topbar .potion-bar { position: static; }
+  .topbar__actions { flex: none; gap: 4px; align-items: center; }
+  .topbar .icon-btn { width: 40px; height: 40px; min-width: 40px; }
+
+  .combat-hud { grid-template-columns: 96px 1fr 104px; grid-template-areas: 'left hand right'; gap: 0 6px; padding: 0 8px max(4px, env(safe-area-inset-bottom)); }
+  .combat-hud .hud-hint { display: none; }
+  .hud-left, .hud-right { flex-direction: column; gap: 6px; padding-bottom: 2px; }
+  .energy { width: 56px; height: 56px; margin-bottom: 14px; }
+  .pile__box { width: 40px; height: 40px; }
+  .btn--end { width: 100%; padding: 6px 8px; font-size: 12px; min-height: 40px; }
+  .battlefield { padding-top: 30px; padding-bottom: 0; }
+  .unit__name { min-height: 0; max-height: 2.2em; overflow: hidden; font-size: 10px; line-height: 1.1; }
+  .combat-hud { margin-top: 8px; }
+}
+
+/* ---------- Лёгкий режим: телефон, сенсорный ввод, reduced motion ---------- */
+@media (max-width: 767px), (pointer: coarse) {
+  /* Полноэкранные слои с бесконечной анимацией: статичный фон дешевле на слабых GPU */
+  .menu::before, .menu::after, .map-screen::before, .combat::before, .combat::after, .battlefield::after,
+  .battlefield__grid, .class-card::before, .is-victory::before, .is-defeat::before { animation: none; }
+  .combat[data-tier] .battlefield { animation: none; }
+  .rarity--rare .card__glow, .card .card__frame::after, .card-art .art-holo { animation: none; mix-blend-mode: normal; }
+  .menu::after, .battlefield__grid, .battlefield::before { filter: none; }
+  /* Мелкие idle-анимации SVG у карт и врагов */
+  .art-pulse, .art-twinkle, .art-sway, .art-leg, .art-seg, .art-swarm, .art-ghost, .art-aim, .art-ring, .art-rise, .art-scan, .art-crown,
+  .art-breathe, .art-visor-scan, .art-spin, .art-float, .holo, .spin-slow, .spin-rev, .logo__word { animation: none; }
+  .glitch::before, .glitch::after { animation: none; }
+  /* Тяжёлые тени и размытия */
+  .topbar { box-shadow: none; }
+  .modal { box-shadow: 0 0 16px rgba(0, 240, 255, 0.12); }
+  .unit-art { filter: none; }
+  .hand-card .card { filter: none; }
+  .hand-card:not(.is-playable) .card { filter: brightness(0.7); }
+}
+html[data-motion='reduced'] .menu::before, html[data-motion='reduced'] .class-card::before, html[data-motion='reduced'] .is-victory::before,
+html[data-motion='reduced'] .battlefield__grid, html[data-motion='reduced'] .combat[data-tier] .battlefield, html[data-motion='reduced'] .card .card__frame::after,
+html[data-motion='reduced'] [class*='art-'], html[data-motion='reduced'] .glitch::before, html[data-motion='reduced'] .glitch::after { animation: none; }

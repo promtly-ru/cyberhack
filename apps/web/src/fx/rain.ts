@@ -56,7 +56,7 @@ class Rain {
       return;
     }
     this.app = app;
-    app.ticker.maxFPS = 30;
+    app.ticker.maxFPS = window.innerWidth < 768 ? 20 : 30;
     app.canvas.classList.add('rain-canvas');
     app.canvas.setAttribute('aria-hidden', 'true');
     host.appendChild(app.canvas);
@@ -113,7 +113,7 @@ class Rain {
     this.cols = [];
     const n = Math.ceil(w / cell);
     for (let c = 0; c < n; c++) {
-      if (Math.random() < 0.35) continue; // разреженный дождь
+      if (Math.random() < (w < 600 ? 0.6 : 0.35)) continue; // разреженный дождь (на телефоне ещё реже)
       const len = 6 + Math.floor(Math.random() * 18);
       const parts: Particle[] = [];
       for (let k = 0; k < len; k++) {
