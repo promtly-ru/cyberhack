@@ -39,14 +39,6 @@
   .unit__name { min-height: 0; max-height: 2.2em; overflow: hidden; font-size: 10px; line-height: 1.1; }
   .combat-hud { margin-top: 8px; }
 
-  /* Карта: узкая колонка вместо растяжения на всю ширину, компактная шапка */
-  .map-head { padding-top: 4px; padding-bottom: 4px; align-items: center; flex-wrap: nowrap; }
-  .map-head .eyebrow { display: inline; margin-right: 8px; }
-  .map-head > div { display: flex; align-items: baseline; gap: 8px; }
-  .map-title { font-size: 17px; margin: 0; }
-  .map-head .screen-hint { display: none; }
-  .map-scroll { margin-bottom: 6px; }
-  .map-svg { width: min(100%, 340px); margin: 0 auto; }
 }
 
 /* ---------- Лёгкий режим: телефон, сенсорный ввод, reduced motion ---------- */

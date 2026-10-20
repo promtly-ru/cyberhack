@@ -2,7 +2,7 @@
  * Профиль метапрогрессии: значение по умолчанию, валидация «сырых» данных и слияние
  * (перенос гостевого прогресса в облако, конфликт двух устройств).
  */
-import type { ClassId, LifetimeStats } from '@cyberhack/engine';
+import { checkSaveCompat, type ClassId, type LifetimeStats } from '@cyberhack/engine';
 import type { Profile, SavedRun, WeeklyProgress } from './types';
 import { isRecord } from './storage';
 
@@ -145,6 +145,8 @@ export function normalizeSavedRun(raw: unknown): SavedRun | null {
   if (!isRecord(options) || typeof options.seed !== 'string' || !isClassId(options.classId)) return null;
   if (!Array.isArray(actions) || !actions.every(isRecord)) return null;
   if (!isRecord(state)) return null;
+  // забег из старой версии игры (другая карта и враги) воспроизвести нельзя — считаем, что сохранения нет
+  if (!checkSaveCompat(state).ok) return null;
   if (typeof updatedAt !== 'string' || Number.isNaN(Date.parse(updatedAt))) return null;
   return raw as unknown as SavedRun;
 }

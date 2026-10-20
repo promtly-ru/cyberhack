@@ -75,6 +75,7 @@ export function newRun(opts: NewRunOptions): RunState {
     ...(mutators.length > 0 ? { mutators } : {}),
     ...(opts.weekly ? { weekly: opts.weekly } : {}),
     ...(opts.heat ? { heat: true } : {}),
+    ...(opts.zoneRules === false ? { noZoneRules: true } : {}),
     act: 1,
     floor: 0,
     hp: Math.max(1, Math.floor(maxHp * mods.startHpPct)),

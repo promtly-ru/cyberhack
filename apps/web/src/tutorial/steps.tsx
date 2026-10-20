@@ -98,9 +98,9 @@ const ANY_BLOCK_SEL = '[data-testid="hand-card"][data-playable="1"][data-block="
 const SELECTED_TARGETED = '[data-testid="hand-card"][aria-pressed="true"][data-targeted="1"]';
 const SELECTED_BLOCK = '[data-testid="hand-card"][aria-pressed="true"][data-block="1"]';
 
-const LEGEND_SEL = '.map-legend';
+const LEGEND_SEL = '.map-legend[open]';
 
-/** На широком экране легенда карты видна сбоку, на телефоне спрятана под кнопкой. */
+/** Легенда карты — сворачиваемый блок; подсвечиваем её, только если она раскрыта. */
 function legendVisible(): boolean {
   if (typeof document === 'undefined') return false;
   const el = document.querySelector(LEGEND_SEL);
@@ -131,17 +131,16 @@ export const STEPS: Step[] = [
     mode: 'coach',
     screens: ['map'],
     title: 'Карта сети',
-    text: () => 'Это карта сети. Ты стартуешь внизу и пробиваешься наверх, к боссу акта. Ходить можно только по линиям, от узла к узлу.',
+    text: () => 'Это карта сети. На каждом шаге выбираешь один из доступных узлов и так пробиваешься к боссу акта. Назад хода нет.',
   },
   {
     id: 'map-node',
     mode: 'action',
     screens: ['map'],
     title: 'Первый узел',
-    text: () => 'Кружки — это узлы. Начнём с боя: нажми на подсвеченный сервер.',
-    // Круг узла без пульсирующего ореола — иначе рамка «дышит» вместе с анимацией
+    text: () => 'Карточки — это узлы на выбор. Начнём с боя: нажми на карточку «Сервер».',
+    // Карточка доступного узла: сначала бой, иначе любой доступный
     target: () => [
-      '[data-testid="map-node"][data-state="available"][data-kind="combat"] .map-node__halo',
       '[data-testid="map-node"][data-state="available"][data-kind="combat"]',
       '[data-testid="map-node"][data-state="available"]',
     ],
@@ -317,12 +316,12 @@ export const STEPS: Step[] = [
     title: 'Узлы бывают разные',
     text: () =>
       legendVisible() ? (
-        'Путь выбираешь сам. Справа — легенда: что значит каждый значок узла. Бой — карты и кредиты, отдых — лечение, рынок — покупки.'
+        'Путь выбираешь сам. Легенда раскрыта: что значит каждый значок узла. Бой — карты и кредиты, отдых — лечение, рынок — покупки.'
       ) : (
         <>
           <span>Путь выбираешь сам. Значки подскажут, что ждёт впереди:</span>
           <NodeKinds />
-          <span className="tut-note">Этот список всегда под кнопкой «Легенда».</span>
+          <span className="tut-note">Этот список всегда в блоке «Легенда» под карточками.</span>
         </>
       ),
     target: () => (legendVisible() ? [LEGEND_SEL] : null),

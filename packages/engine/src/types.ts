@@ -4,7 +4,8 @@
  * Переименование или удаление существующих полей ломает UI и сохранения.
  */
 
-export const SAVE_VERSION = 1 as const;
+/** 2 — новая карта (секторы) и ИИ врагов; забеги версии 1 не загружаются */
+export const SAVE_VERSION = 2 as const;
 
 // ---------- Базовые идентификаторы ----------
 
@@ -47,7 +48,12 @@ export type Effect =
   /** Получить amount расходников (potionId — конкретный, иначе случайный); при полных слотах — ничего */
   | { type: 'gain_potion'; amount: number; potionId?: string }
   /** Азарт: с шансом amount% срабатывают эффекты win, иначе lose (бросок по потоку ГСЧ combat) */
-  | { type: 'gamble'; amount: number; win: Effect[]; lose?: Effect[] };
+  | { type: 'gamble'; amount: number; win: Effect[]; lose?: Effect[] }
+  // ---- Эффекты врагов ----
+  /** Призвать amount врагов enemyId, пока живых врагов меньше max (по умолчанию SUMMON_LIMIT) */
+  | { type: 'summon'; enemyId: string; amount: number; max?: number }
+  /** Блок amount всем живым союзникам (self — и себе) */
+  | { type: 'shield_allies'; amount: number; self?: boolean };
 
 // ---------- Определения контента (JSON-данные) ----------
 
@@ -104,10 +110,58 @@ export interface EnemyDef {
   act: 1 | 2 | 3 | 4;
   hp: [min: number, max: number];
   moves: EnemyMove[];
-  /** Простой ИИ: 'cycle' — по кругу, 'random' — взвешенный выбор без 3 повторов подряд */
-  ai: { kind: 'cycle'; order: string[] } | { kind: 'random'; weights: Record<string, number> };
+  ai: EnemyAi;
   description?: string;
 }
+
+/** Условие хода врага; все заданные поля должны выполниться */
+export interface AiCondition {
+  /** Ровно этот ход врага (1 — первый) */
+  turn?: number;
+  /** Каждый N-й ход врага */
+  every?: number;
+  /** HP врага в % строго меньше */
+  hpBelow?: number;
+  /** HP врага в % не меньше */
+  hpAtLeast?: number;
+  /** Живых врагов (включая себя) не больше / не меньше */
+  enemiesAtMost?: number;
+  enemiesAtLeast?: number;
+  /** В прошлом ходу игрок разыграл карту этого типа ('attack', 'skill', 'power') или с этим id */
+  playerPlayed?: string;
+  /** Сколько таких карт минимум (по умолчанию 1) */
+  playerPlayedCount?: number;
+}
+
+/** Фаза врага: активна, пока HP% <= hpAtMost (берётся фаза с наименьшим подходящим порогом) */
+export interface EnemyPhase {
+  hpAtMost: number;
+  /** Ходы фазы по кругу (или weights — взвешенно) */
+  order?: string[];
+  weights?: Record<string, number>;
+  /** Ход сразу при входе в фазу */
+  onEnter?: string;
+}
+
+export interface ScriptedStep {
+  move: string;
+  when?: AiCondition;
+  /** Только один раз за бой */
+  once?: boolean;
+}
+
+/**
+ * ИИ врага: 'cycle' — по кругу; 'random' — взвешенно без 3 повторов подряд;
+ * 'phased' — фазы по порогам HP; 'scripted' — первый подходящий шаг скрипта, иначе fallback по кругу.
+ */
+export type EnemyAi =
+  | { kind: 'cycle'; order: string[] }
+  | { kind: 'random'; weights: Record<string, number> }
+  | { kind: 'phased'; phases: EnemyPhase[] }
+  | { kind: 'scripted'; script: ScriptedStep[]; fallback: string[] };
+
+/** Правило зоны: none — нет; overheat — каждый 3-й ход враги +Разгон; adaptive — сопротивление к повторной атаке; distortion — часть намерений скрыта */
+export type ZoneRuleId = 'none' | 'overheat' | 'adaptive' | 'distortion';
 
 /** Группа врагов для узла карты */
 export interface EncounterDef {
@@ -228,6 +282,8 @@ export interface Intent {
   /** Итоговый урон за удар с учётом статусов (для отображения) */
   damage?: number;
   times?: number;
+  /** Намерение скрыто правилом зоны (kind = 'unknown') */
+  hidden?: boolean;
 }
 
 export interface EnemyState extends CombatantState {
@@ -235,6 +291,11 @@ export interface EnemyState extends CombatantState {
   defId: string;
   intent: Intent;
   moveHistory: string[];
+  /** ИИ 'phased': текущая фаза (индекс в ai.phases) и длина moveHistory при входе в неё */
+  aiPhase?: number;
+  aiPhaseStart?: number;
+  /** Призван в бою */
+  summoned?: boolean;
 }
 
 export interface CombatState {
@@ -254,6 +315,14 @@ export interface CombatState {
   heat?: number;
   /** Охлаждение (кнопка) уже использовано в этот ход */
   heatCooled?: boolean;
+  /** Правило зоны этого боя (нет поля = без правила) */
+  zoneRule?: ZoneRuleId;
+  /** id карт, разыгранных игроком в текущем (или прошлом, во время хода врагов) ходу */
+  playedThisTurn?: string[];
+  /** adaptive: подряд сыгранные одинаковые атаки */
+  attackStreak?: { cardId: string; count: number };
+  /** adaptive: сопротивление к атаке cardId до конца хода turn */
+  resist?: { cardId: string; turn: number };
 }
 
 // ---------- Карта забега ----------
@@ -267,6 +336,8 @@ export interface MapNode {
   col: number; // 0..6
   kind: MapNodeKind;
   next: string[];
+  /** Сектор зоны (1..3); у босса нет */
+  sector?: 1 | 2 | 3;
 }
 
 // ---------- Экраны ----------
@@ -337,6 +408,8 @@ export interface RunState {
   weekly?: string;
   /** Режим «Перегрев»: в бою работает шкала Heat; нет поля = обычный забег */
   heat?: boolean;
+  /** Правила зон отключены (тестовые фикстуры) */
+  noZoneRules?: boolean;
   act: 1 | 2 | 3 | 4;
   floor: number; // общий счётчик пройденных узлов
   hp: number;
@@ -444,7 +517,11 @@ export type GameEvent =
   /** Барьер поглотил удар */
   | { type: 'barrier_absorbed'; targetUid: string | 'player'; amount: number }
   /** Карты ушли из руки/добора в сброс эффектом (scry, discard_hand_draw) */
-  | { type: 'cards_discarded'; count: number };
+  | { type: 'cards_discarded'; count: number }
+  /** Враг призван */
+  | { type: 'enemy_summoned'; enemyUid: string; defId: string }
+  /** Сработало правило зоны */
+  | { type: 'zone_rule'; rule: ZoneRuleId };
 
 export interface ActionResult {
   state: RunState;
@@ -460,6 +537,8 @@ export interface NewRunOptions {
   weekly?: string;
   /** Режим «Перегрев» */
   heat?: boolean;
+  /** false — без правил зон (тесты) */
+  zoneRules?: boolean;
   /**
    * Метапрогрессия: открытые игроком карты/реликвии из числа закрываемых (см. unlocks.ts).
    * Не передано — открыто всё (тесты, симулятор, еженедельный вызов).

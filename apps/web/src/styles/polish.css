@@ -526,28 +526,9 @@
   animation: map-motes calc(34s / var(--speed)) linear infinite;
 }
 @keyframes map-motes { to { background-position: 40px -170px, -60px -180px, -1200px 100%, 0 0, 0 0; } }
-.map-head { position: relative; }
-.map-head::after { content: ''; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; height: 1px; background: linear-gradient(90deg, rgba(var(--act-a), 0.8), rgba(var(--act-b), 0.6), transparent); }
+.mm-head { position: relative; }
+.mm-head::after { content: ''; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; height: 1px; background: linear-gradient(90deg, rgba(var(--act-a), 0.8), rgba(var(--act-b), 0.6), transparent); }
 .map-title { text-shadow: 0 0 16px rgba(var(--act-a), 0.7); }
-.map-scroll {
-  border-color: rgba(var(--act-a), 0.3);
-  background:
-    linear-gradient(to bottom, rgba(5, 6, 15, 0.78), rgba(5, 6, 15, 0.55)),
-    repeating-linear-gradient(0deg, rgba(var(--act-a), 0.05) 0 1px, transparent 1px 40px),
-    repeating-linear-gradient(90deg, rgba(var(--act-a), 0.05) 0 1px, transparent 1px 40px);
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(var(--act-a), 0.1);
-}
-.map-gridline { stroke: rgba(var(--act-a), 0.08); }
-.map-edge { stroke: rgba(154, 166, 200, 0.4); }
-.map-edge.is-visited { stroke: rgb(var(--act-a)); filter: drop-shadow(0 0 5px rgb(var(--act-a))); }
-.map-edge.is-open { filter: drop-shadow(0 0 4px var(--acid)); }
-.map-node__bg { fill: #0a0d1f; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)); transition: fill 0.15s; }
-.map-node.is-available { filter: drop-shadow(0 0 9px currentColor); }
-.map-node.is-available:hover { filter: drop-shadow(0 0 16px currentColor); }
-.map-node.is-available .map-node__bg { fill: color-mix(in srgb, currentColor 26%, #0a0d1f); }
-.kind-boss .map-node__bg { filter: drop-shadow(0 0 10px var(--magenta)); }
-.kind-elite .map-node__bg { stroke-dasharray: 0; }
-.map-node.is-current .map-node__halo { stroke-dasharray: 5 4; animation: spin calc(8s / var(--speed)) linear infinite; transform-box: fill-box; transform-origin: center; }
 .legend-icon { background: radial-gradient(circle at 50% 30%, color-mix(in srgb, currentColor 25%, #0a0d1f), #0a0d1f); box-shadow: 0 0 10px color-mix(in srgb, currentColor 35%, transparent); }
 
 /* ============================================================

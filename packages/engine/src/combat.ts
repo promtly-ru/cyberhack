@@ -3,6 +3,7 @@
  * Все функции мутируют ctx.s (вызывающий код уже сделал structuredClone).
  */
 import { chooseMove } from './ai';
+import { ADAPT_RESIST_MULT, ADAPT_STREAK, isIntentDistorted, OVERHEAT_EVERY, OVERHEAT_STRENGTH, SUMMON_LIMIT, zoneRuleFor } from './zones';
 import type { AscensionMods } from './ascension';
 import { canUpgrade, COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, type ResolvedCard } from './cards';
 import { getContent } from './content';
@@ -43,6 +44,8 @@ export interface CombatCtx {
   c: CombatState;
   ev: GameEvent[];
   mods: AscensionMods;
+  /** id карты, эффекты которой сейчас разыгрываются */
+  card?: string;
 }
 
 export type Unit = 'player' | EnemyState;
@@ -144,6 +147,8 @@ function attack(ctx: CombatCtx, source: Unit | null, target: Unit, base: number,
     if (m !== 1) dmg = Math.floor(dmg * m + 1e-9);
     const hm = heatPlayerDamageMult(ctx.c.heat ?? 0);
     if (hm !== 1) dmg = Math.floor(dmg * hm + 1e-9);
+    const r = ctx.c.resist;
+    if (r && ctx.card === r.cardId && r.turn === ctx.c.turn) dmg = Math.floor(dmg * ADAPT_RESIST_MULT + 1e-9);
   } else if (source && target === 'player') {
     const hm = heatEnemyDamageMult(ctx.c.heat ?? 0);
     if (hm !== 1) dmg = Math.ceil(dmg * hm - 1e-9);
@@ -465,6 +470,14 @@ function applyEnemyEffect(ctx: CombatCtx, enemy: EnemyState, def: EnemyDef, eff:
     case 'add_card':
       addCardToCombat(ctx, eff.cardId, eff.to, eff.count ?? 1);
       return;
+    case 'summon': {
+      const max = eff.max ?? SUMMON_LIMIT;
+      for (let i = 0; i < eff.amount && livingEnemies(ctx.c).length < max; i++) summonEnemy(ctx, eff.enemyId);
+      return;
+    }
+    case 'shield_allies':
+      for (const ally of livingEnemies(ctx.c)) if (ally !== enemy || eff.self) gainBlock(ctx, ally, eff.amount);
+      return;
     default:
       // draw / gain_energy / exhaust_random_hand / gain_gold / scry / echo и пр. у врагов игнорируются
       return;
@@ -541,6 +554,11 @@ export function refreshIntent(ctx: CombatCtx, e: EnemyState): void {
     e.intent = { kind: 'unknown', moveId: move.id };
     return;
   }
+  // Правило зоны «Искажения»: часть намерений обычных врагов скрыта
+  if (def.tier === 'normal' && ctx.c.zoneRule === 'distortion' && isIntentDistorted(ctx.c.enemies.indexOf(e), ctx.c.turn)) {
+    e.intent = { kind: 'unknown', moveId: move.id, hidden: true };
+    return;
+  }
   const dmg = move.effects.find((f) => f.type === 'damage' && f.target !== 'self');
   e.intent = { kind: move.intent, moveId: move.id };
   if (dmg && dmg.type === 'damage') {
@@ -555,31 +573,43 @@ export function refreshIntents(ctx: CombatCtx): void {
 
 function planNextMove(ctx: CombatCtx, e: EnemyState): void {
   const def = enemyDefOf(e);
-  const moveId = chooseMove(def, e.moveHistory, rngOf(ctx.s, 'ai'));
+  const aiCtx = { hpPct: (e.hp / Math.max(1, e.maxHp)) * 100, enemies: livingEnemies(ctx.c).length, played: ctx.c.playedThisTurn ?? [] };
+  const moveId = chooseMove(def, e.moveHistory, rngOf(ctx.s, 'ai'), aiCtx, e);
   e.intent = { kind: def.moves.find((m) => m.id === moveId)?.intent ?? 'unknown', moveId };
   refreshIntent(ctx, e);
 }
 
+/** Призыв: новый враг справа, ходит со следующего хода врагов. */
+function summonEnemy(ctx: CombatCtx, id: string): void {
+  const e = createEnemy(ctx.s, id, ctx.mods);
+  e.summoned = true;
+  ctx.c.enemies.push(e);
+  ctx.ev.push({ type: 'enemy_summoned', enemyUid: e.uid, defId: id });
+  for (const [sid, n] of Object.entries(mutMods(ctx).enemyCombatStatuses)) applyStatus(ctx, e, sid, n);
+  planNextMove(ctx, e);
+}
+
 // ---------- фазы боя ----------
 
+function createEnemy(s: RunState, id: string, mods: AscensionMods): EnemyState {
+  const def = getContent().enemies.get(id);
+  if (!def) throw new Error(`Unknown enemy id: ${id}`);
+  const hp = Math.max(1, Math.floor(rngOf(s, 'combat').int(def.hp[0], def.hp[1]) * hpMult(mods, def.tier) + 1e-9));
+  return {
+    uid: nextUid(s, 'e'),
+    defId: id,
+    hp,
+    maxHp: hp,
+    block: 0,
+    statuses: {},
+    intent: { kind: 'unknown', moveId: '' },
+    moveHistory: [],
+  };
+}
+
 export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEvent[], mods: AscensionMods): CombatCtx {
-  const content = getContent();
   const rng = rngOf(s, 'combat');
-  const enemies: EnemyState[] = enemyIds.map((id) => {
-    const def = content.enemies.get(id);
-    if (!def) throw new Error(`Unknown enemy id: ${id}`);
-    const hp = Math.max(1, Math.floor(rng.int(def.hp[0], def.hp[1]) * hpMult(mods, def.tier) + 1e-9));
-    return {
-      uid: nextUid(s, 'e'),
-      defId: id,
-      hp,
-      maxHp: hp,
-      block: 0,
-      statuses: {},
-      intent: { kind: 'unknown', moveId: '' },
-      moveHistory: [],
-    };
-  });
+  const enemies: EnemyState[] = enemyIds.map((id) => createEnemy(s, id, mods));
   const mm = getMutatorMods(s.mutators);
   const shuffled = rng.shuffle(s.deck.map((card) => ({ ...card })));
   // Врождённые карты — наверх добора (порядок среди них сохраняется), чтобы попасть в стартовую руку
@@ -598,6 +628,8 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
     counters: {},
     ...(s.heat ? { heat: HEAT_START } : {}),
   };
+  const rule = zoneRuleFor(s);
+  if (rule !== 'none') c.zoneRule = rule;
   s.combat = c;
   const ctx: CombatCtx = { s, c, ev, mods };
   // Мутаторы: стартовые статусы врагов и игрока
@@ -634,6 +666,7 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   const c = ctx.c;
   c.turn += 1;
   c.counters[COUNTER_TURN_CARDS] = 0;
+  c.playedThisTurn = [];
   ctx.ev.push({ type: 'turn_started', turn: c.turn });
   c.player.block = 0;
   tickVirus(ctx, 'player');
@@ -659,6 +692,11 @@ export function startPlayerTurn(ctx: CombatCtx): void {
     triggerRelics(ctx, 'combat_start');
     applySynergies(ctx);
     applyFirmwares(ctx, 'combat_start');
+  }
+  // Правило зоны «Перегрев серверов»: каждый 3-й ход враги усиливаются
+  if (c.zoneRule === 'overheat' && c.turn % OVERHEAT_EVERY === 0 && !isOver(ctx)) {
+    ctx.ev.push({ type: 'zone_rule', rule: 'overheat' });
+    for (const e of livingEnemies(c)) applyStatus(ctx, e, STATUS.strength, OVERHEAT_STRENGTH);
   }
   refreshIntents(ctx);
 }
@@ -725,6 +763,8 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   const inTurn = (c.counters[COUNTER_TURN_CARDS] ?? 0) + 1;
   c.counters[COUNTER_TURN_CARDS] = inTurn;
   if (inTurn > (ctx.s.stats.maxCardsInTurn ?? 0)) ctx.s.stats.maxCardsInTurn = inTurn;
+  (c.playedThisTurn ??= []).push(inst.defId);
+  ctx.card = inst.defId;
 
   // Эхо: карта срабатывает дважды, снимается 1 Эхо (проверяется до эффектов — Эхо от самой карты не тратится)
   let passes = 1;
@@ -742,6 +782,8 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
     }
   }
 
+  ctx.card = undefined;
+  if (card.type === 'attack') trackAdaptive(ctx, inst.defId);
   // Силы (power) уходят из боя; exhaust — в сброшенные навсегда; остальное — в сброс.
   if (card.type !== 'power') {
     if (card.exhaust) exhaustCard(ctx, inst);
@@ -752,6 +794,18 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   triggerRelics(ctx, 'card_played');
   if (card.type === 'attack') triggerRelics(ctx, 'attack_played');
   if (!isOver(ctx)) refreshIntents(ctx);
+}
+
+/** Правило «Сердца ИИ»: после ADAPT_STREAK одинаковых атак подряд — сопротивление к ней до конца хода. */
+function trackAdaptive(ctx: CombatCtx, cardId: string): void {
+  const c = ctx.c;
+  if (c.zoneRule !== 'adaptive') return;
+  const streak = c.attackStreak?.cardId === cardId ? c.attackStreak.count + 1 : 1;
+  c.attackStreak = { cardId, count: streak };
+  if (streak >= ADAPT_STREAK && !(c.resist?.cardId === cardId && c.resist.turn === c.turn)) {
+    c.resist = { cardId, turn: c.turn };
+    ctx.ev.push({ type: 'zone_rule', rule: 'adaptive' });
+  }
 }
 
 export function endTurn(ctx: CombatCtx): void {
@@ -774,9 +828,11 @@ export function endTurn(ctx: CombatCtx): void {
   endOfTurnStatuses(ctx, 'player');
   if (isOver(ctx)) return;
 
-  for (const e of c.enemies) {
+  // Блок снимается у всех сразу: защита от союзников, полученная в этой фазе, доживает до хода игрока
+  for (const e of c.enemies) if (e.hp > 0) e.block = 0;
+  // Снимок: призванные в этой фазе ходят со следующего раза
+  for (const e of [...c.enemies]) {
     if (e.hp <= 0) continue;
-    e.block = 0;
     tickVirus(ctx, e);
     if (isOver(ctx)) return;
     tickBleed(ctx, e);

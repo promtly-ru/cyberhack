@@ -6,7 +6,7 @@
   /* drop-shadow на SVG — самая дорогая операция, на телефоне убираем */
   .unit-art, .unit-art .visor, .card-art, .relic-glyph, .potion-glyph, .potion-slot .icon,
   .pip.is-on, .energy__ring2, .art-crown, .showcase__item .unit-art,
-  .rarity--uncommon, .rarity--rare, .target-arrow path, .energy, .card-art .art-hero, .map-node__bg, .reward__icon { filter: none !important; }
+  .rarity--uncommon, .rarity--rare, .target-arrow path, .energy, .card-art .art-hero, .reward__icon { filter: none !important; }
   .rarity--rare .card__frame::before { mix-blend-mode: normal; }
   .glitch::before, .glitch::after { animation: none; mix-blend-mode: normal; }
   /* Мелкие вечные анимации внутри SVG юнитов */
@@ -16,7 +16,7 @@
   .art-breathe, .art-visor-scan, .art-spin, .card-art .art-holo, .card.is-upgraded .card__plus,
   .combat[data-tier] .battlefield, .logo__word, .class-card.is-selected::after, .is-defeat::before,
   .rc-ring--1, .rc-ring--2, .rc-shield, .diff-card--zero_day.is-selected::after, .firmware.is-active,
-  .stat--hp.is-low, .heat--3 .heat__fill, .map-node.is-current .map-node__halo {
+  .stat--hp.is-low, .heat--3 .heat__fill {
     animation: none !important;
   }
   /* Тяжёлые размытые тени — упрощаем */

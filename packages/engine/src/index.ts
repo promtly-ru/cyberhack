@@ -5,6 +5,7 @@
 import { describeCard as describeCardImpl } from './cards';
 import { getContent } from './content';
 import { weeklyClassId } from './weekly';
+import { SAVE_VERSION } from './types';
 import {
   applyAction as applyActionImpl,
   getLegalActions as getLegalActionsImpl,
@@ -126,3 +127,12 @@ export function weeklyClass(seed: string): ClassId {
 export * from './weekly';
 export * from './heat';
 export { canCool } from './combat';
+export * from './zones';
+export { MAP_ROWS, BOSS_ROW, SECTORS, SECTOR_LENGTH, sectorOf } from './map';
+
+/** Совместим ли сохранённый забег с текущим движком; иначе — причина для игрока (профиль не трогаем). */
+export function checkSaveCompat(state: unknown): { ok: true } | { ok: false; reason: string } {
+  const v = (state as { version?: unknown } | null)?.version;
+  if (v === SAVE_VERSION) return { ok: true };
+  return { ok: false, reason: 'Забег создан в старой версии игры (карта и враги обновились). Начните новый забег — профиль и достижения сохранены.' };
+}

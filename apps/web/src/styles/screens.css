@@ -79,41 +79,7 @@
 
 /* ---------- Карта ---------- */
 .map-screen { height: 100dvh; overflow: hidden; }
-.map-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; column-gap: 12px; padding: 12px var(--gutter) 8px; max-width: 980px; margin: 0 auto; width: 100%; }
 .map-title { font-size: clamp(20px, 3vw, 30px); }
-.map-head > div { flex: 1; min-width: 0; }
-.map-body { flex: 1; min-height: 0; display: flex; gap: 20px; justify-content: center; padding: 0 var(--gutter); }
-.map-scroll { flex: 0 1 560px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--line-2); border-radius: 14px; background: rgba(5, 6, 15, 0.6); scrollbar-color: var(--line) transparent; margin-bottom: 12px; }
-.map-svg { display: block; width: 100%; height: auto; }
-.map-gridline { stroke: rgba(0, 240, 255, 0.06); }
-.map-edge { stroke: rgba(154, 166, 200, 0.28); stroke-width: 2; stroke-dasharray: 2 6; stroke-linecap: round; }
-.map-edge.is-visited { stroke: var(--cyan); stroke-dasharray: none; stroke-width: 3; filter: drop-shadow(0 0 4px var(--cyan)); }
-.map-edge.is-open { stroke: var(--acid); stroke-width: 2.5; stroke-dasharray: 6 6; animation: dash calc(0.8s / var(--speed)) linear infinite; }
-.map-node { color: #8e98ba; }
-.map-node__bg { fill: #0a0d1f; stroke: currentColor; stroke-width: 2; }
-.map-node__halo { fill: none; stroke: transparent; }
-.map-node__hit { fill: #000; fill-opacity: 0; stroke: none; }
-.map-node.kind-combat { color: #c0c8e4; }
-.map-node.kind-elite { color: var(--orange); }
-.map-node.kind-event { color: var(--violet); }
-.map-node.kind-shop { color: var(--acid); }
-.map-node.kind-rest { color: var(--green); }
-.map-node.kind-treasure { color: var(--cyan); }
-.map-node.kind-boss { color: var(--magenta); }
-.map-node.is-locked { opacity: 0.55; }
-.map-node.is-visited { opacity: 0.6; }
-.map-node.is-visited .map-node__bg { fill: color-mix(in srgb, currentColor 18%, #0a0d1f); }
-.map-node__check { fill: none; stroke: var(--cyan); stroke-width: 3; stroke-linecap: round; }
-.map-node.is-current .map-node__halo { stroke: var(--cyan); stroke-width: 2.5; filter: drop-shadow(0 0 6px var(--cyan)); }
-.map-node.is-available { cursor: pointer; filter: drop-shadow(0 0 6px currentColor); }
-.map-node.is-available .map-node__bg { fill: color-mix(in srgb, currentColor 20%, #0a0d1f); stroke-width: 2.5; }
-.map-node__pulse { fill: none; stroke: currentColor; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: node-pulse calc(1.4s / var(--speed)) ease-out infinite; }
-.map-node.is-available:hover .map-node__bg, .map-node.is-available:focus-visible .map-node__bg { fill: color-mix(in srgb, currentColor 40%, #0a0d1f); }
-.map-node:focus { outline: none; }
-.map-node:focus-visible .map-node__halo { stroke: var(--acid); stroke-width: 3; filter: drop-shadow(0 0 6px var(--acid)); }
-@keyframes node-pulse { from { opacity: 0.9; transform: scale(0.75); } to { opacity: 0; transform: scale(1.35); } }
-.kind-boss .map-node__bg { stroke-width: 3; }
-
 .map-legend { flex: 0 0 250px; align-self: flex-start; padding: 16px; background: var(--panel); border: 1px solid var(--line-2); border-radius: 14px; }
 .map-legend ul { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .map-legend li { display: flex; gap: 10px; align-items: flex-start; }
@@ -123,13 +89,6 @@
 .legend-icon { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid currentColor; background: #0a0d1f; }
 .map-legend .kind-combat { color: #c0c8e4; } .map-legend .kind-elite { color: var(--orange); } .map-legend .kind-event { color: var(--violet); }
 .map-legend .kind-shop { color: var(--acid); } .map-legend .kind-rest { color: var(--green); } .map-legend .kind-treasure { color: var(--cyan); } .map-legend .kind-boss { color: var(--magenta); }
-.legend-toggle { display: none; }
-@media (max-width: 899px) {
-  .legend-toggle { display: inline-flex; }
-  .map-legend { display: none; position: fixed; right: 12px; top: 120px; z-index: 40; width: min(280px, calc(100vw - 24px)); background: var(--panel-solid); }
-  .map-legend.is-open { display: block; }
-  .map-scroll { flex: 1 1 auto; }
-}
 
 /* ---------- Экраны забега ---------- */
 .run-screen__body { width: min(1100px, 100%); margin: 0 auto; padding: calc(20px + var(--plaque-top, 0px)) var(--gutter) 32px; display: flex; flex-direction: column; gap: 18px; }
@@ -240,16 +199,7 @@
 .cs-foot { position: sticky; bottom: var(--plaque-h, 0px); z-index: 15; padding: 10px 0; background: linear-gradient(to top, rgba(5, 6, 15, 0.97) 70%, transparent); }
 
 /* ---------- Новые узлы карты, метки наград, магазин ---------- */
-.map-node.kind-lab { color: #7df9c2; }
-.map-node.kind-blackbox { color: #ffd23f; }
-.map-node.kind-relay { color: #5ec8ff; }
-.map-node.kind-ambush { color: #ff5470; }
 .map-legend .kind-lab { color: #7df9c2; } .map-legend .kind-blackbox { color: #ffd23f; } .map-legend .kind-relay { color: #5ec8ff; } .map-legend .kind-ambush { color: #ff5470; }
-.map-node.kind-ambush .map-node__bg { stroke-dasharray: 4 3; }
-.map-node__mark { color: var(--text-dim, #9aa6c8); pointer-events: none; }
-.map-node__mark-bg { fill: #0a0d1f; stroke: currentColor; stroke-width: 1; opacity: 0.92; }
-.map-node.is-available .map-node__mark { color: var(--acid, #d8ff3e); }
-.map-edge.is-safe:not(.is-visited) { stroke: rgba(80, 255, 160, 0.55); stroke-dasharray: 6 4; stroke-width: 2.4; }
 .map-result { margin: 6px 0 0; padding: 6px 10px; border-left: 3px solid var(--cyan, #00f0ff); background: var(--panel); border-radius: 6px; font-size: 13px; }
 .sale-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; font-size: 11px; font-weight: 700; color: #0a0d1f; background: var(--acid, #d8ff3e); border-radius: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
 .shop-item.is-sale { position: relative; filter: drop-shadow(0 0 10px rgba(216, 255, 62, 0.55)); }

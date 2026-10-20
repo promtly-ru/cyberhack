@@ -22,6 +22,6 @@ describe('публичный API', () => {
     expect(engine.validateContent()).toEqual([]);
     expect(engine.calcAttackDamage(6, null, null)).toBe(6);
     expect(engine.STATUS.virus).toBe('virus');
-    expect(engine.SAVE_VERSION).toBe(1);
+    expect(engine.SAVE_VERSION).toBe(2);
   });
 });

@@ -131,7 +131,10 @@ const EFFECT_TYPES = new Set([
   'cleanse',
   'gain_potion',
   'gamble',
+  'summon',
+  'shield_allies',
 ]);
+const ENEMY_ONLY_EFFECTS = new Set(['summon', 'shield_allies']);
 
 function checkDuplicates(kind: string, items: readonly { id: string }[], errors: string[]): void {
   const seen = new Set<string>();
@@ -161,7 +164,7 @@ export function validateContent(data: ContentData = current.data): string[] {
   const relicIds = new Set(data.relics.map((r) => r.id));
   const statusIds = new Set(data.statuses.map((s) => s.id));
 
-  const checkEffects = (where: string, effects: unknown): void => {
+  const checkEffects = (where: string, effects: unknown, enemy = false): void => {
     if (!Array.isArray(effects)) {
       errors.push(`${where}: effects не массив`);
       return;
@@ -172,6 +175,8 @@ export function validateContent(data: ContentData = current.data): string[] {
         errors.push(`${at}: неизвестный тип эффекта "${(e as { type?: unknown })?.type}"`);
         return;
       }
+      if (!enemy && ENEMY_ONLY_EFFECTS.has(e.type)) errors.push(`${at}: эффект "${e.type}" только для врагов`);
+      if (e.type === 'summon' && !enemyIds.has(e.enemyId)) errors.push(`${at}: неизвестный враг "${e.enemyId}"`);
       if (e.type === 'apply_status' && !statusIds.has(e.status)) errors.push(`${at}: неизвестный статус "${e.status}"`);
       if (e.type === 'add_card' && !cardIds.has(e.cardId)) errors.push(`${at}: неизвестная карта "${e.cardId}"`);
       if (e.type === 'gain_potion' && e.potionId !== undefined && !getPotion(e.potionId))
@@ -206,7 +211,10 @@ export function validateContent(data: ContentData = current.data): string[] {
     if (moves.length === 0) errors.push(`${w}: нет moves`);
     checkDuplicates(`${w}.moves`, moves, errors);
     const moveIds = new Set(moves.map((m) => m.id));
-    for (const m of moves) checkEffects(`${w}.move "${m.id}"`, m.effects);
+    for (const m of moves) checkEffects(`${w}.move "${m.id}"`, m.effects, true);
+    const badMove = (where: string, id: unknown) => {
+      if (typeof id !== 'string' || !moveIds.has(id)) errors.push(`${w}: ${where} ссылается на неизвестный move "${String(id)}"`);
+    };
     if (!e.ai) errors.push(`${w}: нет ai`);
     else if (e.ai.kind === 'cycle') {
       if (!Array.isArray(e.ai.order) || e.ai.order.length === 0) errors.push(`${w}: пустой ai.order`);
@@ -215,6 +223,22 @@ export function validateContent(data: ContentData = current.data): string[] {
       const entries = Object.entries(e.ai.weights ?? {});
       if (!entries.some(([, wt]) => wt > 0)) errors.push(`${w}: нет положительных ai.weights`);
       for (const [id] of entries) if (!moveIds.has(id)) errors.push(`${w}: ai.weights ссылается на неизвестный move "${id}"`);
+    } else if (e.ai.kind === 'phased') {
+      const phases = Array.isArray(e.ai.phases) ? e.ai.phases : [];
+      if (phases.length === 0) errors.push(`${w}: нет ai.phases`);
+      phases.forEach((p, i) => {
+        if (typeof p.hpAtMost !== 'number' || p.hpAtMost <= 0 || p.hpAtMost > 100) errors.push(`${w}: ai.phases[${i}].hpAtMost вне 1..100`);
+        if (!p.order?.length && !Object.values(p.weights ?? {}).some((x) => x > 0)) errors.push(`${w}: ai.phases[${i}] без ходов`);
+        p.order?.forEach((id) => badMove(`ai.phases[${i}].order`, id));
+        Object.keys(p.weights ?? {}).forEach((id) => badMove(`ai.phases[${i}].weights`, id));
+        if (p.onEnter !== undefined) badMove(`ai.phases[${i}].onEnter`, p.onEnter);
+      });
+      if (phases.length > 0 && !phases.some((p) => p.hpAtMost === 100)) errors.push(`${w}: нет фазы с hpAtMost 100`);
+    } else if (e.ai.kind === 'scripted') {
+      if (!Array.isArray(e.ai.script)) errors.push(`${w}: ai.script не массив`);
+      else e.ai.script.forEach((st, i) => badMove(`ai.script[${i}]`, st.move));
+      if (!Array.isArray(e.ai.fallback) || e.ai.fallback.length === 0) errors.push(`${w}: пустой ai.fallback`);
+      else e.ai.fallback.forEach((id) => badMove('ai.fallback', id));
     } else errors.push(`${w}: неизвестный ai.kind`);
   }
 

@@ -1,12 +1,12 @@
 /** Общие заготовки для тестов сетевого слоя (в прод-бандл не попадает: импортируется только из *.test.ts). */
-import type { Action, NewRunOptions, RunState } from '@cyberhack/engine';
+import { SAVE_VERSION, type Action, type NewRunOptions, type RunState } from '@cyberhack/engine';
 import type { SavedRun } from './types';
 import type { ReplayFn } from './local';
 import { MemoryStorage } from './storage';
 
 export function fakeState(over: Partial<RunState> = {}): RunState {
   return {
-    version: 1,
+    version: SAVE_VERSION,
     seed: '2026-W43',
     classId: 'ghost',
     ascension: 0,
