@@ -56,6 +56,8 @@ export interface CombatCtx {
 
 /** Максимальная вложенность срабатывания хуков (хук -> эффект -> хук ...). */
 export const MAX_HOOK_DEPTH = 3;
+/** Потолок постоянного прироста максимума HP из боя за забег (иначе карта «Имплантат-ядро» стакается бесконечно) */
+export const MAX_HP_GAIN_IN_COMBAT = 12;
 
 export type Unit = 'player' | EnemyState;
 
@@ -332,7 +334,10 @@ function applyPlayerUtilityEffect(ctx: CombatCtx, eff: Effect): boolean {
       return true;
     }
     case 'gain_max_hp': {
-      const amt = Math.max(0, Math.floor(eff.amount));
+      const used = ctx.s.combatMaxHpGain ?? 0;
+      const amt = Math.min(Math.max(0, Math.floor(eff.amount)), Math.max(0, MAX_HP_GAIN_IN_COMBAT - used));
+      if (amt <= 0) return true;
+      ctx.s.combatMaxHpGain = used + amt;
       ctx.c.player.maxHp += amt;
       heal(ctx, 'player', amt);
       return true;

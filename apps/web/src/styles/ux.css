@@ -104,3 +104,27 @@
   .status-row--dense .status__name { display: none; }
   .status-row--dense .status__n { margin-left: 0; font-size: 12px; }
 }
+
+/* Экран отдыха: картинка и кнопки выбора помещаются на маленьком экране без прокрутки */
+@media (max-width: 767px), (max-height: 700px) {
+  .rest-core { width: min(180px, 22dvh); height: min(180px, 22dvh); }
+  .rest-screen .flavor { margin: 6px 0; font-size: 14px; }
+  .rest-options { gap: 8px; }
+  .choice { padding: 12px 14px; gap: 4px; }
+  .choice b { font-size: 18px; }
+  .choice small { font-size: 13px; }
+}
+@media (max-height: 520px) {
+  .rest-core { width: 64px; height: 64px; }
+  .rest-screen .flavor { display: none; }
+  .rest-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .rest-screen .flavor { display: none; }
+  .rest-core { width: min(140px, 16dvh); height: min(140px, 16dvh); }
+}
+@media (max-height: 520px) {
+  .run-screen .panel-head h1 { font-size: 26px; margin: 2px 0; }
+  .run-screen .panel-head .eyebrow { font-size: 10px; }
+  .run-screen .screen-hint { display: none; }
+}
