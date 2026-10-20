@@ -159,6 +159,7 @@ export function cardStats(defId: string, upgraded: boolean) {
     ethereal: d.ethereal ?? false,
     retain: u?.retain ?? d.retain ?? false,
     innate: u?.innate ?? d.innate ?? false,
+    echo: u?.echo ?? d.echo ?? false,
   };
 }
 

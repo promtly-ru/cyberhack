@@ -559,7 +559,353 @@ function coins(r: Rand): ReactNode[] {
   return out;
 }
 
-const MOTIFS = { blades, beam, blast, shield, firewall, spores, virus, reticle, ascend, stream, bolt, heal, reactor, shockwave, stack, glitch, coins };
+/** Микросхема: корпус с ножками и дорожками. */
+function chip(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  const n = 4 + Math.floor(r() * 2);
+  let pins = '';
+  for (let i = 0; i < n; i++) {
+    const t = -15 + (i / (n - 1)) * 30;
+    pins += `M${P(cx + t)} ${CY - 20}v-8M${P(cx + t)} ${CY + 20}v8M${cx - 20} ${P(CY + t * 0.8)}h-8M${cx + 20} ${P(CY + t * 0.8)}h8`;
+  }
+  out.push(<path key="pins" d={pins} strokeWidth="1.6" opacity=".8" className="k2" />);
+  out.push(<rect key="body" x={cx - 20} y={CY - 20} width={40} height={40} rx={3} className="fill-bg" strokeWidth="1.6" />);
+  out.push(<rect key="die" x={cx - 12} y={CY - 12} width={24} height={24} rx={1.5} className="fsoft" strokeWidth="1" />);
+  out.push(<rect key="core" x={cx - 5} y={CY - 5} width={10} height={10} className="f2" stroke="none" />);
+  out.push(<path key="tr" d={`M${cx - 12} ${CY - 6}h4v-4M${cx + 12} ${CY + 6}h-4v4M${cx - 6} ${CY + 12}v-4h-4`} strokeWidth=".7" stroke="#fff" opacity=".7" />);
+  out.push(<circle key="dot" cx={cx - 16} cy={CY - 16} r={1.4} className="f1" />);
+  for (let i = 0; i < 6; i++) out.push(<path key={`tc${i}`} d={`M${P(r() * 20)} ${P(8 + r() * 48)}h${P(6 + r() * 14)}`} strokeWidth=".6" opacity=".4" />);
+  return out;
+}
+
+/** Дрон: квадрокоптер с лучом-прицелом. */
+function drone(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 10);
+  const cy = P(26 + (r() - 0.5) * 4);
+  out.push(<path key="beam" d={`M${cx} ${cy + 8}L${cx - 12} 62H${cx + 12}Z`} className="fsoft" strokeWidth=".5" opacity=".6" />);
+  [-1, 1].forEach((s, i) => {
+    const ax = cx + s * 20;
+    out.push(<path key={`arm${i}`} d={`M${cx} ${cy}L${P(ax)} ${cy - 5}`} strokeWidth="1.6" />);
+    out.push(<g key={`rot${i}`} className="art-spin" style={{ transformOrigin: `${P(ax)}px ${cy - 6}px` }}>
+      <ellipse cx={P(ax)} cy={cy - 6} rx={9} ry={1.8} className="fsoft" strokeWidth=".8" />
+      <path d={`M${P(ax - 9)} ${cy - 6}h18`} strokeWidth=".6" stroke="#fff" opacity=".6" />
+    </g>);
+    out.push(<circle key={`m${i}`} cx={P(ax)} cy={cy - 5} r={1.6} className="f2" />);
+  });
+  out.push(<path key="body" d={pol(cx, cy, 10, 6, 0, 0.7)} className="fill-bg" strokeWidth="1.5" />);
+  out.push(<circle key="lens" cx={cx} cy={cy + 1} r={3.4} className="f2" strokeWidth="1" />, <circle key="gl" cx={P(cx - 1)} cy={cy} r={0.9} fill="#fff" stroke="none" />);
+  out.push(<path key="leg" d={`M${cx - 6} ${cy + 6}l-3 5h5M${cx + 6} ${cy + 6}l3 5h-5`} strokeWidth="1" />);
+  out.push(<circle key="tg" cx={cx} cy={58} r={4} strokeWidth="1" className="k2" />, <path key="tgx" d={`M${cx - 7} 58h14M${cx} 51v14`} strokeWidth=".6" />);
+  for (let i = 0; i < 8; i++) out.push(<path key={`w${i}`} d={`M${P(r() * W)} ${P(r() * 40)}h${P(3 + r() * 6)}`} strokeWidth=".6" opacity=".4" />);
+  return out;
+}
+
+/** Катана: клинок с хамоном, цубой и росчерком. */
+function katana(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const ang = P(-0.7 + r() * 0.3);
+  out.push(<path key="slash" d="M8 56C30 40 60 24 94 8C64 26 38 44 8 56Z" className="fsoft" strokeWidth=".6" opacity=".7" />);
+  out.push(<g key="k" transform={`rotate(${P(ang * 57.3)} ${CX} ${CY})`}>
+    <path d="M10 33L70 30.5Q76 32 76 33.5Q76 35 70 35.5L10 35Z" className="fill-bg" strokeWidth="1.3" />
+    <path d="M14 33.8H72" stroke="#fff" strokeWidth=".6" opacity=".8" />
+    <path d="M16 34.8q4-1.4 8 0t8 0 8 0 8 0" strokeWidth=".6" className="k2" />
+    <rect x="3" y="31.5" width="16" height="4.4" rx="1" className="fsoft" strokeWidth="1.2" />
+    <path d="M6 31.5l3 4.4M10 31.5l3 4.4M14 31.5l3 4.4" strokeWidth=".6" />
+    <ellipse cx="20.5" cy="33.7" rx="2" ry="6" className="f2" strokeWidth="1" />
+  </g>);
+  for (let i = 0; i < 10; i++) out.push(<path key={`s${i}`} d={`M${P(40 + r() * 54)} ${P(4 + r() * 22)}l${P(2 + r() * 5)} ${P(-2 - r() * 3)}`} strokeWidth=".8" className={i % 2 ? 'k2' : undefined} opacity=".8" />);
+  out.push(<circle key="hit" cx={92} cy={9} r={2.2} className="f2" />);
+  return out;
+}
+
+/** ДНК: двойная спираль с перемычками. */
+function dna(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const ph = r() * 6.28;
+  const amp = 14 + r() * 4;
+  let a = '';
+  let b = '';
+  for (let x = 6; x <= 94; x += 2.5) {
+    const s = Math.sin(((x - 6) / 88) * Math.PI * 4 + ph);
+    a += `${x === 6 ? 'M' : 'L'}${x} ${P(CY + s * amp)}`;
+    b += `${x === 6 ? 'M' : 'L'}${x} ${P(CY - s * amp)}`;
+  }
+  for (let x = 10; x <= 90; x += 5.5) {
+    const s = Math.sin(((x - 6) / 88) * Math.PI * 4 + ph);
+    out.push(<path key={`rg${x}`} d={`M${x} ${P(CY + s * amp)}V${P(CY - s * amp)}`} strokeWidth=".8" opacity={P(0.3 + Math.abs(Math.cos(((x - 6) / 88) * Math.PI * 4 + ph)) * 0.6)} />);
+    out.push(<circle key={`rn${x}`} cx={x} cy={P(CY + s * amp)} r={1.3} className={Math.round(x) % 2 ? 'f2' : 'f1'} />);
+  }
+  out.push(<path key="a" d={a} strokeWidth="1.8" />, <path key="b" d={b} strokeWidth="1.8" className="k2" />);
+  return out;
+}
+
+/** Глаз: радужка со зрачком и веками. */
+function eye(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 6);
+  out.push(<path key="lid" d={`M${cx - 38} ${CY}Q${cx} ${CY - 34} ${cx + 38} ${CY}Q${cx} ${CY + 34} ${cx - 38} ${CY}Z`} className="fill-bg" strokeWidth="1.6" />);
+  out.push(<circle key="iris" cx={cx} cy={CY} r={15} className="fsoft" strokeWidth="1.4" />);
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * Math.PI * 2;
+    out.push(<path key={`ir${i}`} d={`M${P(cx + Math.cos(a) * 8)} ${P(CY + Math.sin(a) * 8)}L${P(cx + Math.cos(a) * 15)} ${P(CY + Math.sin(a) * 15)}`} strokeWidth=".6" opacity=".7" className={i % 3 ? undefined : 'k2'} />);
+  }
+  out.push(<circle key="pu" cx={cx} cy={CY} r={6.5} fill="#04050c" className="k2" strokeWidth="1.2" />, <circle key="hl" cx={P(cx - 3)} cy={CY - 3} r={1.8} fill="#fff" stroke="none" />);
+  out.push(<path key="lash" d={`M${cx - 30} ${CY - 6}l-4 -4M${cx - 18} ${CY - 14}l-3 -5M${cx + 18} ${CY - 14}l3 -5M${cx + 30} ${CY - 6}l4 -4`} strokeWidth="1" opacity=".7" />);
+  out.push(<path key="sc" d={`M${cx - 38} ${CY + 24}H${cx + 38}`} strokeWidth=".6" strokeDasharray="2 3" className="k2" opacity=".7" />);
+  return out;
+}
+
+/** Замок: дужка, корпус и замочная скважина. */
+function lock(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  const open = r() < 0.3;
+  out.push(<circle key="aura" cx={cx} cy={34} r={26} className="fsoft" strokeWidth=".6" opacity=".6" />);
+  out.push(<path key="sh" d={open ? `M${cx - 10} 30V20a10 10 0 0120 0` : `M${cx - 10} 30V20a10 10 0 0120 0V30`} strokeWidth="3.2" className="k2" />);
+  out.push(<rect key="bd" x={cx - 17} y={30} width={34} height={26} rx={3} className="fill-bg" strokeWidth="1.8" />);
+  out.push(<rect key="pl" x={cx - 13} y={34} width={26} height={18} rx={1.5} className="fsoft" strokeWidth=".7" />);
+  out.push(<circle key="kh" cx={cx} cy={40} r={3.2} className="f2" />, <path key="ks" d={`M${cx} 41v7`} strokeWidth="2.4" className="k2" />);
+  for (let i = 0; i < 6; i++) out.push(<rect key={`b${i}`} x={cx - 14 + i * 5} y={53} width={2.4} height={2} className="f1" stroke="none" opacity=".7" />);
+  for (let i = 0; i < 8; i++) out.push(<path key={`h${i}`} d={`M${P(r() * W)} ${P(4 + r() * 56)}h${P(2 + r() * 5)}`} strokeWidth=".6" opacity=".4" />);
+  return out;
+}
+
+/** Череп: большой череп со скрещёнными костями. */
+function skull(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  out.push(<path key="b1" d={`M${cx - 26} 52l52-12M${cx - 26} 40l52 12`} strokeWidth="3" opacity=".85" className="k2" />);
+  out.push(<circle key="k1" cx={cx - 26} cy={52} r={2.2} className="fill-bg" />, <circle key="k2" cx={cx + 26} cy={40} r={2.2} className="fill-bg" />);
+  out.push(<path key="sk" d={`M${cx - 15} 24c0-12 7-18 15-18s15 6 15 18c0 6-3 9-6 11v6h-18v-6c-3-2-6-5-6-11z`} className="fill-bg" strokeWidth="1.8" />);
+  out.push(<path key="in" d={`M${cx - 11} 22c0-8 5-13 11-13`} stroke="#fff" strokeWidth="1" opacity=".5" />);
+  out.push(<path key="e1" d={`M${cx - 10} 20h7v7h-7z`} className="f2" />, <path key="e2" d={`M${cx + 3} 20h7v7h-7z`} className="f2" />);
+  out.push(<path key="n" d={`M${cx} 29l-2 4h4z`} className="f1" />, <path key="t" d={`M${cx - 6} 41v-4M${cx - 2} 41v-4M${cx + 2} 41v-4M${cx + 6} 41v-4`} strokeWidth="1" />);
+  for (let i = 0; i < 8; i++) out.push(<circle key={`p${i}`} cx={P(r() * W)} cy={P(r() * H)} r={0.9} className="f1" opacity=".5" />);
+  return out;
+}
+
+/** Спутник: панели батарей, тарелка и орбита. */
+function satellite(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  const cy = P(CY + (r() - 0.5) * 6);
+  out.push(<ellipse key="orb" cx={CX} cy={CY} rx={44} ry={13} strokeWidth=".7" strokeDasharray="2 3" className="k2" opacity=".7" transform={`rotate(-20 ${CX} ${CY})`} />);
+  [-1, 1].forEach((s, i) => {
+    const x0 = s < 0 ? cx - 8 - 26 : cx + 8;
+    out.push(<rect key={`p${i}`} x={P(x0)} y={cy - 8} width={26} height={16} className="fsoft" strokeWidth="1.2" />);
+    out.push(<path key={`pg${i}`} d={`M${P(x0)} ${cy}h26M${P(x0 + 8.7)} ${cy - 8}v16M${P(x0 + 17.3)} ${cy - 8}v16`} strokeWidth=".6" opacity=".7" />);
+  });
+  out.push(<rect key="bd" x={cx - 8} y={cy - 7} width={16} height={14} rx={2} className="fill-bg" strokeWidth="1.6" />);
+  out.push(<circle key="co" cx={cx} cy={cy} r={3} className="f2" />);
+  out.push(<path key="dish" d={`M${cx - 6} ${cy + 15}Q${cx} ${cy + 24} ${cx + 6} ${cy + 15}`} strokeWidth="1.4" />, <path key="ds" d={`M${cx} ${cy + 7}v10`} strokeWidth="1" />);
+  for (let i = 1; i <= 3; i++) out.push(<path key={`sg${i}`} d={`M${cx + 6 + i * 5} ${cy - 14 - i * 3}a${i * 5} ${i * 5} 0 0 1 ${i * 5} ${i * 3}`} strokeWidth=".8" opacity={P(1 - i * 0.2)} />);
+  for (let i = 0; i < 10; i++) out.push(<circle key={`st${i}`} cx={P(r() * W)} cy={P(r() * H)} r={0.7} className="f1" opacity=".6" />);
+  return out;
+}
+
+/** Песочные часы: время, песок и струйка. */
+function hourglass(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  const fill = 0.3 + r() * 0.4;
+  out.push(<circle key="ring" cx={cx} cy={CY} r={27} strokeWidth=".7" strokeDasharray="1 4" className="k2" opacity=".7" />);
+  out.push(<path key="gl" d={`M${cx - 15} 8H${cx + 15}C${cx + 15} 22 ${cx + 3} 28 ${cx + 3} 32S${cx + 15} 42 ${cx + 15} 56H${cx - 15}C${cx - 15} 42 ${cx - 3} 36 ${cx - 3} 32S${cx - 15} 22 ${cx - 15} 8Z`} className="fill-bg" strokeWidth="1.6" />);
+  out.push(<path key="sd" d={`M${cx - 11} 54H${cx + 11}C${cx + 9} ${P(54 - 14 * fill)} ${cx + 3} ${P(54 - 20 * fill)} ${cx} ${P(54 - 22 * fill)}C${cx - 3} ${P(54 - 20 * fill)} ${cx - 9} ${P(54 - 14 * fill)} ${cx - 11} 54Z`} className="f2" stroke="none" opacity=".9" />);
+  out.push(<path key="tp" d={`M${cx - 10} 12H${cx + 10}C${cx + 8} 18 ${cx + 3} 22 ${cx} 26C${cx - 3} 22 ${cx - 8} 18 ${cx - 10} 12Z`} className="fsoft" strokeWidth=".6" />);
+  out.push(<path key="st" d={`M${cx} 28V${P(54 - 22 * fill)}`} stroke="#fff" strokeWidth=".8" strokeDasharray="1 1.5" />);
+  out.push(<path key="cap" d={`M${cx - 19} 6H${cx + 19}M${cx - 19} 58H${cx + 19}`} strokeWidth="2.4" className="k2" />);
+  for (let i = 0; i < 7; i++) out.push(<path key={`t${i}`} d={`M${P(cx + 20 + r() * 20)} ${P(8 + r() * 48)}h${P(2 + r() * 4)}`} strokeWidth=".7" opacity=".45" />);
+  return out;
+}
+
+/** Кости: два куба с точками. */
+function dice(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const pips: Record<number, [number, number][]> = {
+    1: [[0, 0]],
+    2: [[-1, -1], [1, 1]],
+    3: [[-1, -1], [0, 0], [1, 1]],
+    4: [[-1, -1], [1, -1], [-1, 1], [1, 1]],
+    5: [[-1, -1], [1, -1], [0, 0], [-1, 1], [1, 1]],
+    6: [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]],
+  };
+  [
+    { x: 34, y: 34, s: 22, rot: -14 + r() * 8, v: 1 + Math.floor(r() * 6), c: 'fsoft' },
+    { x: 66, y: 28, s: 17, rot: 16 + r() * 10, v: 1 + Math.floor(r() * 6), c: 'fill-bg' },
+  ].forEach((d, i) => {
+    const h = d.s / 2;
+    out.push(<g key={`d${i}`} transform={`translate(${d.x} ${d.y}) rotate(${P(d.rot)})`}>
+      <rect x={-h} y={-h} width={d.s} height={d.s} rx={3} className={d.c} strokeWidth="1.6" />
+      <path d={`M${-h + 2} ${-h + 1.5}H${h - 3}`} stroke="#fff" strokeWidth=".8" opacity=".6" />
+      {(pips[d.v] ?? []).map(([px, py], k) => <circle key={k} cx={P(px * d.s * 0.26)} cy={P(py * d.s * 0.26)} r={P(d.s * 0.075)} className="f2" />)}
+    </g>);
+  });
+  out.push(<path key="tr" d="M44 52q10 8 22 2" strokeWidth=".8" strokeDasharray="1 3" className="k2" />);
+  for (let i = 0; i < 8; i++) out.push(<path key={`s${i}`} d={`M${P(r() * W)} ${P(r() * H)}l2 -2`} strokeWidth="1" className="k2" opacity=".6" />);
+  return out;
+}
+
+/** Wi-Fi: расходящиеся дуги сигнала от источника. */
+function wifi(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 10);
+  const by = 50;
+  for (let i = 1; i <= 4; i++) {
+    const rad = i * 10;
+    out.push(<path key={`a${i}`} d={`M${P(cx - rad * 0.75)} ${P(by - rad * 0.66)}A${rad} ${rad} 0 0 1 ${P(cx + rad * 0.75)} ${P(by - rad * 0.66)}`} strokeWidth={P(3.4 - i * 0.5)} opacity={P(1 - i * 0.14)} className={i % 2 ? undefined : 'k2'} strokeLinecap="round" />);
+  }
+  out.push(<circle key="src" cx={cx} cy={by} r={4} className="f2" />, <circle key="srr" cx={cx} cy={by} r={7} strokeWidth=".7" className="k2" />);
+  out.push(<path key="gnd" d={`M${cx - 20} ${by + 8}H${cx + 20}`} strokeWidth="1" opacity=".6" />);
+  for (let i = 0; i < 10; i++) out.push(<rect key={`p${i}`} x={P(r() * 96)} y={P(4 + r() * 30)} width={P(1 + r() * 3)} height={1.2} className="f1" opacity=".5" />);
+  return out;
+}
+
+/** Терминал: окно с командной строкой. */
+function terminal(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const x = P(14 + (r() - 0.5) * 6);
+  out.push(<rect key="win" x={x} y={8} width={72} height={48} rx={2.5} className="fill-bg" strokeWidth="1.6" />);
+  out.push(<path key="bar" d={`M${x} 17H${x + 72}`} strokeWidth="1" />, <circle key="d1" cx={x + 5} cy={12.5} r={1.4} className="f2" />, <circle key="d2" cx={x + 10} cy={12.5} r={1.4} className="f1" />, <circle key="d3" cx={x + 15} cy={12.5} r={1.4} className="fsoft" />);
+  for (let i = 0; i < 4; i++) {
+    const y = 24 + i * 7.5;
+    out.push(<path key={`pr${i}`} d={`M${x + 5} ${y - 2}l3 2-3 2`} strokeWidth="1.2" className="k2" />);
+    out.push(<path key={`ln${i}`} d={`M${x + 12} ${y}h${P(10 + r() * 40)}`} strokeWidth="1.6" opacity={P(0.45 + r() * 0.4)} className={i === 1 ? 'k2' : undefined} />);
+  }
+  out.push(<rect key="cur" x={x + 12} y={48} width={4} height={5} className="f2" stroke="none" />);
+  out.push(<path key="sc" d={`M${x + 3} 20H${x + 69}`} stroke="#fff" strokeWidth=".5" opacity=".35" />);
+  return out;
+}
+
+/** Шестерня: крупная шестерня с малой в зацеплении. */
+function gear(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(40 + (r() - 0.5) * 6);
+  const cy = P(32 + (r() - 0.5) * 4);
+  out.push(<g key="g1" className="art-spin" style={{ transformOrigin: `${cx}px ${cy}px` }}>
+    <path d={gearPath(cx, cy, 25, 20, 10, r())} className="fill-bg" strokeWidth="1.6" />
+    <circle cx={cx} cy={cy} r={12} className="fsoft" strokeWidth="1" />
+    <path d={`M${cx - 12} ${cy}h24M${cx} ${cy - 12}v24`} strokeWidth=".6" opacity=".6" />
+  </g>);
+  const sx = P(cx + 36);
+  const sy = P(cy + 14);
+  out.push(<g key="g2" className="art-spin art-spin--rev" style={{ transformOrigin: `${sx}px ${sy}px` }}>
+    <path d={gearPath(sx, sy, 13, 10, 7, r())} className="fill-bg" strokeWidth="1.4" />
+    <circle cx={sx} cy={sy} r={4} strokeWidth="1" className="k2" />
+  </g>);
+  out.push(<circle key="h1" cx={cx} cy={cy} r={4.5} className="f2" />, <circle key="h2" cx={sx} cy={sy} r={1.5} className="f2" />);
+  out.push(<path key="bolt" d={`M${cx + 8} ${cy - 30}l4 -4M${cx - 28} ${cy + 20}l-4 4`} strokeWidth="1.2" className="k2" />);
+  return out;
+}
+
+/** Кристалл: гранёный осколок с бликами. */
+function crystal(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  const w = 15 + r() * 4;
+  out.push(<ellipse key="gl" cx={cx} cy={56} rx={24} ry={4} className="fsoft" strokeWidth=".7" />);
+  out.push(<path key="bd" d={`M${cx} 3L${cx + w} 22L${cx + w * 0.6} 54L${cx} 60L${cx - w * 0.6} 54L${cx - w} 22Z`} className="fill-bg" strokeWidth="1.7" />);
+  out.push(<path key="f1" d={`M${cx} 3L${cx + w} 22H${cx}Z`} className="fsoft" strokeWidth=".7" />);
+  out.push(<path key="f2" d={`M${cx} 22V60L${cx - w * 0.6} 54L${cx - w} 22Z`} className="f2" stroke="none" opacity=".55" />);
+  out.push(<path key="ed" d={`M${cx - w} 22H${cx + w}M${cx} 3V60`} strokeWidth=".8" />);
+  out.push(<path key="hl" d={`M${cx - w + 4} 20L${cx - 3} 8`} stroke="#fff" strokeWidth="1.2" opacity=".8" />);
+  [-1, 1].forEach((s, i) => {
+    const sx = cx + s * (24 + r() * 8);
+    out.push(<path key={`sh${i}`} d={`M${P(sx)} ${34 + i * 6}l${s * 3} -9l${s * 4} 9l${-s * 3} 12z`} className={i ? 'f2' : 'fsoft'} strokeWidth="1" />);
+  });
+  for (let i = 0; i < 8; i++) out.push(<path key={`sp${i}`} d={`M${P(r() * W)} ${P(r() * 50)}h2`} strokeWidth="1" className="k2" opacity=".7" />);
+  return out;
+}
+
+/** Коготь/хват: кисть с когтями, тянущаяся к цели. */
+function claw(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  out.push(<path key="arm" d={`M${cx - 8} 64V50H${cx + 8}V64`} className="fill-bg" strokeWidth="1.5" />);
+  out.push(<path key="pm" d={`M${cx - 14} 50V38C${cx - 14} 33 ${cx + 14} 33 ${cx + 14} 38V50Z`} className="fill-bg" strokeWidth="1.6" />);
+  out.push(<rect key="pl" x={cx - 7} y={40} width={14} height={7} rx={1} className="fsoft" strokeWidth=".7" />);
+  const fingers: [number, number][] = [[-12, -22], [-4, -30], [4, -30], [12, -22]];
+  fingers.forEach(([dx, dy], i) => {
+    const bx = cx + dx;
+    const tx = cx + dx * 1.5 + (dx < 0 ? 3 : -3);
+    const ty = 36 + dy;
+    out.push(<path key={`f${i}`} d={`M${P(bx)} 37L${P(bx + (tx - bx) * 0.5)} ${P(36 + dy * 0.5)}L${P(tx)} ${P(ty)}`} strokeWidth="3.2" opacity=".95" />);
+    out.push(<path key={`n${i}`} d={`M${P(tx)} ${P(ty)}l${dx < 0 ? 3 : -3} -5`} strokeWidth="1.4" className="k2" />);
+    out.push(<circle key={`j${i}`} cx={P(bx + (tx - bx) * 0.5)} cy={P(36 + dy * 0.5)} r={1.3} className="f2" />);
+  });
+  out.push(<path key="th" d={`M${cx - 14} 44l-9 -6`} strokeWidth="3" />);
+  out.push(<circle key="tg" cx={cx} cy={8} r={5} strokeWidth="1" className="k2" strokeDasharray="2 2" />);
+  for (let i = 0; i < 8; i++) out.push(<path key={`s${i}`} d={`M${P(r() * W)} ${P(r() * 30)}h${P(2 + r() * 4)}`} strokeWidth=".6" opacity=".45" />);
+  return out;
+}
+
+/** Радар: развёртка с секторами и целями. */
+function radar(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  const cy = 34;
+  const sw = r() * 6.28;
+  [28, 20, 12].forEach((rad, i) => out.push(<circle key={`c${i}`} cx={cx} cy={cy} r={rad} strokeWidth={i ? 0.6 : 1.4} opacity={i ? 0.6 : 1} />));
+  out.push(<path key="ax" d={`M${cx - 30} ${cy}H${cx + 30}M${cx} ${cy - 30}V${cy + 30}`} strokeWidth=".5" opacity=".5" />);
+  out.push(<g key="sw" className="art-spin" style={{ transformOrigin: `${cx}px ${cy}px` }}>
+    <path d={`M${cx} ${cy}L${P(cx + Math.cos(sw) * 28)} ${P(cy + Math.sin(sw) * 28)}A28 28 0 0 0 ${P(cx + Math.cos(sw - 0.8) * 28)} ${P(cy + Math.sin(sw - 0.8) * 28)}Z`} className="fsoft" strokeWidth=".6" />
+    <path d={`M${cx} ${cy}L${P(cx + Math.cos(sw) * 28)} ${P(cy + Math.sin(sw) * 28)}`} stroke="#fff" strokeWidth="1" />
+  </g>);
+  for (let i = 0; i < 4; i++) {
+    const a = r() * 6.28;
+    const d = 8 + r() * 18;
+    out.push(<circle key={`b${i}`} cx={P(cx + Math.cos(a) * d)} cy={P(cy + Math.sin(a) * d)} r={P(1.2 + r() * 1.2)} className={i % 2 ? 'f2' : 'f1'} />);
+  }
+  out.push(<circle key="ct" cx={cx} cy={cy} r={1.6} className="f2" />);
+  out.push(<path key="tk" d={`M${cx - 28} ${cy}h-3M${cx + 28} ${cy}h3M${cx} ${cy - 28}v-3M${cx} ${cy + 28}v3`} strokeWidth="1.2" className="k2" />);
+  return out;
+}
+
+/** Ключ-карта: ключ с бородкой и ореолом доступа. */
+function keycard(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const ang = P(-28 + r() * 16);
+  out.push(<circle key="aura" cx={CX} cy={CY} r={26} className="fsoft" strokeWidth=".6" opacity=".6" />);
+  out.push(<g key="k" transform={`rotate(${ang} ${CX} ${CY})`}>
+    <circle cx="28" cy="32" r="11" className="fill-bg" strokeWidth="1.8" />
+    <circle cx="28" cy="32" r="5" strokeWidth="1.2" className="k2" />
+    <path d={pol(28, 32, 7.5, 6, 0)} className="fsoft" strokeWidth=".6" />
+    <path d="M39 30H76V34H39Z" className="fill-bg" strokeWidth="1.6" />
+    <path d="M42 31h10" stroke="#fff" strokeWidth=".7" opacity=".7" />
+    <circle cx="28" cy="32" r="1.8" className="f2" />
+    <path d="M60 34v8h5v-8M70 34v6h4v-6" className="f2" strokeWidth="1" />
+  </g>);
+  for (let i = 0; i < 12; i++) out.push(<path key={`s${i}`} d={`M${P(r() * W)} ${P(r() * H)}l${P(2 + r() * 3)} ${P(-1 - r() * 2)}`} strokeWidth=".9" className={i % 2 ? 'k2' : undefined} opacity=".6" />);
+  return out;
+}
+
+/** Схема-дерево: ветвящиеся дорожки с узлами. */
+function circuitTree(r: Rand): ReactNode[] {
+  const out: ReactNode[] = [];
+  const cx = P(CX + (r() - 0.5) * 8);
+  out.push(<path key="trunk" d={`M${cx} 64V34`} strokeWidth="2.4" />);
+  const branch = (x: number, y: number, dir: number, depth: number, i: number) => {
+    if (depth > 1) {
+      out.push(<circle key={`l${i}`} cx={P(x)} cy={P(y)} r={2.2} className="f2" />);
+      return;
+    }
+    const len = 12 - depth * 2 + r() * 4;
+    const nx = x + dir * len;
+    const ny = y - len * (0.9 + r() * 0.5);
+    out.push(<path key={`b${i}`} d={`M${P(x)} ${P(y)}H${P(x + dir * len * 0.5)}L${P(nx)} ${P(ny)}`} strokeWidth={P(2 - depth * 0.5)} className={depth % 2 ? 'k2' : undefined} />);
+    out.push(<circle key={`n${i}`} cx={P(nx)} cy={P(ny)} r={1.6} className="f1" />);
+    branch(nx, ny, dir, depth + 1, i * 3 + 1);
+    branch(nx, ny, -dir, depth + 1, i * 3 + 2);
+  };
+  branch(cx, 40, 1, 0, 1);
+  branch(cx, 40, -1, 0, 7);
+  out.push(<circle key="root" cx={cx} cy={34} r={3.4} className="fill-bg" strokeWidth="1.4" />, <circle key="rc" cx={cx} cy={34} r={1.4} fill="#fff" stroke="none" />);
+  out.push(<path key="gnd" d={`M${cx - 14} 60H${cx + 14}M${cx - 8} 63H${cx + 8}`} strokeWidth="1" opacity=".6" />);
+  return out;
+}
+
+const MOTIFS = { chip, drone, katana, dna, eye, lock, skull, satellite, hourglass, dice, wifi, terminal, gear, crystal, claw, radar, keycard, circuitTree, blades, beam, blast, shield, firewall, spores, virus, reticle, ascend, stream, bolt, heal, reactor, shockwave, stack, glitch, coins };
 type MotifId = keyof typeof MOTIFS;
 
 interface Mini {
@@ -570,31 +916,46 @@ interface Mini {
   effects: { type: string; status?: string; target?: string; amount?: number; win?: Mini['effects']; lose?: Mini['effects'] }[];
 }
 
+/** Мотивы-«почерк» класса: подмешиваются в пул каждой категории. */
+const FLAVOR: Record<string, MotifId[]> = {
+  samurai: ['katana', 'claw'],
+  droneop: ['drone', 'radar'],
+  chrono: ['hourglass', 'satellite'],
+  vabanker: ['dice', 'skull'],
+  biohacker: ['dna', 'claw'],
+  engineer: ['gear', 'chip'],
+  ghost: ['eye', 'skull'],
+  phreaker: ['wifi', 'satellite'],
+  netrunner: ['terminal', 'circuitTree'],
+  neutral: ['crystal', 'keycard'],
+};
+
 function pickMotif(def: Mini, h: number): MotifId {
   const flat = (l: Mini['effects']): Mini['effects'] => l.flatMap((e) => (e.type === 'gamble' ? [e, ...flat(e.win ?? []), ...flat(e.lose ?? [])] : [e]));
   const fx = flat(def.effects);
   const all = def.target === 'all_enemies' || fx.some((e) => e.target === 'all_enemies');
   const has = (t: string) => fx.some((e) => e.type === t);
   const st = (...ids: string[]) => fx.some((e) => e.type === 'apply_status' && ids.includes(e.status ?? ''));
+  const fl = FLAVOR[def.classId] ?? FLAVOR.neutral ?? [];
+  const pick = (base: MotifId[]): MotifId => {
+    const pool = [...base, ...fl];
+    return pool[(h >>> 4) % pool.length] ?? base[0] ?? 'blast';
+  };
   if (def.type === 'curse' || def.type === 'status') return 'glitch';
-  if (def.classId === 'vabanker' && has('gamble') && !has('damage')) return 'coins';
-  if (has('damage')) {
-    if (all) return 'shockwave';
-    const v: MotifId[] = def.classId === 'vabanker' ? ['coins', 'blast', 'beam'] : def.classId === 'samurai' ? ['blades', 'blades', 'blast'] : def.classId === 'netrunner' || def.classId === 'phreaker' ? ['beam', 'blast', 'beam'] : ['blades', 'beam', 'blast'];
-    return v[h % v.length] ?? 'blast';
-  }
-  if (st('virus', 'poison')) return all ? 'shockwave' : h % 2 ? 'spores' : 'virus';
-  if (st('vulnerable', 'weak', 'frail')) return 'reticle';
-  if (def.type === 'power' && !has('block')) return 'reactor';
-  if (st('strength', 'dexterity', 'ritual')) return 'ascend';
-  if (st('plating', 'thorns')) return h % 2 ? 'firewall' : 'shield';
-  if (has('block')) return h % 3 === 0 ? 'firewall' : 'shield';
-  if (has('heal') || st('regen')) return 'heal';
-  if (has('gain_energy')) return 'bolt';
-  if (has('draw')) return 'stream';
-  if (has('add_card')) return 'stack';
-  if (has('gain_gold')) return 'coins';
-  if (def.type === 'power') return 'reactor';
+  if (def.classId === 'vabanker' && has('gamble') && !has('damage')) return pick(['coins', 'dice', 'skull']);
+  if (has('damage')) return all ? pick(['shockwave', 'blast', 'radar']) : pick(['blades', 'beam', 'blast', 'reticle', 'bolt', 'virus']);
+  if (st('virus', 'poison')) return all ? pick(['shockwave', 'spores', 'virus']) : pick(['spores', 'virus', 'skull']);
+  if (st('vulnerable', 'weak', 'frail')) return pick(['reticle', 'eye', 'radar']);
+  if (def.type === 'power' && !has('block')) return pick(['reactor', 'circuitTree', 'crystal']);
+  if (st('strength', 'dexterity', 'ritual')) return pick(['ascend', 'reactor', 'crystal']);
+  if (st('plating', 'thorns')) return pick(['shield', 'firewall', 'gear']);
+  if (has('block')) return pick(['shield', 'firewall', 'lock']);
+  if (has('heal') || has('heal_pct') || st('regen')) return pick(['heal', 'dna', 'crystal']);
+  if (has('gain_energy')) return pick(['bolt', 'reactor', 'chip']);
+  if (has('draw')) return pick(['stream', 'terminal', 'satellite']);
+  if (has('add_card')) return pick(['stack', 'terminal', 'circuitTree']);
+  if (has('gain_gold')) return pick(['coins', 'dice', 'keycard']);
+  if (def.type === 'power') return pick(['reactor', 'circuitTree', 'crystal']);
   const any = Object.keys(MOTIFS) as MotifId[];
   return any[h % any.length] ?? 'blast';
 }
