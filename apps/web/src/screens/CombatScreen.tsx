@@ -43,6 +43,19 @@ function cardLabel(c: CardInstance, playable: boolean): string {
 
 const LONG_PRESS_MS = 450;
 
+function useMediaQuery(query: string): boolean {
+  const [m, setM] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.(query);
+    if (!mq) return;
+    const on = () => setM(mq.matches);
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, [query]);
+  return m;
+}
+
 /** Сенсорный экран без мыши: подсказки «удерживай», а не «правый клик». */
 function useCoarsePointer(): boolean {
   const [coarse, setCoarse] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.('(hover: none)').matches);
@@ -83,7 +96,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const handRef = useRef<HTMLDivElement>(null);
   const [handW, setHandW] = useState(600);
   /** Телефон: рука — горизонтальная лента со свайпом, карты крупнее */
-  const strip = handW < 440;
+  const strip = useMediaQuery('(max-width: 480px) and (min-height: 480px)');
   const drag = useRef<DragState | null>(null);
   const arrowRef = useRef<SVGPathElement>(null);
   const arrowSvgRef = useRef<SVGSVGElement>(null);

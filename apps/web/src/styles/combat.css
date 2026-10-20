@@ -334,4 +334,14 @@
   .intent { padding: 1px 5px 2px; }
   .intent__label { font-size: 10px; }
   .intent__dmg { font-size: 13px; }
+  .unit__name { min-height: 0; font-size: 10px; white-space: nowrap; display: block; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+  .unit__info { gap: 1px; }
+  .battlefield { padding-top: 6px; }
+}
+@media (max-height: 340px) and (orientation: landscape) {
+  .unit, .unit--player, .enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: 38px; }
+  .tier-boss { --unit-size: 58px; }
+  .unit { --intent-h: 22px; }
+  .unit__name { display: none; }
+  .battlefield { padding-top: 0; }
 }
