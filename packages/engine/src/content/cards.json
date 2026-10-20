@@ -95,7 +95,7 @@
   },
   {
     "id": "ph_firewall",
-    "name": "Карантин",
+    "name": "Сетевой экран",
     "classId": "phreaker",
     "type": "skill",
     "rarity": "starter",
@@ -109,7 +109,7 @@
     ],
     "description": "Получи 6 блока.",
     "upgrade": {
-      "name": "Карантин+",
+      "name": "Сетевой экран+",
       "effects": [
         {
           "type": "block",
@@ -13434,7 +13434,7 @@
   },
   {
     "id": "n_ping_flood",
-    "name": "Пинг-флуд",
+    "name": "Шторм запросов",
     "classId": "neutral",
     "type": "attack",
     "rarity": "common",
@@ -13449,7 +13449,7 @@
     ],
     "description": "Нанеси 4 урона всем врагам.",
     "upgrade": {
-      "name": "Пинг-флуд+",
+      "name": "Шторм запросов+",
       "effects": [
         {
           "type": "damage",
@@ -13540,7 +13540,7 @@
   },
   {
     "id": "n_ice_wall",
-    "name": "Ледяная стена",
+    "name": "Ледник данных",
     "classId": "neutral",
     "type": "skill",
     "rarity": "common",
@@ -13554,7 +13554,7 @@
     ],
     "description": "Получи 13 блока.",
     "upgrade": {
-      "name": "Ледяная стена+",
+      "name": "Ледник данных+",
       "effects": [
         {
           "type": "block",

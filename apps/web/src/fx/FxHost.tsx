@@ -11,7 +11,9 @@ export function FxHost() {
   const motion = useSettings((s) => s.motion);
 
   useEffect(() => {
-    if (bgRef.current) void rain.mount(bgRef.current);
+    // Телефон: второй полноэкранный WebGL-канвас под DOM заметно грузит GPU — фон без дождя
+    const phone = matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
+    if (bgRef.current && !phone) void rain.mount(bgRef.current);
     if (fgRef.current) void fx.mount(fgRef.current);
     return () => {
       rain.unmount();

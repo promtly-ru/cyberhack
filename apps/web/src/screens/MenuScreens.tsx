@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import type { ClassDef, ClassId, Difficulty } from '../game/engine';
-import { DIFFICULTY_CARDS, DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSources, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
+import { DIFFICULTY_CARDS, HEAT_THRESHOLDS, DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSources, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
 import { MAX_ASCENSION, useGame } from '../game/store';
 import { FeedbackModal } from './Feedback';
 import { weeklyAttemptsLeft } from '../game/meta';
@@ -292,6 +292,20 @@ function RegularSelect() {
   return (
     <div className="screen class-select" data-testid="class-select">
       <SelectHead eyebrow={heatMode ? 'Перегрев' : 'Новый взлом'} title="Выбери класс" />
+      {heatMode ? (
+        <section className="heat-brief" aria-label="Режим Перегрев">
+          <p>
+            <Icon name="skull" size={18} /> <b>Перегрев:</b> каждая карта и каждый ход нагревают систему. Чем горячее, тем сильнее ты и враги. Перегрев до 100 — потеря HP. Очки ×1.15.
+          </p>
+          <ul>
+            {HEAT_THRESHOLDS.map((t) => (
+              <li key={t.at}>
+                <b>{t.at}% · {t.name}</b> <span>{t.text}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <div className="cs-classes" role="radiogroup" aria-label="Класс">
         {classes.map((c) => (
           <ClassCard key={c.id} c={c} selected={cls === c.id} locked={!unlocked(c.id)} hint={lockHint(c.id)} onSelect={() => setCls(c.id)} />
@@ -373,7 +387,7 @@ function RegularSelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">{`${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}${mutators.length ? ` · мутаторов: ${mutators.length}` : ''}`}</small>
+              <small className="muted">{`${heatMode ? 'Перегрев · ' : ''}${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}${mutators.length ? ` · мутаторов: ${mutators.length}` : ''}`}</small>
             </span>
           </div>
         ) : null}
@@ -418,6 +432,7 @@ function WeeklySelect() {
           <ClassCard c={current} selected locked={false} onSelect={() => undefined} />
         </div>
       ) : null}
+      <div className="weekly-layout">
       <div className="weekly-info">
         <p className="muted">
           Один и тот же забег для всех на неделю: класс, карта, два мутатора и правило недели. 3 попытки, в зачёт идёт лучшая. Участникам — эксклюзивный титул «{title}».
@@ -434,6 +449,7 @@ function WeeklySelect() {
       <section className="panel weekly-panel">
         <WeeklyBoard limit={50} />
       </section>
+      </div>
       <div className="cs-foot">
         {current ? (
           <div className="cs-summary">

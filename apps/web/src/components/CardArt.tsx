@@ -618,6 +618,19 @@ export const CardArt = memo(function CardArt({ id, upgraded = false }: { id: str
   const hero = (MOTIFS[kind] ?? blast)(r);
   const rarity = def?.rarity ?? 'common';
   const flip = (h >> 5) % 3 === 0;
+  // Индивидуальность: у каждой карты свой поворот/масштаб/сдвиг главного мотива и второй мотив-«печать»,
+  // чтобы карты с похожими эффектами не выглядели одинаково.
+  const vr = rng(h ^ 0x5bd1e995);
+  const rot = P((vr() - 0.5) * 30);
+  const sc = P(0.78 + vr() * 0.3);
+  const dx = P((vr() - 0.5) * 16);
+  const dy = P((vr() - 0.5) * 8);
+  const ids = Object.keys(MOTIFS) as MotifId[];
+  const others = ids.filter((m) => m !== kind && m !== 'glitch');
+  const second = others[(h >>> 9) % others.length] ?? 'stack';
+  const secondArt = (MOTIFS[second] ?? blast)(rng(h ^ 0x27d4eb2f));
+  const sx = vr() < 0.5 ? 4 : 66;
+  const sy = vr() < 0.5 ? 2 : 34;
   const sparkles: ReactNode[] = [];
   if (rarity === 'rare' || rarity === 'special') {
     const sr = rng(h + 7);
@@ -649,7 +662,10 @@ export const CardArt = memo(function CardArt({ id, upgraded = false }: { id: str
       </defs>
       <rect width={W} height={H} fill={`url(#${uid}g)`} stroke="none" />
       <g className="art-bg" opacity=".42">{bg}</g>
-      <g className="art-hero" transform={flip ? `translate(${W} 0) scale(-1 1)` : undefined}>{hero}</g>
+      <g className="art-second" opacity=".5" transform={`translate(${sx} ${sy}) scale(.3)`}>{secondArt}</g>
+      <g transform={`translate(${W / 2 + dx} ${H / 2 + dy}) rotate(${rot}) scale(${sc}) translate(${-W / 2} ${-H / 2})`}>
+        <g className="art-hero" transform={flip ? `translate(${W} 0) scale(-1 1)` : undefined}>{hero}</g>
+      </g>
       <rect width={W} height={H} fill={`url(#${uid}f)`} stroke="none" />
       {rarity === 'rare' || rarity === 'special' ? <rect className="art-holo" width={W} height={H} fill={`url(#${uid}h)`} stroke="none" /> : null}
       {sparkles}

@@ -331,3 +331,33 @@ a[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
 .diff-cards:has(.is-selected) .diff-card:not(.is-selected) { opacity: 0.55; }
 .class-card:not(.is-selected):hover, .diff-card:not(.is-selected):hover { opacity: 1; }
 .asc-chip.is-selected { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* ---------- Перегрев: пояснение режима ---------- */
+.heat-brief { padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255, 140, 20, 0.55); background: rgba(255, 140, 20, 0.08); display: flex; flex-direction: column; gap: 8px; }
+.heat-brief p { margin: 0; line-height: 1.45; }
+.heat-brief p svg { vertical-align: -3px; color: var(--orange); }
+.heat-brief b { color: var(--orange); }
+.heat-brief ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px; font-size: 13px; }
+.heat-brief li { display: flex; flex-direction: column; gap: 2px; padding: 6px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); }
+.heat-brief li span { color: var(--text-dim); }
+
+/* ---------- Еженедельный: инфо и таблица рядом на широких экранах ---------- */
+.weekly-layout { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.weekly-panel { min-width: 0; }
+@media (min-width: 900px) {
+  .class-select[data-testid='weekly-select'] { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); align-items: start; }
+  .class-select[data-testid='weekly-select'] > .cs-head, .class-select[data-testid='weekly-select'] > .cs-foot { grid-column: 1 / -1; }
+  .class-select[data-testid='weekly-select'] .weekly-info { align-items: flex-start; text-align: left; }
+  .class-select[data-testid='weekly-select'] .weekly-board { width: 100%; }
+  .class-select[data-testid='weekly-select'] .cs-classes { grid-template-columns: 1fr; }
+}
+
+/* ---------- Низкие экраны (телефон горизонтально): компактная нижняя панель ---------- */
+@media (max-height: 520px) {
+  .class-select { gap: 12px; }
+  .cs-foot { flex-wrap: nowrap; padding: 6px 0; gap: 10px; }
+  .cs-foot .btn { width: auto; flex: 0 0 auto; padding: 10px 22px; min-height: 0; font-size: 15px; }
+  .cs-summary { min-width: 0; }
+  .cs-summary span { min-width: 0; }
+  .cs-summary b, .cs-summary small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
