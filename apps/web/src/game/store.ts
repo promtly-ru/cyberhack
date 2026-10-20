@@ -26,6 +26,8 @@ interface GameStore {
   view: View;
   /** Экран еженедельного вызова вместо выбора класса */
   weeklyMode: boolean;
+  /** Режим «Перегрев» выбран на экране класса */
+  heatMode: boolean;
   run: RunState | null;
   options: NewRunOptions | null;
   /** Журнал действий — для сохранений и replay() на сервере */
@@ -46,10 +48,10 @@ interface GameStore {
   runEnd: RunEndInfo | null;
 
   setView(v: View): void;
-  openClassSelect(weekly: boolean): void;
+  openClassSelect(weekly: boolean, heat?: boolean): void;
   startRun(opts: NewRunOptions): void;
   /** Обычный забег с учётом разблокировок профиля */
-  startRegular(classId: ClassId, ascension: number, difficulty?: Difficulty, mutators?: readonly string[]): void;
+  startRegular(classId: ClassId, ascension: number, difficulty?: Difficulty, mutators?: readonly string[], heat?: boolean): void;
   /** Еженедельный вызов (3 попытки в неделю). false — попытка уже использована */
   startWeekly(): boolean;
   /** Загрузить готовое состояние (продолжение или dev-сценарий) */
@@ -89,6 +91,7 @@ function finalCombat(prev: CombatState, events: GameEvent[]): CombatState {
 export const useGame = create<GameStore>((set, get) => ({
   view: 'menu',
   weeklyMode: false,
+  heatMode: false,
   run: null,
   options: null,
   actions: [],
@@ -104,7 +107,7 @@ export const useGame = create<GameStore>((set, get) => ({
   runEnd: null,
 
   setView: (view) => set({ view }),
-  openClassSelect: (weekly) => set({ view: 'class_select', weeklyMode: weekly }),
+  openClassSelect: (weekly, heat = false) => set({ view: 'class_select', weeklyMode: weekly, heatMode: heat }),
 
   startRun(opts) {
     weeklyStartedAt = opts.weekly ? Date.now() : 0;
@@ -117,14 +120,14 @@ export const useGame = create<GameStore>((set, get) => ({
     }
   },
 
-  startRegular(classId, ascension, difficulty, mutators) {
+  startRegular(classId, ascension, difficulty, mutators, heat) {
     const { profile } = get();
     if (!profile.unlockedClasses.includes(classId)) {
       set({ error: 'Класс ещё не открыт' });
       return;
     }
     const max = Math.min(MAX_ASCENSION, profile.maxAscension[classId] ?? 0);
-    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max)), difficulty, mutators));
+    get().startRun(regularRunOptions(profile, classId, Math.max(0, Math.min(ascension, max)), difficulty, mutators, heat));
   },
 
   startWeekly() {

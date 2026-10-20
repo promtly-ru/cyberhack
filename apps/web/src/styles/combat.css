@@ -284,3 +284,21 @@
 .hand.is-strip .card__art { height: 31%; }
 .hand.is-strip .card__text { font-size: 9.6cqw; line-height: 1.15; }
 .hand.is-strip .card__type { font-size: 6.4cqw; }
+
+/* ---------- Режим «Перегрев» ---------- */
+.heat { display: flex; align-items: center; gap: 12px; padding: 4px 12px; max-width: 720px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+.heat__track { position: relative; flex: 1 1 auto; height: 12px; border-radius: 6px; background: rgba(255, 255, 255, 0.08); }
+.heat__fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #22d3ee 0%, #facc15 55%, #ef4444 100%); background-size: 720px 100%; transition: width 0.25s ease; }
+.heat__mark { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: rgba(255, 255, 255, 0.4); }
+.heat__mark.is-active { background: #fff; }
+.heat__mark.is-current { width: 4px; margin-left: -2px; box-shadow: 0 0 8px 2px currentColor; }
+.heat--0 .heat__mark.is-current, .heat--1 { color: #22d3ee; }
+.heat--2 { color: #facc15; }
+.heat--3 { color: #ef4444; }
+.heat--3 .heat__fill { animation: heat-pulse 0.8s ease-in-out infinite alternate; }
+.heat__label { display: flex; flex-direction: column; font-size: 12px; line-height: 1.2; min-width: 0; flex: 0 1 280px; }
+.heat__label b { color: currentColor; }
+.heat__label span { opacity: 0.85; }
+.heat__cool { flex: none; min-height: 36px; padding: 0 14px; }
+@keyframes heat-pulse { from { filter: brightness(1); } to { filter: brightness(1.4); } }
+@media (max-width: 640px) { .heat { flex-wrap: wrap; gap: 6px; } .heat__label { flex: 1 1 100%; order: 3; } }

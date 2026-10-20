@@ -158,5 +158,25 @@
       "ch_slowdown"
     ],
     "startingRelic": "r_ch_chronometer"
+  },
+  {
+    "id": "vabanker",
+    "name": "Ва-банкер",
+    "description": "Азартный игрок: ставит HP и карты ради огромного усиления. Монетка, кубик и «крутка» обычно на его стороне, но казино не прощает неудач. Фишка класса: Азарт — исход карты решает бросок.",
+    "maxHp": 80,
+    "startingGold": 99,
+    "startingDeck": [
+      "vb_chip",
+      "vb_chip",
+      "vb_chip",
+      "vb_chip",
+      "vb_chip",
+      "vb_hedge",
+      "vb_hedge",
+      "vb_hedge",
+      "vb_hedge",
+      "vb_coin"
+    ],
+    "startingRelic": "r_vb_lucky_chip"
   }
 ]

@@ -270,3 +270,44 @@
 .feedback__text { width: 100%; resize: vertical; padding: 10px; background: var(--panel-solid); color: var(--text); border: 1px solid var(--line); border-radius: 8px; font: inherit; }
 .feedback__hint { color: var(--text-dim); font-size: 12px; }
 a[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
+
+/* Выбор режима сложности: карточки с плюсами и минусами */
+.diff-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.diff-card { --dc: var(--cyan, #00f0ff); position: relative; display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--dc) 9%, transparent), rgba(5, 6, 15, 0.6)); color: var(--text); cursor: pointer; overflow: hidden; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
+.diff-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--dc); opacity: 0.7; }
+.diff-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--dc) 60%, transparent); }
+.diff-card.is-selected { border-color: var(--dc); box-shadow: 0 0 26px color-mix(in srgb, var(--dc) 35%, transparent), inset 0 0 26px color-mix(in srgb, var(--dc) 12%, transparent); }
+.diff-card--easy { --dc: #3dff9a; }
+.diff-card--normal { --dc: #00f0ff; }
+.diff-card--hard { --dc: #ff3b5c; }
+.diff-card--zero_day { --dc: #c25bff; background-image: repeating-linear-gradient(135deg, rgba(194, 91, 255, 0.07) 0 2px, transparent 2px 10px), linear-gradient(180deg, rgba(194, 91, 255, 0.16), rgba(5, 6, 15, 0.7)); }
+.diff-card--zero_day.is-selected::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 40%, rgba(194, 91, 255, 0.22) 50%, transparent 60%) 0 0 / 250% 100%; animation: foil-slide calc(3.5s / var(--speed, 1)) linear infinite; }
+.diff-card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.diff-card__name { font-family: var(--font-display); font-size: 18px; color: var(--dc); text-shadow: 0 0 12px color-mix(in srgb, var(--dc) 55%, transparent); }
+.diff-card__score { font-size: 12px; color: var(--acid); border: 1px solid rgba(232, 255, 58, 0.4); border-radius: 999px; padding: 1px 8px; }
+.diff-card__tag { font-size: 13px; color: #c9d3ee; }
+.diff-card__list { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.35; }
+.diff-card__list li { padding-left: 18px; position: relative; }
+.diff-card__list li::before { position: absolute; left: 0; font-weight: 800; }
+.diff-card__list .is-plus::before { content: '+'; color: #3dff9a; }
+.diff-card__list .is-minus::before { content: '−'; color: #ff3b5c; }
+@media (max-width: 1023px) { .diff-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 559px) { .diff-cards { grid-template-columns: 1fr; } }
+
+/* Главное меню: главные кнопки, плитки режимов, нижняя панель инструментов */
+.menu-btn--primary { min-height: 78px; }
+.menu-btn--primary b { font-size: 22px; }
+.menu-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.menu-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 12px; text-align: left; border-radius: 12px; border: 1px solid var(--line); background: rgba(11, 15, 34, 0.8); color: var(--cyan); cursor: pointer; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
+.menu-tile b { font-family: var(--font-display); font-size: 15px; color: #fff; letter-spacing: 0.03em; }
+.menu-tile small { font-size: 12px; line-height: 1.3; color: var(--text-dim); }
+.menu-tile:hover { transform: translateY(-3px); border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.18); }
+.menu-tile[data-testid='menu-heat'] { color: var(--orange); }
+.menu-tile[data-testid='menu-heat']:hover { border-color: var(--orange); box-shadow: 0 0 20px rgba(255, 159, 28, 0.25); }
+.menu-tools { display: flex; gap: 6px; padding-top: 10px; margin-top: 2px; border-top: 1px solid var(--line-2); }
+.menu-tool { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--text-dim); font-size: 12px; cursor: pointer; transition: color 0.15s, background 0.15s, border-color 0.15s; }
+.menu-tool:hover { color: var(--cyan); background: rgba(0, 240, 255, 0.08); border-color: var(--line); }
+@media (max-width: 420px) { .menu-group { grid-template-columns: 1fr; } .menu-tile { flex-direction: row; flex-wrap: wrap; align-items: center; } .menu-tile small { flex-basis: 100%; } }
+
+/* Выбор класса: кнопка старта всегда под рукой */
+.cs-foot { position: sticky; bottom: 0; z-index: 5; padding: 12px 0; background: linear-gradient(to top, var(--bg, #05060f) 70%, transparent); }

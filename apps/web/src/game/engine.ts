@@ -11,6 +11,7 @@ export { InvalidActionError, SAVE_VERSION } from '@cyberhack/engine';
 // Метапрогрессия и ascension — только настоящий движок (мока нет)
 export {
   ACHIEVEMENTS,
+  DIFFICULTY_CARDS,
   DIFFICULTY_INFO,
   SYNERGIES,
   FIRMWARES,
@@ -51,6 +52,13 @@ export {
   weeklyResetAt,
   prevWeeklySeed,
   weeklyTitle,
+  // Режим «Перегрев»
+  HEAT_MAX,
+  HEAT_COOL_AMOUNT,
+  HEAT_COOL_HP,
+  HEAT_THRESHOLDS,
+  heatLevel,
+  canCool,
 } from '@cyberhack/engine';
 
 const mocked = new Set<string>();

@@ -590,7 +590,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
 
 // ---------------- Конец забега ----------------
 
-const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер', droneop: 'Оператор дронов', chrono: 'Хроно-хакер' };
+const CLASS_NAME: Record<string, string> = { netrunner: 'Нетраннер', phreaker: 'Фрикер', ghost: 'Призрак', samurai: 'Кибер-самурай', engineer: 'Инженер', biohacker: 'Биохакер', droneop: 'Оператор дронов', chrono: 'Хроно-хакер', vabanker: 'Ва-банкер' };
 
 export function GameOverScreen({ run, victory }: { run: RunState; victory: boolean }) {
   const toMenu = useGame((s) => s.toMenu);

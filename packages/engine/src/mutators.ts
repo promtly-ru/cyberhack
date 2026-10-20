@@ -189,10 +189,33 @@ export const WEEKLY_RULES: readonly MutatorSpec[] = [
   },
 ];
 
+/** Скрытое правило режима «Нулевой день» (id 'dz_*'): добавляется в RunState.mutators самим движком. */
+export const ZERO_DAY_RULE_ID = 'dz_zero_day';
+const DIFFICULTY_RULES: readonly MutatorSpec[] = [
+  {
+    id: ZERO_DAY_RULE_ID,
+    name: 'Нулевой день',
+    description: '+1 энергия, но на 1 карту меньше в руке; намерения обычных врагов скрыты; враги начинают с 1 Разгоном; проклятие в колоде и бонусный имплант; старт с 80% HP; золота +25%.',
+    scoreBonus: 0.4,
+    mods: (m) => {
+      m.curseInDeck = true;
+      m.startHpPct = Math.min(m.startHpPct, 0.8);
+      m.goldMult *= 1.25;
+    },
+    extra: (x) => {
+      x.bonusEnergy += 1;
+      x.bonusDraw -= 1;
+      x.hideNormalIntents = true;
+      x.enemyCombatStatuses.strength = (x.enemyCombatStatuses.strength ?? 0) + 1;
+      x.bonusStartRelic = true;
+    },
+  },
+];
+
 /** Публичный список мутаторов (для UI). */
 export const MUTATORS: readonly MutatorDef[] = SPECS.map(({ id, name, description, scoreBonus }) => ({ id, name, description, scoreBonus }));
 
-const BY_ID = new Map([...SPECS, ...WEEKLY_RULES].map((m) => [m.id, m] as const));
+const BY_ID = new Map([...SPECS, ...WEEKLY_RULES, ...DIFFICULTY_RULES].map((m) => [m.id, m] as const));
 
 export function getWeeklyRule(id: string): MutatorDef | undefined {
   const m = WEEKLY_RULES.find((r) => r.id === id);

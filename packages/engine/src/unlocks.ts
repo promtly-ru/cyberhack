@@ -23,6 +23,7 @@ export interface LifetimeStats {
   winsBiohacker?: number;
   winsDroneop?: number;
   winsChrono?: number;
+  winsVabanker?: number;
   /** Высший уровень Ascension, на котором была победа */
   bestWinAscension?: number;
   bestAct?: number;
@@ -358,6 +359,22 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     unlocks: [card('ch_chronostasis'), card('ch_dilation')],
   },
   {
+    id: 'wins_7',
+    name: 'Везунчик',
+    description: 'Победить в семи забегах',
+    target: 7,
+    value: lt('wins'),
+    unlocks: [{ kind: 'class', id: 'vabanker' }, card('vb_double_down')],
+  },
+  {
+    id: 'win_vabanker',
+    name: 'Казино всегда в плюсе. Кроме сегодня',
+    description: 'Победить за Ва-банкера',
+    target: 1,
+    value: lt('winsVabanker'),
+    unlocks: [card('vb_all_in'), card('vb_jackpot')],
+  },
+  {
     id: 'kills_500',
     name: 'Чистильщик сети',
     description: 'Уничтожить 500 врагов (за все забеги)',
@@ -452,6 +469,7 @@ const WIN_KEY: Record<ClassId, keyof LifetimeStats> = {
   biohacker: 'winsBiohacker',
   droneop: 'winsDroneop',
   chrono: 'winsChrono',
+  vabanker: 'winsVabanker',
 };
 
 function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, victory: boolean): LifetimeStats {

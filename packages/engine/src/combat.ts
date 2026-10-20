@@ -26,6 +26,10 @@ import {
   type StatusId,
 } from './types';
 import { makeCard, nextUid } from './util';
+import {
+  HEAT_AFTER_MELTDOWN, HEAT_COOL_AMOUNT, HEAT_COOL_HP, HEAT_IDLE_COOL, HEAT_MAX, HEAT_MELTDOWN_HP_PCT, HEAT_PER_CARD,
+  HEAT_PER_TURN, HEAT_START, heatEnemyDamageMult, heatLevel, heatPlayerDamageMult,
+} from './heat';
 
 export const BASE_ENERGY = 3;
 export const DRAW_PER_TURN = 5;
@@ -138,6 +142,11 @@ function attack(ctx: CombatCtx, source: Unit | null, target: Unit, base: number,
   if (source === 'player') {
     const m = mutMods(ctx).playerDamageMult;
     if (m !== 1) dmg = Math.floor(dmg * m + 1e-9);
+    const hm = heatPlayerDamageMult(ctx.c.heat ?? 0);
+    if (hm !== 1) dmg = Math.floor(dmg * hm + 1e-9);
+  } else if (source && target === 'player') {
+    const hm = heatEnemyDamageMult(ctx.c.heat ?? 0);
+    if (hm !== 1) dmg = Math.ceil(dmg * hm - 1e-9);
   }
   const lost = hit(ctx, target, dmg);
   if (source === 'player' && target !== 'player' && lost > (ctx.s.stats.maxHit ?? 0)) ctx.s.stats.maxHit = lost;
@@ -364,9 +373,21 @@ function applyCardEffect(ctx: CombatCtx, eff: Effect, card: ResolvedCard, chosen
       else for (const e of enemyTargets(ctx, kind, chosen)) applyStatus(ctx, e, eff.status, eff.amount);
       return;
     }
+    case 'gamble':
+      for (const sub of rollGamble(ctx, eff)) {
+        if (isOver(ctx)) break;
+        applyCardEffect(ctx, sub, card, chosen);
+      }
+      return;
     default:
       applyPlayerUtilityEffect(ctx, eff);
   }
+}
+
+/** Бросок «Азарта»: детерминированно, через поток ГСЧ combat */
+function rollGamble(ctx: CombatCtx, eff: Extract<Effect, { type: 'gamble' }>): Effect[] {
+  const win = rngOf(ctx.s, 'combat').next() * 100 < eff.amount;
+  return win ? eff.win : (eff.lose ?? []);
 }
 
 function applyRelicEffect(ctx: CombatCtx, eff: Effect): void {
@@ -397,6 +418,12 @@ function applyRelicEffect(ctx: CombatCtx, eff: Effect): void {
       else for (const e of targets) applyStatus(ctx, e, eff.status, eff.amount);
       return;
     }
+    case 'gamble':
+      for (const sub of rollGamble(ctx, eff)) {
+        if (isOver(ctx)) break;
+        applyRelicEffect(ctx, sub);
+      }
+      return;
     default:
       applyPlayerUtilityEffect(ctx, eff);
   }
@@ -569,6 +596,7 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
     enemies,
     phase: 'player',
     counters: {},
+    ...(s.heat ? { heat: HEAT_START } : {}),
   };
   s.combat = c;
   const ctx: CombatCtx = { s, c, ev, mods };
@@ -613,6 +641,11 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   tickBleed(ctx, 'player');
   if (isOver(ctx)) return;
   c.energy = c.maxEnergy;
+  if (c.heat !== undefined) {
+    c.heatCooled = false;
+    addHeat(ctx, HEAT_PER_TURN);
+    if (isOver(ctx)) return;
+  }
   if (mutMods(ctx).turnEcho && getStatus(c.player, STATUS.echo) < 1) applyStatus(ctx, 'player', STATUS.echo, 1);
   triggerRelics(ctx, 'turn_start');
   if (isOver(ctx)) return;
@@ -620,7 +653,8 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   if (isOver(ctx)) return;
   // Ход 1: все врождённые карты (они наверху добора) попадают в руку, даже если их больше 5
   const innate = c.turn === 1 ? c.drawPile.filter((card) => resolveCard(card.defId, card.upgraded).innate).length : 0;
-  drawCards(ctx, Math.max(DRAW_PER_TURN + getMutatorMods(ctx.s.mutators).bonusDraw, innate));
+  const heatDraw = c.heat !== undefined && heatLevel(c.heat) >= 2 ? 1 : 0;
+  drawCards(ctx, Math.max(DRAW_PER_TURN + getMutatorMods(ctx.s.mutators).bonusDraw, innate) + heatDraw);
   if (c.turn === 1) {
     triggerRelics(ctx, 'combat_start');
     applySynergies(ctx);
@@ -633,7 +667,36 @@ export function startPlayerTurn(ctx: CombatCtx): void {
 export function isPlayable(c: CombatState, card: ResolvedCard): boolean {
   if (card.cost === COST_UNPLAYABLE || card.cost < COST_X) return false;
   if (card.cost === COST_X) return true;
-  return c.energy >= card.cost;
+  return c.energy >= effectiveCost(c, card);
+}
+
+/** «Критическая масса» (Heat ≥ 75): первая карта хода бесплатна. */
+export function effectiveCost(c: CombatState, card: ResolvedCard): number {
+  if (card.cost > 0 && c.heat !== undefined && heatLevel(c.heat) >= 3 && (c.counters[COUNTER_TURN_CARDS] ?? 0) === 0) return 0;
+  return card.cost;
+}
+
+/** Прибавить Heat; при 100 — «Расплавление»: урон 15% макс HP игроку, Heat падает до 40. */
+export function addHeat(ctx: CombatCtx, n: number): void {
+  const c = ctx.c;
+  if (c.heat === undefined) return;
+  c.heat = Math.max(0, Math.min(HEAT_MAX, c.heat + n));
+  if (c.heat >= HEAT_MAX) {
+    c.heat = HEAT_AFTER_MELTDOWN;
+    hit(ctx, 'player', Math.max(1, Math.floor(c.player.maxHp * HEAT_MELTDOWN_HP_PCT)), true);
+  }
+}
+
+export function canCool(c: CombatState): boolean {
+  return c.phase === 'player' && c.heat !== undefined && !c.heatCooled && c.heat > 0 && c.player.hp > HEAT_COOL_HP;
+}
+
+/** Кнопка «Охладить»: −30 Heat, −6 HP, раз в ход. */
+export function coolDown(ctx: CombatCtx): void {
+  if (!canCool(ctx.c)) throw new InvalidActionError('Cannot cool down now');
+  ctx.c.heatCooled = true;
+  hit(ctx, 'player', HEAT_COOL_HP, true);
+  if (!isOver(ctx)) addHeat(ctx, -HEAT_COOL_AMOUNT);
 }
 
 export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | undefined): void {
@@ -655,7 +718,7 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   if (card.cost === COST_X) {
     repeats = c.energy;
     c.energy = 0;
-  } else c.energy -= card.cost;
+  } else c.energy -= effectiveCost(c, card);
 
   ctx.ev.push({ type: 'card_played', cardUid: inst.uid, defId: inst.defId });
   ctx.s.stats.cardsPlayed += 1;
@@ -685,6 +748,7 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
     else c.discardPile.push(inst);
   }
 
+  if (!isOver(ctx)) addHeat(ctx, HEAT_PER_CARD);
   triggerRelics(ctx, 'card_played');
   if (card.type === 'attack') triggerRelics(ctx, 'attack_played');
   if (!isOver(ctx)) refreshIntents(ctx);
@@ -692,6 +756,7 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
 
 export function endTurn(ctx: CombatCtx): void {
   const c = ctx.c;
+  if (c.heat !== undefined && (c.counters[COUNTER_TURN_CARDS] ?? 0) === 0) addHeat(ctx, -HEAT_IDLE_COOL);
   triggerRelics(ctx, 'turn_end');
   if (isOver(ctx)) return;
 

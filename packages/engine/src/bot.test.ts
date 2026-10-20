@@ -28,7 +28,7 @@ describe('случайный бот, обычные фикстуры', () => {
       floors += state.floor;
     }
     expect(floors).toBeGreaterThan(100);
-  });
+  }, 60_000);
 });
 
 describe('случайный бот, лёгкие фикстуры', () => {

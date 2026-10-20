@@ -5,6 +5,8 @@
 import { applyDifficulty, clampAscension, getAscensionMods, type AscensionMods } from './ascension';
 import { canUpgrade, needsEnemyTarget, resolveCard } from './cards';
 import {
+  canCool,
+  coolDown,
   endTurn,
   isPlayable,
   livingEnemies,
@@ -16,7 +18,7 @@ import {
 } from './combat';
 import { getContent } from './content';
 import { generateMap } from './map';
-import { applyMutators, getMutatorMods, normalizeMutators } from './mutators';
+import { applyMutators, getMutatorMods, normalizeMutators, ZERO_DAY_RULE_ID } from './mutators';
 import { weeklyMutatorIds } from './weekly';
 import { addPotion, gainPotions, getPotion, hasFreePotionSlot, potionsOf } from './potions';
 import { buildCombatRewards, buildShop, refreshShop, rollRelic, rewardCardPool, MAX_SHOP_REFRESHES, type CombatTier } from './rewards';
@@ -60,6 +62,7 @@ export function newRun(opts: NewRunOptions): RunState {
   const ascension = clampAscension(opts.ascension);
   // Еженедельный вызов: мутаторы и правило недели выводятся из id недели (одинаковы для всех)
   const mutators = opts.weekly ? weeklyMutatorIds(opts.weekly) : normalizeMutators(opts.mutators);
+  if (opts.difficulty === 'zero_day' && !opts.weekly) mutators.push(ZERO_DAY_RULE_ID);
   const mods = modsOf({ ascension, ...(opts.difficulty ? { difficulty: opts.difficulty } : {}), mutators });
   const maxHp = Math.max(1, cls.maxHp - Math.floor(cls.maxHp * mods.maxHpPenaltyPct));
 
@@ -71,6 +74,7 @@ export function newRun(opts: NewRunOptions): RunState {
     ...(opts.difficulty && opts.difficulty !== 'normal' ? { difficulty: opts.difficulty } : {}),
     ...(mutators.length > 0 ? { mutators } : {}),
     ...(opts.weekly ? { weekly: opts.weekly } : {}),
+    ...(opts.heat ? { heat: true } : {}),
     act: 1,
     floor: 0,
     hp: Math.max(1, Math.floor(maxHp * mods.startHpPct)),
@@ -459,6 +463,12 @@ export function applyAction(state: RunState, action: Action): ActionResult {
     case 'end_turn': {
       const ctx = combatCtx(s, ev);
       endTurn(ctx);
+      afterCombatStep(s, ctx, ev);
+      break;
+    }
+    case 'cool': {
+      const ctx = combatCtx(s, ev);
+      coolDown(ctx);
       afterCombatStep(s, ctx, ev);
       break;
     }
@@ -864,6 +874,7 @@ export function getLegalActions(state: RunState): Action[] {
           for (const e of alive) actions.push({ type: 'play_card', cardUid: inst.uid, targetUid: e.uid });
         } else actions.push({ type: 'play_card', cardUid: inst.uid });
       }
+      if (canCool(c)) actions.push({ type: 'cool' });
       actions.push({ type: 'end_turn' });
       break;
     }

@@ -99,7 +99,7 @@ function AccountPanel() {
     title = 'Гость';
     sub = cloud
       ? 'Прогресс хранится только в этом браузере. Войди, чтобы он сохранялся в облаке.'
-      : 'Прогресс хранится только в этом браузере. Создай профиль — и у каждого, кто играет на этом устройстве, будет свой прогресс.';
+      : 'Прогресс хранится только в этом браузере. Зарегистрируйся по почте, когда будет готов сервер.';
   } else if (user.provider === 'local') {
     title = user.displayName;
     sub = `Профиль на этом устройстве · ${current?.hasPin ? 'защищён PIN' : 'без PIN'}`;
@@ -213,45 +213,70 @@ export function LocalMigrationGate() {
   );
 }
 
-/** Облачный вход: почта (magic link), Google, GitHub. */
+/** Облачный вход: регистрация и вход по почте и паролю, ссылка из письма, Google, GitHub. */
+type LoginMode = 'signup' | 'signin' | 'link';
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: boolean }) {
+  const [mode, setMode] = useState<LoginMode>('signup');
   const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const needPassword = mode !== 'link';
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setEmailError('Похоже, в адресе опечатка — проверь почту');
-      return;
+    if (!EMAIL_RE.test(email.trim())) return setError('Похоже, в адресе опечатка — проверь почту');
+    if (mode === 'signup' && password.length < 8) return setError('Пароль — не короче 8 символов');
+    if (mode === 'signin' && !password) return setError('Введи пароль');
+    setError(null);
+    if (mode === 'link') {
+      void act(() => accountAction((b) => b.auth.signInWithEmail(email)), 'Готово! Открой письмо и нажми на ссылку для входа', { close: false });
+    } else if (mode === 'signin') {
+      void act(() => accountAction((b) => b.auth.signInWithPassword(email, password)), 'Ты вошёл', { close: false });
+    } else {
+      void act(
+        () =>
+          accountAction(async (b) => {
+            const r = await b.auth.signUpWithPassword(email, password);
+            if (r.confirmEmail) throw new Error('Аккаунт создан. Открой письмо и подтверди почту, потом нажми «Вход».');
+          }),
+        'Аккаунт создан — ты вошёл',
+        { close: false },
+      );
     }
-    setEmailError(null);
-    void act(() => accountAction((b) => b.auth.signInWithEmail(email)), 'Готово! Открой письмо и нажми на ссылку для входа', { close: false });
-  };
-  const [password, setPassword] = useState('');
-  const [usePassword, setUsePassword] = useState(false);
-  const signUp = () => {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setEmailError('Похоже, в адресе опечатка — проверь почту');
-    if (password.length < 8) return setEmailError('Пароль — не короче 8 символов');
-    setEmailError(null);
-    void act(
-      () => accountAction((b) => b.auth.signUpWithPassword(email, password)),
-      'Аккаунт создан! Если пришло письмо — подтверди почту',
-      { close: false },
-    );
-  };
-  const passwordSignIn = () => {
-    setEmailError(null);
-    void act(() => accountAction((b) => b.auth.signInWithPassword(email, password)), 'Ты вошёл', { close: false });
   };
   const oauth = (provider: 'google' | 'github', label: string) =>
     void act(() => accountAction((b) => b.auth.signInWithOAuth(provider)), `Переходим к ${label}…`, { close: false });
+  const tabs: [LoginMode, string][] = [
+    ['signup', 'Регистрация'],
+    ['signin', 'Вход'],
+    ['link', 'По ссылке'],
+  ];
   return (
-    <div className="account-block" data-testid="cloud-login">
+    <div className="account-block cloud-login" data-testid="cloud-login">
       <h3 className="account-block__title">Облачный аккаунт</h3>
       <p className="muted small">Прогресс сохранится в облаке: продолжай с любого устройства и попадай в таблицу лидеров.</p>
       {!cloud ? <p className="muted small">Сервер ещё не подключён — вход заработает после настройки Supabase.</p> : null}
+      <div className="login-tabs" role="tablist">
+        {tabs.map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={mode === id}
+            className={`login-tab${mode === id ? ' is-active' : ''}`}
+            onClick={() => {
+              setMode(id);
+              setError(null);
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <form className="login-form" onSubmit={submit} noValidate>
         <label className="field">
-          <span>Почта — пришлём ссылку для входа</span>
+          <span>Почта</span>
           <input
             className="acc-input"
             type="email"
@@ -260,45 +285,38 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="hacker@example.com"
-            aria-invalid={!!emailError}
+            aria-invalid={!!error && !EMAIL_RE.test(email.trim())}
           />
         </label>
-        {usePassword ? (
+        {needPassword ? (
           <label className="field">
-            <span>Пароль (от 8 символов)</span>
+            <span>{mode === 'signup' ? 'Придумай пароль (от 8 символов)' : 'Пароль'}</span>
             <input
               className="acc-input"
               type="password"
-              autoComplete="current-password"
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-        ) : null}
-        {emailError ? <p className="error small">{emailError}</p> : null}
-        {usePassword ? (
-          <>
-            <button className="btn btn--primary" type="button" disabled={busy} onClick={signUp}>
-              <Icon name="mail" size={18} /> Зарегистрироваться
-            </button>
-            <button className="btn btn--ghost" type="button" disabled={busy} onClick={passwordSignIn}>
-              Войти
-            </button>
-          </>
         ) : (
-          <button className="btn btn--primary" type="submit" disabled={busy}>
-            <Icon name="mail" size={18} /> Получить ссылку
-          </button>
+          <p className="muted small">Пришлём на почту ссылку — нажми на неё, и ты в игре. Пароль не нужен.</p>
         )}
-        <button className="btn btn--ghost small" type="button" onClick={() => setUsePassword((v) => !v)}>
-          {usePassword ? 'Войти по ссылке из письма' : 'Почта и пароль'}
+        {error ? (
+          <p className="error small" role="alert">
+            {error}
+          </p>
+        ) : null}
+        <button className="btn btn--primary" type="submit" disabled={busy}>
+          <Icon name="mail" size={18} /> {mode === 'signup' ? 'Зарегистрироваться' : mode === 'signin' ? 'Войти' : 'Получить ссылку'}
         </button>
       </form>
+      <div className="login-or">или</div>
       <div className="oauth">
-        <button className="btn btn--ghost" disabled={busy} onClick={() => oauth('google', 'Google')}>
+        <button className="btn btn--ghost" type="button" disabled={busy} onClick={() => oauth('google', 'Google')}>
           <Icon name="google" size={18} /> Google
         </button>
-        <button className="btn btn--ghost" disabled={busy} onClick={() => oauth('github', 'GitHub')}>
+        <button className="btn btn--ghost" type="button" disabled={busy} onClick={() => oauth('github', 'GitHub')}>
           <Icon name="github" size={18} /> GitHub
         </button>
       </div>
@@ -565,7 +583,7 @@ export function ProfileScreen() {
   const openCards = profile.unlockedCards.filter((id) => lockableCards().includes(id)).length;
   const openRelics = profile.unlockedRelics.filter((id) => lockableRelics().includes(id)).length;
 
-  const classes: ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono'];
+  const classes: ClassId[] = ['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono', 'vabanker'];
   return (
     <div className="screen profile" data-testid="profile">
       <SelectHead eyebrow="Профиль" title={guest || !user ? 'Гость' : user.displayName} />

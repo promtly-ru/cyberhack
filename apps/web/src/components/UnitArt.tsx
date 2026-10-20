@@ -10,6 +10,7 @@ export const CLASS_COLOR: Record<ClassId, string> = {
   biohacker: '#3dff8a',
   droneop: '#4da3ff',
   chrono: '#ff4fd8',
+  vabanker: '#ffd23f',
 };
 
 export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId }) {
@@ -71,6 +72,13 @@ export const PlayerArt = memo(function PlayerArt({ classId }: { classId: ClassId
             <path d="M6 30h16M14 24v12" strokeWidth="1.2" opacity=".7" />
             <circle cx="106" cy="42" r="4" className="fill-glow-soft" strokeWidth="1.6" />
             <path d="M99 42h14" strokeWidth="1.2" opacity=".7" />
+          </>
+        ) : null}
+        {classId === 'vabanker' ? (
+          <>
+            <path d="M44 14l-8 10 8 10 8-10zM76 14l-8 10 8 10 8-10z" className="fill-glow-soft" strokeWidth="1.4" />
+            <path d="M40 24h8M72 24h8" strokeWidth="1" opacity=".7" />
+            <circle cx="60" cy="16" r="3" className="fill-glow" strokeWidth="1.2" />
           </>
         ) : null}
         {classId === 'chrono' ? (

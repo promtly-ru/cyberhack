@@ -204,7 +204,7 @@
 /* Класс-метка: тонкая полоса внизу рамки */
 .card { --cls: transparent; }
 .card-cls--netrunner { --cls: #00f0ff; } .card-cls--phreaker { --cls: #e8ff3a; } .card-cls--ghost { --cls: #b48cff; }
-.card-cls--samurai { --cls: #ff5a36; } .card-cls--engineer { --cls: #ff9d1c; } .card-cls--biohacker { --cls: #3dff8a; } .card-cls--droneop { --cls: #4da3ff; } .card-cls--chrono { --cls: #ff4fd8; }
+.card-cls--samurai { --cls: #ff5a36; } .card-cls--engineer { --cls: #ff9d1c; } .card-cls--biohacker { --cls: #3dff8a; } .card-cls--droneop { --cls: #4da3ff; } .card-cls--chrono { --cls: #ff4fd8; } .card-cls--vabanker { --cls: #ffd23f; }
 .card-cls--neutral { --cls: #8d97b5; }
 .card__frame { box-shadow: inset 0 -1.2cqw 0 -0.2cqw var(--cls), inset 0 0 6cqw color-mix(in srgb, var(--accent) 25%, transparent); }
 .rarity--uncommon .card__frame { box-shadow: inset 0 -1.2cqw 0 -0.2cqw var(--cls), inset 0 0 6cqw color-mix(in srgb, var(--accent) 32%, transparent), 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); }

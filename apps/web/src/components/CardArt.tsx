@@ -171,6 +171,7 @@ const BG: Record<string, Motif> = {
   biohacker: bgBio,
   droneop: bgEngineer,
   chrono: bgNetrunner,
+  vabanker: bgNeutral,
   neutral: bgNeutral,
 };
 
@@ -566,18 +567,20 @@ interface Mini {
   rarity: string;
   classId: string;
   target: string;
-  effects: { type: string; status?: string; target?: string; amount?: number }[];
+  effects: { type: string; status?: string; target?: string; amount?: number; win?: Mini['effects']; lose?: Mini['effects'] }[];
 }
 
 function pickMotif(def: Mini, h: number): MotifId {
-  const fx = def.effects;
+  const flat = (l: Mini['effects']): Mini['effects'] => l.flatMap((e) => (e.type === 'gamble' ? [e, ...flat(e.win ?? []), ...flat(e.lose ?? [])] : [e]));
+  const fx = flat(def.effects);
   const all = def.target === 'all_enemies' || fx.some((e) => e.target === 'all_enemies');
   const has = (t: string) => fx.some((e) => e.type === t);
   const st = (...ids: string[]) => fx.some((e) => e.type === 'apply_status' && ids.includes(e.status ?? ''));
   if (def.type === 'curse' || def.type === 'status') return 'glitch';
+  if (def.classId === 'vabanker' && has('gamble') && !has('damage')) return 'coins';
   if (has('damage')) {
     if (all) return 'shockwave';
-    const v: MotifId[] = def.classId === 'samurai' ? ['blades', 'blades', 'blast'] : def.classId === 'netrunner' || def.classId === 'phreaker' ? ['beam', 'blast', 'beam'] : ['blades', 'beam', 'blast'];
+    const v: MotifId[] = def.classId === 'vabanker' ? ['coins', 'blast', 'beam'] : def.classId === 'samurai' ? ['blades', 'blades', 'blast'] : def.classId === 'netrunner' || def.classId === 'phreaker' ? ['beam', 'blast', 'beam'] : ['blades', 'beam', 'blast'];
     return v[h % v.length] ?? 'blast';
   }
   if (st('virus', 'poison')) return all ? 'shockwave' : h % 2 ? 'spores' : 'virus';

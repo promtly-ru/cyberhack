@@ -8,8 +8,8 @@ export const SAVE_VERSION = 1 as const;
 
 // ---------- Базовые идентификаторы ----------
 
-export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer' | 'biohacker' | 'droneop' | 'chrono';
-export type Difficulty = 'easy' | 'normal' | 'hard';
+export type ClassId = 'netrunner' | 'phreaker' | 'ghost' | 'samurai' | 'engineer' | 'biohacker' | 'droneop' | 'chrono' | 'vabanker';
+export type Difficulty = 'easy' | 'normal' | 'hard' | 'zero_day';
 export type CardType = 'attack' | 'skill' | 'power' | 'status' | 'curse';
 export type Rarity = 'starter' | 'common' | 'uncommon' | 'rare' | 'special';
 export type TargetKind = 'enemy' | 'all_enemies' | 'random_enemy' | 'self' | 'none';
@@ -45,7 +45,9 @@ export type Effect =
   /** Снять с игрока до amount разных дебаффов (99 — все) */
   | { type: 'cleanse'; amount: number }
   /** Получить amount расходников (potionId — конкретный, иначе случайный); при полных слотах — ничего */
-  | { type: 'gain_potion'; amount: number; potionId?: string };
+  | { type: 'gain_potion'; amount: number; potionId?: string }
+  /** Азарт: с шансом amount% срабатывают эффекты win, иначе lose (бросок по потоку ГСЧ combat) */
+  | { type: 'gamble'; amount: number; win: Effect[]; lose?: Effect[] };
 
 // ---------- Определения контента (JSON-данные) ----------
 
@@ -248,6 +250,10 @@ export interface CombatState {
   phase: 'player' | 'won' | 'lost';
   /** Счётчики для реликвий с every */
   counters: Record<string, number>;
+  /** Режим «Перегрев»: шкала 0..100 (нет поля = режим выключен) */
+  heat?: number;
+  /** Охлаждение (кнопка) уже использовано в этот ход */
+  heatCooled?: boolean;
 }
 
 // ---------- Карта забега ----------
@@ -329,6 +335,8 @@ export interface RunState {
   difficulty?: Difficulty;
   /** Еженедельный вызов: id недели ('2026-W43'); нет поля = обычный забег */
   weekly?: string;
+  /** Режим «Перегрев»: в бою работает шкала Heat; нет поля = обычный забег */
+  heat?: boolean;
   act: 1 | 2 | 3 | 4;
   floor: number; // общий счётчик пройденных узлов
   hp: number;
@@ -382,6 +390,8 @@ export type Action =
   | { type: 'choose_node'; nodeId: string }
   | { type: 'play_card'; cardUid: string; targetUid?: string }
   | { type: 'end_turn' }
+  /** Режим «Перегрев»: охладить (−30 Heat, −6 HP, раз в ход) */
+  | { type: 'cool' }
   | { type: 'take_reward'; index: number }
   | { type: 'pick_card'; cardId: string | null } // null = пропустить
   | { type: 'leave_reward' }
@@ -446,6 +456,8 @@ export interface NewRunOptions {
   difficulty?: Difficulty;
   /** Еженедельный вызов: id недели; мутаторы и правило недели выводятся из него */
   weekly?: string;
+  /** Режим «Перегрев» */
+  heat?: boolean;
   /**
    * Метапрогрессия: открытые игроком карты/реликвии из числа закрываемых (см. unlocks.ts).
    * Не передано — открыто всё (тесты, симулятор, еженедельный вызов).

@@ -85,6 +85,23 @@ export const DIFFICULTY_INFO: Record<Difficulty, { name: string; description: st
   easy: { name: 'Лёгкая', description: 'Враги слабее (HP −20%, урон −15%), отдых и награда за акт щедрее. Для знакомства с игрой.' },
   normal: { name: 'Обычная', description: 'Задуманный баланс.' },
   hard: { name: 'Сложная', description: 'Враги крепче (HP +15%, урон +12%), элит больше, золота меньше на 10%.' },
+  zero_day: {
+    name: 'Нулевой день',
+    description: 'Уязвимость без патча: другие правила, а не просто цифры. Подробности — в карточке режима.',
+  },
+};
+
+/** Карточка режима для меню: девиз, особенности (+/−) и бонус к счёту. */
+export const DIFFICULTY_CARDS: Record<Difficulty, { tagline: string; perks: readonly string[]; traps: readonly string[]; scoreBonus: number }> = {
+  easy: { tagline: 'Знакомство с сетью', perks: ['Враги слабее: HP −20%, урон −15%', 'Отдых лечит 40%, после босса — полное HP'], traps: [], scoreBonus: 0 },
+  normal: { tagline: 'Задуманный баланс', perks: ['Без поблажек и усилений'], traps: [], scoreBonus: 0 },
+  hard: { tagline: 'Файрволы злее', perks: [], traps: ['Враги крепче: HP +15%, урон +12%', 'Больше элит на карте', 'Золота на 10% меньше'], scoreBonus: 0 },
+  zero_day: {
+    tagline: 'Правила взлома переписаны',
+    perks: ['+1 энергия каждый ход', 'Бонусный имплант на старте', 'Золота на 25% больше'],
+    traps: ['На 1 карту меньше в руке', 'Намерения обычных врагов скрыты', 'Враги начинают бой с 1 Разгоном', 'В колоде проклятие, старт с 80% HP'],
+    scoreBonus: 0.4,
+  },
 };
 
 /** Режим сложности накладывается на модификаторы Ascension. */

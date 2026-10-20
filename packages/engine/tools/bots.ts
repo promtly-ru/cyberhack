@@ -287,6 +287,11 @@ function effectValue(e: Effect, cls: RunState['classId'], card: ResolvedCard): n
       return 3;
     case 'gain_potion':
       return e.amount * 5;
+    case 'gamble': {
+      const p = e.amount / 100;
+      const sum = (l: Effect[] | undefined) => (l ?? []).reduce((a, x) => a + effectValue(x, cls, card), 0);
+      return p * sum(e.win) + (1 - p) * sum(e.lose);
+    }
     default:
       return 0;
   }

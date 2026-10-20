@@ -30,6 +30,7 @@ export function regularRunOptions(
   ascension: number,
   difficulty: Difficulty = 'normal',
   mutators: readonly string[] = [],
+  heat = false,
 ): NewRunOptions {
   return {
     seed: randomSeed(),
@@ -38,6 +39,7 @@ export function regularRunOptions(
     difficulty,
     unlocked: unlockedOptions(profile),
     ...(mutators.length ? { mutators: [...mutators] } : {}),
+    ...(heat ? { heat: true } : {}),
   };
 }
 

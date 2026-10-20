@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import type { ClassDef, ClassId, Difficulty } from '../game/engine';
-import { DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSource, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
+import { DIFFICULTY_CARDS, DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSource, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
 import { MAX_ASCENSION, useGame } from '../game/store';
 import { FeedbackModal } from './Feedback';
 import { weeklyAttemptsLeft } from '../game/meta';
@@ -86,72 +86,62 @@ export function MainMenu() {
         </div>
         <nav className="menu__nav" aria-label="Главное меню">
           <button className="menu-btn menu-btn--primary" data-testid="menu-new" onClick={click(() => openClassSelect(false))}>
-            <Icon name="terminal" size={22} />
+            <Icon name="terminal" size={26} />
             <span>
               <b>Новый взлом</b>
-              <small>Новая игра: выбрать класс и сложность</small>
+              <small>Выбрать класс и сложность</small>
             </span>
           </button>
           <button className="menu-btn" data-testid="menu-continue" onClick={onContinue} disabled={!cont}>
             <Icon name="play" size={22} />
             <span>
               <b>Продолжить</b>
-              <small>{cont ? `Продолжить сохранённую игру · ${CLASS_NAME[cont.classId]}, этаж ${cont.floor}${cont.ascension > 0 ? `, сложность ${cont.ascension}` : ''}` : 'Сохранённой игры нет'}</small>
+              <small>{cont ? `${CLASS_NAME[cont.classId]}, этаж ${cont.floor}${cont.ascension > 0 ? `, сложность ${cont.ascension}` : ''}` : 'Сохранённой игры нет'}</small>
             </span>
           </button>
-          <button className="menu-btn" data-testid="menu-weekly" onClick={click(() => openClassSelect(true))}>
-            <Icon name="calendar" size={22} />
-            <span>
-              <b>Еженедельный вызов</b>
+          <div className="menu-group" role="group" aria-label="Режимы">
+            <button className="menu-tile" data-testid="menu-weekly" onClick={click(() => openClassSelect(true))}>
+              <Icon name="calendar" size={22} />
+              <b>Еженедельный</b>
               <small>
-                {weekLabel(week)} · общий для всех{weeklyCls ? ` · ${CLASS_NAME[weeklyCls]}` : ''} · попыток {weeklyLeft}/{WEEKLY_ATTEMPTS}
+                {weekLabel(week)}{weeklyCls ? ` · ${CLASS_NAME[weeklyCls]}` : ''} · {weeklyLeft}/{WEEKLY_ATTEMPTS}
               </small>
-            </span>
-          </button>
-          <button className="menu-btn" data-testid="menu-tutorial" onClick={click(() => startTutorial())}>
-            <Icon name="graduation" size={22} />
-            <span>
+            </button>
+            <button className="menu-tile" data-testid="menu-heat" onClick={click(() => openClassSelect(false, true))}>
+              <Icon name="skull" size={22} />
+              <b>Перегрев</b>
+              <small>Риск ради силы · очки ×1.15</small>
+            </button>
+            <button className="menu-tile" data-testid="menu-tutorial" onClick={click(() => startTutorial())}>
+              <Icon name="graduation" size={22} />
               <b>Обучение</b>
               <small>Пробный бой с подсказками</small>
-            </span>
-          </button>
-          <button className="menu-btn" data-testid="menu-howto" onClick={click(() => setView('howto'))}>
-            <Icon name="book" size={22} />
-            <span>
-              <b>Как играть</b>
-              <small>Правила и словарь терминов</small>
-            </span>
-          </button>
-          {isInstalledApp() ? null : (
-            <button className="menu-btn" data-testid="menu-download" onClick={click(() => setView('download'))}>
-              <Icon name="upgrade" size={22} />
-              <span>
-                <b>Скачать игру</b>
-                <small>Windows, macOS, Linux, Android, iPhone</small>
-              </span>
             </button>
-          )}
-          <button className="menu-btn" data-testid="menu-profile" onClick={click(() => setView('profile'))}>
-            <Icon name="user" size={22} />
-            <span>
-              <b>{user ? 'Профиль' : 'Профиль / Вход'}</b>
-              <small>{user ? `${user.displayName} · достижения и рекорды` : 'Гость · достижения и рекорды'}</small>
-            </span>
-          </button>
-          <button className="menu-btn menu-btn--quiet" data-testid="menu-feedback" onClick={click(() => setFeedbackOpen(true))}>
-            <Icon name="mail" size={22} />
-            <span>
-              <b>Предложить идею</b>
-              <small>Обратная связь: что добавить в игру</small>
-            </span>
-          </button>
-          <button className="menu-btn menu-btn--quiet" data-testid="menu-settings" onClick={click(() => openSettings(true))}>
-            <Icon name="gear" size={22} />
-            <span>
-              <b>Настройки</b>
-              <small>Звук, скорость, анимации</small>
-            </span>
-          </button>
+          </div>
+          <div className="menu-tools" role="group" aria-label="Ещё">
+            <button className="menu-tool" data-testid="menu-profile" onClick={click(() => setView('profile'))} {...tip(user ? 'Профиль' : 'Профиль / Вход', user ? `${user.displayName} · достижения и рекорды` : 'Гость · достижения и рекорды')}>
+              <Icon name="user" size={20} />
+              <span>{user ? 'Профиль' : 'Вход'}</span>
+            </button>
+            <button className="menu-tool" data-testid="menu-howto" onClick={click(() => setView('howto'))} {...tip('Как играть', 'Правила и словарь терминов')}>
+              <Icon name="book" size={20} />
+              <span>Правила</span>
+            </button>
+            {isInstalledApp() ? null : (
+              <button className="menu-tool" data-testid="menu-download" onClick={click(() => setView('download'))} {...tip('Скачать игру', 'Windows, macOS, Linux, Android, iPhone')}>
+                <Icon name="upgrade" size={20} />
+                <span>Скачать</span>
+              </button>
+            )}
+            <button className="menu-tool" data-testid="menu-feedback" onClick={click(() => setFeedbackOpen(true))} {...tip('Предложить идею', 'Обратная связь: что добавить в игру')}>
+              <Icon name="mail" size={20} />
+              <span>Идея</span>
+            </button>
+            <button className="menu-tool" data-testid="menu-settings" onClick={click(() => openSettings(true))} {...tip('Настройки', 'Звук, скорость, анимации')}>
+              <Icon name="gear" size={20} />
+              <span>Настройки</span>
+            </button>
+          </div>
         </nav>
         {feedbackOpen ? <FeedbackModal onClose={() => setFeedbackOpen(false)} /> : null}
         <footer className="menu__foot">
@@ -189,6 +179,7 @@ export const CLASS_STYLE: Record<string, string> = {
   engineer: 'крепкая броня — Броня-патчи, Контрудар и тяжёлые орудия.',
   droneop: 'рой дронов — карты-дроны бесплатно появляются в руке и исчезают в конце хода.',
   chrono: 'управление временем — энергия, добор, Лаг врагам; плата за скорость — Фрагментация.',
+  vabanker: 'азарт и риск — ставь HP и карты, а монетка и «крутка» чаще на твоей стороне.',
 };
 
 function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selected: boolean; locked: boolean; onSelect: () => void; hint?: string }) {
@@ -274,9 +265,12 @@ export function SelectHead({ eyebrow, title }: { eyebrow: string; title: string 
   );
 }
 
+const DIFFICULTY_ORDER: Difficulty[] = ['easy', 'normal', 'hard', 'zero_day'];
+
 function RegularSelect() {
   const profile = useGame((s) => s.profile);
   const startRegular = useGame((s) => s.startRegular);
+  const heatMode = useGame((s) => s.heatMode);
   const error = useGame((s) => s.error);
   const classes = safeClasses();
   const unlocked = (id: ClassId) => profile.unlockedClasses.includes(id);
@@ -291,12 +285,12 @@ function RegularSelect() {
   const start = () => {
     unlockAudio();
     sfx('select');
-    startRegular(cls, asc, diff, mutators);
+    startRegular(cls, asc, diff, mutators, heatMode);
   };
 
   return (
     <div className="screen class-select" data-testid="class-select">
-      <SelectHead eyebrow="Новый взлом" title="Выбери класс" />
+      <SelectHead eyebrow={heatMode ? 'Перегрев' : 'Новый взлом'} title="Выбери класс" />
       <div className="cs-classes" role="radiogroup" aria-label="Класс">
         {classes.map((c) => (
           <ClassCard key={c.id} c={c} selected={cls === c.id} locked={!unlocked(c.id)} hint={lockHint(c.id)} onSelect={() => setCls(c.id)} />
@@ -305,24 +299,39 @@ function RegularSelect() {
       <section className="cs-asc" aria-label="Режим сложности">
         <div className="cs-asc__head">
           <h2 className="section-title">Режим</h2>
-          <span className="muted small">{DIFFICULTY_INFO[diff].description}</span>
+          <span className="muted small">Определяет правила боя. Ниже можно добавить мутаторы и уровень Ascension.</span>
         </div>
-        <div className="asc-chips" role="radiogroup" aria-label="Режим">
-          {(['easy', 'normal', 'hard'] as Difficulty[]).map((d) => (
-            <button
-              key={d}
-              role="radio"
-              aria-checked={diff === d}
-              className={`asc-chip${diff === d ? ' is-selected' : ''}`}
-              style={{ width: 'auto', padding: '0 16px' }}
-              onClick={() => {
-                sfx('click');
-                setDiff(d);
-              }}
-            >
-              {DIFFICULTY_INFO[d].name}
-            </button>
-          ))}
+        <div className="diff-cards" role="radiogroup" aria-label="Режим">
+          {DIFFICULTY_ORDER.map((d) => {
+            const info = DIFFICULTY_CARDS[d];
+            return (
+              <button
+                key={d}
+                role="radio"
+                aria-checked={diff === d}
+                data-testid={`diff-${d}`}
+                className={`diff-card diff-card--${d}${diff === d ? ' is-selected' : ''}`}
+                onClick={() => {
+                  sfx('click');
+                  setDiff(d);
+                }}
+              >
+                <span className="diff-card__head">
+                  <b className="diff-card__name">{DIFFICULTY_INFO[d].name}</b>
+                  {info.scoreBonus > 0 ? <span className="diff-card__score mono">очки +{Math.round(info.scoreBonus * 100)}%</span> : null}
+                </span>
+                <span className="diff-card__tag">{info.tagline}</span>
+                <ul className="diff-card__list">
+                  {info.perks.map((t) => (
+                    <li key={t} className="is-plus">{t}</li>
+                  ))}
+                  {info.traps.map((t) => (
+                    <li key={t} className="is-minus">{t}</li>
+                  ))}
+                </ul>
+              </button>
+            );
+          })}
         </div>
       </section>
       <MutatorPicker value={mutators} onChange={setMutators} />

@@ -29,7 +29,7 @@ import type {
 export * from './types';
 export { validateContent, setContentForTests, resetContent, getContent } from './content';
 export type { ContentData } from './content';
-export { DIFFICULTY_INFO, getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
+export { DIFFICULTY_CARDS, DIFFICULTY_INFO, getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
 export type { AscensionMods } from './ascension';
 export { computeScore } from './score';
 export { FIRMWARES, getFirmware, firmwareProgress, isFirmwareActive } from './firmware';
@@ -123,3 +123,5 @@ export function weeklyClass(seed: string): ClassId {
 }
 
 export * from './weekly';
+export * from './heat';
+export { canCool } from './combat';

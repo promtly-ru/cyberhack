@@ -100,7 +100,7 @@ export function resetContent(): void {
 
 // ---------- Валидация ----------
 
-const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono']);
+const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono', 'vabanker']);
 const RELIC_TRIGGERS: ReadonlySet<RelicTrigger> = new Set<RelicTrigger>([
   'combat_start',
   'turn_start',
@@ -130,6 +130,7 @@ const EFFECT_TYPES = new Set([
   'double_next',
   'cleanse',
   'gain_potion',
+  'gamble',
 ]);
 
 function checkDuplicates(kind: string, items: readonly { id: string }[], errors: string[]): void {
@@ -175,6 +176,11 @@ export function validateContent(data: ContentData = current.data): string[] {
       if (e.type === 'add_card' && !cardIds.has(e.cardId)) errors.push(`${at}: неизвестная карта "${e.cardId}"`);
       if (e.type === 'gain_potion' && e.potionId !== undefined && !getPotion(e.potionId))
         errors.push(`${at}: неизвестный расходник "${e.potionId}"`);
+      if (e.type === 'gamble') {
+        if (e.amount < 0 || e.amount > 100) errors.push(`${at}: шанс gamble вне 0..100`);
+        checkEffects(`${at}.win`, e.win);
+        if (e.lose !== undefined) checkEffects(`${at}.lose`, e.lose);
+      }
       if (typeof (e as { amount?: unknown }).amount !== 'number' && e.type !== 'add_card')
         errors.push(`${at}: amount не число`);
     });

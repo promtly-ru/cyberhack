@@ -1536,5 +1536,91 @@
         "amount": 2
       }
     ]
+  },
+  {
+    "id": "r_vb_lucky_chip",
+    "name": "Счастливая фишка",
+    "rarity": "starter",
+    "classId": "vabanker",
+    "description": "В начале хода 50%: получи 1 энергию и возьми 1 карту. Иначе получи 3 блока.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 50,
+        "win": [
+          {
+            "type": "gain_energy",
+            "amount": 1
+          },
+          {
+            "type": "draw",
+            "amount": 1
+          }
+        ],
+        "lose": [
+          {
+            "type": "block",
+            "amount": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "r_vb_rabbit_foot",
+    "name": "Заячья лапка",
+    "rarity": "common",
+    "classId": "vabanker",
+    "description": "В начале боя 60%: получи 1 Разгон и 6 блока. Иначе получи 4 блока.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 60,
+        "win": [
+          {
+            "type": "apply_status",
+            "status": "strength",
+            "amount": 1,
+            "target": "self"
+          },
+          {
+            "type": "block",
+            "amount": 6
+          }
+        ],
+        "lose": [
+          {
+            "type": "block",
+            "amount": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "r_vb_house_chip",
+    "name": "Фишка казино",
+    "rarity": "boss",
+    "classId": "vabanker",
+    "description": "В начале хода получи 1 энергию. 35%: потеряй 5 HP.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "gamble",
+        "amount": 35,
+        "win": [
+          {
+            "type": "lose_hp",
+            "amount": 5
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -6873,6 +6873,910 @@
     }
   },
   {
+    "id": "vb_chip",
+    "name": "Фишка",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 6,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 6 урона.",
+    "upgrade": {
+      "name": "Фишка+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 9,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 9 урона."
+    }
+  },
+  {
+    "id": "vb_hedge",
+    "name": "Подстраховка",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "description": "Получи 6 блока.",
+    "upgrade": {
+      "name": "Подстраховка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока."
+    }
+  },
+  {
+    "id": "vb_coin",
+    "name": "Орёл или решка",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "starter",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 70,
+        "win": [
+          {
+            "type": "damage",
+            "amount": 10,
+            "target": "enemy"
+          }
+        ],
+        "lose": [
+          {
+            "type": "damage",
+            "amount": 3,
+            "target": "enemy"
+          }
+        ]
+      }
+    ],
+    "description": "70%: нанеси 10 урона. Иначе нанеси 3 урона.",
+    "upgrade": {
+      "name": "Орёл или решка+",
+      "effects": [
+        {
+          "type": "gamble",
+          "amount": 75,
+          "win": [
+            {
+              "type": "damage",
+              "amount": 14,
+              "target": "enemy"
+            }
+          ],
+          "lose": [
+            {
+              "type": "damage",
+              "amount": 4,
+              "target": "enemy"
+            }
+          ]
+        }
+      ],
+      "description": "75%: нанеси 14 урона. Иначе нанеси 4 урона."
+    }
+  },
+  {
+    "id": "vb_bluff",
+    "name": "Блеф",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 65,
+        "win": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 2,
+            "target": "enemy"
+          },
+          {
+            "type": "apply_status",
+            "status": "vulnerable",
+            "amount": 1,
+            "target": "enemy"
+          }
+        ],
+        "lose": [
+          {
+            "type": "apply_status",
+            "status": "weak",
+            "amount": 1,
+            "target": "enemy"
+          }
+        ]
+      }
+    ],
+    "description": "65%: наложи 2 Лага и 1 Брешь. Иначе наложи 1 Лаг.",
+    "upgrade": {
+      "name": "Блеф+",
+      "effects": [
+        {
+          "type": "gamble",
+          "amount": 75,
+          "win": [
+            {
+              "type": "apply_status",
+              "status": "weak",
+              "amount": 2,
+              "target": "enemy"
+            },
+            {
+              "type": "apply_status",
+              "status": "vulnerable",
+              "amount": 2,
+              "target": "enemy"
+            }
+          ],
+          "lose": [
+            {
+              "type": "apply_status",
+              "status": "weak",
+              "amount": 1,
+              "target": "enemy"
+            }
+          ]
+        }
+      ],
+      "description": "75%: наложи 2 Лага и 2 Бреши. Иначе наложи 1 Лаг."
+    }
+  },
+  {
+    "id": "vb_chip_stack",
+    "name": "Стопка фишек",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 7
+      },
+      {
+        "type": "gamble",
+        "amount": 50,
+        "win": [
+          {
+            "type": "block",
+            "amount": 6
+          }
+        ]
+      }
+    ],
+    "description": "Получи 7 блока. 50%: ещё 6 блока.",
+    "upgrade": {
+      "name": "Стопка фишек+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 8
+        },
+        {
+          "type": "gamble",
+          "amount": 60,
+          "win": [
+            {
+              "type": "block",
+              "amount": 7
+            }
+          ]
+        }
+      ],
+      "description": "Получи 8 блока. 60%: ещё 7 блока."
+    }
+  },
+  {
+    "id": "vb_cheat",
+    "name": "Шулерство",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 0,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 5,
+        "target": "enemy"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 2
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Нанеси 5 урона. Потеряй 2 HP. Возьми 1 карту.",
+    "upgrade": {
+      "name": "Шулерство+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 8,
+          "target": "enemy"
+        },
+        {
+          "type": "lose_hp",
+          "amount": 2
+        },
+        {
+          "type": "draw",
+          "amount": 1
+        }
+      ],
+      "description": "Нанеси 8 урона. Потеряй 2 HP. Возьми 1 карту."
+    }
+  },
+  {
+    "id": "vb_slot_spin",
+    "name": "Крутка слота",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 60,
+        "win": [
+          {
+            "type": "damage",
+            "amount": 13,
+            "target": "enemy"
+          }
+        ],
+        "lose": [
+          {
+            "type": "damage",
+            "amount": 4,
+            "target": "enemy"
+          }
+        ]
+      }
+    ],
+    "description": "60%: нанеси 13 урона. Иначе нанеси 4 урона.",
+    "upgrade": {
+      "name": "Крутка слота+",
+      "effects": [
+        {
+          "type": "gamble",
+          "amount": 65,
+          "win": [
+            {
+              "type": "damage",
+              "amount": 17,
+              "target": "enemy"
+            }
+          ],
+          "lose": [
+            {
+              "type": "damage",
+              "amount": 5,
+              "target": "enemy"
+            }
+          ]
+        }
+      ],
+      "description": "65%: нанеси 17 урона. Иначе нанеси 5 урона."
+    }
+  },
+  {
+    "id": "vb_loot_box",
+    "name": "Лутбокс",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 3
+      },
+      {
+        "type": "draw",
+        "amount": 2
+      },
+      {
+        "type": "gamble",
+        "amount": 35,
+        "win": [
+          {
+            "type": "gain_potion",
+            "amount": 1
+          }
+        ]
+      }
+    ],
+    "description": "Потеряй 3 HP. Возьми 2 карты. 35%: получи расходник. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Лутбокс+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 3
+        },
+        {
+          "type": "draw",
+          "amount": 3
+        },
+        {
+          "type": "gamble",
+          "amount": 50,
+          "win": [
+            {
+              "type": "gain_potion",
+              "amount": 1
+            }
+          ]
+        }
+      ],
+      "description": "Потеряй 3 HP. Возьми 3 карты. 50%: получи расходник. Сжигается."
+    }
+  },
+  {
+    "id": "vb_double_down",
+    "name": "Удвоить ставку",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 55,
+        "win": [
+          {
+            "type": "damage",
+            "amount": 22,
+            "target": "enemy"
+          }
+        ],
+        "lose": [
+          {
+            "type": "damage",
+            "amount": 6,
+            "target": "enemy"
+          },
+          {
+            "type": "lose_hp",
+            "amount": 4
+          }
+        ]
+      }
+    ],
+    "description": "55%: нанеси 22 урона. Иначе нанеси 6 урона и потеряй 4 HP.",
+    "upgrade": {
+      "name": "Удвоить ставку+",
+      "effects": [
+        {
+          "type": "gamble",
+          "amount": 60,
+          "win": [
+            {
+              "type": "damage",
+              "amount": 28,
+              "target": "enemy"
+            }
+          ],
+          "lose": [
+            {
+              "type": "damage",
+              "amount": 8,
+              "target": "enemy"
+            },
+            {
+              "type": "lose_hp",
+              "amount": 4
+            }
+          ]
+        }
+      ],
+      "description": "60%: нанеси 28 урона. Иначе нанеси 8 урона и потеряй 4 HP."
+    }
+  },
+  {
+    "id": "vb_blood_chips",
+    "name": "Фишки из крови",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 5
+      },
+      {
+        "type": "gain_energy",
+        "amount": 2
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Потеряй 5 HP. Получи 2 энергии. Возьми 1 карту. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Фишки из крови+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 4
+        },
+        {
+          "type": "gain_energy",
+          "amount": 2
+        },
+        {
+          "type": "draw",
+          "amount": 2
+        }
+      ],
+      "description": "Потеряй 4 HP. Получи 2 энергии. Возьми 2 карты. Сжигается."
+    }
+  },
+  {
+    "id": "vb_pit_boss",
+    "name": "Крупье, это нечестно!",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "all_enemies"
+      },
+      {
+        "type": "gamble",
+        "amount": 60,
+        "win": [
+          {
+            "type": "block",
+            "amount": 10
+          }
+        ]
+      }
+    ],
+    "description": "Наложи 2 Лага на всех врагов. 60%: получи 10 блока.",
+    "upgrade": {
+      "name": "Крупье, это нечестно!+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 2,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 1,
+          "target": "all_enemies"
+        },
+        {
+          "type": "gamble",
+          "amount": 70,
+          "win": [
+            {
+              "type": "block",
+              "amount": 12
+            }
+          ]
+        }
+      ],
+      "description": "Наложи 2 Лага и 1 Брешь на всех врагов. 70%: получи 12 блока."
+    }
+  },
+  {
+    "id": "vb_ace_sleeve",
+    "name": "Туз в рукаве",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 2
+      },
+      {
+        "type": "gamble",
+        "amount": 50,
+        "win": [
+          {
+            "type": "double_next",
+            "amount": 1
+          }
+        ]
+      }
+    ],
+    "description": "Возьми 2 карты. 50%: следующая карта срабатывает дважды.",
+    "upgrade": {
+      "name": "Туз в рукаве+",
+      "effects": [
+        {
+          "type": "draw",
+          "amount": 2
+        },
+        {
+          "type": "gamble",
+          "amount": 70,
+          "win": [
+            {
+              "type": "double_next",
+              "amount": 1
+            }
+          ]
+        }
+      ],
+      "description": "Возьми 2 карты. 70%: следующая карта срабатывает дважды."
+    }
+  },
+  {
+    "id": "vb_card_stake",
+    "name": "Ставка картой",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "exhaust_random_hand",
+        "amount": 1
+      },
+      {
+        "type": "gain_energy",
+        "amount": 2
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Сожги 1 случайную карту в руке. Получи 2 энергии. Возьми 1 карту. Сжигается.",
+    "upgrade": {
+      "name": "Ставка картой+",
+      "effects": [
+        {
+          "type": "exhaust_random_hand",
+          "amount": 1
+        },
+        {
+          "type": "gain_energy",
+          "amount": 2
+        },
+        {
+          "type": "draw",
+          "amount": 2
+        }
+      ],
+      "description": "Сожги 1 случайную карту в руке. Получи 2 энергии. Возьми 2 карты. Сжигается."
+    },
+    "exhaust": true
+  },
+  {
+    "id": "vb_hot_streak",
+    "name": "Полоса везения",
+    "classId": "vabanker",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "dexterity",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "lose_hp",
+        "amount": 4
+      }
+    ],
+    "description": "Получи 1 Разгон. Получи 1 Шифрование. Потеряй 4 HP.",
+    "upgrade": {
+      "name": "Полоса везения+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "strength",
+          "amount": 2,
+          "target": "self"
+        },
+        {
+          "type": "apply_status",
+          "status": "dexterity",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "lose_hp",
+          "amount": 4
+        }
+      ],
+      "description": "Получи 2 Разгона. Получи 1 Шифрование. Потеряй 4 HP."
+    }
+  },
+  {
+    "id": "vb_roulette",
+    "name": "Русская рулетка",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 83,
+        "win": [
+          {
+            "type": "damage",
+            "amount": 8,
+            "times": 3,
+            "target": "enemy"
+          }
+        ],
+        "lose": [
+          {
+            "type": "lose_hp",
+            "amount": 10
+          }
+        ]
+      }
+    ],
+    "description": "83%: нанеси 8 урона 3 раза. Иначе потеряй 10 HP.",
+    "upgrade": {
+      "name": "Русская рулетка+",
+      "effects": [
+        {
+          "type": "gamble",
+          "amount": 83,
+          "win": [
+            {
+              "type": "damage",
+              "amount": 11,
+              "times": 3,
+              "target": "enemy"
+            }
+          ],
+          "lose": [
+            {
+              "type": "lose_hp",
+              "amount": 8
+            }
+          ]
+        }
+      ],
+      "description": "83%: нанеси 11 урона 3 раза. Иначе потеряй 8 HP."
+    }
+  },
+  {
+    "id": "vb_all_in",
+    "name": "Ва-банк",
+    "classId": "vabanker",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 8
+      },
+      {
+        "type": "gamble",
+        "amount": 70,
+        "win": [
+          {
+            "type": "damage",
+            "amount": 40,
+            "target": "enemy"
+          }
+        ],
+        "lose": [
+          {
+            "type": "damage",
+            "amount": 12,
+            "target": "enemy"
+          }
+        ]
+      }
+    ],
+    "description": "Потеряй 8 HP. 70%: нанеси 40 урона. Иначе нанеси 12 урона. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Ва-банк+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 8
+        },
+        {
+          "type": "gamble",
+          "amount": 75,
+          "win": [
+            {
+              "type": "damage",
+              "amount": 52,
+              "target": "enemy"
+            }
+          ],
+          "lose": [
+            {
+              "type": "damage",
+              "amount": 15,
+              "target": "enemy"
+            }
+          ]
+        }
+      ],
+      "description": "Потеряй 8 HP. 75%: нанеси 52 урона. Иначе нанеси 15 урона. Сжигается."
+    }
+  },
+  {
+    "id": "vb_jackpot",
+    "name": "Джекпот",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 45,
+        "win": [
+          {
+            "type": "gain_energy",
+            "amount": 3
+          },
+          {
+            "type": "draw",
+            "amount": 4
+          },
+          {
+            "type": "block",
+            "amount": 15
+          }
+        ],
+        "lose": [
+          {
+            "type": "draw",
+            "amount": 2
+          },
+          {
+            "type": "block",
+            "amount": 8
+          }
+        ]
+      }
+    ],
+    "description": "45%: получи 3 энергии, возьми 4 карты, получи 15 блока. Иначе возьми 2 карты и получи 8 блока. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Джекпот+",
+      "effects": [
+        {
+          "type": "gamble",
+          "amount": 55,
+          "win": [
+            {
+              "type": "gain_energy",
+              "amount": 3
+            },
+            {
+              "type": "draw",
+              "amount": 4
+            },
+            {
+              "type": "block",
+              "amount": 18
+            }
+          ],
+          "lose": [
+            {
+              "type": "draw",
+              "amount": 2
+            },
+            {
+              "type": "block",
+              "amount": 10
+            }
+          ]
+        }
+      ],
+      "description": "55%: получи 3 энергии, возьми 4 карты, получи 18 блока. Иначе возьми 2 карты и получи 10 блока. Сжигается."
+    }
+  },
+  {
+    "id": "vb_loaded_dice",
+    "name": "Заряженные кости",
+    "classId": "vabanker",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 6
+      },
+      {
+        "type": "double_next",
+        "amount": 2
+      }
+    ],
+    "description": "Потеряй 6 HP. Следующие 2 карты срабатывают дважды. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Заряженные кости+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 4
+        },
+        {
+          "type": "double_next",
+          "amount": 2
+        }
+      ],
+      "description": "Потеряй 4 HP. Следующие 2 карты срабатывают дважды. Сжигается."
+    }
+  },
+  {
     "id": "nr_buffer_smash",
     "name": "Разбиение буфера",
     "classId": "netrunner",

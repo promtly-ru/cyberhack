@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as RMouseEvent, type PointerEvent as RPointerEvent } from 'react';
 import type { CardInstance, CombatState, EnemyState, RunState } from '../game/engine';
-import { cardStats, describeCard, getEnemyDef, getLegalActions } from '../game/engine';
+import { canCool, cardStats, describeCard, getEnemyDef, getLegalActions, HEAT_COOL_AMOUNT, HEAT_COOL_HP, HEAT_MAX, HEAT_THRESHOLDS, heatLevel } from '../game/engine';
 import { useGame } from '../game/store';
 import { Card, CardTerms } from '../components/Card';
 import { HpBar, IntentBadge, StatusRow, SynergyBar } from '../components/Bits';
@@ -496,6 +496,17 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         ) : null}
       </div>
 
+      {combat.heat !== undefined ? (
+        <HeatBar
+          heat={combat.heat}
+          canCool={playerPhase && canCool(combat)}
+          onCool={() => {
+            sfx('click');
+            dispatch({ type: 'cool' });
+          }}
+        />
+      ) : null}
+
       <div className={`combat-hud${strip ? ' is-strip' : ''}`}>
         <div className="hud-left">
           <EnergyCore energy={combat.energy} max={combat.maxEnergy} />
@@ -610,6 +621,28 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       {pile === 'draw' ? <CardGridModal title="Колода (добор)" cards={combat.drawPile} onClose={() => setPile(null)} empty="Стопка пуста — сброс перемешается" /> : null}
       {pile === 'discard' ? <CardGridModal title="Сброс" cards={[...combat.discardPile].reverse()} sorted={false} onClose={() => setPile(null)} /> : null}
       {pile === 'exhaust' ? <CardGridModal title="Сожжено" cards={combat.exhaustPile} onClose={() => setPile(null)} empty="Ничего не сгорело" /> : null}
+    </div>
+  );
+}
+
+function HeatBar({ heat, canCool: can, onCool }: { heat: number; canCool: boolean; onCool: () => void }) {
+  const lvl = heatLevel(heat);
+  const active = lvl > 0 ? HEAT_THRESHOLDS[lvl - 1]! : null;
+  return (
+    <div className={`heat heat--${lvl}`} data-testid="heat" data-heat={heat} aria-label={`Перегрев ${heat} из ${HEAT_MAX}`}>
+      <div className="heat__track" role="progressbar" aria-valuemin={0} aria-valuemax={HEAT_MAX} aria-valuenow={heat}>
+        <div className="heat__fill" style={{ width: `${heat}%` }} />
+        {HEAT_THRESHOLDS.map((t, i) => (
+          <span key={t.at} className={`heat__mark${lvl > i ? ' is-active' : ''}${lvl === i + 1 ? ' is-current' : ''}`} style={{ left: `${t.at}%` }} {...tip(t.name, t.text)} />
+        ))}
+      </div>
+      <div className="heat__label">
+        <b>Heat {heat}</b>
+        <span>{active ? `${active.name}: ${active.text}` : 'Остыл — порогов нет'}</span>
+      </div>
+      <button className="btn heat__cool" data-testid="cool" disabled={!can} onClick={onCool} {...tip('Охладить', `−${HEAT_COOL_AMOUNT} Heat, стоит ${HEAT_COOL_HP} HP, раз в ход`)}>
+        Охладить
+      </button>
     </div>
   );
 }
