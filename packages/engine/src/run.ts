@@ -369,9 +369,24 @@ function upgradableCards(s: RunState): CardInstance[] {
 
 /** Улучшение: игроку предлагают случайные 3 карты (или меньше, если их меньше). */
 const UPGRADE_OFFER_SIZE = 3;
+/** Набор карт для выбора запоминается по узлу: «Отмена» и повторное открытие не пересоздают его (иначе можно крутить до нужных карт). */
+function offerFor(s: RunState, purpose: 'upgrade' | 'transform', make: () => string[]): string[] {
+  const key = `${s.act}:${s.currentNodeId ?? 'x'}:${purpose}`;
+  const store = (s.offers ??= {});
+  const saved = (store[key] ?? []).filter((uid) => {
+    const c = s.deck.find((d) => d.uid === uid);
+    return !!c && (purpose !== 'upgrade' || canUpgrade(c.defId, c.upgraded));
+  });
+  if (saved.length > 0) return saved;
+  const fresh = make();
+  store[key] = fresh;
+  return fresh;
+}
+
 function upgradeScreen(s: RunState): Screen {
-  const pool = upgradableCards(s);
-  const offer = rngOf(s, 'cards').shuffle([...pool]).slice(0, UPGRADE_OFFER_SIZE).map((c) => c.uid);
+  const offer = offerFor(s, 'upgrade', () =>
+    rngOf(s, 'cards').shuffle([...upgradableCards(s)]).slice(0, UPGRADE_OFFER_SIZE).map((c) => c.uid),
+  );
   return { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map', offer };
 }
 
@@ -618,7 +633,7 @@ function backScreen(s: RunState, returnTo: 'map' | 'shop'): Screen | null {
 
 const TRANSFORM_OFFER_SIZE = 3;
 function transformScreen(s: RunState): Screen {
-  const offer = rngOf(s, 'cards').shuffle([...s.deck]).slice(0, TRANSFORM_OFFER_SIZE).map((c) => c.uid);
+  const offer = offerFor(s, 'transform', () => rngOf(s, 'cards').shuffle([...s.deck]).slice(0, TRANSFORM_OFFER_SIZE).map((c) => c.uid));
   return { kind: 'select_deck_card', purpose: 'transform', returnTo: 'map', offer };
 }
 

@@ -340,6 +340,14 @@ describe('отдых', () => {
     expect(r.events).toContainEqual({ type: 'relic_triggered', relicId: 'r_rest' });
   });
 
+  it('отмена и повторное «Улучшить» не меняют предложенные карты', () => {
+    const s = enterKind('rest');
+    const first = act(s, { type: 'rest_upgrade' });
+    const back = act(first, { type: 'select_deck_card', cardUid: null });
+    const second = act(back, { type: 'rest_upgrade' });
+    expect((second.screen as { offer: string[] }).offer).toEqual((first.screen as { offer: string[] }).offer);
+  });
+
   it('rest_upgrade → выбор карты → улучшение; отмена возвращает к отдыху', () => {
     const s = enterKind('rest');
     let sel = act(s, { type: 'rest_upgrade' });

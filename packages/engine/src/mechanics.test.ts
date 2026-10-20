@@ -2,6 +2,7 @@
  * Новые механики: ключевые слова карт (retain/innate), эффекты (scry, discard_hand_draw, upgrade_random_hand,
  * gain_max_hp, heal_pct, double_next, cleanse, gain_potion), статусы (echo, barrier, bleed, mark).
  */
+import { MAX_HP_GAIN_IN_COMBAT } from './combat';
 import { describe, expect, it } from 'vitest';
 import { setContentForTests } from './content';
 import { enterCombat, OPTS, play, setupCombat, useContent } from './__fixtures__/helpers';
@@ -84,6 +85,17 @@ describe('новые эффекты', () => {
     r = play(r, uidOf(r, 'strike'), 'en0');
     expect(r.screen.kind).toBe('reward');
     expect(r.maxHp).toBe(maxHp + 4);
+  });
+
+  it('gain_max_hp: суммарный прирост за забег ограничен потолком', () => {
+    const s = setupCombat(enterCombat(), { hand: ['gene', 'gene', 'gene', 'gene', 'gene'] });
+    const maxHp = c0(s).player.maxHp;
+    s.combatMaxHpGain = MAX_HP_GAIN_IN_COMBAT - 4;
+    let r = play(s, uidOf(s, 'gene'));
+    expect(c0(r).player.maxHp).toBe(maxHp + 4);
+    r = play(r, uidOf(r, 'gene'));
+    expect(c0(r).player.maxHp).toBe(maxHp + 4);
+    expect(r.combatMaxHpGain).toBe(MAX_HP_GAIN_IN_COMBAT);
   });
 
   it('heal_pct: лечит процент от максимума', () => {
