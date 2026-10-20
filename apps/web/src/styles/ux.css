@@ -1,0 +1,94 @@
+/* ============================================================
+   UX: расположение кнопок (подключается последним)
+   ============================================================ */
+
+/* ---------- Единый стиль кнопок: цели нажатия >= 44px ---------- */
+.btn { min-height: 48px; border-radius: 12px; }
+.btn--sm { min-height: 44px; }
+.icon-btn { min-width: 44px; height: 44px; border-radius: 12px; }
+.topbar .icon-btn { min-width: 44px; height: 44px; }
+.menu-tool, .menu-tile, .account-chip { min-height: 44px; }
+
+/* ---------- Экраны забега: главная кнопка закреплена внизу ---------- */
+.run-screen { min-height: 100dvh; }
+.run-screen__body { flex: 1 1 auto; }
+.run-screen__body > .actions,
+.run-screen__body .upgrade-pick > .actions {
+  position: sticky; bottom: var(--plaque-h, 0px); z-index: 12;
+  margin: auto -4px 0; padding: 12px 4px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg, #05060f) 72%, transparent);
+}
+.run-screen__body > .actions .btn { min-width: min(220px, 46%); flex: 1 1 140px; max-width: 320px; }
+.run-screen__body > .actions .btn:only-child { flex: 0 1 320px; }
+@media (max-width: 767px) {
+  .run-screen__body > .actions .btn { max-width: none; }
+  .run-screen__body > .actions .btn:only-child { flex: 1 1 100%; }
+}
+
+/* Кнопки «Назад» на выборе класса / профиле / правилах: слева сверху, по одному правилу */
+.cs-head .icon-btn { flex: none; min-width: 48px; height: 48px; }
+
+/* ---------- Бой: нижняя зона, цели >= 44px ---------- */
+@media (max-width: 767px) and (min-height: 521px), (max-width: 767px) and (max-aspect-ratio: 5/4) {
+  .combat-hud .btn--end { min-height: 52px; min-width: 132px; padding: 8px 18px; font-size: 15px; }
+  .pile__box { width: 48px; height: 48px; }
+  .hud-left, .hud-right { align-items: center; }
+}
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .btn--end { min-height: 44px; }
+  .pile__box { width: 44px; height: 44px; }
+  .topbar .icon-btn { width: 44px; height: 44px; min-width: 44px; }
+}
+
+/* ---------- Главное меню ---------- */
+.menu-btn--primary { min-height: 84px; border-radius: 16px; }
+.menu-btn--primary b { font-size: 24px; }
+.menu-btn { border-radius: 14px; }
+.menu-tile { min-height: 64px; }
+.menu-tool { min-height: 52px; }
+.menu-tool span { font-size: 12px; }
+
+.account-chip { min-height: 52px; border-color: rgba(0, 240, 255, 0.5); box-shadow: 0 0 16px rgba(0, 240, 255, 0.15); }
+.account-chip--guest { background: linear-gradient(90deg, rgba(0, 240, 255, 0.14), var(--panel)); }
+.account-chip__text b { font-size: 15px; }
+.account-chip__text small { font-size: 13px; }
+
+/* Телефон вертикально: логотип сверху, действия внизу, главное — в зоне большого пальца */
+@media (max-width: 899px) and (min-height: 521px) {
+  .screen.menu { padding: 12px var(--gutter) max(16px, env(safe-area-inset-bottom)); min-height: 100dvh; }
+  .menu__inner { flex: 1 1 auto; margin-block: 0; width: min(520px, 100%); margin-inline: auto; display: flex; flex-direction: column; gap: 14px; }
+  .menu__hero { flex: 1 1 auto; justify-content: center; }
+  .menu__nav { display: flex; flex-direction: column; gap: 8px; }
+  .menu__nav > .menu-tools { order: 1; border-top: 0; padding-top: 0; margin-top: 0; gap: 4px; }
+  .menu__nav > .menu-group { order: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .menu__nav > [data-testid='menu-continue'] { order: 3; min-height: 60px; }
+  .menu__nav > [data-testid='menu-new'] { order: 4; min-height: 88px; }
+  .menu-tile { flex-direction: column; flex-wrap: nowrap; align-items: center; text-align: center; padding: 8px 4px; gap: 2px; }
+  .menu-tile small { display: none; }
+  .menu-tile b { font-size: 13px; }
+  .account-chip { align-self: stretch; max-width: none; margin: 0 0 4px; justify-content: flex-start; }
+  .account-chip::after { content: '›'; margin-left: auto; padding-left: 8px; font-size: 22px; color: var(--cyan); }
+  .menu__foot { margin-top: 0; }
+}
+/* Широкие телефоны/планшеты: чип сверху справа, как было */
+@media (min-width: 721px) and (max-width: 899px) and (min-height: 521px) {
+  .account-chip { align-self: flex-end; max-width: 280px; }
+}
+
+/* Десктоп: две колонки, главное действие крупно */
+@media (min-width: 900px) and (min-height: 521px) {
+  .menu__inner { grid-template-columns: minmax(0, 1fr) minmax(380px, 460px); }
+  .menu__nav { gap: 10px; }
+  .menu__nav > [data-testid='menu-new'] { min-height: 92px; }
+  .menu__nav > .menu-tools { margin-top: 4px; }
+  .menu-tile { min-height: 76px; }
+}
+
+/* Класс-витрина: 9 классов в одну строку на телефоне, на десктопе без «сироты» */
+@media (max-width: 899px) { .showcase { grid-template-columns: repeat(9, 1fr); } }
+@media (min-width: 1100px) { .showcase { grid-template-columns: repeat(9, 1fr); gap: 6px; } .showcase__item span { font-size: 9px; } }
+@media (max-width: 400px) and (min-height: 521px) {
+  .combat-hud .btn--end { min-width: 0; padding: 8px 10px; font-size: 14px; flex: 1 1 auto; }
+  .pile__box { width: 44px; height: 44px; }
+  .hud-left, .hud-right { gap: 6px; min-width: 0; }
+}

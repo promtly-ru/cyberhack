@@ -5,6 +5,7 @@ import { accountAction, useGame } from '../game/store';
 import type { DeviceProfile, User } from '../net/types';
 import { LocalProfileError, type LocalProfileErrorCode } from '../net/errors';
 import { Icon } from '../components/Icon';
+import { isNativeApp } from '../net/platform';
 import { sfx } from '../audio/sfx';
 import { AchievementsPanel, CLASS_NAME, WeeklyBoard } from './MetaBits';
 import { SelectHead } from './MenuScreens';
@@ -218,7 +219,8 @@ type LoginMode = 'signup' | 'signin' | 'link';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: boolean }) {
-  const [mode, setMode] = useState<LoginMode>('signup');
+  const native = isNativeApp();
+  const [mode, setMode] = useState<LoginMode>(native ? 'signin' : 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -252,13 +254,15 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
     ['signin', 'Вход'],
     ['link', 'По ссылке'],
   ];
+  const shownTabs = native ? tabs.filter(([id]) => id !== 'link') : tabs;
   return (
     <div className="account-block cloud-login" data-testid="cloud-login">
       <h3 className="account-block__title">Облачный аккаунт</h3>
       <p className="muted small">Прогресс сохранится в облаке: продолжай с любого устройства и попадай в таблицу лидеров.</p>
       {!cloud ? <p className="muted small">Сервер ещё не подключён — вход заработает после настройки Supabase.</p> : null}
+      {native ? <p className="muted small">Войди тем же email и паролем, что на сайте.</p> : null}
       <div className="login-tabs" role="tablist">
-        {tabs.map(([id, label]) => (
+        {shownTabs.map(([id, label]) => (
           <button
             key={id}
             type="button"
@@ -311,8 +315,8 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
           <Icon name="mail" size={18} /> {mode === 'signup' ? 'Зарегистрироваться' : mode === 'signin' ? 'Войти' : 'Получить ссылку'}
         </button>
       </form>
-      <div className="login-or">или</div>
-      <div className="oauth">
+      {native ? null : <div className="login-or">или</div>}
+      <div className="oauth" hidden={native}>
         <button className="btn btn--ghost" type="button" disabled={busy} onClick={() => oauth('google', 'Google')}>
           <Icon name="google" size={18} /> Google
         </button>

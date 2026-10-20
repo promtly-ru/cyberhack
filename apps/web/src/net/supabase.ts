@@ -12,6 +12,7 @@ import type { Action, NewRunOptions } from '@cyberhack/engine';
 import type { AuthApi, Backend, DeviceProfilesApi, LeaderboardApi, LeaderboardEntry, Profile, SavedRun, SavesApi, User } from './types';
 import { AuthRequiredError, BackendError, NetworkError } from './errors';
 import { GUEST_PREFIX, MAX_WEEKLY_ACTIONS, createLocalSaves, type LocalSaves, type ReplayFn } from './local';
+import { isNativeApp, resolveRedirect } from './platform';
 import { createDeviceAccounts } from './device';
 import { CLASS_IDS, compareIso, hasProgress, mergeProfiles, normalizeProfile, normalizeSavedRun } from './profile';
 import { browserStorage, isRecord, readJson, removeKey, writeJson, type KeyValueStorage } from './storage';
@@ -151,8 +152,7 @@ function mapUser(u: SbUser): User {
 }
 
 function defaultRedirect(): string {
-  const loc = globalThis.location;
-  return loc ? `${loc.origin}${loc.pathname}` : '';
+  return resolveRedirect(globalThis.location, isNativeApp());
 }
 
 function defaultOnOnline(cb: () => void): () => void {
