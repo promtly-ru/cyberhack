@@ -19,9 +19,42 @@ export type StatusId = string;
 
 // ---------- Эффекты (data-driven) ----------
 
+/** Источник масштабирования для damage/block: итог = amount + perAmount * count */
+export type ScalePer =
+  | { kind: 'target_status'; status: StatusId }
+  | { kind: 'self_status'; status: StatusId }
+  | { kind: 'discard_size' }
+  | { kind: 'exhaust_size' }
+  | { kind: 'attacks_played_this_turn' }
+  | { kind: 'cards_in_hand' };
+
+/** Условие эффекта conditional: все заданные поля должны выполняться (И). */
+export interface EffectCondition {
+  /** У цели (выбранный враг, иначе первый живой) есть статус > 0 */
+  targetHasStatus?: StatusId;
+  /** У игрока есть статус > 0 */
+  selfHasStatus?: StatusId;
+  /** HP игрока строго ниже n% от максимума */
+  hpBelowPct?: number;
+  /** В руке не больше n карт (разыгрываемая карта уже не в руке) */
+  handSizeAtMost?: number;
+  /** До этой карты в этот ход сыграно не меньше n атак */
+  playedAttacksThisTurnAtLeast?: number;
+}
+
+export type HookTrigger = 'play_attack' | 'play_skill' | 'apply_status' | 'exhaust' | 'turn_start' | 'turn_end' | 'take_damage';
+
+/** Хук боя игрока: при событии on срабатывают effects (как эффекты карты). */
+export interface CombatHook {
+  on: HookTrigger;
+  effects: Effect[];
+  /** id карты-источника (для UI/отладки) */
+  source?: string;
+}
+
 export type Effect =
-  | { type: 'damage'; amount: number; times?: number; target?: TargetKind }
-  | { type: 'block'; amount: number }
+  | { type: 'damage'; amount: number; times?: number; target?: TargetKind; per?: ScalePer; perAmount?: number }
+  | { type: 'block'; amount: number; per?: ScalePer; perAmount?: number }
   | { type: 'apply_status'; status: StatusId; amount: number; target?: TargetKind }
   | { type: 'draw'; amount: number }
   | { type: 'gain_energy'; amount: number }
@@ -49,6 +82,14 @@ export type Effect =
   | { type: 'gain_potion'; amount: number; potionId?: string }
   /** Азарт: с шансом amount% срабатывают эффекты win, иначе lose (бросок по потоку ГСЧ combat) */
   | { type: 'gamble'; amount: number; win: Effect[]; lose?: Effect[] }
+  /** Условный эффект: если if выполняется — then, иначе else */
+  | { type: 'conditional'; if: EffectCondition; then: Effect[]; else?: Effect[] }
+  /** Умножить стаки статуса у цели (floor) */
+  | { type: 'multiply_status'; status: StatusId; factor: number; target?: TargetKind }
+  /** Снять все стаки статуса с цели и нанести стаки*damageMult урона (через блок) */
+  | { type: 'consume_status'; status: StatusId; damageMult: number; target?: TargetKind }
+  /** Добавить хук до конца боя (обычно у power-карт) */
+  | { type: 'add_hook'; hook: CombatHook }
   // ---- Эффекты врагов ----
   /** Призвать amount врагов enemyId, пока живых врагов меньше max (по умолчанию SUMMON_LIMIT) */
   | { type: 'summon'; enemyId: string; amount: number; max?: number }
@@ -74,6 +115,10 @@ export interface CardDef {
   retain?: boolean;
   /** Врождённая: всегда в стартовой руке боя */
   innate?: boolean;
+  /** Эхо-ключ: если после розыгрыша энергия стала 0 — эффекты срабатывают ещё раз */
+  echo?: boolean;
+  /** Архетипы (движком в бою не используются) */
+  tags?: string[];
   upgrade?: {
     name?: string;
     cost?: number;
@@ -82,6 +127,7 @@ export interface CardDef {
     exhaust?: boolean;
     retain?: boolean;
     innate?: boolean;
+    echo?: boolean;
   };
 }
 
@@ -315,6 +361,10 @@ export interface CombatState {
   heat?: number;
   /** Охлаждение (кнопка) уже использовано в этот ход */
   heatCooled?: boolean;
+  /** Хуки игрока (от power-карт); нет поля = нет хуков */
+  hooks?: CombatHook[];
+  /** Атак сыграно в этот ход (сброс в начале хода) */
+  attacksThisTurn?: number;
   /** Правило зоны этого боя (нет поля = без правила) */
   zoneRule?: ZoneRuleId;
   /** id карт, разыгранных игроком в текущем (или прошлом, во время хода врагов) ходу */

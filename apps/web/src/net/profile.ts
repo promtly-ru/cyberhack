@@ -2,7 +2,8 @@
  * Профиль метапрогрессии: значение по умолчанию, валидация «сырых» данных и слияние
  * (перенос гостевого прогресса в облако, конфликт двух устройств).
  */
-import { checkSaveCompat, type ClassId, type LifetimeStats } from '@cyberhack/engine';
+import type { ClassId, LifetimeStats } from '@cyberhack/engine';
+import { checkSaveCompat } from '@cyberhack/engine';
 import type { Profile, SavedRun, WeeklyProgress } from './types';
 import { isRecord } from './storage';
 

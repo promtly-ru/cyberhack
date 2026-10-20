@@ -1,5 +1,6 @@
 /** Общие заготовки для тестов сетевого слоя (в прод-бандл не попадает: импортируется только из *.test.ts). */
-import { SAVE_VERSION, type Action, type NewRunOptions, type RunState } from '@cyberhack/engine';
+import type { Action, NewRunOptions, RunState } from '@cyberhack/engine';
+import { SAVE_VERSION } from '@cyberhack/engine';
 import type { SavedRun } from './types';
 import type { ReplayFn } from './local';
 import { MemoryStorage } from './storage';

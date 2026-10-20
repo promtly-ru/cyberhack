@@ -82,6 +82,7 @@ export function rollCards(
   weights: [number, number, number],
   rareMult = 1,
   avoid: readonly string[] = [],
+  weightOf: (c: CardDef) => number = () => 1,
 ): CardDef[] {
   const result: CardDef[] = [];
   const w: [RewardRarity, number][] = [
@@ -97,19 +98,37 @@ export function rollCards(
     const remaining = fresh.length > 0 ? fresh : left;
     const rarity = rng.weighted(w);
     const ofRarity = remaining.filter((c) => c.rarity === rarity);
-    result.push(rng.pick(ofRarity.length > 0 ? ofRarity : remaining));
+    const cands = ofRarity.length > 0 ? ofRarity : remaining;
+    result.push(rng.weighted(cands.map((c) => [c, Math.max(0.01, weightOf(c))] as const)));
   }
   return result;
+}
+
+/** Вес нейтральной карты относительно классовой: ~1 из 4 предложений нейтральное. */
+const NEUTRAL_WEIGHT = 0.25;
+/** Сколько карт архетипа (тега) в колоде нужно, чтобы награды начали к нему тянуть. */
+const ARCHETYPE_MIN = 3;
+
+/** Теги архетипов колоды, встречающиеся не реже ARCHETYPE_MIN раз. */
+function deckArchetypes(s: RunState): Set<string> {
+  const cards = getContent().cards;
+  const n = new Map<string, number>();
+  for (const c of s.deck) for (const t of (cards.get(c.defId) as { tags?: string[] } | undefined)?.tags ?? []) n.set(t, (n.get(t) ?? 0) + 1);
+  return new Set([...n].filter(([, k]) => k >= ARCHETYPE_MIN).map(([t]) => t));
 }
 
 export function rollCardChoice(s: RunState, rng: Rng, tier: CombatTier, mods: AscensionMods): string[] {
   const count = 3 + getMutatorMods(s.mutators).extraCardChoices;
   const classPool = rewardCardPool(s.classId, s);
-  // Маленький пул класса разбавляем нейтральными картами, иначе предложения повторяются.
-  const pool = tier !== 'boss' && classPool.length < 20 ? [...classPool, ...rewardCardPool('neutral', s)] : classPool;
+  // Нейтральные карты всегда в пуле (кроме босса), но с меньшим весом — больше разнообразия.
+  const pool = tier !== 'boss' ? [...classPool, ...rewardCardPool('neutral', s)] : classPool;
+  const arch = deckArchetypes(s);
+  const weightOf = (c: CardDef): number =>
+    (c.classId === 'neutral' ? NEUTRAL_WEIGHT : 1) * ((c as { tags?: string[] }).tags?.some((t) => arch.has(t)) ? 2 : 1);
+  // Анти-повтор на большую часть пула: за забег карты не возвращаются, пока есть новые.
   const recent = s.recentOffers ?? [];
-  const ids = rollCards(rng, pool, count, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult, recent).map((c) => c.id);
-  s.recentOffers = [...recent, ...ids].slice(-Math.min(12, Math.floor(pool.length / 2)));
+  const ids = rollCards(rng, pool, count, CARD_RARITY_WEIGHTS[tier], mods.rareCardMult, recent, weightOf).map((c) => c.id);
+  s.recentOffers = [...recent, ...ids].slice(-Math.floor(pool.length * 0.7));
   return ids;
 }
 

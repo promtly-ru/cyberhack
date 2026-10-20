@@ -20,6 +20,8 @@ export interface ResolvedCard {
   retain: boolean;
   /** Врождённая: всегда в стартовой руке боя */
   innate: boolean;
+  /** Эхо-ключ (поле echo карты) */
+  echo: boolean;
   description: string;
 }
 
@@ -43,6 +45,7 @@ export function resolveCard(defId: string, upgraded: boolean): ResolvedCard {
     ethereal: def.ethereal ?? false,
     retain: up?.retain ?? def.retain ?? false,
     innate: up?.innate ?? def.innate ?? false,
+    echo: up?.echo ?? def.echo ?? false,
     description: up?.description ?? def.description,
   };
 }
@@ -70,9 +73,17 @@ function placeholderValues(effects: Effect[]): Record<string, string> {
       case 'damage':
         setOnce('damage', e.amount);
         setOnce('times', e.times ?? 1);
+        if (e.perAmount !== undefined) setOnce('per', e.perAmount);
+        break;
+      case 'multiply_status':
+        setOnce('factor', e.factor);
+        break;
+      case 'consume_status':
+        setOnce('mult', e.damageMult);
         break;
       case 'block':
         setOnce('block', e.amount);
+        if (e.perAmount !== undefined) setOnce('per', e.perAmount);
         break;
       case 'apply_status':
         setOnce(e.status, e.amount);

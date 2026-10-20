@@ -22,6 +22,10 @@ import {
   type EnemyDef,
   type EnemyState,
   type GameEvent,
+  type HookTrigger,
+  type ScalePer,
+  type EffectCondition,
+  type TargetKind,
   type RelicTrigger,
   type RunState,
   type StatusId,
@@ -46,7 +50,12 @@ export interface CombatCtx {
   mods: AscensionMods;
   /** id карты, эффекты которой сейчас разыгрываются */
   card?: string;
+  /** Текущая глубина вложенных хуков (защита от рекурсии; не сериализуется) */
+  hookDepth?: number;
 }
+
+/** Максимальная вложенность срабатывания хуков (хук -> эффект -> хук ...). */
+export const MAX_HOOK_DEPTH = 3;
 
 export type Unit = 'player' | EnemyState;
 
@@ -134,7 +143,9 @@ export function hit(ctx: CombatCtx, u: Unit, amount: number, ignoreBlock = false
   ctx.ev.push({ type: 'damage', targetUid: unitUid(u), amount: dmg, blocked });
   if (u !== 'player') ctx.s.stats.damageDealt += before - t.hp;
   if (t.hp <= 0) onDeath(ctx, u);
-  return before - t.hp;
+  const lost = before - t.hp;
+  if (u === 'player' && lost > 0 && !isOver(ctx)) fireHooks(ctx, 'take_damage');
+  return lost;
 }
 
 /** Атакующий удар: strength/weak/vulnerable + thorns цели. source = null — «сырой» урон. */
@@ -241,6 +252,7 @@ export function drawCards(ctx: CombatCtx, n: number): number {
 function exhaustCard(ctx: CombatCtx, card: CardInstance): void {
   ctx.c.exhaustPile.push(card);
   ctx.ev.push({ type: 'card_exhausted', cardUid: card.uid });
+  fireHooks(ctx, 'exhaust');
 }
 
 function addCardToCombat(ctx: CombatCtx, defId: string, to: 'hand' | 'draw' | 'discard', count: number): void {
@@ -358,26 +370,117 @@ function enemyTargets(ctx: CombatCtx, kind: string, chosen: EnemyState | undefin
   return r ? [r] : [];
 }
 
-function applyCardEffect(ctx: CombatCtx, eff: Effect, card: ResolvedCard, chosen: EnemyState | undefined): void {
+/** Сколько «единиц» даёт источник масштабирования. */
+function scaleCount(ctx: CombatCtx, per: ScalePer, target: EnemyState | undefined): number {
+  const c = ctx.c;
+  switch (per.kind) {
+    case 'target_status':
+      return target ? Math.max(0, getStatus(target, per.status)) : 0;
+    case 'self_status':
+      return Math.max(0, getStatus(c.player, per.status));
+    case 'discard_size':
+      return c.discardPile.length;
+    case 'exhaust_size':
+      return c.exhaustPile.length;
+    case 'attacks_played_this_turn':
+      return c.attacksThisTurn ?? 0;
+    case 'cards_in_hand':
+      return c.hand.length;
+    default:
+      return 0;
+  }
+}
+
+/** amount + perAmount * count (без per — amount; perAmount по умолчанию 1). */
+function scaled(ctx: CombatCtx, eff: { amount: number; per?: ScalePer; perAmount?: number }, target: EnemyState | undefined): number {
+  if (!eff.per) return eff.amount;
+  return eff.amount + (eff.perAmount ?? 1) * scaleCount(ctx, eff.per, target);
+}
+
+function conditionTarget(ctx: CombatCtx, chosen: EnemyState | undefined): EnemyState | undefined {
+  return chosen && chosen.hp > 0 ? chosen : livingEnemies(ctx.c)[0];
+}
+
+/** Проверка условия conditional (все заданные поля — И). */
+export function checkCondition(ctx: CombatCtx, cond: EffectCondition, chosen: EnemyState | undefined): boolean {
+  const c = ctx.c;
+  if (cond.targetHasStatus !== undefined) {
+    const t = conditionTarget(ctx, chosen);
+    if (!t || getStatus(t, cond.targetHasStatus) <= 0) return false;
+  }
+  if (cond.selfHasStatus !== undefined && getStatus(c.player, cond.selfHasStatus) <= 0) return false;
+  if (cond.hpBelowPct !== undefined && !(c.player.hp * 100 < c.player.maxHp * cond.hpBelowPct)) return false;
+  if (cond.handSizeAtMost !== undefined && c.hand.length > cond.handSizeAtMost) return false;
+  if (cond.playedAttacksThisTurnAtLeast !== undefined && (c.attacksThisTurn ?? 0) < cond.playedAttacksThisTurnAtLeast) return false;
+  return true;
+}
+
+/** Цели статусных эффектов (multiply/consume): self/none — игрок, иначе враги. */
+function statusUnits(ctx: CombatCtx, kind: TargetKind, chosen: EnemyState | undefined): Unit[] {
+  if (kind === 'self' || kind === 'none') return ['player'];
+  return enemyTargets(ctx, kind, chosen);
+}
+
+/** Что нужно эффектам карты от источника: цель по умолчанию. */
+type EffectSource = Pick<ResolvedCard, 'target'>;
+
+function applyCardEffect(ctx: CombatCtx, eff: Effect, card: EffectSource, chosen: EnemyState | undefined): void {
   switch (eff.type) {
     case 'damage': {
       const kind = eff.target ?? card.target;
       const times = eff.times ?? 1;
       for (let t = 0; t < times && !isOver(ctx); t++) {
-        if (kind === 'self') attack(ctx, null, 'player', eff.amount, false);
-        else for (const e of enemyTargets(ctx, kind, chosen)) attack(ctx, 'player', e, eff.amount);
+        if (kind === 'self') attack(ctx, null, 'player', scaled(ctx, eff, conditionTarget(ctx, chosen)), false);
+        else for (const e of enemyTargets(ctx, kind, chosen)) attack(ctx, 'player', e, scaled(ctx, eff, e));
       }
       return;
     }
     case 'block':
-      gainBlock(ctx, 'player', eff.amount);
+      gainBlock(ctx, 'player', scaled(ctx, eff, conditionTarget(ctx, chosen)));
       return;
     case 'apply_status': {
       const kind = eff.target ?? card.target;
       if (kind === 'self' || kind === 'none') applyStatus(ctx, 'player', eff.status, eff.amount);
-      else for (const e of enemyTargets(ctx, kind, chosen)) applyStatus(ctx, e, eff.status, eff.amount);
+      else
+        for (const e of enemyTargets(ctx, kind, chosen)) {
+          applyStatus(ctx, e, eff.status, eff.amount);
+          if (eff.amount > 0 && !isOver(ctx)) fireHooks(ctx, 'apply_status', e);
+        }
       return;
     }
+    case 'conditional': {
+      const list = checkCondition(ctx, eff.if, chosen) ? eff.then : (eff.else ?? []);
+      for (const sub of list) {
+        if (isOver(ctx)) break;
+        applyCardEffect(ctx, sub, card, chosen);
+      }
+      return;
+    }
+    case 'multiply_status': {
+      for (const u of statusUnits(ctx, eff.target ?? card.target, chosen)) {
+        const cur = getStatus(unitState(ctx, u), eff.status);
+        const delta = Math.floor(cur * eff.factor) - cur;
+        if (cur !== 0 && delta !== 0) applyStatus(ctx, u, eff.status, delta);
+      }
+      return;
+    }
+    case 'consume_status': {
+      for (const u of statusUnits(ctx, eff.target ?? card.target, chosen)) {
+        if (isOver(ctx)) break;
+        const t = unitState(ctx, u);
+        const stacks = getStatus(t, eff.status);
+        if (stacks <= 0 || t.hp <= 0) continue;
+        delete t.statuses[eff.status];
+        ctx.ev.push({ type: 'status_applied', targetUid: unitUid(u), status: eff.status, amount: -stacks });
+        // Урон по носителю; если статус снят с игрока — по выбранному/случайному врагу
+        const victim: EnemyState | undefined = u === 'player' ? enemyTargets(ctx, 'enemy', chosen)[0] : u;
+        if (victim) attack(ctx, null, victim, stacks * eff.damageMult, true);
+      }
+      return;
+    }
+    case 'add_hook':
+      (ctx.c.hooks ??= []).push(structuredClone(eff.hook));
+      return;
     case 'gamble':
       for (const sub of rollGamble(ctx, eff)) {
         if (isOver(ctx)) break;
@@ -386,6 +489,26 @@ function applyCardEffect(ctx: CombatCtx, eff: Effect, card: ResolvedCard, chosen
       return;
     default:
       applyPlayerUtilityEffect(ctx, eff);
+  }
+}
+
+/** Сработать хуки игрока на событие on (глубина ограничена MAX_HOOK_DEPTH). */
+export function fireHooks(ctx: CombatCtx, on: HookTrigger, chosen?: EnemyState): void {
+  const hooks = ctx.c.hooks;
+  if (!hooks || hooks.length === 0 || isOver(ctx)) return;
+  const depth = ctx.hookDepth ?? 0;
+  if (depth >= MAX_HOOK_DEPTH) return;
+  ctx.hookDepth = depth + 1;
+  try {
+    for (const hook of [...hooks]) {
+      if (hook.on !== on) continue;
+      for (const eff of hook.effects) {
+        if (isOver(ctx)) return;
+        applyCardEffect(ctx, eff, { target: 'random_enemy' }, chosen);
+      }
+    }
+  } finally {
+    ctx.hookDepth = depth;
   }
 }
 
@@ -667,6 +790,7 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   c.turn += 1;
   c.counters[COUNTER_TURN_CARDS] = 0;
   c.playedThisTurn = [];
+  c.attacksThisTurn = 0;
   ctx.ev.push({ type: 'turn_started', turn: c.turn });
   c.player.block = 0;
   tickVirus(ctx, 'player');
@@ -698,6 +822,8 @@ export function startPlayerTurn(ctx: CombatCtx): void {
     ctx.ev.push({ type: 'zone_rule', rule: 'overheat' });
     for (const e of livingEnemies(c)) applyStatus(ctx, e, STATUS.strength, OVERHEAT_STRENGTH);
   }
+  fireHooks(ctx, 'turn_start');
+  if (isOver(ctx)) return;
   refreshIntents(ctx);
 }
 
@@ -752,6 +878,7 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   }
 
   c.hand.splice(idx, 1);
+  const energyBefore = c.energy;
   let repeats = 1;
   if (card.cost === COST_X) {
     repeats = c.energy;
@@ -772,15 +899,24 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
     addStatus(c.player, STATUS.echo, -1);
     passes = 2;
   }
-  for (let p = 0; p < passes && !isOver(ctx); p++) {
-    if (p > 0) ctx.ev.push({ type: 'card_echoed', cardUid: inst.uid });
+  const runEffects = (): void => {
     for (let r = 0; r < repeats && !isOver(ctx); r++) {
       for (const eff of card.effects) {
         if (isOver(ctx)) break;
         applyCardEffect(ctx, eff, card, chosen);
       }
     }
+  };
+  for (let p = 0; p < passes && !isOver(ctx); p++) {
+    if (p > 0) ctx.ev.push({ type: 'card_echoed', cardUid: inst.uid });
+    runEffects();
   }
+  // Ключевое слово echo: энергия была > 0 и после розыгрыша стала 0 — эффекты ещё раз (один)
+  if (card.echo && energyBefore > 0 && c.energy === 0 && !isOver(ctx)) {
+    ctx.ev.push({ type: 'card_echoed', cardUid: inst.uid });
+    runEffects();
+  }
+  if (card.type === 'attack') c.attacksThisTurn = (c.attacksThisTurn ?? 0) + 1;
 
   ctx.card = undefined;
   if (card.type === 'attack') trackAdaptive(ctx, inst.defId);
@@ -793,6 +929,8 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   if (!isOver(ctx)) addHeat(ctx, HEAT_PER_CARD);
   triggerRelics(ctx, 'card_played');
   if (card.type === 'attack') triggerRelics(ctx, 'attack_played');
+  if (card.type === 'attack') fireHooks(ctx, 'play_attack', chosen);
+  else if (card.type === 'skill') fireHooks(ctx, 'play_skill', chosen);
   if (!isOver(ctx)) refreshIntents(ctx);
 }
 
@@ -812,6 +950,8 @@ export function endTurn(ctx: CombatCtx): void {
   const c = ctx.c;
   if (c.heat !== undefined && (c.counters[COUNTER_TURN_CARDS] ?? 0) === 0) addHeat(ctx, -HEAT_IDLE_COOL);
   triggerRelics(ctx, 'turn_end');
+  if (isOver(ctx)) return;
+  fireHooks(ctx, 'turn_end');
   if (isOver(ctx)) return;
 
   const hand = c.hand;

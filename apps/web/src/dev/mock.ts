@@ -3,6 +3,7 @@
  * Реализация упрощённая: хватает, чтобы прокликать все экраны UI.
  * Импортировать только из game/engine.ts.
  */
+import { SAVE_VERSION } from '@cyberhack/engine';
 import type {
   Action,
   ActionResult,
@@ -384,7 +385,8 @@ function rollIntent(s: RunState, e: EnemyState): void {
   if (def.ai.kind === 'cycle') {
     moveId = def.ai.order[e.moveHistory.length % def.ai.order.length] ?? def.moves[0]!.id;
   } else {
-    const entries = Object.entries(def.ai.weights);
+    const weights = def.ai.kind === 'random' ? def.ai.weights : Object.fromEntries(def.moves.map((m) => [m.id, 1]));
+    const entries = Object.entries(weights);
     const last2 = e.moveHistory.slice(-2);
     const allowed = entries.filter(([id]) => !(last2.length === 2 && last2.every((m) => m === id)));
     const total = allowed.reduce((a, [, w]) => a + w, 0);
@@ -785,7 +787,7 @@ export function newRun(opts: NewRunOptions): RunState {
   const cls = getClassDef(opts.classId);
   const h = hashStr(opts.seed);
   const s: RunState = {
-    version: 1, seed: opts.seed, classId: opts.classId, ascension: opts.ascension ?? 0, ...(opts.weekly ? { weekly: opts.weekly } : {}),
+    version: SAVE_VERSION, seed: opts.seed, classId: opts.classId, ascension: opts.ascension ?? 0, ...(opts.weekly ? { weekly: opts.weekly } : {}),
     act: 1, floor: 0, hp: cls.maxHp, maxHp: cls.maxHp, gold: cls.startingGold, deck: [], relics: [cls.startingRelic],
     map: [], currentNodeId: null, visited: [], screen: { kind: 'map' }, combat: null,
     rng: { map: h ^ 1, combat: h ^ 2, cards: h ^ 3, rewards: h ^ 4, events: h ^ 5, shop: h ^ 6, ai: h ^ 7 },
