@@ -97,6 +97,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const [mousePreview, setMousePreview] = useState(false);
   const coarse = useCoarsePointer();
   const tutorialActive = useTutorial((s) => s.active);
+  const [confirmEnd, setConfirmEnd] = useState(false);
 
   const playerPhase = combat.phase === 'player' && !frozen;
 
@@ -350,15 +351,26 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     else setHoverTarget(null);
   };
 
+  // Конец хода: если остались энергия и играбельные карты — переспрашиваем (кроме обучения)
+  const doEndTurn = () => {
+    sfx('click');
+    setSelected(null);
+    dispatch({ type: 'end_turn' });
+  };
+  const requestEndTurn = () => {
+    if (!playerPhase) return;
+    if (!tutorialActive && combat.energy > 0 && legal.size > 0) setConfirmEnd(true);
+    else doEndTurn();
+  };
+  const requestEndRef = useRef(requestEndTurn);
+  requestEndRef.current = requestEndTurn;
+
   // ---------- Клавиатура ----------
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!playerPhase || document.querySelector('.modal')) return;
       if (e.key === 'Escape') setSelected(null);
-      if (e.key.toLowerCase() === 'e' || e.key.toLowerCase() === 'у') {
-        sfx('click');
-        dispatch({ type: 'end_turn' });
-      }
+      if (e.key.toLowerCase() === 'e' || e.key.toLowerCase() === 'у') requestEndRef.current();
       const n = Number(e.key);
       if (n >= 1 && n <= 9) {
         const c = combat.hand[n - 1];
@@ -583,11 +595,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
             data-testid="end-turn"
             aria-keyshortcuts="E"
             disabled={!playerPhase}
-            onClick={() => {
-              sfx('click');
-              setSelected(null);
-              dispatch({ type: 'end_turn' });
-            }}
+            onClick={requestEndTurn}
           >
             <span>Конец хода</span>
             <kbd className="hide-sm">E</kbd>
@@ -618,6 +626,33 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         </div>
       ) : null}
 
+      {confirmEnd ? (
+        <div className="modal-backdrop" onClick={() => setConfirmEnd(false)}>
+          <div className="modal end-confirm" role="alertdialog" aria-modal="true" aria-labelledby="end-confirm-title" data-testid="end-turn-confirm" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__body">
+              <h2 id="end-confirm-title">Закончить ход?</h2>
+              <p className="muted">
+                Осталось энергии: <b>{combat.energy}</b>. В руке есть карты, которые можно сыграть.
+              </p>
+              <div className="end-confirm__actions">
+                <button className="btn btn--ghost" data-testid="end-turn-cancel" autoFocus onClick={() => setConfirmEnd(false)}>
+                  Продолжить ход
+                </button>
+                <button
+                  className="btn btn--primary"
+                  data-testid="end-turn-yes"
+                  onClick={() => {
+                    setConfirmEnd(false);
+                    doEndTurn();
+                  }}
+                >
+                  Да, закончить
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {pile === 'draw' ? <CardGridModal title="Колода (добор)" cards={combat.drawPile} onClose={() => setPile(null)} empty="Стопка пуста — сброс перемешается" /> : null}
       {pile === 'discard' ? <CardGridModal title="Сброс" cards={[...combat.discardPile].reverse()} sorted={false} onClose={() => setPile(null)} /> : null}
       {pile === 'exhaust' ? <CardGridModal title="Сожжено" cards={combat.exhaustPile} onClose={() => setPile(null)} empty="Ничего не сгорело" /> : null}

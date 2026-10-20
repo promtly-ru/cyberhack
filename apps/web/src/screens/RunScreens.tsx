@@ -52,6 +52,8 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
     dispatch({ type: 'take_reward', index: i });
   };
   const slotsFull = (run.potions?.length ?? 0) >= POTION_SLOTS;
+  // Дальше — только когда всё, что можно забрать, забрано (расходник при полных слотах не блокирует)
+  const unclaimed = screen.items.filter((it) => !(it.kind === 'potion' && slotsFull)).length;
   return (
     <Shell run={run} className="reward-screen" eyebrow="Доступ получен" title="Трофеи" hint="Нажми на награду, чтобы забрать её. Когда закончишь — «Дальше»." glitch>
       <ul className="reward-list">
@@ -101,12 +103,13 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
         <button
           className="btn btn--primary"
           data-testid="reward-leave"
+          disabled={unclaimed > 0}
           onClick={() => {
             sfx('click');
             dispatch({ type: 'leave_reward' });
           }}
         >
-          Дальше <Icon name="play" size={16} />
+          {unclaimed > 0 ? `Сначала забери награды (${unclaimed})` : 'Дальше'} <Icon name="play" size={16} />
         </button>
       </div>
     </Shell>

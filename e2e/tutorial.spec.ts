@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { test, expect, winCombat, TUTORIAL_KEY } from './fixtures';
+import { test, expect, winCombat, collectRewards, TUTORIAL_KEY } from './fixtures';
 
 // Эти тесты проверяют сам онбординг — профиль «новичка» без флага обучения
 test.use({ tutorialDone: false });
@@ -78,7 +78,8 @@ test('обучение: от карты до конца первого боя и
   // Прошивка выпадает не всегда: если выпала, обучение объясняет и её
   if (await step(page, 'reward-firmware').isVisible().catch(() => false)) await next(page, act, 'reward-firmware');
   await expect(page.getByTestId('tutorial')).toHaveCount(0); // дальше игрок сам, экран подсказывает строкой
-  await act(page.getByTestId('reward-leave'));
+  await collectRewards(page, act);
+  if (await page.getByTestId('reward-screen').isVisible()) await act(page.getByTestId('reward-leave'));
 
   // Снова карта: типы узлов и финал
   await expect(page.getByTestId('map')).toBeVisible();

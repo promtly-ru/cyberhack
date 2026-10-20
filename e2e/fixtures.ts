@@ -128,7 +128,7 @@ export async function winCombat(page: Page, act: Fixtures['act'], maxTurns = 25)
     }
     await expect(reward.or(combat)).toBeVisible();
     if (await reward.isVisible()) return turn;
-    if ((await combat.getAttribute('data-phase')) === 'player') await act(page.getByTestId('end-turn'));
+    if ((await combat.getAttribute('data-phase')) === 'player') await endTurn(page, act);
     else await expect(reward).toBeVisible();
   }
   throw new Error(`бой не выигран за ${maxTurns} ходов`);
@@ -148,4 +148,23 @@ export async function savedActions(page: Page): Promise<number> {
     }
     return -1;
   });
+}
+
+/** «Конец хода» с подтверждением, если осталась энергия и есть что сыграть. */
+export async function endTurn(page: Page, act: Fixtures['act']): Promise<void> {
+  await act(page.getByTestId('end-turn'));
+  const yes = page.getByTestId('end-turn-yes');
+  if (await yes.isVisible({ timeout: 800 }).catch(() => false)) await act(yes);
+}
+
+/** Забрать все доступные награды (карту — первую из предложенных), чтобы открылась кнопка «Дальше». */
+export async function collectRewards(page: Page, act: Fixtures['act']): Promise<void> {
+  for (let i = 0; i < 8; i++) {
+    if (!(await page.getByTestId('reward-screen').isVisible())) return;
+    const item = page.locator('[data-testid="reward-item"]:not([disabled])').first();
+    if (!(await item.count())) return;
+    await act(item);
+    if (await page.getByTestId('pick-screen').isVisible({ timeout: 800 }).catch(() => false)) await act(page.getByTestId('pick-card').first());
+    await expect(page.getByTestId('reward-screen').or(page.getByTestId('map'))).toBeVisible();
+  }
 }

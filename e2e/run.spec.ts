@@ -1,4 +1,4 @@
-import { test, expect, startRun, enterCombat, playOneCard, winCombat, savedActions } from './fixtures';
+import { test, expect, startRun, enterCombat, playOneCard, winCombat, savedActions, collectRewards } from './fixtures';
 
 test('новый взлом: класс → карта → бой → победа → награда → карта', async ({ page, act }) => {
   await startRun(page, act);
@@ -31,6 +31,7 @@ test('новый взлом: класс → карта → бой → побед
     await act(page.getByTestId('pick-card').first());
     await expect(page.getByTestId('reward-screen').or(page.getByTestId('map'))).toBeVisible();
   }
+  await collectRewards(page, act);
   if (await page.getByTestId('reward-screen').isVisible()) await act(page.getByTestId('reward-leave'));
 
   // Снова карта: пройденный узел отмечен, следующие доступны

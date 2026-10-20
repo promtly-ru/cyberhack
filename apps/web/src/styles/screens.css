@@ -311,3 +311,14 @@ a[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
   .cs-summary span { min-width: 0; }
   .cs-summary b, .cs-summary small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
+
+/* ---------- Выбор карты: всегда 3 в ряд ---------- */
+.pick-row { flex-wrap: nowrap; --card-w: min(220px, calc((100vw - 2 * var(--gutter, 16px) - 2 * clamp(6px, 2vw, 32px)) / 3)); gap: clamp(6px, 2vw, 32px); }
+@media (max-width: 520px) { .pick-row { --card-w: calc((100vw - 2 * var(--gutter, 16px) - 12px) / 3); } .pick-slot .card-terms { font-size: 11px; } }
+
+/* ---------- Подтверждение конца хода ---------- */
+.end-confirm .modal__body { display: flex; flex-direction: column; gap: 12px; }
+.end-confirm h2 { font-size: 20px; }
+.end-confirm p { margin: 0; }
+.end-confirm__actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.end-confirm__actions .btn { flex: 1 1 140px; }
