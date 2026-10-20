@@ -133,6 +133,7 @@ async function main(): Promise<void> {
               const w = new Worker(new URL(import.meta.url), {
                 workerData: { bot, ascension, prefix, runs: c } satisfies Job,
                 execArgv: ['--import', 'tsx'],
+                resourceLimits: { maxOldGenerationSizeMb: 1024, maxYoungGenerationSizeMb: 128 },
               });
               w.once('message', res);
               w.once('error', rej);

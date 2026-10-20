@@ -32,6 +32,7 @@ export {
   lockableCards,
   lockableRelics,
   unlockSource,
+  unlockSources,
   unlockedOptions,
   // Расходники и мутаторы забега
   POTIONS,

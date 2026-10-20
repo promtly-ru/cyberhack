@@ -64,6 +64,10 @@ export interface AchievementDef {
 export const STARTING_CLASSES: readonly ClassId[] = ['netrunner'];
 
 const lt = (key: keyof LifetimeStats) => (p: MetaProfile) => p.lifetime?.[key] ?? 0;
+const classesWon = (p: MetaProfile) =>
+  (['Netrunner', 'Phreaker', 'Ghost', 'Samurai', 'Engineer', 'Biohacker', 'Droneop', 'Chrono', 'Vabanker'] as const).filter(
+    (c) => (p.lifetime?.[`wins${c}` as keyof LifetimeStats] ?? 0) > 0,
+  ).length;
 const card = (id: string): Unlock => ({ kind: 'card', id });
 const relic = (id: string): Unlock => ({ kind: 'relic', id });
 
@@ -226,7 +230,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Наложить 100 вируса на врагов за один бой',
     target: 100,
     value: lt('bestVirusInCombat'),
-    unlocks: [card('ph_honeypot'), card('ph_backup'), card('ph_polymorph')],
+    unlocks: [card('ph_honeypot'), card('ph_backup'), card('ph_polymorph'), { kind: 'class', id: 'biohacker' }],
   },
   {
     id: 'big_hit',
@@ -234,7 +238,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Нанести 50 урона одной атакой',
     target: 50,
     value: lt('bestHit'),
-    unlocks: [card('nr_firewall_bash'), card('nr_afterburn'), card('nr_meltdown')],
+    unlocks: [card('nr_firewall_bash'), card('nr_afterburn'), card('nr_meltdown'), { kind: 'class', id: 'samurai' }],
   },
   {
     id: 'combo_20',
@@ -242,7 +246,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Сыграть 20 карт за один ход',
     target: 20,
     value: lt('bestCardsInTurn'),
-    unlocks: [card('gh_flurry'), card('gh_null_storm')],
+    unlocks: [card('gh_flurry'), card('gh_null_storm'), { kind: 'class', id: 'chrono' }],
   },
   {
     id: 'elite_hunter',
@@ -258,7 +262,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Накопить 500 золота одновременно',
     target: 500,
     value: lt('bestGold'),
-    unlocks: [relic('r_trace_jammer'), relic('r_smart_watch')],
+    unlocks: [relic('r_trace_jammer'), relic('r_smart_watch'), { kind: 'class', id: 'vabanker' }],
   },
   {
     id: 'collector',
@@ -274,7 +278,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Закончить забег с 8 улучшенными картами в колоде',
     target: 8,
     value: lt('bestUpgraded'),
-    unlocks: [card('gh_phase_shift'), relic('r_auto_patcher')],
+    unlocks: [card('gh_phase_shift'), relic('r_auto_patcher'), { kind: 'class', id: 'engineer' }],
   },
   {
     id: 'veteran',
@@ -380,7 +384,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     description: 'Уничтожить 500 врагов (за все забеги)',
     target: 500,
     value: lt('enemiesKilled'),
-    unlocks: [card('n_system_crash'), relic('r_chain_lightning')],
+    unlocks: [card('n_system_crash'), relic('r_chain_lightning'), { kind: 'class', id: 'droneop' }],
   },
   {
     id: 'elites_in_run_3',
@@ -389,6 +393,23 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     target: 3,
     value: lt('bestElitesInRun'),
     unlocks: [card('n_black_box'), relic('r_dead_mans_switch')],
+  },
+  // ---- Альтернативные пути и мастерство ----
+  {
+    id: 'polyglot',
+    name: 'Полиглот',
+    description: 'Победить тремя разными классами',
+    target: 3,
+    value: classesWon,
+    unlocks: [{ kind: 'class', id: 'vabanker' }],
+  },
+  {
+    id: 'master_all',
+    name: 'Мастер всех ролей',
+    description: 'Победить за каждый из девяти классов',
+    target: 9,
+    value: classesWon,
+    unlocks: [],
   },
 ];
 
@@ -432,6 +453,10 @@ export function lockedContent(unlocked: NonNullable<NewRunOptions['unlocked']>):
 }
 
 /** Какое достижение открывает этот элемент (для подписи «как открыть»). */
+export function unlockSources(kind: Unlock['kind'], id: string): AchievementDef[] {
+  return ACHIEVEMENTS.filter((a) => a.unlocks.some((u) => u.kind === kind && u.id === id));
+}
+
 export function unlockSource(kind: Unlock['kind'], id: string): AchievementDef | undefined {
   return ACHIEVEMENTS.find((a) => a.unlocks.some((u) => u.kind === kind && u.id === id));
 }

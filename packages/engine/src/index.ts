@@ -55,6 +55,7 @@ export {
   lockableRelics,
   lockedContent,
   unlockSource,
+  unlockSources,
   unlockedOptions,
 } from './unlocks';
 export type { AchievementDef, LifetimeStats, MetaProfile, RunEndResult, Unlock } from './unlocks';

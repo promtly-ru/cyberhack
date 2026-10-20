@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import type { ClassDef, ClassId, Difficulty } from '../game/engine';
-import { DIFFICULTY_CARDS, DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSource, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
+import { DIFFICULTY_CARDS, DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSources, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
 import { MAX_ASCENSION, useGame } from '../game/store';
 import { FeedbackModal } from './Feedback';
 import { weeklyAttemptsLeft } from '../game/meta';
@@ -165,8 +165,8 @@ function safeClasses(): ClassDef[] {
 }
 
 function lockHint(id: ClassId): string {
-  const a = unlockSource('class', id);
-  return a ? `${a.name}: ${a.description.toLowerCase()}` : 'Откроется позже';
+  const list = unlockSources('class', id);
+  return list.length ? list.map((a) => `${a.name}: ${a.description.toLowerCase()}`).join(' — или — ') : 'Откроется позже';
 }
 
 /** Стиль класса простыми словами. */

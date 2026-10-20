@@ -1,7 +1,0 @@
-
-Running 54 tests using 3 workers
-
-  ok  2 [desktop] › e2e\_playthrough\misc.spec.ts:8:1 › misc (30.1s)
-  ok  1 [desktop] › e2e\_playthrough\playthrough.spec.ts:28:3 › desktop tut-netrunner-easy (4.6m)
-  ok  4 [desktop] › e2e\_playthrough\playthrough.spec.ts:28:3 › desktop netrunner-normal (4.1m)
-  ok  5 [desktop] › e2e\_playthrough\playthrough.spec.ts:28:3 › desktop netrunner-hard (57.8s)
