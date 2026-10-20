@@ -50,11 +50,21 @@ function RunView() {
 }
 
 export function App() {
+  if (DevGallery && new URLSearchParams(location.search).has('gallery')) {
+    return (
+      <Suspense fallback={null}>
+        <DevGallery />
+      </Suspense>
+    );
+  }
+  return <GameApp />;
+}
+
+function GameApp() {
   const view = useGame((s) => s.view);
   const settingsOpen = useUi((s) => s.settingsOpen);
   const error = useGame((s) => s.error);
   useHistoryNav();
-  if (DevGallery && new URLSearchParams(location.search).has('gallery')) return <Suspense fallback={null}><DevGallery /></Suspense>;
 
   useEffect(() => {
     // Dev-сценарии: ?dev=combat|map|shop|reward|card_pick|rest|event|deck|defeat|victory
