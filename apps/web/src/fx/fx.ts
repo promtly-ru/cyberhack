@@ -240,7 +240,11 @@ class FxEngine {
       },
     });
     t.anchor.set(0.5);
-    t.x = x + rand(-10, 10);
+    // Длинная надпись не уходит за край экрана: ужимаем и сдвигаем внутрь
+    const vw = this.app.screen.width;
+    if (t.width > vw - 16) t.scale.set((vw - 16) / t.width);
+    const half = t.width / 2 + 8;
+    t.x = Math.min(Math.max(x + rand(-10, 10), half), vw - half);
     t.y = y;
     const reduced = isReducedMotion();
     this.textLayer.addChild(t);

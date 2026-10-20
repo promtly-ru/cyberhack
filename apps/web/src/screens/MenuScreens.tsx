@@ -198,6 +198,7 @@ function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selec
         onSelect();
       }}
     >
+      {selected && <span className="pick-badge" aria-hidden="true">✓ ВЫБРАНО</span>}
       <span className="class-card__art">
         <PlayerArt classId={c.id} />
       </span>
@@ -316,6 +317,7 @@ function RegularSelect() {
                   setDiff(d);
                 }}
               >
+                {diff === d && <span className="pick-badge" aria-hidden="true">✓ ВЫБРАНО</span>}
                 <span className="diff-card__head">
                   <b className="diff-card__name">{DIFFICULTY_INFO[d].name}</b>
                   {info.scoreBonus > 0 ? <span className="diff-card__score mono">очки +{Math.round(info.scoreBonus * 100)}%</span> : null}

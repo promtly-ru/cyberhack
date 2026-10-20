@@ -319,3 +319,15 @@ a[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
 .class-card.is-locked .class-card__lock small { max-width: none; }
 @media (min-width: 768px) { .class-card.is-locked .class-card__lock { flex-direction: column; align-items: flex-start; gap: 4px; } }
 .cs-classes { align-items: start; }
+
+/* ---------- Явная отметка выбора: класс и сложность ---------- */
+.class-card.is-selected, .diff-card.is-selected { outline: 3px solid var(--class-color, var(--dc)); outline-offset: 2px; background-color: color-mix(in srgb, var(--class-color, var(--dc)) 14%, transparent); }
+.pick-badge {
+  position: absolute; top: 6px; right: 6px; z-index: 3; pointer-events: none;
+  padding: 2px 7px; border-radius: 6px; font: 700 10px/1.4 var(--font-mono, monospace); letter-spacing: 0.06em;
+  background: var(--class-color, var(--dc)); color: #05060f;
+}
+.cs-classes:has(.is-selected) .class-card:not(.is-selected):not(.is-locked),
+.diff-cards:has(.is-selected) .diff-card:not(.is-selected) { opacity: 0.55; }
+.class-card:not(.is-selected):hover, .diff-card:not(.is-selected):hover { opacity: 1; }
+.asc-chip.is-selected { outline: 2px solid #fff; outline-offset: 2px; }

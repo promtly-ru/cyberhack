@@ -111,3 +111,12 @@ html[data-motion='reduced'] [class*='art-'], html[data-motion='reduced'] .glitch
   .topbar .firmware-bar { flex: 0 1 auto; max-width: 30%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .topbar .firmware { padding: 2px 7px; font-size: 11px; }
 }
+
+/* Длинные слова («Самовосстановления») переносятся внутри карты, а не вылезают за край */
+.card__text { overflow-wrap: anywhere; hyphens: auto; }
+.card__name { overflow-wrap: anywhere; }
+
+/* Прошивки на телефоне переносятся на вторую строку, а не обрезаются */
+@media (max-width: 767px) and (min-height: 521px), (max-width: 767px) and (max-aspect-ratio: 5/4) {
+  .topbar .firmware-bar { flex-wrap: wrap; overflow: visible; gap: 4px; }
+}
