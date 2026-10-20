@@ -5,77 +5,81 @@ const P: Record<string, ReactNode> = {
   // --- Узлы карты ---
   combat: (
     <>
-      <circle cx="12" cy="12" r="7" />
-      <path d="M12 2v5M12 17v5M2 12h5M17 12h5" />
-      <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M4 9h16M4 15h16" />
+      <circle cx="7.5" cy="6" r=".9" fill="currentColor" stroke="none" />
+      <circle cx="7.5" cy="12" r=".9" fill="currentColor" stroke="none" />
+      <circle cx="7.5" cy="18" r=".9" fill="currentColor" stroke="none" />
+      <path d="M11 6h6M11 12h6M11 18h6" opacity=".6" />
     </>
   ),
   elite: (
     <>
-      <path d="M4 2.5l3.2 5.5M20 2.5l-3.2 5.5" />
-      <path d="M6 11.5a6 6 0 0 1 12 0v3.5l-2 2V20H8v-3l-2-2z" />
-      <circle cx="9.6" cy="12.6" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="14.4" cy="12.6" r="1.4" fill="currentColor" stroke="none" />
-      <path d="M11 20v-2.2M13 20v-2.2" />
+      <path d="M12 2l8 3.2v5.6c0 5-3.4 8.9-8 11.2-4.6-2.3-8-6.2-8-11.2V5.2z" />
+      <path d="M8.5 9.5l2 1.5M15.5 9.5l-2 1.5" />
+      <path d="M9 15.5c1.8-1.4 4.2-1.4 6 0" />
+      <path d="M12 2v3" opacity=".6" />
     </>
   ),
   event: (
     <>
-      <path d="M12 2l10 10-10 10L2 12z" />
-      <path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.6" />
-      <circle cx="12" cy="16.8" r="1" fill="currentColor" stroke="none" />
+      <path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z" />
+      <path d="M9.7 9.4a2.4 2.4 0 1 1 3.3 2.2c-.6.3-1 .8-1 1.5v.5" />
+      <circle cx="12" cy="16.4" r="1" fill="currentColor" stroke="none" />
     </>
   ),
   shop: (
     <>
-      <rect x="5" y="5" width="14" height="14" rx="2" />
-      <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
-      <path d="M14 9.6c-.4-.6-1.1-1-2-1-1.2 0-2 .6-2 1.5s.9 1.3 2 1.5 2 .6 2 1.5-.8 1.5-2 1.5c-.9 0-1.6-.4-2-1M12 7.4v1.2M12 15.4v1.2" />
+      <path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z" />
+      <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+      <path d="M13.8 12.2c-.4-.5-1-.8-1.8-.8-1 0-1.8.5-1.8 1.3s.8 1.1 1.8 1.3 1.8.5 1.8 1.3-.8 1.3-1.8 1.3c-.8 0-1.4-.3-1.8-.8M12 10.6v.8M12 17.2v.8" />
     </>
   ),
   rest: (
     <>
-      <path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z" />
-      <path d="M12 8v8M8 12h8" />
+      <path d="M12 3c2.5 3 4.5 5 4.5 8.5A4.5 4.5 0 0 1 12 16a4.5 4.5 0 0 1-4.5-4.5C7.5 8 9.5 6 12 3z" />
+      <path d="M12 9.5c1 1.2 1.6 2 1.6 3.2a1.6 1.6 0 0 1-3.2 0c0-1.2.6-2 1.6-3.2z" fill="currentColor" stroke="none" opacity=".7" />
+      <path d="M4 20l16-2M4 18l16 2" />
     </>
   ),
   treasure: (
     <>
-      <path d="M12 2l9 5v10l-9 5-9-5V7z" />
-      <path d="M3 7l9 5 9-5M12 12v10" />
-      <path d="M7.5 9.5l4.5 2.5" opacity=".5" />
+      <rect x="3.5" y="9" width="17" height="11" rx="1.5" />
+      <path d="M3.5 9l2-4h13l2 4" />
+      <path d="M3.5 13h17" />
+      <rect x="10.5" y="11.5" width="3" height="4" rx=".6" />
+      <path d="M8 5l-.5 4M16 5l.5 4" opacity=".5" />
     </>
   ),
   lab: (
     <>
-      <path d="M9 2h6M10 2v6L4.5 19a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8V2" />
-      <path d="M7.5 15h9" />
-      <circle cx="10.5" cy="18" r="1" fill="currentColor" stroke="none" />
-      <circle cx="14" cy="12" r=".8" fill="currentColor" stroke="none" />
+      <path d="M9 2.5h6M10 2.5v5.5L4.8 18.6A2 2 0 0 0 6.6 21.5h10.8a2 2 0 0 0 1.8-2.9L14 8V2.5" />
+      <path d="M7 15.5c2-1.2 3.6 1 5 0s3-1.2 5 0" />
+      <circle cx="11" cy="18.4" r=".9" fill="currentColor" stroke="none" />
+      <circle cx="14.2" cy="12.4" r=".7" fill="currentColor" stroke="none" />
     </>
   ),
   blackbox: (
     <>
-      <rect x="3.5" y="6" width="17" height="14" rx="2" />
-      <path d="M3.5 11h17M12 11v3" />
-      <circle cx="12" cy="16" r="1.4" fill="currentColor" stroke="none" />
-      <path d="M8 6V4.5a4 4 0 0 1 8 0V6" opacity=".7" />
+      <path d="M12 2.5l8.5 4.5v10L12 21.5 3.5 17V7z" />
+      <path d="M3.5 7L12 11.5 20.5 7M12 11.5v10" />
+      <rect x="13.8" y="13.6" width="3.6" height="3" rx=".5" />
+      <path d="M14.4 13.6v-.8a1.2 1.2 0 0 1 2.4 0v.8" />
     </>
   ),
   relay: (
     <>
-      <path d="M12 21v-9" />
-      <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none" />
-      <path d="M7.6 5.6a6.2 6.2 0 0 0 0 8.8M16.4 5.6a6.2 6.2 0 0 1 0 8.8M4.6 2.8a10.2 10.2 0 0 0 0 14.4M19.4 2.8a10.2 10.2 0 0 1 0 14.4" />
-      <path d="M8 21h8" />
+      <path d="M12 9l-4.5 12.5M12 9l4.5 12.5M9 16.5h6M8.2 19.5h7.6" />
+      <circle cx="12" cy="7" r="1.8" fill="currentColor" stroke="none" />
+      <path d="M8.3 3.6a5 5 0 0 0 0 6.8M15.7 3.6a5 5 0 0 1 0 6.8" />
+      <path d="M5.6 1.6a8.6 8.6 0 0 0 0 10.8M18.4 1.6a8.6 8.6 0 0 1 0 10.8" opacity=".55" />
     </>
   ),
   ambush: (
     <>
-      <path d="M12 3L2.5 20h19z" />
-      <path d="M12 9.5v5" />
-      <circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none" />
-      <path d="M12 1v1.5M5 4l1 1M19 4l-1 1" opacity=".6" />
+      <path d="M4 20L16.5 7.5M20 20L7.5 7.5" />
+      <path d="M16.5 7.5L19 3l-4.5 2.5M7.5 7.5L5 3l4.5 2.5" />
+      <path d="M6 15.5l2.5 2.5M18 15.5L15.5 18" />
     </>
   ),
   refresh: (

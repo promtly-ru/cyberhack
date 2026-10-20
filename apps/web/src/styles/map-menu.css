@@ -73,3 +73,24 @@
   .mm-card:hover { transform: none; }
 }
 html[data-motion='reduced'] .mm-card { animation: none; transition: none; }
+
+/* ---------- Секторы зоны и правило зоны ---------- */
+.mm-sector { display: flex; flex-direction: column; gap: 8px; }
+.mm-sectors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 6px; }
+.mm-sectors li {
+  display: flex; align-items: center; gap: 6px; min-width: 0; padding: 7px 10px; border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.03); color: var(--text-dim); font-size: 12px;
+}
+.mm-sectors li span { flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid currentColor; font: 700 10px/1 var(--font-mono); }
+.mm-sectors li b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mm-sectors li.is-done { color: rgba(var(--act-a), 0.7); }
+.mm-sectors li.is-now { color: var(--text); border-color: rgba(var(--act-a), 0.8); background: rgba(var(--act-a), 0.12); }
+.mm-sectors li.is-boss { color: #ff7a90; }
+.mm-sectors li.is-boss.is-now { border-color: #ff3b5c; background: rgba(255, 59, 92, 0.14); color: #fff; }
+.mm-rule { margin: 0; display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+.mm-rule svg { flex: none; margin-top: 2px; color: var(--orange); }
+@media (max-width: 600px) {
+  .mm-sectors { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mm-sectors li { flex-direction: column; justify-content: center; text-align: center; padding: 6px 4px; gap: 3px; font-size: 10.5px; }
+  .mm-sectors li b { white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
+}

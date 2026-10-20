@@ -48,6 +48,20 @@ function Marks({ kind }: { kind: MapNodeKind }) {
   );
 }
 
+const SECTOR_NAMES: Record<number, string[]> = {
+  1: ['Вестибюль', 'Офисные этажи', 'Пост охраны'],
+  2: ['Холодный коридор', 'Майнинг-ферма', 'Реакторный зал'],
+  3: ['Обучающая выборка', 'Скрытые слои', 'Ядро внимания'],
+  4: ['Горизонт событий', 'Разлом', 'Сингулярность'],
+};
+
+const ZONE_RULE_TEXT: Record<number, string> = {
+  1: 'Правило зоны: нет — периметр учит основам.',
+  2: 'Правило зоны «Перегрев серверов»: каждый 3-й ход враги получают +1 Разгон.',
+  3: 'Правило зоны «Адаптация»: третья одинаковая атака подряд наносит половину урона.',
+  4: 'Правило зоны «Искажения»: часть намерений обычных врагов скрыта.',
+};
+
 export function MapScreen({ run }: { run: RunState }) {
   const dispatch = useGame((s) => s.dispatch);
 
@@ -91,24 +105,11 @@ export function MapScreen({ run }: { run: RunState }) {
   const done = run.visited.filter((id) => byId.has(id));
   const stepNo = Math.min(done.length + (available.size > 0 ? 1 : 0), steps);
 
-  // Силуэты следующих шагов: типы узлов за ближайшими доступными, без конкретных узлов
-  const ahead = useMemo(() => {
-    const out: MapNodeKind[][] = [];
-    let level = [...available];
-    for (let i = 0; i < 3; i++) {
-      const next = new Set<string>();
-      for (const id of level) for (const nx of byId.get(id)?.next ?? []) next.add(nx);
-      if (next.size === 0) break;
-      const kinds = new Set<MapNodeKind>();
-      for (const id of next) {
-        const n = byId.get(id);
-        if (n) kinds.add(n.kind);
-      }
-      out.push([...kinds]);
-      level = [...next];
-    }
-    return out;
-  }, [available, byId]);
+  // Сектор, в котором лежат доступные узлы (по 5 шагов, последний ряд — босс)
+  const nextRow = availList.length ? Math.min(...availList.map((n) => n.row)) : (current?.row ?? 0);
+  const isBossStep = availList.some((n) => n.kind === 'boss');
+  const sector = Math.min(3, Math.floor(nextRow / 5) + 1);
+  const sectorNames = SECTOR_NAMES[run.act] ?? SECTOR_NAMES[1]!;
 
   const choose = (id: string) => {
     if (!available.has(id)) return;
@@ -133,6 +134,23 @@ export function MapScreen({ run }: { run: RunState }) {
               <i style={{ width: `${steps ? (stepNo / steps) * 100 : 0}%` }} />
             </span>
           </div>
+        </div>
+        <div className="mm-sector" data-sector={isBossStep ? 'boss' : sector}>
+          <ol className="mm-sectors" aria-label="Секторы зоны">
+            {sectorNames.map((name, i) => (
+              <li key={name} className={!isBossStep && i + 1 === sector ? 'is-now' : i + 1 < sector || isBossStep ? 'is-done' : ''}>
+                <span>{i + 1}</span>
+                <b>{name}</b>
+              </li>
+            ))}
+            <li className={`is-boss${isBossStep ? ' is-now' : ''}`}>
+              <Icon name="boss" size={16} />
+              <b>Ядро</b>
+            </li>
+          </ol>
+          <p className="mm-rule">
+            <Icon name="ambush" size={14} /> {ZONE_RULE_TEXT[run.act] ?? ZONE_RULE_TEXT[1]}
+          </p>
         </div>
         {available.size > 0 ? (
           <p className="screen-hint screen-hint--map" data-testid="screen-hint">
@@ -186,39 +204,6 @@ export function MapScreen({ run }: { run: RunState }) {
             );
           })}
         </div>
-        <details className="mm-fold">
-          <summary>Маршрут</summary>
-          <div className="mm-route">
-            <ol className="mm-done">
-              {done.length === 0 ? <li className="muted small">Пока ни одного шага.</li> : null}
-              {done.map((id, i) => {
-                const n = byId.get(id)!;
-                return (
-                  <li key={id} className={`kind-${n.kind}`}>
-                    <Icon name={n.kind} size={16} />
-                    <span>
-                      {i + 1}. {NODE_LABEL[n.kind].name}
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
-            {ahead.length > 0 ? (
-              <ol className="mm-ahead" aria-label="Что дальше">
-                {ahead.map((kinds, i) => (
-                  <li key={i}>
-                    <span className="muted small">Дальше {i + 1}:</span>
-                    {kinds.map((k) => (
-                      <span key={k} className={`mm-sil kind-${k}`} title={NODE_LABEL[k].name}>
-                        <Icon name={k} size={16} />
-                      </span>
-                    ))}
-                  </li>
-                ))}
-              </ol>
-            ) : null}
-          </div>
-        </details>
         <details className="mm-fold map-legend">
           <summary>Легенда</summary>
           <ul>
