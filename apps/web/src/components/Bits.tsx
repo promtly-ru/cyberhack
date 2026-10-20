@@ -68,7 +68,7 @@ export function StatusRow({ statuses, labeled = false }: { statuses: Record<stri
   const entries = Object.entries(statuses).filter(([, v]) => v !== 0);
   if (!entries.length) return <div className="status-row is-empty" />;
   return (
-    <div className={`status-row${labeled ? " status-row--labeled" : ""}`}>
+    <div className={`status-row${labeled ? " status-row--labeled" : ""}${labeled && entries.length >= 3 ? " status-row--dense" : ""}`}>
       {entries.map(([id, v]) => {
         const def = tryStatusDef(id);
         const kind = def?.kind ?? (v < 0 ? 'debuff' : 'buff');
