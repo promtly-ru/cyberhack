@@ -388,7 +388,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const n = combat.hand.length;
   const compact = handW < 520;
   // На низких экранах (телефон горизонтально) карты не должны съедать поле боя
-  const maxByH = Math.max(84, ((typeof window !== 'undefined' ? window.innerHeight : 800) - 250) / 1.4);
+  const maxByH = Math.max(84, ((typeof window !== 'undefined' ? window.innerHeight : 800) - 280) / 1.4);
   const cardW = Math.min(maxByH, strip ? Math.min(136, Math.max(112, (handW - 12) / 2.75)) : compact ? Math.min(112, Math.max(88, handW / 3.25)) : Math.min(164, Math.max(120, handW / 5.6)));
   const cardH = cardW * 1.4;
   const fanAngle = n > 1 && !strip ? Math.min(5, 28 / n) : 0;

@@ -318,4 +318,12 @@
   .unit, .unit--player, .enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: 62px; }
   .tier-boss { --unit-size: 92px; }
   .combat-hud .hud-hint { display: none; }
+  .battlefield { padding-top: 26px; padding-bottom: 0; }
+  .unit, .unit--player, .enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: 56px; }
+  .tier-boss { --unit-size: 84px; }
+  .unit { --intent-h: 28px; }
+  .intent__label { display: none; }
+  .intent { padding: 1px 5px 2px; }
+  .intent__label { font-size: 10px; }
+  .intent__dmg { font-size: 13px; }
 }
