@@ -179,9 +179,18 @@ export function devScenario(kind: mock.DevScenario): real.RunState | null {
   // Настоящий движок: карта или первый бой
   if (kind === 'map') return s;
   if (kind === 'combat') {
-    const node = real.getLegalActions(s).find((a) => a.type === 'choose_node');
-    if (node) s = real.applyAction(s, node).state;
-    return s;
+    // Бой с несколькими врагами — на нём видно выбор цели (с одним врагом карта играется сразу)
+    let first: real.RunState | undefined;
+    for (let i = 0; i < 20; i++) {
+      const base = i === 0 ? s : real.newRun({ seed: `dev-shot-${i}`, classId: 'netrunner' });
+      for (const a of real.getLegalActions(base)) {
+        if (a.type !== 'choose_node') continue;
+        const st = real.applyAction(base, a).state;
+        first ??= st;
+        if ((st.combat?.enemies.length ?? 0) > 1) return st;
+      }
+    }
+    return first ?? s;
   }
   return mock.mockScenario(kind);
 }

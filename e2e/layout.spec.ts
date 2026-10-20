@@ -45,6 +45,7 @@ test('телефон: долгий тап — превью карты, тап к
   await page.goto('./?dev=combat');
   const card = page.locator('[data-testid="hand-card"][data-targeted="1"][data-playable="1"]').first();
   await expect(card).toBeVisible();
+  await card.scrollIntoViewIfNeeded();
   const box = (await card.boundingBox())!;
   const x = box.x + box.width / 2;
   const y = box.y + box.height / 2;
