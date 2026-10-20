@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import type { ClassDef, ClassId, Difficulty } from '../game/engine';
 import { DIFFICULTY_INFO, WEEKLY_ATTEMPTS, isMockActive, listClasses, tryRelicDef, unlockSource, weeklyClass, weeklySeed, weeklyTitle } from '../game/engine';
 import { MAX_ASCENSION, useGame } from '../game/store';
+import { FeedbackModal } from './Feedback';
 import { weeklyAttemptsLeft } from '../game/meta';
 import { Icon } from '../components/Icon';
 import { PlayerArt, CLASS_COLOR } from '../components/UnitArt';
@@ -53,6 +54,7 @@ export function MainMenu() {
   const backendMode = useGame((s) => s.backendMode);
   const openClassSelect = useGame((s) => s.openClassSelect);
   const setView = useGame((s) => s.setView);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const loadRun = useGame((s) => s.loadRun);
   const openSettings = useUi((s) => s.openSettings);
   const profile = useGame((s) => s.profile);
@@ -136,6 +138,13 @@ export function MainMenu() {
               <small>{user ? `${user.displayName} · достижения и рекорды` : 'Гость · достижения и рекорды'}</small>
             </span>
           </button>
+          <button className="menu-btn menu-btn--quiet" data-testid="menu-feedback" onClick={click(() => setFeedbackOpen(true))}>
+            <Icon name="mail" size={22} />
+            <span>
+              <b>Предложить идею</b>
+              <small>Обратная связь: что добавить в игру</small>
+            </span>
+          </button>
           <button className="menu-btn menu-btn--quiet" data-testid="menu-settings" onClick={click(() => openSettings(true))}>
             <Icon name="gear" size={22} />
             <span>
@@ -144,6 +153,7 @@ export function MainMenu() {
             </span>
           </button>
         </nav>
+        {feedbackOpen ? <FeedbackModal onClose={() => setFeedbackOpen(false)} /> : null}
         <footer className="menu__foot">
           <span className={`badge${backendMode === 'supabase' ? ' badge--ok' : ''}`}>{backendMode === 'loading' ? 'подключение…' : backendMode === 'supabase' ? 'онлайн' : 'офлайн: прогресс на этом устройстве'}</span>
           {isMockActive() ? <span className="badge badge--warn">DEV · мок движка</span> : null}
