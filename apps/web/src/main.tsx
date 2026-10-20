@@ -16,6 +16,7 @@ import './styles/skies.css';
 import './styles/polish.css';
 import './styles/mechanics.css';
 import './styles/responsive.css';
+import './styles/perf.css';
 
 applyToDocument();
 void initBackend();

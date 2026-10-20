@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon } from '../components/Icon';
 
 const ISSUES_URL = 'https://github.com/promtly-ru/cyberhack/issues/new';
@@ -12,9 +12,17 @@ export function FeedbackModal({ onClose }: { onClose: () => void }) {
   const title = `[${kind}] ${body.split('\n')[0]?.slice(0, 70) ?? ''}`;
   const href = `${ISSUES_URL}?${new URLSearchParams({ title, body: `${body}\n\n— отправлено из игры` }).toString()}`;
 
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, [onClose]);
+
   return (
     <div className="modal-backdrop" onClick={onClose} data-testid="feedback-modal">
-      <div className="modal" role="dialog" aria-label="Обратная связь" onClick={(e) => e.stopPropagation()}>
+      <div className="modal" role="dialog" aria-modal="true" aria-label="Обратная связь" onClick={(e) => e.stopPropagation()}>
         <div className="modal__head">
           <h2>Предложить идею</h2>
           <button className="btn" onClick={onClose} aria-label="Закрыть"><Icon name="close" size={16} /></button>

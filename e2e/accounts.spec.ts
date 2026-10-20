@@ -25,7 +25,8 @@ async function backToMenu(page: Page, act: Act): Promise<void> {
   await expect(page.getByTestId('menu')).toBeVisible();
 }
 
-test('офлайн-профиль: создать → выйти → войти обратно, прогресс на месте', async ({ page, act }) => {
+// Офлайн-профили по нику заменены входом по почте (ProfileScreen: CloudLogin); без сервера сценарий недоступен.
+test.skip('офлайн-профиль: создать → выйти → войти обратно, прогресс на месте', async ({ page, act }) => {
   await page.goto(`./?seed=${SEED}`);
   await expect(page.getByTestId('menu')).toBeVisible();
   const chipName = page.getByTestId('account-chip-name');
@@ -75,7 +76,8 @@ test('офлайн-профиль: создать → выйти → войти 
   await expect(page.getByTestId('menu-continue')).toContainText('этаж');
 });
 
-test('занятый ник: подсказка войти в существующий профиль', async ({ page, act }) => {
+// Офлайн-профили по нику заменены входом по почте (ProfileScreen: CloudLogin); без сервера сценарий недоступен.
+test.skip('занятый ник: подсказка войти в существующий профиль', async ({ page, act }) => {
   await page.goto('./');
   await openProfileFromChip(page, act);
   await act(page.getByTestId('account-login'));

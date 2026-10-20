@@ -92,7 +92,7 @@ class FxEngine {
         resizeTo: window,
         antialias: false,
         autoDensity: true,
-        resolution: Math.min(window.devicePixelRatio || 1, 2),
+        resolution: Math.min(window.devicePixelRatio || 1, window.innerWidth < 900 ? 1.25 : 2),
         preference: 'webgl',
         autoStart: false,
       });

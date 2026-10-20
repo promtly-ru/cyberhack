@@ -36,7 +36,7 @@ test('еженедельный вызов стартует, попытка сп�
   // Попытка засчитана: в меню видно 2 из 3, забег сохранён
   await expect.poll(() => savedActions(page)).toBeGreaterThanOrEqual(0);
   await page.reload();
-  await expect(page.getByTestId('menu-weekly')).toContainText('попыток 2/3');
+  await expect(page.getByTestId('menu-weekly')).toContainText('· 2/3');
   await expect(page.getByTestId('menu-continue')).toBeEnabled();
 });
 

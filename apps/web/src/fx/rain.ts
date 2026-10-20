@@ -46,7 +46,7 @@ class Rain {
     const token = ++this.token;
     const app = new Application();
     try {
-      await app.init({ backgroundAlpha: 0, resizeTo: window, antialias: false, autoDensity: true, resolution: Math.min(window.devicePixelRatio || 1, 1.5), preference: 'webgl' });
+      await app.init({ backgroundAlpha: 0, resizeTo: window, antialias: false, autoDensity: true, resolution: window.innerWidth < 900 ? 1 : Math.min(window.devicePixelRatio || 1, 1.5), preference: 'webgl' });
     } catch (e) {
       console.warn('[rain] Pixi не инициализирован:', e);
       return;
@@ -56,7 +56,7 @@ class Rain {
       return;
     }
     this.app = app;
-    app.ticker.maxFPS = window.innerWidth < 768 ? 20 : 30;
+    app.ticker.maxFPS = window.innerWidth < 900 ? 15 : 30;
     app.canvas.classList.add('rain-canvas');
     app.canvas.setAttribute('aria-hidden', 'true');
     host.appendChild(app.canvas);
@@ -113,7 +113,7 @@ class Rain {
     this.cols = [];
     const n = Math.ceil(w / cell);
     for (let c = 0; c < n; c++) {
-      if (Math.random() < (w < 600 ? 0.6 : 0.35)) continue; // разреженный дождь (на телефоне ещё реже)
+      if (Math.random() < (w < 600 ? 0.75 : 0.35)) continue; // разреженный дождь (на телефоне ещё реже)
       const len = 6 + Math.floor(Math.random() * 18);
       const parts: Particle[] = [];
       for (let k = 0; k < len; k++) {

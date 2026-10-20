@@ -38,6 +38,15 @@
   .battlefield { padding-top: 30px; padding-bottom: 0; }
   .unit__name { min-height: 0; max-height: 2.2em; overflow: hidden; font-size: 10px; line-height: 1.1; }
   .combat-hud { margin-top: 8px; }
+
+  /* Карта: узкая колонка вместо растяжения на всю ширину, компактная шапка */
+  .map-head { padding-top: 4px; padding-bottom: 4px; align-items: center; flex-wrap: nowrap; }
+  .map-head .eyebrow { display: inline; margin-right: 8px; }
+  .map-head > div { display: flex; align-items: baseline; gap: 8px; }
+  .map-title { font-size: 17px; margin: 0; }
+  .map-head .screen-hint { display: none; }
+  .map-scroll { margin-bottom: 6px; }
+  .map-svg { width: min(100%, 340px); margin: 0 auto; }
 }
 
 /* ---------- Лёгкий режим: телефон, сенсорный ввод, reduced motion ---------- */
@@ -62,3 +71,43 @@
 html[data-motion='reduced'] .menu::before, html[data-motion='reduced'] .class-card::before, html[data-motion='reduced'] .is-victory::before,
 html[data-motion='reduced'] .battlefield__grid, html[data-motion='reduced'] .combat[data-tier] .battlefield, html[data-motion='reduced'] .card .card__frame::after,
 html[data-motion='reduced'] [class*='art-'], html[data-motion='reduced'] .glitch::before, html[data-motion='reduced'] .glitch::after { animation: none; }
+
+/* Меню на низком экране (телефон горизонтально): лого слева, кнопки справа, плитки режимов и инструменты — на всю ширину колонки */
+@media (max-height: 520px) {
+  .menu { padding-top: 56px; }
+  .menu__inner { grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr); }
+  .menu__hero .logo__word { font-size: clamp(24px, 7vh, 40px); }
+  .menu__nav > .menu-group, .menu__nav > .menu-tools { grid-column: 1 / -1; }
+  .menu-group { gap: 6px; }
+  .menu-tile { padding: 6px 10px; gap: 1px; }
+  .menu-tile b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .menu-tile small { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .menu-tile .icon { display: none; }
+  .menu-tools { padding-top: 4px; }
+  .menu-tool { padding: 4px; flex-direction: row; justify-content: center; }
+  .menu__foot { display: none; }
+}
+
+/* Выбор класса: нижняя панель непрозрачная, список не просвечивает сквозь неё */
+.cs-foot { background: var(--bg, #05060f); box-shadow: 0 -16px 16px -4px var(--bg, #05060f); }
+
+/* Щит не закрывает цифры HP: текст сдвигается вправо от значка блока */
+.hpbar.has-block .hpbar__text { padding-left: 34px; }
+
+/* Шапка на телефоне (вертикально): явная сетка, ничего не наезжает.
+   1 ряд: статы | колода, настройки; 2 ряд: прошивки (прокрутка); 3 ряд: импланты (расходники прижаты справа, см. mechanics.css) */
+@media (max-width: 767px) and (min-height: 521px), (max-width: 767px) and (max-aspect-ratio: 5/4) {
+  .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'stats actions' 'fw fw' 'relics relics'; align-items: center; row-gap: 4px; }
+  .topbar__stats { grid-area: stats; }
+  .topbar__actions { grid-area: actions; }
+  .topbar .topbar__relics { grid-area: relics; grid-column: auto; grid-row: auto; }
+  .topbar .firmware-bar { grid-area: fw; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .topbar .firmware-bar:empty { display: none; }
+  .topbar .firmware { padding: 2px 8px; font-size: 11px; }
+}
+
+/* Телефон горизонтально: прошивки в общей строке шапки, ужаты и прокручиваются */
+@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
+  .topbar .firmware-bar { flex: 0 1 auto; max-width: 30%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .topbar .firmware { padding: 2px 7px; font-size: 11px; }
+}
