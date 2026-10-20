@@ -208,16 +208,16 @@ describe('evaluateRunEnd', () => {
     expect(r.profile.maxAscension.netrunner).toBe(0);
   });
 
-  it('первый босс открывает Фрикера, 3-й акт — Призрака', () => {
+  it('3 босса открывают Фрикера, 3-й акт Призрака не открывает', () => {
     const s = finished({ status: 'lost' }, (st) => {
       st.act = 3;
       st.stats.enemiesKilled = 10;
-      st.stats.bossesKilled = 2;
+      st.stats.bossesKilled = 3;
     });
     const r = evaluateRunEnd(freshProfile(), s);
     expect(r.newAchievements).toEqual(expect.arrayContaining(['first_boss', 'deep_dive']));
-    expect(r.unlocked.classes.sort()).toEqual(['ghost', 'phreaker']);
-    expect(r.profile.unlockedClasses.sort()).toEqual(['ghost', 'netrunner', 'phreaker']);
+    expect(r.unlocked.classes.sort()).toEqual(['phreaker']);
+    expect(r.profile.unlockedClasses.sort()).toEqual(['netrunner', 'phreaker']);
   });
 
   it('победа на максимальном A открывает следующий уровень, на меньшем — нет', () => {
@@ -242,9 +242,9 @@ describe('evaluateRunEnd', () => {
 
   it('рекорды за бой: вирус, удар, карты за ход, золото', () => {
     const s = finished({ status: 'lost', classId: 'phreaker' }, (st) => {
-      st.stats.maxVirusInCombat = 120;
-      st.stats.maxHit = 55;
-      st.stats.maxCardsInTurn = 21;
+      st.stats.maxVirusInCombat = 260;
+      st.stats.maxHit = 85;
+      st.stats.maxCardsInTurn = 36;
       st.stats.maxGold = 510;
     });
     const r = evaluateRunEnd(freshProfile(), s);
