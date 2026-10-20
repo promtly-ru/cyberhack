@@ -106,6 +106,14 @@ class FxEngine {
     }
     this.app = app;
     app.canvas.classList.add('fx-canvas');
+    // Потеря WebGL-контекста (мало памяти GPU): прячем канвас, иначе он может залить экран белым
+    app.canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      app.canvas.style.visibility = 'hidden';
+    });
+    app.canvas.addEventListener('webglcontextrestored', () => {
+      app.canvas.style.visibility = '';
+    });
     app.canvas.setAttribute('aria-hidden', 'true');
     host.appendChild(app.canvas);
     this.texSquare = makeTexture('square');

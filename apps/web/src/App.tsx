@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useGame } from './game/store';
 import { devScenario, type DevScenario } from './game/engine';
 import { FxHost } from './fx/FxHost';
@@ -14,6 +14,8 @@ import { RewardScreen, CardPickScreen, ShopScreen, RestScreen, NodeScreen, Event
 import { SettingsModal } from './screens/SettingsModal';
 import { useHistoryNav } from './game/historyNav';
 import { useUi } from './ui/uiStore';
+
+const DevGallery = import.meta.env.DEV ? lazy(() => import('./dev/Gallery')) : null;
 
 function RunView() {
   const run = useGame((s) => s.run);
@@ -52,12 +54,15 @@ export function App() {
   const settingsOpen = useUi((s) => s.settingsOpen);
   const error = useGame((s) => s.error);
   useHistoryNav();
+  if (DevGallery && new URLSearchParams(location.search).has('gallery')) return <Suspense fallback={null}><DevGallery /></Suspense>;
 
   useEffect(() => {
     // Dev-сценарии: ?dev=combat|map|shop|reward|card_pick|rest|event|deck|defeat|victory
     const kind = new URLSearchParams(location.search).get('dev') as DevScenario | null;
     if (!kind) return;
-    const st = devScenario(kind);
+    let st = devScenario(kind);
+    const dAct = new URLSearchParams(location.search).get('act');
+    if (import.meta.env.DEV && st && dAct) st = { ...st, act: Number(dAct) as 1 | 2 | 3 | 4 };
     if (st) useGame.getState().loadRun(st, { seed: st.seed, classId: st.classId, ascension: st.ascension });
   }, []);
 

@@ -18,6 +18,7 @@ import './styles/mechanics.css';
 import './styles/responsive.css';
 import './styles/ux.css';
 import './styles/map-menu.css';
+import './styles/enemies-zones.css';
 import './styles/perf.css';
 
 applyToDocument();

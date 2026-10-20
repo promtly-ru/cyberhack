@@ -58,6 +58,14 @@ class Rain {
     this.app = app;
     app.ticker.maxFPS = window.innerWidth < 900 ? 15 : 30;
     app.canvas.classList.add('rain-canvas');
+    // Потеря WebGL-контекста (мало памяти GPU): прячем канвас, иначе он может залить экран белым
+    app.canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      app.canvas.style.visibility = 'hidden';
+    });
+    app.canvas.addEventListener('webglcontextrestored', () => {
+      app.canvas.style.visibility = '';
+    });
     app.canvas.setAttribute('aria-hidden', 'true');
     host.appendChild(app.canvas);
     this.frames = buildAtlas();

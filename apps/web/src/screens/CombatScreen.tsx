@@ -4,23 +4,19 @@ import { canCool, cardStats, describeCard, getEnemyDef, getLegalActions, HEAT_CO
 import { useGame } from '../game/store';
 import { Card, CardTerms } from '../components/Card';
 import { HpBar, IntentBadge, StatusRow, SynergyBar } from '../components/Bits';
-import { EnemyArt, PlayerArt, CLASS_COLOR } from '../components/UnitArt';
+import { PlayerArt, CLASS_COLOR } from '../components/UnitArt';
+import { EnemyArt, accentColor } from '../components/EnemyArt';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { TopBar } from '../components/TopBar';
 import { CardGridModal } from '../components/CardGridModal';
 import { fx, parseColor } from '../fx/fx';
 import { sfx } from '../audio/sfx';
-import { hash } from '../ui/rand';
 import { useTutorial } from '../tutorial/tutorialStore';
 
 const TYPE_COLOR: Record<string, string> = { attack: '#ff2bd6', skill: '#00f0ff', power: '#e8ff3a', status: '#8d97b5', curse: '#ff3b5c' };
-const ENEMY_COLORS = ['#ff3b5c', '#ff6a3d', '#ff2bd6'];
-
 function enemyColor(e: EnemyState, tier: string): string {
-  if (tier === 'boss') return '#ff2bd6';
-  if (tier === 'elite') return '#ff9f1c';
-  return ENEMY_COLORS[hash(e.defId) % ENEMY_COLORS.length] ?? '#ff3b5c';
+  return accentColor(e.defId, tier as 'normal' | 'elite' | 'boss');
 }
 
 function enemyInfo(e: EnemyState) {
@@ -431,6 +427,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       data-tier={combat.enemies.some((e) => enemyInfo(e).tier === 'boss') ? 'boss' : combat.enemies.some((e) => enemyInfo(e).tier === 'elite') ? 'elite' : 'normal'}
       data-phase={frozen ? 'frozen' : combat.phase}
     >
+      <div className="zone-bg" aria-hidden="true" />
       <TopBar run={run} />
       <div className="battlefield" onClick={onFieldClick}>
         <div className="battlefield__grid" aria-hidden="true" />
