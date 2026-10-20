@@ -157,13 +157,14 @@
   transform-origin: 50% 100%;
   transition: transform calc(180ms / var(--speed)) ease-out;
 }
-.hand-card__inner { display: block; transition: scale calc(150ms / var(--speed)), translate calc(150ms / var(--speed)); }
+.hand-card__inner { display: block; transform-origin: 50% 100%; transition: scale calc(150ms / var(--speed)), translate calc(150ms / var(--speed)), rotate calc(150ms / var(--speed)); }
 .hand-card.is-dragging .hand-card__inner { transition: none; }
 .hand-card:disabled { cursor: default; }
 .hand-card:not(.is-playable) .card { filter: saturate(0.5) brightness(0.8); }
 @media (hover: hover) {
-  .hand-card:hover:not(:disabled) { transform: translate(var(--x), -26%) rotate(0deg); z-index: 45 !important; }
-  .hand-card:hover:not(:disabled) .hand-card__inner { scale: 1.12; }
+  /* Поднимаем только содержимое: зона наведения стоит на месте, иначе карта «дрожит» на границе курсора */
+  .hand-card:hover:not(:disabled) { z-index: 45 !important; }
+  .hand-card:hover:not(:disabled) .hand-card__inner { scale: 1.12; translate: 0 calc(-26% - var(--y, 0px)); rotate: calc(-1 * var(--r, 0deg)); }
 }
 .hand-card.is-selected { transform: translate(var(--x), -24%) rotate(0deg); }
 .hand-card.is-selected .card { filter: drop-shadow(0 0 12px var(--acid)); }
