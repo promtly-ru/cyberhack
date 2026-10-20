@@ -5784,11 +5784,6 @@
       {
         "type": "damage",
         "amount": 4,
-        "per": {
-          "kind": "target_status",
-          "status": "virus"
-        },
-        "perAmount": 1,
         "target": "enemy"
       },
       {
@@ -5798,18 +5793,13 @@
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 4 урона +1 за каждый Вирус на цели. Наложи 4 Вируса.",
+    "description": "Нанеси 4 урона. Наложи 4 Вируса.",
     "upgrade": {
       "name": "Токсин+",
       "effects": [
         {
           "type": "damage",
-          "amount": 5,
-          "per": {
-            "kind": "target_status",
-            "status": "virus"
-          },
-          "perAmount": 1,
+          "amount": 6,
           "target": "enemy"
         },
         {
@@ -5819,7 +5809,7 @@
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 5 урона +1 за каждый Вирус на цели. Наложи 5 Вируса."
+      "description": "Нанеси 6 урона. Наложи 6 Вируса."
     },
     "tags": [
       "virus"
@@ -15823,17 +15813,11 @@
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 1,
-        "target": "self"
-      },
-      {
-        "type": "multiply_status",
-        "status": "regen",
-        "factor": 2,
+        "amount": 2,
         "target": "self"
       }
     ],
-    "description": "Получи 4 блока. Получи 1 Самовосстановление, затем удвой Самовосстановление.",
+    "description": "Получи 4 блока. Получи 2 Самовосстановления.",
     "upgrade": {
       "name": "Инфузия+",
       "effects": [
@@ -15844,17 +15828,11 @@
         {
           "type": "apply_status",
           "status": "regen",
-          "amount": 2,
-          "target": "self"
-        },
-        {
-          "type": "multiply_status",
-          "status": "regen",
-          "factor": 2,
+          "amount": 3,
           "target": "self"
         }
       ],
-      "description": "Получи 6 блока. Получи 2 Самовосстановления, затем удвой Самовосстановление."
+      "description": "Получи 6 блока. Получи 3 Самовосстановления."
     },
     "tags": [
       "regen"
@@ -16109,7 +16087,7 @@
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 4,
+        "amount": 3,
         "target": "all_enemies"
       },
       {
@@ -16123,7 +16101,7 @@
         "amount": 5
       }
     ],
-    "description": "Наложи 4 Вируса на всех врагов, затем удвой их Вирус. Потеряй 5 HP. Сжигается.",
+    "description": "Наложи 3 Вируса на всех врагов, затем удвой их Вирус. Потеряй 5 HP. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Цитокиновый шторм+",
@@ -16131,7 +16109,7 @@
         {
           "type": "apply_status",
           "status": "virus",
-          "amount": 5,
+          "amount": 4,
           "target": "all_enemies"
         },
         {
@@ -16145,7 +16123,7 @@
           "amount": 5
         }
       ],
-      "description": "Наложи 5 Вируса на всех врагов, затем удвой их Вирус. Потеряй 5 HP. Сжигается."
+      "description": "Наложи 4 Вируса на всех врагов, затем удвой их Вирус. Потеряй 5 HP. Сжигается."
     },
     "tags": [
       "virus"
@@ -16668,7 +16646,7 @@
     "classId": "biohacker",
     "type": "attack",
     "rarity": "uncommon",
-    "cost": 1,
+    "cost": 2,
     "target": "enemy",
     "effects": [
       {
@@ -16701,7 +16679,7 @@
     "classId": "biohacker",
     "type": "skill",
     "rarity": "uncommon",
-    "cost": 1,
+    "cost": 2,
     "target": "all_enemies",
     "effects": [
       {
@@ -16747,17 +16725,17 @@
             {
               "type": "apply_status",
               "status": "virus",
-              "amount": 2,
+              "amount": 1,
               "target": "random_enemy"
             }
           ]
         }
       }
     ],
-    "description": "Каждый раз, когда играешь атаку, наложи 2 Вируса случайному врагу.",
+    "description": "Каждый раз, когда играешь атаку, наложи 1 Вирус случайному врагу.",
     "upgrade": {
       "name": "Инкубатор+",
-      "description": "Каждый раз, когда играешь атаку, наложи 3 Вируса случайному врагу.",
+      "description": "Каждый раз, когда играешь атаку, наложи 2 Вируса случайному врагу.",
       "effects": [
         {
           "type": "add_hook",
@@ -16767,7 +16745,7 @@
               {
                 "type": "apply_status",
                 "status": "virus",
-                "amount": 3,
+                "amount": 2,
                 "target": "random_enemy"
               }
             ]
@@ -16790,7 +16768,7 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 8,
+        "amount": 6,
         "target": "enemy"
       },
       {
@@ -16801,20 +16779,20 @@
         "then": [
           {
             "type": "damage",
-            "amount": 7,
+            "amount": 5,
             "target": "enemy"
           }
         ]
       }
     ],
-    "description": "Нанеси 8 урона. Если HP ниже 50%, нанеси ещё 7 урона.",
+    "description": "Нанеси 6 урона. Если HP ниже 50%, нанеси ещё 5 урона.",
     "upgrade": {
       "name": "Гемолиз+",
-      "description": "Нанеси 10 урона. Если HP ниже 50%, нанеси ещё 9 урона.",
+      "description": "Нанеси 8 урона. Если HP ниже 50%, нанеси ещё 6 урона.",
       "effects": [
         {
           "type": "damage",
-          "amount": 10,
+          "amount": 8,
           "target": "enemy"
         },
         {
@@ -16825,7 +16803,7 @@
           "then": [
             {
               "type": "damage",
-              "amount": 9,
+              "amount": 6,
               "target": "enemy"
             }
           ]
@@ -16996,20 +16974,20 @@
           "effects": [
             {
               "type": "block",
-              "amount": 4
+              "amount": 3
             },
             {
               "type": "heal",
-              "amount": 2
+              "amount": 1
             }
           ]
         }
       }
     ],
-    "description": "В начале хода получай 4 блока и восстанавливай 2 HP.",
+    "description": "В начале хода получай 3 блока и восстанавливай 1 HP.",
     "upgrade": {
       "name": "Гомеостаз+",
-      "description": "В начале хода получай 6 блока и восстанавливай 3 HP.",
+      "description": "В начале хода получай 4 блока и восстанавливай 2 HP.",
       "effects": [
         {
           "type": "add_hook",
@@ -17018,11 +16996,11 @@
             "effects": [
               {
                 "type": "block",
-                "amount": 6
+                "amount": 4
               },
               {
                 "type": "heal",
-                "amount": 3
+                "amount": 2
               }
             ]
           }
