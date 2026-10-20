@@ -131,7 +131,16 @@ const EFFECT_TYPES = new Set([
   'cleanse',
   'gain_potion',
   'gamble',
+  'conditional',
+  'multiply_status',
+  'consume_status',
+  'add_hook',
 ]);
+
+const HOOK_TRIGGERS = new Set(['play_attack', 'play_skill', 'apply_status', 'exhaust', 'turn_start', 'turn_end', 'take_damage']);
+const PER_KINDS = new Set(['target_status', 'self_status', 'discard_size', 'exhaust_size', 'attacks_played_this_turn', 'cards_in_hand']);
+/** Эффекты без поля amount */
+const NO_AMOUNT = new Set(['add_card', 'conditional', 'multiply_status', 'consume_status', 'add_hook']);
 
 function checkDuplicates(kind: string, items: readonly { id: string }[], errors: string[]): void {
   const seen = new Set<string>();
@@ -181,7 +190,37 @@ export function validateContent(data: ContentData = current.data): string[] {
         checkEffects(`${at}.win`, e.win);
         if (e.lose !== undefined) checkEffects(`${at}.lose`, e.lose);
       }
-      if (typeof (e as { amount?: unknown }).amount !== 'number' && e.type !== 'add_card')
+      if ((e.type === 'damage' || e.type === 'block') && e.per !== undefined) {
+        if (!PER_KINDS.has(e.per.kind)) errors.push(`${at}: неизвестный per.kind "${e.per.kind}"`);
+        if ((e.per.kind === 'target_status' || e.per.kind === 'self_status') && !statusIds.has(e.per.status))
+          errors.push(`${at}: неизвестный статус per "${e.per.status}"`);
+        if (e.perAmount !== undefined && typeof e.perAmount !== 'number') errors.push(`${at}: perAmount не число`);
+      }
+      if (e.type === 'conditional') {
+        const cond = e.if as unknown;
+        if (!cond || typeof cond !== 'object') errors.push(`${at}: нет условия if`);
+        else {
+          for (const k of ['targetHasStatus', 'selfHasStatus'] as const) {
+            const v = e.if[k];
+            if (v !== undefined && !statusIds.has(v)) errors.push(`${at}: неизвестный статус в if.${k} "${v}"`);
+          }
+          for (const k of ['hpBelowPct', 'handSizeAtMost', 'playedAttacksThisTurnAtLeast'] as const) {
+            const v = e.if[k];
+            if (v !== undefined && typeof v !== 'number') errors.push(`${at}: if.${k} не число`);
+          }
+        }
+        checkEffects(`${at}.then`, e.then);
+        if (e.else !== undefined) checkEffects(`${at}.else`, e.else);
+      }
+      if ((e.type === 'multiply_status' || e.type === 'consume_status') && !statusIds.has(e.status))
+        errors.push(`${at}: неизвестный статус "${e.status}"`);
+      if (e.type === 'multiply_status' && typeof e.factor !== 'number') errors.push(`${at}: factor не число`);
+      if (e.type === 'consume_status' && typeof e.damageMult !== 'number') errors.push(`${at}: damageMult не число`);
+      if (e.type === 'add_hook') {
+        if (!e.hook || !HOOK_TRIGGERS.has(e.hook.on)) errors.push(`${at}: неизвестный hook.on "${e.hook?.on}"`);
+        else checkEffects(`${at}.hook`, e.hook.effects);
+      }
+      if (typeof (e as { amount?: unknown }).amount !== 'number' && !NO_AMOUNT.has(e.type))
         errors.push(`${at}: amount не число`);
     });
   };
