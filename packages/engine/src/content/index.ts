@@ -100,6 +100,8 @@ export function resetContent(): void {
 
 // ---------- Валидация ----------
 
+const ART_FAMILIES = new Set(['drone', 'bot', 'worm', 'eye', 'daemon', 'construct', 'swarm', 'ghost', 'beast', 'core']);
+const ART_ACCENTS = new Set(['cyan', 'magenta', 'acid', 'orange', 'green', 'violet', 'red']);
 const CLASS_IDS = new Set(['netrunner', 'phreaker', 'ghost', 'samurai', 'engineer', 'biohacker', 'droneop', 'chrono', 'vabanker']);
 const RELIC_TRIGGERS: ReadonlySet<RelicTrigger> = new Set<RelicTrigger>([
   'combat_start',
@@ -254,6 +256,11 @@ export function validateContent(data: ContentData = current.data): string[] {
     const badMove = (where: string, id: unknown) => {
       if (typeof id !== 'string' || !moveIds.has(id)) errors.push(`${w}: ${where} ссылается на неизвестный move "${String(id)}"`);
     };
+    if (e.art !== undefined) {
+      if (!ART_FAMILIES.has(e.art.family)) errors.push(`${w}: неизвестное art.family "${String(e.art.family)}"`);
+      if (!ART_ACCENTS.has(e.art.accent)) errors.push(`${w}: неизвестное art.accent "${String(e.art.accent)}"`);
+      if (typeof e.art.note !== 'string' || e.art.note.length === 0) errors.push(`${w}: пустое art.note`);
+    }
     if (!e.ai) errors.push(`${w}: нет ai`);
     else if (e.ai.kind === 'cycle') {
       if (!Array.isArray(e.ai.order) || e.ai.order.length === 0) errors.push(`${w}: пустой ai.order`);
@@ -311,6 +318,7 @@ export function validateContent(data: ContentData = current.data): string[] {
     const w = `encounter "${enc.id}"`;
     if (!Array.isArray(enc.enemies) || enc.enemies.length === 0) errors.push(`${w}: нет врагов`);
     else for (const id of enc.enemies) if (!enemyIds.has(id)) errors.push(`${w}: неизвестный враг "${id}"`);
+    if (enc.weight !== undefined && !(enc.weight > 0)) errors.push(`${w}: weight должен быть > 0`);
   }
 
   // Покрытие актов: для каждого акта нужны обычные, элитные и босс-встречи.

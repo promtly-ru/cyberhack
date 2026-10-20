@@ -1,666 +1,243 @@
 [
   {
-    "id": "a1_e_script_bot",
+    "id": "a1_g_patrol_drone_patrol_drone",
     "act": 1,
     "tier": "normal",
     "enemies": [
-      "a1_script_bot"
+      "a1_patrol_drone",
+      "a1_patrol_drone"
     ],
     "early": true
   },
   {
-    "id": "a1_e_cultist",
+    "id": "a1_g_camera",
     "act": 1,
     "tier": "normal",
     "enemies": [
-      "a1_cultist"
+      "a1_camera"
     ],
     "early": true
   },
   {
-    "id": "a1_e_spam_bot",
+    "id": "a1_g_phisher",
     "act": 1,
     "tier": "normal",
     "enemies": [
-      "a1_spam_bot"
-    ],
-    "early": true
-  },
-  {
-    "id": "a1_e_drones",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_drone",
-      "a1_drone"
-    ],
-    "early": true
-  },
-  {
-    "id": "a1_antivirus",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_antivirus"
-    ]
-  },
-  {
-    "id": "a1_drone_swarm",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_drone",
-      "a1_drone",
-      "a1_drone"
-    ]
-  },
-  {
-    "id": "a1_proxy_spam",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_proxy",
-      "a1_spam_bot"
-    ]
-  },
-  {
-    "id": "a1_antivirus_drone",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_drone",
-      "a1_antivirus"
-    ]
-  },
-  {
-    "id": "a1_proxy_net",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_proxy",
-      "a1_drone",
-      "a1_proxy"
-    ]
-  },
-  {
-    "id": "a1_bot_patrol",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_script_bot",
-      "a1_drone"
-    ]
-  },
-  {
-    "id": "a1_elite_sentinel",
-    "act": 1,
-    "tier": "elite",
-    "enemies": [
-      "a1_ice_sentinel"
-    ]
-  },
-  {
-    "id": "a1_elite_sentries",
-    "act": 1,
-    "tier": "elite",
-    "enemies": [
-      "a1_sentry_a",
-      "a1_sentry_b",
-      "a1_sentry_a"
-    ]
-  },
-  {
-    "id": "a1_boss",
-    "act": 1,
-    "tier": "boss",
-    "enemies": [
-      "boss_cerberus"
-    ]
-  },
-  {
-    "id": "a2_e_tracer",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_tracer"
-    ],
-    "early": true
-  },
-  {
-    "id": "a2_e_honeypot",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_honeypot"
-    ],
-    "early": true
-  },
-  {
-    "id": "a2_e_daemon",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_firewall_daemon"
-    ],
-    "early": true
-  },
-  {
-    "id": "a2_admin",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_admin_bot"
-    ]
-  },
-  {
-    "id": "a2_worm_nest",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_crypto_worm",
-      "a2_crypto_worm",
-      "a2_crypto_worm"
-    ]
-  },
-  {
-    "id": "a2_tracer_worm",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_tracer",
-      "a2_crypto_worm"
-    ]
-  },
-  {
-    "id": "a2_daemon_tracer",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_firewall_daemon",
-      "a2_tracer"
-    ]
-  },
-  {
-    "id": "a2_honey_worm",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_crypto_worm",
-      "a2_honeypot"
-    ]
-  },
-  {
-    "id": "a2_elite_hound",
-    "act": 2,
-    "tier": "elite",
-    "enemies": [
-      "a2_ice_hound"
-    ]
-  },
-  {
-    "id": "a2_boss",
-    "act": 2,
-    "tier": "boss",
-    "enemies": [
-      "boss_chimera"
-    ]
-  },
-  {
-    "id": "a3_e_replicator",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_replicator"
-    ],
-    "early": true
-  },
-  {
-    "id": "a3_e_killswitch",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_killswitch"
-    ],
-    "early": true
-  },
-  {
-    "id": "a3_e_netwatch",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_netwatch"
-    ],
-    "early": true
-  },
-  {
-    "id": "a3_black_ice",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_black_ice"
-    ]
-  },
-  {
-    "id": "a3_sec_daemon",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_sec_daemon"
-    ]
-  },
-  {
-    "id": "a3_replicators",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_replicator",
-      "a3_replicator"
-    ]
-  },
-  {
-    "id": "a3_watch_switch",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_netwatch",
-      "a3_killswitch"
-    ]
-  },
-  {
-    "id": "a3_ice_replicator",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_replicator",
-      "a3_black_ice"
-    ]
-  },
-  {
-    "id": "a3_elite_hunter",
-    "act": 3,
-    "tier": "elite",
-    "enemies": [
-      "a3_ai_hunter"
-    ]
-  },
-  {
-    "id": "a3_boss",
-    "act": 3,
-    "tier": "boss",
-    "enemies": [
-      "boss_omnis"
-    ]
-  },
-  {
-    "id": "a1_e_phisher",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_phisher",
       "a1_phisher"
     ],
     "early": true
   },
   {
-    "id": "a1_phisher_proxy",
+    "id": "a1_g_pickpocket",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_pickpocket"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_g_sparker",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_sparker"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_g_scanner",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_scanner"
+    ],
+    "early": true
+  },
+  {
+    "id": "a1_g_guard",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_guard"
+    ]
+  },
+  {
+    "id": "a1_g_firewall_cell_patrol_drone",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_firewall_cell",
+      "a1_patrol_drone"
+    ]
+  },
+  {
+    "id": "a1_g_turnstile_patrol_drone_patrol_drone",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_turnstile",
+      "a1_patrol_drone",
+      "a1_patrol_drone"
+    ]
+  },
+  {
+    "id": "a1_g_razor_wire_scanner",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_razor_wire",
+      "a1_scanner"
+    ]
+  },
+  {
+    "id": "a1_g_admin_script_guard",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_admin_script",
+      "a1_guard"
+    ]
+  },
+  {
+    "id": "a1_g_sparker_phisher",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_sparker",
+      "a1_phisher"
+    ]
+  },
+  {
+    "id": "a1_g_camera_firewall_cell",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_camera",
+      "a1_firewall_cell"
+    ]
+  },
+  {
+    "id": "a1_g_medic_drone_guard",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_medic_drone",
+      "a1_guard"
+    ]
+  },
+  {
+    "id": "a1_g_pickpocket_razor_wire",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_pickpocket",
+      "a1_razor_wire"
+    ]
+  },
+  {
+    "id": "a1_g_admin_script_patrol_drone",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_admin_script",
+      "a1_patrol_drone"
+    ]
+  },
+  {
+    "id": "a1_g_patrol_drone_patrol_drone_patrol_drone",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_patrol_drone",
+      "a1_patrol_drone",
+      "a1_patrol_drone"
+    ]
+  },
+  {
+    "id": "a1_g_turnstile_camera",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_turnstile",
+      "a1_camera"
+    ]
+  },
+  {
+    "id": "a1_g_phisher_medic_drone_patrol_drone",
     "act": 1,
     "tier": "normal",
     "enemies": [
       "a1_phisher",
-      "a1_proxy"
+      "a1_medic_drone",
+      "a1_patrol_drone"
     ]
   },
   {
-    "id": "a1_boss_hydra",
+    "id": "a1_g_camera_guard",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_camera",
+      "a1_guard"
+    ]
+  },
+  {
+    "id": "a1_g_scanner_sparker",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_scanner",
+      "a1_sparker"
+    ]
+  },
+  {
+    "id": "a1_g_firewall_cell_pickpocket",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_firewall_cell",
+      "a1_pickpocket"
+    ]
+  },
+  {
+    "id": "a1_e_gatekeeper",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_elite_gatekeeper"
+    ]
+  },
+  {
+    "id": "a1_e_overseer",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_elite_overseer"
+    ]
+  },
+  {
+    "id": "a1_e_hound",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_elite_hound"
+    ]
+  },
+  {
+    "id": "a1_e_quarantine",
+    "act": 1,
+    "tier": "elite",
+    "enemies": [
+      "a1_elite_quarantine"
+    ]
+  },
+  {
+    "id": "a1_boss_cerberus",
     "act": 1,
     "tier": "boss",
     "enemies": [
-      "boss_hydra"
-    ]
-  },
-  {
-    "id": "a2_e_sniffer",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_packet_sniffer"
-    ],
-    "early": true
-  },
-  {
-    "id": "a2_ransom",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_ransom_bot"
-    ]
-  },
-  {
-    "id": "a2_sniffer_worm",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_packet_sniffer",
-      "a2_crypto_worm"
-    ]
-  },
-  {
-    "id": "a2_elite_warden",
-    "act": 2,
-    "tier": "elite",
-    "enemies": [
-      "a2_data_warden"
-    ]
-  },
-  {
-    "id": "a2_boss_leviathan",
-    "act": 2,
-    "tier": "boss",
-    "enemies": [
-      "boss_leviathan"
-    ]
-  },
-  {
-    "id": "a3_swarm",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_swarm_node",
-      "a3_swarm_node",
-      "a3_swarm_node"
-    ]
-  },
-  {
-    "id": "a3_swarm_watch",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_swarm_node",
-      "a3_netwatch"
-    ]
-  },
-  {
-    "id": "a3_elite_wall",
-    "act": 3,
-    "tier": "elite",
-    "enemies": [
-      "a3_black_wall"
-    ]
-  },
-  {
-    "id": "a3_boss_archon",
-    "act": 3,
-    "tier": "boss",
-    "enemies": [
-      "boss_archon"
-    ]
-  },
-  {
-    "id": "a4_e_phantom",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_phantom"
-    ],
-    "early": true
-  },
-  {
-    "id": "a4_e_leech",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_leech"
-    ],
-    "early": true
-  },
-  {
-    "id": "a4_e_bomb",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_logic_bomb",
-      "a4_nano"
-    ],
-    "early": true
-  },
-  {
-    "id": "a4_mirror",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_mirror"
-    ]
-  },
-  {
-    "id": "a4_overseer",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_overseer"
-    ]
-  },
-  {
-    "id": "a4_nano_swarm",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_nano",
-      "a4_nano",
-      "a4_nano"
-    ]
-  },
-  {
-    "id": "a4_guard_siren",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_core_guard",
-      "a4_siren"
-    ]
-  },
-  {
-    "id": "a4_phantom_leech",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_phantom",
-      "a4_leech"
-    ]
-  },
-  {
-    "id": "a4_bomb_mirror",
-    "act": 4,
-    "tier": "normal",
-    "enemies": [
-      "a4_logic_bomb",
-      "a4_mirror"
-    ]
-  },
-  {
-    "id": "a4_elite_void",
-    "act": 4,
-    "tier": "elite",
-    "enemies": [
-      "a4_void_warden"
-    ]
-  },
-  {
-    "id": "a4_elite_twin",
-    "act": 4,
-    "tier": "elite",
-    "enemies": [
-      "a4_twin_core"
-    ]
-  },
-  {
-    "id": "a4_boss_nexus",
-    "act": 4,
-    "tier": "boss",
-    "enemies": [
-      "boss_nexus"
-    ]
-  },
-  {
-    "id": "a4_boss_singularity",
-    "act": 4,
-    "tier": "boss",
-    "enemies": [
-      "boss_singularity"
-    ]
-  },
-  {
-    "id": "a1_scanner",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_rogue_scanner",
-      "a1_rogue_scanner"
-    ]
-  },
-  {
-    "id": "a1_rat_scanner",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_cache_rat",
-      "a1_rogue_scanner"
-    ]
-  },
-  {
-    "id": "a1_elite_warden",
-    "act": 1,
-    "tier": "elite",
-    "enemies": [
-      "a1_elite_warden"
-    ]
-  },
-  {
-    "id": "a2_wraith",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_data_wraith"
-    ]
-  },
-  {
-    "id": "a2_trap_wraith",
-    "act": 2,
-    "tier": "normal",
-    "enemies": [
-      "a2_trap_node",
-      "a2_data_wraith"
-    ]
-  },
-  {
-    "id": "a2_elite_hydra",
-    "act": 2,
-    "tier": "elite",
-    "enemies": [
-      "a2_elite_hydra"
-    ]
-  },
-  {
-    "id": "a3_flayer",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_mind_flayer"
-    ]
-  },
-  {
-    "id": "a3_ward_flayer",
-    "act": 3,
-    "tier": "normal",
-    "enemies": [
-      "a3_ward",
-      "a3_mind_flayer"
-    ]
-  },
-  {
-    "id": "a3_elite_colossus",
-    "act": 3,
-    "tier": "elite",
-    "enemies": [
-      "a3_elite_colossus"
-    ]
-  },
-  {
-    "id": "a1_e_kitten",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_glitch_kitten"
-    ],
-    "early": true
-  },
-  {
-    "id": "a1_e_sprites",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_firewall_sprite",
-      "a1_firewall_sprite"
-    ],
-    "early": true
-  },
-  {
-    "id": "a1_e_mine",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_mine_layer"
-    ],
-    "early": true
-  },
-  {
-    "id": "a1_leech",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_kernel_leech"
-    ]
-  },
-  {
-    "id": "a1_golem",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_dust_golem"
-    ]
-  },
-  {
-    "id": "a1_kitten_pack",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_glitch_kitten",
-      "a1_glitch_kitten"
-    ]
-  },
-  {
-    "id": "a1_leech_sprite",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_kernel_leech",
-      "a1_firewall_sprite"
-    ]
-  },
-  {
-    "id": "a1_mine_kitten",
-    "act": 1,
-    "tier": "normal",
-    "enemies": [
-      "a1_mine_layer",
-      "a1_glitch_kitten"
-    ]
-  },
-  {
-    "id": "a1_elite_gatekeeper",
-    "act": 1,
-    "tier": "elite",
-    "enemies": [
-      "a1_gatekeeper"
+      "boss_cerberus"
     ]
   },
   {
@@ -672,210 +249,727 @@
     ]
   },
   {
-    "id": "a2_e_courier",
+    "id": "a2_g_rack_rat",
     "act": 2,
     "tier": "normal",
     "enemies": [
-      "a2_dark_courier"
+      "a2_rack_rat"
     ],
     "early": true
   },
   {
-    "id": "a2_e_phish",
+    "id": "a2_g_lag_spike",
     "act": 2,
     "tier": "normal",
     "enemies": [
-      "a2_phish_kit"
+      "a2_lag_spike"
     ],
     "early": true
   },
   {
-    "id": "a2_e_nest",
+    "id": "a2_g_cable_nest",
     "act": 2,
     "tier": "normal",
     "enemies": [
-      "a2_bug_nest"
+      "a2_cable_nest"
     ],
     "early": true
   },
   {
-    "id": "a2_cipher",
+    "id": "a2_g_defrag",
     "act": 2,
     "tier": "normal",
     "enemies": [
-      "a2_cipher_golem"
-    ]
+      "a2_defrag"
+    ],
+    "early": true
   },
   {
-    "id": "a2_courier_phish",
+    "id": "a2_g_rack_rat_rack_rat",
     "act": 2,
     "tier": "normal",
     "enemies": [
-      "a2_dark_courier",
-      "a2_phish_kit"
-    ]
+      "a2_rack_rat",
+      "a2_rack_rat"
+    ],
+    "early": true
   },
   {
-    "id": "a2_nest_courier",
+    "id": "a2_g_coolant_golem",
     "act": 2,
     "tier": "normal",
     "enemies": [
-      "a2_bug_nest",
-      "a2_dark_courier"
+      "a2_coolant_golem"
     ]
   },
   {
-    "id": "a2_elite_bounty",
+    "id": "a2_g_cooling_fan_rack_rat_rack_rat",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_cooling_fan",
+      "a2_rack_rat",
+      "a2_rack_rat"
+    ]
+  },
+  {
+    "id": "a2_g_overheater_cable_nest",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_overheater",
+      "a2_cable_nest"
+    ]
+  },
+  {
+    "id": "a2_g_miner_thermal_sniper",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_miner",
+      "a2_thermal_sniper"
+    ]
+  },
+  {
+    "id": "a2_g_gpu_farm_coolant_golem",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_gpu_farm",
+      "a2_coolant_golem"
+    ]
+  },
+  {
+    "id": "a2_g_surge_protector_lag_spike",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_surge_protector",
+      "a2_lag_spike"
+    ]
+  },
+  {
+    "id": "a2_g_db_leech_rack_rat",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_db_leech",
+      "a2_rack_rat"
+    ]
+  },
+  {
+    "id": "a2_g_defrag_overheater",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_defrag",
+      "a2_overheater"
+    ]
+  },
+  {
+    "id": "a2_g_thermal_sniper_cooling_fan_cable_nest",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_thermal_sniper",
+      "a2_cooling_fan",
+      "a2_cable_nest"
+    ]
+  },
+  {
+    "id": "a2_g_miner_db_leech",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_miner",
+      "a2_db_leech"
+    ]
+  },
+  {
+    "id": "a2_g_gpu_farm_lag_spike",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_gpu_farm",
+      "a2_lag_spike"
+    ]
+  },
+  {
+    "id": "a2_g_surge_protector_cooling_fan",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_surge_protector",
+      "a2_cooling_fan"
+    ]
+  },
+  {
+    "id": "a2_g_cable_nest_cable_nest",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_cable_nest",
+      "a2_cable_nest"
+    ]
+  },
+  {
+    "id": "a2_g_overheater_miner",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_overheater",
+      "a2_miner"
+    ]
+  },
+  {
+    "id": "a2_g_coolant_golem_thermal_sniper",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_coolant_golem",
+      "a2_thermal_sniper"
+    ]
+  },
+  {
+    "id": "a2_g_db_leech_defrag_rack_rat",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_db_leech",
+      "a2_defrag",
+      "a2_rack_rat"
+    ]
+  },
+  {
+    "id": "a2_e_cooling_core",
     "act": 2,
     "tier": "elite",
     "enemies": [
-      "a2_bounty_hunter"
+      "a2_elite_cooling_core"
     ]
   },
   {
-    "id": "a2_boss_architect",
+    "id": "a2_e_overclock",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_elite_overclock"
+    ]
+  },
+  {
+    "id": "a2_e_hashfarm",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_elite_hashfarm"
+    ]
+  },
+  {
+    "id": "a2_e_leak_hunter",
+    "act": 2,
+    "tier": "elite",
+    "enemies": [
+      "a2_elite_leak_hunter"
+    ]
+  },
+  {
+    "id": "a2_boss_hypervisor",
     "act": 2,
     "tier": "boss",
     "enemies": [
-      "boss_architect"
+      "boss_hypervisor"
     ]
   },
   {
-    "id": "a3_e_sniper",
+    "id": "a2_boss_meltdown",
+    "act": 2,
+    "tier": "boss",
+    "enemies": [
+      "boss_meltdown"
+    ]
+  },
+  {
+    "id": "a3_g_token_swarm",
     "act": 3,
     "tier": "normal",
     "enemies": [
-      "a3_sniper_node"
+      "a3_token_swarm"
     ],
     "early": true
   },
   {
-    "id": "a3_e_scavenger",
+    "id": "a3_g_neuron_swarm",
     "act": 3,
     "tier": "normal",
     "enemies": [
-      "a3_data_scavenger"
+      "a3_neuron_swarm"
     ],
     "early": true
   },
   {
-    "id": "a3_e_forge",
+    "id": "a3_g_chat_cultist",
     "act": 3,
     "tier": "normal",
     "enemies": [
-      "a3_forge_drone"
+      "a3_chat_cultist"
     ],
     "early": true
   },
   {
-    "id": "a3_hex",
+    "id": "a3_g_noise_generator",
     "act": 3,
     "tier": "normal",
     "enemies": [
-      "a3_hex_weaver"
-    ]
+      "a3_noise_generator"
+    ],
+    "early": true
   },
   {
-    "id": "a3_sniper_scav",
+    "id": "a3_g_gradient",
     "act": 3,
     "tier": "normal",
     "enemies": [
-      "a3_sniper_node",
-      "a3_data_scavenger"
-    ]
+      "a3_gradient"
+    ],
+    "early": true
   },
   {
-    "id": "a3_hex_forge",
+    "id": "a3_g_overfit_model",
     "act": 3,
     "tier": "normal",
     "enemies": [
-      "a3_hex_weaver",
-      "a3_forge_drone"
+      "a3_overfit_model"
     ]
   },
   {
-    "id": "a3_elite_executioner",
+    "id": "a3_g_hallucination_neuron_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_hallucination",
+      "a3_neuron_swarm"
+    ]
+  },
+  {
+    "id": "a3_g_deepfake_chat_cultist",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_deepfake",
+      "a3_chat_cultist"
+    ]
+  },
+  {
+    "id": "a3_g_gradient_discriminator",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_gradient",
+      "a3_discriminator"
+    ]
+  },
+  {
+    "id": "a3_g_attention_head_token_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_attention_head",
+      "a3_token_swarm"
+    ]
+  },
+  {
+    "id": "a3_g_prompt_injector_echo_model",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_prompt_injector",
+      "a3_echo_model"
+    ]
+  },
+  {
+    "id": "a3_g_noise_generator_overfit_model",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_noise_generator",
+      "a3_overfit_model"
+    ]
+  },
+  {
+    "id": "a3_g_discriminator_attention_head",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_discriminator",
+      "a3_attention_head"
+    ]
+  },
+  {
+    "id": "a3_g_deepfake_prompt_injector",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_deepfake",
+      "a3_prompt_injector"
+    ]
+  },
+  {
+    "id": "a3_g_echo_model_neuron_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_echo_model",
+      "a3_neuron_swarm"
+    ]
+  },
+  {
+    "id": "a3_g_hallucination_gradient",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_hallucination",
+      "a3_gradient"
+    ]
+  },
+  {
+    "id": "a3_g_chat_cultist_discriminator_neuron_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_chat_cultist",
+      "a3_discriminator",
+      "a3_neuron_swarm"
+    ]
+  },
+  {
+    "id": "a3_g_token_swarm_token_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_token_swarm",
+      "a3_token_swarm"
+    ]
+  },
+  {
+    "id": "a3_g_overfit_model_prompt_injector",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_overfit_model",
+      "a3_prompt_injector"
+    ]
+  },
+  {
+    "id": "a3_g_noise_generator_hallucination",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_noise_generator",
+      "a3_hallucination"
+    ]
+  },
+  {
+    "id": "a3_g_attention_head_deepfake_chat_cultist",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_attention_head",
+      "a3_deepfake",
+      "a3_chat_cultist"
+    ]
+  },
+  {
+    "id": "a3_e_foundation",
     "act": 3,
     "tier": "elite",
     "enemies": [
-      "a3_silent_executioner"
+      "a3_elite_foundation"
     ]
   },
   {
-    "id": "a3_boss_sentinel",
+    "id": "a3_e_deepfake_twin",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_elite_deepfake_twin"
+    ]
+  },
+  {
+    "id": "a3_e_trainer",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_elite_trainer"
+    ]
+  },
+  {
+    "id": "a3_e_adversary",
+    "act": 3,
+    "tier": "elite",
+    "enemies": [
+      "a3_elite_adversary"
+    ]
+  },
+  {
+    "id": "a3_boss_oracle",
     "act": 3,
     "tier": "boss",
     "enemies": [
-      "boss_sentinel_prime"
+      "boss_oracle"
     ]
   },
   {
-    "id": "a4_e_echo",
+    "id": "a3_boss_doppelganger",
+    "act": 3,
+    "tier": "boss",
+    "enemies": [
+      "boss_doppelganger"
+    ]
+  },
+  {
+    "id": "a4_g_glitch_shard",
     "act": 4,
     "tier": "normal",
     "enemies": [
-      "a4_echo_unit"
+      "a4_glitch_shard"
     ],
     "early": true
   },
   {
-    "id": "a4_e_prophet",
+    "id": "a4_g_null_pointer",
     "act": 4,
     "tier": "normal",
     "enemies": [
-      "a4_glitch_prophet"
+      "a4_null_pointer"
     ],
     "early": true
   },
   {
-    "id": "a4_e_crawler",
+    "id": "a4_g_static_cloud",
     "act": 4,
     "tier": "normal",
     "enemies": [
-      "a4_void_crawler"
+      "a4_static_cloud"
     ],
     "early": true
   },
   {
-    "id": "a4_titan",
+    "id": "a4_g_log_eraser",
     "act": 4,
     "tier": "normal",
     "enemies": [
-      "a4_ice_titan"
-    ]
+      "a4_log_eraser"
+    ],
+    "early": true
   },
   {
-    "id": "a4_echo_prophet",
+    "id": "a4_g_recursion",
     "act": 4,
     "tier": "normal",
     "enemies": [
-      "a4_echo_unit",
-      "a4_glitch_prophet"
-    ]
+      "a4_recursion"
+    ],
+    "early": true
   },
   {
-    "id": "a4_crawler_echo",
+    "id": "a4_g_void_plate",
     "act": 4,
     "tier": "normal",
     "enemies": [
-      "a4_void_crawler",
-      "a4_echo_unit"
+      "a4_void_plate"
     ]
   },
   {
-    "id": "a4_elite_reaper",
+    "id": "a4_g_heap_overflow_glitch_shard",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_heap_overflow",
+      "a4_glitch_shard"
+    ]
+  },
+  {
+    "id": "a4_g_data_eater_static_cloud",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_data_eater",
+      "a4_static_cloud"
+    ]
+  },
+  {
+    "id": "a4_g_distortion_null_pointer",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_distortion",
+      "a4_null_pointer"
+    ]
+  },
+  {
+    "id": "a4_g_segfault_corruptor",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_segfault",
+      "a4_corruptor"
+    ]
+  },
+  {
+    "id": "a4_g_echo_ghost_glitch_shard",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_echo_ghost",
+      "a4_glitch_shard"
+    ]
+  },
+  {
+    "id": "a4_g_recursion_void_plate",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_recursion",
+      "a4_void_plate"
+    ]
+  },
+  {
+    "id": "a4_g_log_eraser_segfault",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_log_eraser",
+      "a4_segfault"
+    ]
+  },
+  {
+    "id": "a4_g_corruptor_static_cloud_glitch_shard",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_corruptor",
+      "a4_static_cloud",
+      "a4_glitch_shard"
+    ]
+  },
+  {
+    "id": "a4_g_data_eater_echo_ghost",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_data_eater",
+      "a4_echo_ghost"
+    ]
+  },
+  {
+    "id": "a4_g_null_pointer_distortion",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_null_pointer",
+      "a4_distortion"
+    ]
+  },
+  {
+    "id": "a4_g_heap_overflow_static_cloud",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_heap_overflow",
+      "a4_static_cloud"
+    ]
+  },
+  {
+    "id": "a4_g_glitch_shard_glitch_shard",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_glitch_shard",
+      "a4_glitch_shard"
+    ]
+  },
+  {
+    "id": "a4_g_void_plate_null_pointer",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_void_plate",
+      "a4_null_pointer"
+    ]
+  },
+  {
+    "id": "a4_g_recursion_echo_ghost",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_recursion",
+      "a4_echo_ghost"
+    ]
+  },
+  {
+    "id": "a4_g_segfault_data_eater",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_segfault",
+      "a4_data_eater"
+    ]
+  },
+  {
+    "id": "a4_e_void_warden",
     "act": 4,
     "tier": "elite",
     "enemies": [
-      "a4_data_reaper"
+      "a4_elite_void_warden"
     ]
   },
   {
-    "id": "a4_boss_zero_hour",
+    "id": "a4_e_data_reaper",
+    "act": 4,
+    "tier": "elite",
+    "enemies": [
+      "a4_elite_data_reaper"
+    ]
+  },
+  {
+    "id": "a4_e_twin_core",
+    "act": 4,
+    "tier": "elite",
+    "enemies": [
+      "a4_elite_twin_core"
+    ]
+  },
+  {
+    "id": "a4_e_paradox",
+    "act": 4,
+    "tier": "elite",
+    "enemies": [
+      "a4_elite_paradox"
+    ]
+  },
+  {
+    "id": "a4_boss_singularity",
     "act": 4,
     "tier": "boss",
     "enemies": [
-      "boss_zero_hour"
+      "boss_singularity"
     ]
+  },
+  {
+    "id": "a4_boss_nexus",
+    "act": 4,
+    "tier": "boss",
+    "enemies": [
+      "boss_nexus"
+    ]
+  },
+  {
+    "id": "a4_boss_forgotten",
+    "act": 4,
+    "tier": "boss",
+    "enemies": [
+      "boss_forgotten"
+    ],
+    "weight": 0.25
   }
 ]

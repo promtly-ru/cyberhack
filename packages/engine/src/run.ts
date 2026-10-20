@@ -133,7 +133,7 @@ function startAct(s: RunState, act: 1 | 2 | 3 | 4, ev: GameEvent[]): void {
   s.map = generateMap(act, rngOf(s, 'map'), modsOf(s).eliteWeightMult);
   s.currentNodeId = null;
   const bosses = getContent().data.encounters.filter((e) => e.tier === 'boss' && e.act === act);
-  if (bosses.length > 0) s.bossEncounterId = rngOf(s, 'map').pick(bosses).id;
+  if (bosses.length > 0) s.bossEncounterId = rngOf(s, 'map').weighted(bosses.map((b) => [b.id, b.weight ?? 1] as [string, number]));
   else delete s.bossEncounterId;
   ev.push({ type: 'act_started', act });
   s.screen = { kind: 'map' };

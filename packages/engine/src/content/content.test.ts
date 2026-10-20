@@ -33,6 +33,25 @@ describe('content', () => {
     expect(validateContent()).toEqual([]);
   });
 
+
+  it('ростер: по зонам 12 обычных, 4 элиты, 2+ босса, art и description у всех, миньоны не в группах', () => {
+    resetContent();
+    const { enemies, encounters } = getContent().data;
+    const minion = (id: string) => id.startsWith('minion_');
+    for (const act of [1, 2, 3, 4] as const) {
+      const at = enemies.filter((e) => e.act === act && !minion(e.id));
+      expect(at.filter((e) => e.tier === 'normal')).toHaveLength(12);
+      expect(at.filter((e) => e.tier === 'elite')).toHaveLength(4);
+      expect(at.filter((e) => e.tier === 'boss').length).toBe(act === 4 ? 3 : 2);
+      expect(encounters.filter((e) => e.act === act && e.tier === 'normal').length).toBeGreaterThanOrEqual(20);
+    }
+    for (const e of enemies) {
+      expect(e.art, e.id).toBeDefined();
+      expect(e.description, e.id).toBeTruthy();
+      if (e.tier === 'boss') expect(e.ai.kind, e.id).toBe('phased');
+    }
+    for (const enc of encounters) for (const id of enc.enemies) expect(minion(id), enc.id).toBe(false);
+  });
   it('нет бесконечных комбо: 0-стоимость без сжигания не добирает больше 1 карты', () => {
     // Регрессия: «Скан портов+» (0, добор 2, без сжигания) давал бесконечный цикл добора и блока.
     const bad: string[] = [];

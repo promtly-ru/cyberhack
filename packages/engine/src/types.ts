@@ -158,6 +158,16 @@ export interface EnemyDef {
   moves: EnemyMove[];
   ai: EnemyAi;
   description?: string;
+  /** Подсказка для художника: семейство силуэта, акцентный цвет, заметка */
+  art?: EnemyArtSpec;
+}
+
+export type EnemyArtFamily = 'drone' | 'bot' | 'worm' | 'eye' | 'daemon' | 'construct' | 'swarm' | 'ghost' | 'beast' | 'core';
+export type EnemyArtAccent = 'cyan' | 'magenta' | 'acid' | 'orange' | 'green' | 'violet' | 'red';
+export interface EnemyArtSpec {
+  family: EnemyArtFamily;
+  accent: EnemyArtAccent;
+  note: string;
 }
 
 /** Условие хода врага; все заданные поля должны выполниться */
@@ -217,6 +227,8 @@ export interface EncounterDef {
   enemies: string[]; // id врагов, порядок = слева направо
   /** Только для первых 3 боёв акта (лёгкие) */
   early?: boolean;
+  /** Вес при выборе босса акта (по умолчанию 1; секретный босс — меньше) */
+  weight?: number;
 }
 
 export type RelicTrigger =
