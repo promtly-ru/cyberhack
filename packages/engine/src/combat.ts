@@ -9,7 +9,7 @@ import { canUpgrade, COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, typ
 import { getContent } from './content';
 import { rngOf } from './rng';
 import { getActiveSynergies } from './synergies';
-import { FIRMWARES, isFirmwareActive } from './firmware';
+import { FIRMWARES, firmwareEffects, firmwareLevel, type FirmwareTrigger } from './firmware';
 import { getMutatorMods, type MutatorMods } from './mutators';
 import { gainPotions, type PotionDef } from './potions';
 import { addStatus, calcAttackDamage, calcBlock, DEBUFF_STATUSES, getStatus, KNOWN_STATUSES, STATUS } from './statuses';
@@ -781,13 +781,13 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
   return ctx;
 }
 
-function applyFirmwares(ctx: CombatCtx, trigger: 'combat_start' | 'turn_start'): void {
+function applyFirmwares(ctx: CombatCtx, trigger: FirmwareTrigger): void {
   const owned = ctx.s.firmwares ?? [];
   if (owned.length === 0) return;
   const deck = ctx.s.deck.map((c) => c.defId);
   for (const fw of FIRMWARES) {
-    if (fw.trigger !== trigger || !owned.includes(fw.id) || !isFirmwareActive(fw, deck)) continue;
-    for (const eff of fw.effects) {
+    if (fw.trigger !== trigger || !owned.includes(fw.id)) continue;
+    for (const eff of firmwareEffects(fw, firmwareLevel(fw, deck))) {
       if (isOver(ctx)) return;
       applyRelicEffect(ctx, eff);
     }
@@ -1005,6 +1005,8 @@ export function endTurn(ctx: CombatCtx): void {
   c.volatileUid = undefined;
   if (c.heat !== undefined && (c.counters[COUNTER_TURN_CARDS] ?? 0) === 0) addHeat(ctx, -HEAT_IDLE_COOL);
   triggerRelics(ctx, 'turn_end');
+  if (isOver(ctx)) return;
+  applyFirmwares(ctx, 'turn_end');
   if (isOver(ctx)) return;
   fireHooks(ctx, 'turn_end');
   if (isOver(ctx)) return;

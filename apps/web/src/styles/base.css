@@ -235,11 +235,14 @@ html[data-motion='reduced'] .glitch::before, html[data-motion='reduced'] .glitch
 .fw-pips i.is-on { background: var(--acid); box-shadow: 0 0 6px rgba(232, 255, 58, 0.6); }
 .firmware.is-active { color: #05060f; background: var(--acid); border-color: var(--acid); box-shadow: 0 0 12px rgba(232, 255, 58, 0.55); animation: fw-pulse 2.4s ease-in-out infinite; }
 .firmware.is-active .fw-pips i, .firmware.is-active .fw-pips i.is-on { background: #05060f; box-shadow: none; }
+.firmware.is-partial { color: var(--acid); background: rgba(232, 255, 58, 0.1); border-color: rgba(232, 255, 58, 0.55); }
 .firmware.is-idle { color: var(--text-dim); background: rgba(255, 255, 255, 0.04); border-style: dashed; }
 .fw-needs { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 6px 0 0; padding: 0; list-style: none; }
 .fw-needs li { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); }
 .fw-needs li.is-have { color: var(--acid); border-color: rgba(232, 255, 58, 0.5); }
 .fw-needs li.is-miss { color: var(--text-dim); border-style: dashed; }
+.fw-levels { margin-top: 6px; font-size: 11px; line-height: 1.35; color: var(--text-dim); text-align: left; }
+.fw-levels .is-current { color: var(--acid); font-weight: 700; }
 @keyframes fw-pulse { 50% { box-shadow: 0 0 20px rgba(232, 255, 58, 0.85); } }
 .reward__fw { font-size: 26px; color: var(--acid); text-shadow: 0 0 12px var(--acid); }
 .reward--firmware { border-color: rgba(232, 255, 58, 0.55); box-shadow: 0 0 18px rgba(232, 255, 58, 0.15); }

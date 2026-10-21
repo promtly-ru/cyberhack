@@ -119,3 +119,9 @@
   .potion-menu { animation: none; }
   .potion-slot, .shop-potion { transition: none; }
 }
+
+.mutator-chip__tag { margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-style: normal; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; vertical-align: 1px; }
+.mutator-chip__tag--risk { color: var(--red, #ff5d6c); border: 1px solid currentColor; }
+.mutator-chip__tag--mixed { color: var(--violet); border: 1px solid currentColor; }
+.mutator-warnings { list-style: none; margin: 10px 0 0; padding: 8px 10px; border-left: 3px solid var(--amber, #ffb347); background: rgba(255, 179, 71, 0.08); display: grid; gap: 4px; font-size: 12px; line-height: 1.35; color: var(--text-dim); }
+@media (max-width: 520px) { .mutator-list { grid-template-columns: 1fr; } .mutator-chip { padding: 10px; } }

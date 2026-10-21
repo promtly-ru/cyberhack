@@ -23,6 +23,8 @@ export {
   MAX_SHOP_REFRESHES,
   firmwareProgress,
   isFirmwareActive,
+  firmwareLevel,
+  describeFirmwareEffects,
   getActiveSynergies,
   STARTING_CLASSES,
   achievementProgress,
@@ -40,6 +42,8 @@ export {
   getPotion,
   canUsePotionNow,
   MUTATORS,
+  MUTATOR_SCORE_CAP,
+  mutatorWarnings,
   getMutator,
   // Еженедельный вызов
   WEEKLY_ATTEMPTS,

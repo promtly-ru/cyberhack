@@ -11,6 +11,8 @@ export interface MutatorDef {
   description: string;
   /** Бонус к счёту забега (доля: 0.1 = +10%) */
   scoreBonus: number;
+  /** Характер: risk — чистое усложнение, mixed — обмен плюсов на минусы */
+  tag?: 'risk' | 'mixed';
 }
 
 export interface MutatorMods {
@@ -51,6 +53,7 @@ const SPECS: readonly MutatorSpec[] = [
     name: 'Туман войны',
     description: 'Намерения обычных врагов скрыты — видно только, что они что-то готовят. Элиты и боссы читаются как обычно.',
     scoreBonus: 0.1,
+    tag: 'risk',
     extra: (x) => (x.hideNormalIntents = true),
   },
   {
@@ -81,22 +84,42 @@ const SPECS: readonly MutatorSpec[] = [
     name: 'Чумной сервер',
     description: 'Каждый бой ты начинаешь с 3 Вируса.',
     scoreBonus: 0.1,
+    tag: 'risk',
     extra: (x) => (x.playerCombatStatuses.virus = (x.playerCombatStatuses.virus ?? 0) + 3),
   },
   {
-    id: 'generous',
-    name: 'Щедрая сеть',
-    description: 'Награды щедрее: на 1 карту больше в выборе, золото ×1.3, расходники падают чаще. Но у врагов на 20% больше HP.',
-    scoreBonus: 0.05,
-    mods: (m) => {
-      m.goldMult *= 1.3;
-      m.normalHpMult *= 1.2;
-      m.eliteHpMult *= 1.2;
-      m.bossHpMult *= 1.2;
-    },
+    id: 'armored',
+    name: 'Бронированная сеть',
+    description: 'Каждый враг начинает бой с 2 Барьера. Взамен в награде на 1 карту больше в выборе и расходники падают чаще.',
+    scoreBonus: 0.1,
+    tag: 'mixed',
     extra: (x) => {
+      x.enemyCombatStatuses.barrier = (x.enemyCombatStatuses.barrier ?? 0) + 2;
       x.extraCardChoices += 1;
       x.potionChanceBonus += 0.3;
+    },
+  },
+  {
+    id: 'storm',
+    name: 'Информационный шторм',
+    description: '+2 карты в руке каждый ход, но обычные враги и элиты бьют на 25% сильнее.',
+    scoreBonus: 0.1,
+    tag: 'mixed',
+    mods: (m) => {
+      m.normalDamageMult *= 1.25;
+      m.eliteDamageMult *= 1.25;
+    },
+    extra: (x) => (x.bonusDraw += 2),
+  },
+  {
+    id: 'rare_hunt',
+    name: 'Охота за редкостью',
+    description: 'Редкие карты в наградах выпадают вдвое чаще, но максимум HP на 15% меньше.',
+    scoreBonus: 0.05,
+    tag: 'mixed',
+    mods: (m) => {
+      m.rareCardMult *= 2;
+      m.maxHpPenaltyPct = Math.min(0.9, m.maxHpPenaltyPct + 0.15);
     },
   },
   {
@@ -104,6 +127,7 @@ const SPECS: readonly MutatorSpec[] = [
     name: 'Охота на элиту',
     description: 'Элитных стражей на карте вдвое больше, и они на 10% крепче.',
     scoreBonus: 0.15,
+    tag: 'risk',
     mods: (m) => {
       m.eliteWeightMult *= 2;
       m.eliteHpMult *= 1.1;
@@ -230,19 +254,21 @@ const DIFFICULTY_RULES: readonly MutatorSpec[] = [
   },
 ];
 
+const pub = ({ id, name, description, scoreBonus, tag }: MutatorSpec): MutatorDef => (tag ? { id, name, description, scoreBonus, tag } : { id, name, description, scoreBonus });
+
 /** Публичный список мутаторов (для UI). */
-export const MUTATORS: readonly MutatorDef[] = SPECS.map(({ id, name, description, scoreBonus }) => ({ id, name, description, scoreBonus }));
+export const MUTATORS: readonly MutatorDef[] = SPECS.map(pub);
 
 const BY_ID = new Map([...SPECS, ...WEEKLY_RULES, ...DIFFICULTY_RULES].map((m) => [m.id, m] as const));
 
 export function getWeeklyRule(id: string): MutatorDef | undefined {
   const m = WEEKLY_RULES.find((r) => r.id === id);
-  return m ? { id: m.id, name: m.name, description: m.description, scoreBonus: m.scoreBonus } : undefined;
+  return m ? pub(m) : undefined;
 }
 
 export function getMutator(id: string): MutatorDef | undefined {
   const m = BY_ID.get(id);
-  return m ? { id: m.id, name: m.name, description: m.description, scoreBonus: m.scoreBonus } : undefined;
+  return m ? pub(m) : undefined;
 }
 
 /** Только известные id, без повторов, в каноническом порядке. */
@@ -282,9 +308,28 @@ export function getMutatorMods(ids: readonly string[] | undefined): MutatorMods 
   return x;
 }
 
-/** Множитель счёта: 1 + сумма бонусов. */
+/** Потолок суммарного бонуса мутаторов к счёту: стопка из всех не должна ломать таблицу рекордов. */
+export const MUTATOR_SCORE_CAP = 0.8;
+
+/** Множитель счёта: 1 + сумма бонусов, но не больше 1 + MUTATOR_SCORE_CAP. */
 export function mutatorScoreMult(ids: readonly string[] | undefined): number {
   let b = 0;
   for (const id of ids ?? []) b += BY_ID.get(id)?.scoreBonus ?? 0;
-  return 1 + b;
+  return 1 + Math.min(MUTATOR_SCORE_CAP, b);
+}
+
+/** Предупреждения о неудачных комбинациях (не запрещают выбор). */
+export function mutatorWarnings(ids: readonly string[] | undefined, zeroDay = false): string[] {
+  const set = new Set(normalizeMutators(ids));
+  const out: string[] = [];
+  if (set.has('glass_cannon') && set.has('fragile')) out.push('Стеклянная пушка + Хрупкий носитель: один пропущенный удар может убить.');
+  if (set.has('glass_cannon') && set.has('storm')) out.push('Стеклянная пушка + Шторм: враги бьют почти вдвое сильнее — очень жёстко.');
+  if (set.has('plague') && set.has('fragile')) out.push('Чумной сервер + Хрупкий носитель: Вирус быстро съедает урезанное HP.');
+  if (set.has('fragile') && set.has('rare_hunt')) out.push('Хрупкий носитель + Охота за редкостью: HP урезано дважды (−45%).');
+  if (set.has('elite_hunt') && set.has('armored')) out.push('Охота на элиту + Бронированная сеть: толстые элиты затянут бои.');
+  if (set.has('poverty') && set.has('armored')) out.push('Бедность + Бронированная сеть: награды щедрее, но золота мало — выбор карт важнее покупок.');
+  if (zeroDay && set.has('fog')) out.push('Туман войны уже входит в «Нулевой день» — мутатор ничего не добавит, но бонус к счёту засчитается.');
+  const total = [...set].reduce((a, id) => a + (BY_ID.get(id)?.scoreBonus ?? 0), 0) + (zeroDay ? (BY_ID.get(ZERO_DAY_RULE_ID)?.scoreBonus ?? 0) : 0);
+  if (total > MUTATOR_SCORE_CAP) out.push(`Бонус к счёту ограничен потолком +${Math.round(MUTATOR_SCORE_CAP * 100)}%.`);
+  return out;
 }

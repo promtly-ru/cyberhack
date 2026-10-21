@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { weeklyMutatorIds } from './weekly';
 import { enterCombat, OPTS, play, setupCombat, useContent } from './__fixtures__/helpers';
 import { mechanicsContent } from './__fixtures__/mechanics';
-import { applyMutators, getMutatorMods, MUTATORS, mutatorScoreMult, normalizeMutators } from './mutators';
+import { applyMutators, getMutatorMods, MUTATORS, mutatorScoreMult, mutatorWarnings, normalizeMutators } from './mutators';
 import { getAscensionMods } from './ascension';
 import { buildCombatRewards } from './rewards';
 import { modsOf, newRun } from './run';
@@ -15,9 +15,9 @@ const c0 = (s: RunState) => s.combat!;
 const withMut = (...m: string[]): NewRunOptions => ({ ...OPTS, mutators: m });
 
 describe('мутаторы: список и нормализация', () => {
-  it('6–8 мутаторов с русскими названиями', () => {
+  it('6–12 мутаторов с русскими названиями', () => {
     expect(MUTATORS.length).toBeGreaterThanOrEqual(6);
-    expect(MUTATORS.length).toBeLessThanOrEqual(8);
+    expect(MUTATORS.length).toBeLessThanOrEqual(12);
     for (const m of MUTATORS) {
       expect(m.name).toMatch(/[А-Яа-яЁё]/);
       expect(m.description).toMatch(/[А-Яа-яЁё]/);
@@ -26,6 +26,8 @@ describe('мутаторы: список и нормализация', () => {
 
   it('неизвестные и повторы отбрасываются, порядок канонический', () => {
     expect(normalizeMutators(['nope', 'plague', 'fog', 'fog'])).toEqual(['fog', 'plague']);
+    expect(normalizeMutators(['generous', 'fog'])).toEqual(['fog']); // удалённый id игнорируется
+    expect(getMutatorMods(['generous']).extraCardChoices).toBe(0);
     expect(newRun(withMut('nope')).mutators).toBeUndefined();
     expect(newRun(withMut('plague', 'fog')).mutators).toEqual(['fog', 'plague']);
   });
@@ -59,6 +61,19 @@ describe('мутаторы: список и нормализация', () => {
     const plain = newRun(OPTS);
     s.floor = plain.floor = 20;
     expect(computeScore(s)).toBe(Math.round(computeScore(plain) * 1.25));
+  });
+});
+
+describe('мутаторы: предупреждения и потолок счёта', () => {
+  it('опасные комбинации дают предупреждения', () => {
+    expect(mutatorWarnings(['fog'])).toEqual([]);
+    expect(mutatorWarnings(['glass_cannon', 'fragile']).length).toBe(1);
+    expect(mutatorWarnings(['fog'], true).length).toBe(1);
+  });
+
+  it('множитель счёта ограничен потолком +80%', () => {
+    expect(mutatorScoreMult(MUTATORS.map((m) => m.id))).toBeLessThanOrEqual(1.8);
+    expect(mutatorScoreMult(['dz_zero_day', 'fog'])).toBeCloseTo(1.5);
   });
 });
 
@@ -110,12 +125,23 @@ describe('мутаторы: правила', () => {
     for (const e of c0(s).enemies) expect(e.statuses.strength).toBe(2);
   });
 
-  it('Щедрая сеть: 4 карты на выбор, враги крепче', () => {
-    const s = newRun(withMut('generous'));
+  it('Бронированная сеть: враги с Барьером, 4 карты на выбор', () => {
+    const s = newRun(withMut('armored'));
     const items = buildCombatRewards(s, 'normal', modsOf(s));
     const choice = items.find((x) => x.kind === 'card_choice');
     expect(choice && choice.kind === 'card_choice' ? choice.cardIds.length : 0).toBe(4);
-    expect(modsOf(s).normalHpMult).toBeCloseTo(1.2);
+    expect(getMutatorMods(['armored']).enemyCombatStatuses.barrier).toBe(2);
+  });
+
+  it('Информационный шторм: +2 к добору, враги бьют сильнее', () => {
+    expect(getMutatorMods(['storm']).bonusDraw).toBe(2);
+    expect(modsOf({ ascension: 0, difficulty: 'normal', mutators: ['storm'] }).normalDamageMult).toBeCloseTo(1.25);
+  });
+
+  it('Охота за редкостью: редкие ×2, HP −15%', () => {
+    const m = modsOf({ ascension: 0, difficulty: 'normal', mutators: ['rare_hunt'] });
+    expect(m.rareCardMult).toBe(2);
+    expect(m.maxHpPenaltyPct).toBeCloseTo(0.15);
   });
 
   it('Охота на элиту: элиты чаще и крепче', () => {
@@ -125,7 +151,7 @@ describe('мутаторы: правила', () => {
   });
 
   it('мутаторы детерминированы: одинаковые опции — одинаковый забег', () => {
-    const o = withMut('fog', 'plague', 'generous');
+    const o = withMut('fog', 'plague', 'armored');
     expect(newRun(o)).toEqual(newRun(o));
   });
 });

@@ -11,7 +11,7 @@ import { tip } from '../components/Tooltip';
 import { useUi } from '../ui/uiStore';
 import { sfx, unlockAudio } from '../audio/sfx';
 import { AscensionInfo, CLASS_NAME, WeeklyBoard, weekLabel } from './MetaBits';
-import { MutatorPicker } from './MutatorPicker';
+import { MutatorPicker, mutatorBonusPct } from './MutatorPicker';
 import { AccountChip } from './ProfileScreen';
 import { startTutorial } from '../tutorial/Tutorial';
 import { isInstalledApp } from '../download/DownloadScreen';
@@ -282,6 +282,7 @@ function RegularSelect() {
   const [mutators, setMutators] = useState<string[]>([]);
   useEffect(() => setAsc((a) => Math.min(a, maxAsc)), [maxAsc]);
   const current = classes.find((c) => c.id === cls);
+  const scorePct = mutatorBonusPct(mutators) + Math.round(DIFFICULTY_CARDS[diff].scoreBonus * 100);
 
   const start = () => {
     unlockAudio();
@@ -350,7 +351,7 @@ function RegularSelect() {
           })}
         </div>
       </section>
-      <MutatorPicker value={mutators} onChange={setMutators} />
+      <MutatorPicker value={mutators} onChange={setMutators} zeroDay={diff === 'zero_day'} />
       <section className="cs-asc" aria-label="Уровень сложности">
         <div className="cs-asc__head">
           <h2 className="section-title">Ascension (открывается победами)</h2>
@@ -387,7 +388,7 @@ function RegularSelect() {
             <RelicIcon id={current.startingRelic} />
             <span>
               <b>{current.name}</b>
-              <small className="muted">{`${heatMode ? 'Перегрев · ' : ''}${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}${mutators.length ? ` · мутаторов: ${mutators.length}` : ''}`}</small>
+              <small className="muted">{`${heatMode ? 'Перегрев · ' : ''}${DIFFICULTY_INFO[diff].name}${asc > 0 ? ` · Ascension ${asc}` : ''}${mutators.length ? ` · мутаторов: ${mutators.length}` : ''}${scorePct > 0 ? ` · очки +${scorePct}%` : ''}`}</small>
             </span>
           </div>
         ) : null}

@@ -1,22 +1,24 @@
 import { useState } from 'react';
-import { MUTATORS } from '../game/engine';
+import { MUTATORS, MUTATOR_SCORE_CAP, mutatorWarnings } from '../game/engine';
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
 
 /** Суммарный бонус к счёту выбранных мутаторов, в процентах. */
 export function mutatorBonusPct(ids: readonly string[]): number {
-  return Math.round(ids.reduce((sum, id) => sum + (MUTATORS.find((m) => m.id === id)?.scoreBonus ?? 0), 0) * 100);
+  const sum = ids.reduce((acc, id) => acc + (MUTATORS.find((m) => m.id === id)?.scoreBonus ?? 0), 0);
+  return Math.round(Math.min(MUTATOR_SCORE_CAP, sum) * 100);
 }
 
 /** Выбор мутаторов забега (необязательно). Свёрнут по умолчанию, чтобы не перегружать экран новичку. */
-export function MutatorPicker({ value, onChange }: { value: readonly string[]; onChange: (ids: string[]) => void }) {
+export function MutatorPicker({ value, onChange, zeroDay = false }: { value: readonly string[]; onChange: (ids: string[]) => void; zeroDay?: boolean }) {
   const [open, setOpen] = useState(value.length > 0);
   const toggle = (id: string) => {
     sfx('click');
     onChange(value.includes(id) ? value.filter((x) => x !== id) : [...value, id]);
   };
   const bonus = mutatorBonusPct(value);
+  const warnings = mutatorWarnings(value, zeroDay);
   return (
     <section className="cs-asc cs-mutators" aria-label="Мутаторы забега" data-testid="mutators">
       <div className="cs-asc__head">
@@ -58,7 +60,10 @@ export function MutatorPicker({ value, onChange }: { value: readonly string[]; o
                   {on ? <Icon name="check" size={14} /> : null}
                 </span>
                 <span className="mutator-chip__text">
-                  <b>{m.name}</b>
+                  <b>
+                    {m.name}
+                    {m.tag ? <i className={`mutator-chip__tag mutator-chip__tag--${m.tag}`}>{m.tag === 'risk' ? 'риск' : 'обмен'}</i> : null}
+                  </b>
                   <small>{m.description}</small>
                 </span>
                 {m.scoreBonus > 0 ? <span className="mutator-chip__bonus mono">+{Math.round(m.scoreBonus * 100)}%</span> : null}
@@ -66,6 +71,13 @@ export function MutatorPicker({ value, onChange }: { value: readonly string[]; o
             );
           })}
         </div>
+      ) : null}
+      {warnings.length ? (
+        <ul className="mutator-warnings" role="status" data-testid="mutator-warnings">
+          {warnings.map((w) => (
+            <li key={w}>{w}</li>
+          ))}
+        </ul>
       ) : null}
     </section>
   );

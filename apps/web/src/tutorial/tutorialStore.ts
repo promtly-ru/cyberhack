@@ -147,6 +147,28 @@ export function nextStep(): void {
   if (t.active) goTo(t.index + 1);
 }
 
+/** Индекс предыдущего пояснения: только подряд идущие coach-шаги на том же экране. */
+function prevIndex(index: number, c: Ctx): number {
+  for (let i = index - 1; i >= 0; i--) {
+    const st = STEPS[i]!;
+    if (st.skip?.(c)) continue;
+    return st.mode === 'coach' && st.screens.includes(c.screen) ? i : -1;
+  }
+  return -1;
+}
+
+export function canGoBack(index: number, c: Ctx | null): boolean {
+  return !!c && prevIndex(index, c) >= 0;
+}
+
+export function prevStep(): void {
+  const t = useTutorial.getState();
+  if (!t.active) return;
+  const c = ctxOf(useGame.getState(), t);
+  const i = c ? prevIndex(t.index, c) : -1;
+  if (i >= 0) useTutorial.setState({ index: i });
+}
+
 export function skipTutorial(): void {
   markFlag('skipped');
   stop();

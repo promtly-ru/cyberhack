@@ -5,7 +5,6 @@
 import type { ReactNode } from 'react';
 import type { CombatState, MapNodeKind, RunState } from '../game/engine';
 import { DIFFICULTY_INFO, cardStats, getEnemyDef, listClasses } from '../game/engine';
-import { CLASS_STYLE } from '../screens/MenuScreens';
 import { NODE_LABEL } from '../screens/MapScreen';
 import { Icon } from '../components/Icon';
 
@@ -131,14 +130,14 @@ export const STEPS: Step[] = [
     mode: 'coach',
     screens: ['map'],
     title: 'Карта сети',
-    text: () => 'Это карта сети. На каждом шаге выбираешь один из доступных узлов и так пробиваешься к боссу акта. Назад хода нет.',
+    text: () => 'Это карта сети: выбираешь доступный узел и идёшь к боссу акта. Назад хода нет.',
   },
   {
     id: 'map-node',
     mode: 'action',
     screens: ['map'],
     title: 'Первый узел',
-    text: () => 'Карточки — это узлы на выбор. Начнём с боя: нажми на карточку «Сервер».',
+    text: () => 'Начнём с боя: нажми на узел «Сервер».',
     // Карточка доступного узла: сначала бой, иначе любой доступный
     target: () => [
       '[data-testid="map-node"][data-state="available"][data-kind="combat"]',
@@ -151,14 +150,6 @@ export const STEPS: Step[] = [
     mode: 'coach',
     screens: ['combat'],
     title: 'Это ты',
-    text: (c) => `Полоска под тобой — здоровье (HP), сейчас ${c.combat?.player.hp ?? 0} из ${c.combat?.player.maxHp ?? 0}. Упадёт до нуля — забег окончен.`,
-    target: () => ['[data-tut="player"] .unit', '[data-tut="player"]'],
-  },
-  {
-    id: 'class',
-    mode: 'coach',
-    screens: ['combat'],
-    title: 'Твой класс',
     text: (c) => {
       let name = c.run.classId as string;
       try {
@@ -166,8 +157,7 @@ export const STEPS: Step[] = [
       } catch {
         /* имя по id */
       }
-      const style = CLASS_STYLE[c.run.classId];
-      return `Ты играешь за класс «${name}». Класс задаёт стартовую колоду, здоровье и имплант на весь забег.${style ? ` Стиль: ${style}` : ''} Остальные классы открываются победами, их видно в «Новый взлом».`;
+      return `Класс «${name}». Полоска под тобой — HP: ${c.combat?.player.hp ?? 0} из ${c.combat?.player.maxHp ?? 0}. Дойдёт до нуля — забег окончен.`;
     },
     target: () => ['[data-tut="player"] .unit', '[data-tut="player"]'],
   },
@@ -206,15 +196,7 @@ export const STEPS: Step[] = [
     mode: 'coach',
     screens: ['combat'],
     title: 'Рука',
-    text: () => 'Это твоя рука. Несыгранные карты в конце хода уходят в сброс, а в новом ходу ты берёшь свежие из колоды.',
-    target: () => ['[data-testid="hand"]'],
-  },
-  {
-    id: 'card-kinds',
-    mode: 'coach',
-    screens: ['combat'],
-    title: 'Категории карт',
-    text: () => 'Подпись и цвет рамки — категория карты: атака (красная), защита, ослабление, усиление, ресурс, модуль. Если текст не влезает, зажми карту — откроется подробное описание.',
+    text: () => 'Это твоя рука. Цвет рамки и подпись — тип карты (атака, защита, усиление). Длинный текст раскроется, если зажать карту. Несыгранное в конце хода уходит в сброс.',
     target: () => ['[data-testid="hand"]'],
   },
   {
@@ -253,8 +235,8 @@ export const STEPS: Step[] = [
     title: 'Конец хода',
     text: (c) =>
       (c.combat?.energy ?? 0) > 0
-        ? 'Энергия ещё есть — можешь сыграть что-нибудь ещё. Потом жми «Конец хода», и враг сделает свой ход.'
-        : 'Энергия кончилась. Жми «Конец хода» — теперь ходит враг.',
+        ? 'Энергия ещё есть, можно сыграть что-то ещё. Затем жми «Конец хода».'
+        : 'Энергия кончилась. Жми «Конец хода».',
     target: () => ['[data-testid="end-turn"]'],
     done: (c) => (c.combat?.turn ?? 0) > c.snap.turn || c.screen !== 'combat',
   },
@@ -341,7 +323,7 @@ export const STEPS: Step[] = [
     title: 'Режим и сложность',
     text: (c) => {
       const d = c.run.difficulty ?? 'normal';
-      return `Сейчас режим «${DIFFICULTY_INFO[d].name}»: ${DIFFICULTY_INFO[d].description} Перед забегом режим выбираешь сам: лёгкий, обычный или сложный. А уровни Ascension открываются победами: каждый добавляет врагам силы.`;
+      return `Сейчас режим «${DIFFICULTY_INFO[d].name}»: ${DIFFICULTY_INFO[d].description} Перед забегом сложность выбираешь сам. Уровни Ascension открываются победами: каждый чуть усложняет забег. Есть ещё мутаторы и еженедельный вызов, о них в «Как играть».`;
     },
   },
   {
@@ -349,7 +331,7 @@ export const STEPS: Step[] = [
     mode: 'final',
     screens: ['map', 'reward', 'card_pick', 'combat', 'other'],
     title: 'Готово!',
-    text: () => 'Забег продолжается: дальше выбирай путь сам. Правила и словарь терминов всегда есть в меню, в разделе «Как играть».',
+    text: () => 'Дальше путь твой. Правила, статусы, прошивки и режимы всегда в меню, в разделе «Как играть».',
   },
 ];
 

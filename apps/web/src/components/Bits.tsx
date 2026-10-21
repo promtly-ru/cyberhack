@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, type ReactNode } from 'react';
-import { cardStats, firmwareProgress, getActiveSynergies, getFirmware, tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
+import { cardStats, describeFirmwareEffects, firmwareLevel, firmwareProgress, getActiveSynergies, getFirmware, tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
 import { hash, r2, rng } from '../ui/rand';
 import { Icon, hasIcon } from './Icon';
 import { tip } from './Tooltip';
@@ -255,19 +255,28 @@ function FirmwarePips({ have, total }: { have: number; total: number }) {
   );
 }
 
-/** Чек-лист карт, нужных для прошивки (✓ есть в колоде, ✗ нет). */
+const FW_STATE = ['не активна', 'частично (2/3)', 'активна (3/3)'] as const;
+
+/** Чек-лист карт, нужных для прошивки (✓ есть в колоде, ✗ нет) + что даёт каждый уровень. */
 export function FirmwareChecklist({ firmwareId, deck }: { firmwareId: string; deck: readonly { defId: string }[] }) {
   const fw = getFirmware(firmwareId);
   if (!fw) return null;
   const have = new Set(deck.map((c) => c.defId));
+  const level = firmwareLevel(fw, deck.map((c) => c.defId));
   return (
-    <ul className="fw-needs" aria-label="Нужные карты">
-      {fw.needs.map((id) => (
-        <li key={id} className={have.has(id) ? 'is-have' : 'is-miss'}>
-          <span aria-hidden="true">{have.has(id) ? '✓' : '✗'}</span> {cardName(id)}
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="fw-needs" aria-label="Нужные карты">
+        {fw.needs.map((id) => (
+          <li key={id} className={have.has(id) ? 'is-have' : 'is-miss'}>
+            <span aria-hidden="true">{have.has(id) ? '✓' : '✗'}</span> {cardName(id)}
+          </li>
+        ))}
+      </ul>
+      <div className="fw-levels" data-level={level}>
+        <div className={level === 1 ? 'is-current' : undefined}>2/3: {describeFirmwareEffects(fw, 1)}</div>
+        <div className={level === 2 ? 'is-current' : undefined}>3/3: {describeFirmwareEffects(fw, 2)}</div>
+      </div>
+    </>
   );
 }
 
@@ -283,15 +292,20 @@ export function FirmwareBar({ firmwares, deck }: { firmwares: readonly string[];
         const fw = getFirmware(id);
         if (!fw) return null;
         const { missing } = firmwareProgress(fw, ids);
-        const active = missing.length === 0;
+        const level = firmwareLevel(fw, ids);
         const have = fw.needs.length - missing.length;
+        const cls = level === 2 ? 'is-active' : level === 1 ? 'is-partial' : 'is-idle';
         return (
           <span
             key={id}
-            className={`firmware${active ? ' is-active' : ' is-idle'}`}
+            className={`firmware ${cls}`}
             tabIndex={0}
-            aria-label={`${fw.name}: ${active ? 'активна' : `не хватает карт: ${missing.length}`}`}
-            {...tip(`${active ? '⚡' : '○'} ${fw.name}`, `${fw.description}. ${active ? 'Активна!' : 'Не активна: собери все карты.'} ${firmwareNeeds(id, deck)}`)}
+            data-level={level}
+            aria-label={`${fw.name}: ${FW_STATE[level]}`}
+            {...tip(
+              `${level === 2 ? '⚡' : level === 1 ? '◐' : '○'} ${fw.name} — ${FW_STATE[level]}`,
+              `2/3: ${describeFirmwareEffects(fw, 1)}. 3/3: ${describeFirmwareEffects(fw, 2)}. ${firmwareNeeds(id, deck)}`,
+            )}
           >
             <Icon name="firmware" size={14} />
             <span className="firmware__name">{fw.name}</span>

@@ -9,7 +9,7 @@ import { CLASS_STYLE } from '../screens/MenuScreens';
 import { isReducedMotion } from '../ui/settings';
 import { sfx } from '../audio/sfx';
 import { COUNTED, STEPS, type Step } from './steps';
-import { beginTutorial, ctxOf, declineInvite, finishTutorial, hasActiveRun, nextStep, skipTutorial, useTutorial } from './tutorialStore';
+import { beginTutorial, canGoBack, ctxOf, declineInvite, finishTutorial, hasActiveRun, nextStep, prevStep, skipTutorial, useTutorial } from './tutorialStore';
 import { ScreenHint, TopPlaque } from './hints';
 
 /** Запустить обучение (из меню или из приглашения при первом запуске). */
@@ -264,8 +264,13 @@ function Coach() {
         ) : (
           <div className="tut-bubble__actions">
             <button className="btn btn--ghost btn--sm tut-skip" data-testid="tutorial-skip" onClick={skipTutorial}>
-              Пропустить обучение
+              Пропустить
             </button>
+            {step.mode === 'coach' && canGoBack(index, ctx) ? (
+              <button className="btn btn--ghost btn--sm" data-testid="tutorial-prev" onClick={prevStep}>
+                Назад
+              </button>
+            ) : null}
             {showNext ? (
               <button
                 ref={primaryRef}

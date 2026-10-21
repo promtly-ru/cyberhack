@@ -1,9 +1,15 @@
 /**
  * Прошивки: редкие модули, которые выпадают с элит, боссов и иногда с обычных боёв.
- * Прошивка работает, только если в колоде собраны все её особые карты.
+ * Уровни: 3/3 карт в колоде — полный бонус; 2/3 — ослабленный (половина чисел,
+ * без энергии/добора/создания карт; если ничего не осталось — немного блока); меньше — не работает.
  */
 import { getContent } from './content';
 import type { Effect, RunState } from './types';
+
+export type FirmwareTrigger = 'combat_start' | 'turn_start' | 'turn_end';
+
+/** 0 — не активна, 1 — частично (2/3), 2 — полностью (3/3) */
+export type FirmwareLevel = 0 | 1 | 2;
 
 export interface FirmwareDef {
   id: string;
@@ -14,7 +20,7 @@ export interface FirmwareDef {
   classId: string;
   /** Карты (defId), которые все должны лежать в колоде */
   needs: string[];
-  trigger: 'combat_start' | 'turn_start';
+  trigger: FirmwareTrigger;
   effects: Effect[];
 }
 
@@ -32,7 +38,7 @@ export const FIRMWARES: readonly FirmwareDef[] = [
   { id: 'fw_hundred', name: 'Сто клинков', description: 'В начале боя +3 Разгона и 4 Контрудара', classId: 'samurai', needs: ['sm_hundred_cuts', 'sm_twin_cut', 'sm_whirlwind'], trigger: 'combat_start', effects: [self('strength', 3), self('thorns', 4)] },
   { id: 'fw_citadel', name: 'Цитадель', description: 'Каждый ход +6 блока и +1 Броня-патч', classId: 'engineer', needs: ['en_fortress', 'en_reinforce', 'en_hardlight'], trigger: 'turn_start', effects: [{ type: 'block', amount: 6 }, self('plating', 1)] },
   { id: 'fw_forge', name: 'Горн', description: 'В начале боя +2 энергии на первый ход и +2 Разгона', classId: 'engineer', needs: ['en_reactor', 'en_railgun', 'en_overcharge'], trigger: 'combat_start', effects: [{ type: 'gain_energy', amount: 2 }, self('strength', 2)] },
-  { id: 'fw_biosync', name: 'Биосинхронизатор', description: 'Каждый ход восстанавливает 2 HP', classId: 'biohacker', needs: ['bh_symbiote', 'bh_regen_matrix', 'bh_blood_pact'], trigger: 'turn_start', effects: [{ type: 'heal', amount: 2 }] },
+  { id: 'fw_biosync', name: 'Биосинхронизатор', description: 'В конце каждого хода восстанавливает 2 HP', classId: 'biohacker', needs: ['bh_symbiote', 'bh_regen_matrix', 'bh_blood_pact'], trigger: 'turn_end', effects: [{ type: 'heal', amount: 2 }] },
   { id: 'fw_overgrowth', name: 'Перерождение', description: 'В начале боя +4 Самовосстановления и +2 Разгона', classId: 'biohacker', needs: ['bh_overgrowth', 'bh_adrenaline', 'bh_mutation'], trigger: 'combat_start', effects: [self('regen', 4), self('strength', 2)] },
   { id: 'fw_miner', name: 'Майнинг-ферма', description: 'Каждый ход +1 карта', classId: 'neutral', needs: ['n_miner', 'n_ram_upgrade', 'n_debugger'], trigger: 'turn_start', effects: [{ type: 'draw', amount: 1 }] },
   { id: 'fw_siege', name: 'Осадный набор', description: 'В начале боя все враги получают 3 Лага и 3 Бреши', classId: 'neutral', needs: ['n_mass_scan', 'n_ddos_kit', 'n_buffer_overflow'], trigger: 'combat_start', effects: [all('weak', 3), all('vulnerable', 3)] },
@@ -64,6 +70,56 @@ export function firmwareProgress(fw: FirmwareDef, deckDefIds: readonly string[])
 
 export function isFirmwareActive(fw: FirmwareDef, deckDefIds: readonly string[]): boolean {
   return firmwareProgress(fw, deckDefIds).missing.length === 0;
+}
+
+/** Уровень прошивки по составу колоды. */
+export function firmwareLevel(fw: FirmwareDef, deckDefIds: readonly string[]): FirmwareLevel {
+  const { missing } = firmwareProgress(fw, deckDefIds);
+  if (missing.length === 0) return 2;
+  return missing.length === 1 && fw.needs.length >= 3 ? 1 : 0;
+}
+
+/** Ослабленные эффекты (уровень 1): числа пополам, без энергии/добора/карт; пусто → немного блока. */
+export function partialEffects(fw: FirmwareDef): Effect[] {
+  const out: Effect[] = [];
+  for (const e of fw.effects) {
+    if (e.type === 'apply_status' || e.type === 'block' || e.type === 'heal') out.push({ ...e, amount: Math.max(1, Math.ceil(e.amount / 2)) });
+  }
+  if (out.length === 0) out.push({ type: 'block', amount: fw.trigger === 'combat_start' ? 5 : 3 });
+  return out;
+}
+
+/** Эффекты прошивки для уровня (0 — пусто). */
+export function firmwareEffects(fw: FirmwareDef, level: FirmwareLevel): readonly Effect[] {
+  return level === 2 ? fw.effects : level === 1 ? partialEffects(fw) : [];
+}
+
+function statusName(id: string): string {
+  return getContent().statuses.get(id)?.name ?? id;
+}
+
+/** Текст эффектов для UI. */
+export function describeFirmwareEffects(fw: FirmwareDef, level: 1 | 2): string {
+  const when = fw.trigger === 'combat_start' ? 'В начале боя' : fw.trigger === 'turn_end' ? 'В конце каждого хода' : 'Каждый ход';
+  const parts = firmwareEffects(fw, level).map((e) => {
+    switch (e.type) {
+      case 'block':
+        return `${e.amount} блока`;
+      case 'heal':
+        return `${e.amount} HP`;
+      case 'draw':
+        return `+${e.amount} карта`;
+      case 'gain_energy':
+        return `+${e.amount} энергии`;
+      case 'add_card':
+        return 'карта в руку';
+      case 'apply_status':
+        return e.target === 'all_enemies' ? `враги: ${e.amount} ${statusName(e.status)}` : `+${e.amount} ${statusName(e.status)}`;
+      default:
+        return '';
+    }
+  });
+  return `${when}: ${parts.filter(Boolean).join(', ')}`;
 }
 
 /** Прошивки, которые можно выдать: свой класс или нейтральные, ещё не полученные, все карты существуют в контенте. */
