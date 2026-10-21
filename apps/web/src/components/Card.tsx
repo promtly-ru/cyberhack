@@ -167,7 +167,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
         <div className="card__art">
           <CardArt id={def.id} upgraded={upgraded} />
         </div>
-        <div className="card__name">
+        <div className={`card__name${longestWord(name) >= 16 ? ' is-xlong' : longestWord(name) >= 12 ? ' is-long' : ''}`}>
           <span>{name}</span>
           {upgraded ? <span className="card__plus">+</span> : null}
         </div>
@@ -185,3 +185,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
     </div>
   );
 });
+
+function longestWord(s: string): number {
+  return s.split(/\s+/).reduce((m, w) => Math.max(m, w.length), 0);
+}

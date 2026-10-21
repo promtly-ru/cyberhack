@@ -119,3 +119,7 @@
 .cat--resource { --accent: #3dff8a; --accent-2: #b4ffd2; --frame-bg: #061a0f; }
 .cat--power { --accent: #e8ff3a; --accent-2: #fff59a; --frame-bg: #121407; }
 .cat--curse { --accent: #c0634a; --accent-2: #5a2418; --frame-bg: #160a07; }
+
+/* Длинные слова в названии не рвём посреди слова — уменьшаем шрифт */
+.card__name.is-long { font-size: 7cqw; }
+.card__name.is-xlong { font-size: 5.8cqw; }
