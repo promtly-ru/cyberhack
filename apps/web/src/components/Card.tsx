@@ -12,6 +12,38 @@ export const TYPE_LABEL: Record<CardType, string> = {
   curse: 'Проклятие',
 };
 
+/** Категория карты для цвета и подписи: вычисляется по эффектам, тип движка не меняется */
+export type CardCategory = 'attack' | 'defense' | 'debuff' | 'buff' | 'resource' | 'power' | 'status' | 'curse';
+
+export const CATEGORY_LABEL: Record<CardCategory, string> = {
+  attack: 'Атака',
+  defense: 'Защита',
+  debuff: 'Ослабление',
+  buff: 'Усиление',
+  resource: 'Ресурс',
+  power: 'Модуль',
+  status: 'Статус',
+  curse: 'Проклятие',
+};
+
+type AnyEffect = { type: string; target?: string; then?: AnyEffect[]; else?: AnyEffect[] };
+
+function flatEffects(list: readonly AnyEffect[] = []): AnyEffect[] {
+  return list.flatMap((e) => [e, ...flatEffects(e.then), ...flatEffects(e.else)]);
+}
+
+export function cardCategory(def: { type: CardType; target?: string; effects?: readonly unknown[] }): CardCategory {
+  if (def.type === 'power' || def.type === 'status' || def.type === 'curse') return def.type;
+  const effs = flatEffects((def.effects ?? []) as AnyEffect[]);
+  const has = (...t: string[]) => effs.some((e) => t.includes(e.type));
+  if (has('damage', 'consume_status')) return 'attack';
+  if (has('block')) return 'defense';
+  const onEnemy = effs.some((e) => (e.type === 'apply_status' || e.type === 'multiply_status') && (e.target ?? def.target) !== 'self' && (e.target ?? def.target) !== 'none');
+  if (onEnemy) return 'debuff';
+  if (has('apply_status', 'multiply_status', 'add_hook', 'double_next')) return 'buff';
+  return def.type === 'attack' ? 'attack' : 'resource';
+}
+
 export const RARITY_LABEL: Record<Rarity, string> = {
   starter: 'Базовая',
   common: 'Обычная',
@@ -116,6 +148,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
   const cls = [
     'card',
     `card--${def.type}`,
+    `cat--${cardCategory(def)}`,
     `rarity--${def.rarity}`,
     `card-cls--${def.classId}`,
     upgraded ? 'is-upgraded' : '',
@@ -128,7 +161,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
   const costLabel = cost === -1 ? 'X' : cost <= -2 ? null : String(cost);
   const costChanged = upgraded && def.upgrade?.cost !== undefined && def.upgrade.cost !== def.cost;
   return (
-    <div className={cls} style={style} aria-label={`${name}${upgraded ? '+' : ''}, ${TYPE_LABEL[def.type]}, стоимость ${costLabel ?? 'нет'}. ${text}`}>
+    <div className={cls} style={style} aria-label={`${name}${upgraded ? '+' : ''}, ${TYPE_LABEL[def.type]} (${CATEGORY_LABEL[cardCategory(def)].toLowerCase()}), стоимость ${costLabel ?? 'нет'}. ${text}`}>
       <div className="card__frame">
         <div className="card__glow" aria-hidden="true" />
         <div className="card__art">
@@ -139,7 +172,7 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
           {upgraded ? <span className="card__plus">+</span> : null}
         </div>
         <div className="card__type">
-          <span>{TYPE_LABEL[def.type]}</span>
+          <span>{CATEGORY_LABEL[cardCategory(def)]}</span>
           <span className="card__rarity">{RARITY_LABEL[def.rarity]}</span>
         </div>
         <div className="card__text">

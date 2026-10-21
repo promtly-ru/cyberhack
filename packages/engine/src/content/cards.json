@@ -20592,5 +20592,728 @@
       "gamble",
       "tempo"
     ]
+  },
+  {
+    "id": "n_n_rail_spike",
+    "name": "Рельсовый шип",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 9,
+        "target": "enemy"
+      }
+    ],
+    "description": "Нанеси 9 урона.",
+    "upgrade": {
+      "name": "Рельсовый шип+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 12,
+          "target": "enemy"
+        }
+      ],
+      "description": "Нанеси 12 урона."
+    },
+    "tags": [
+      "attack"
+    ]
+  },
+  {
+    "id": "n_n_burst_fire",
+    "name": "Очередь пакетов",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 3,
+        "target": "enemy",
+        "times": 3
+      }
+    ],
+    "description": "Нанеси 3 урона 3 раза.",
+    "upgrade": {
+      "name": "Очередь пакетов+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 4,
+          "target": "enemy",
+          "times": 3
+        }
+      ],
+      "description": "Нанеси 4 урона 3 раза."
+    },
+    "tags": [
+      "attack"
+    ]
+  },
+  {
+    "id": "n_n_sweep_scan",
+    "name": "Зачистка сектора",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "damage",
+        "amount": 10,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Нанеси 10 урона всем врагам.",
+    "upgrade": {
+      "name": "Зачистка сектора+",
+      "effects": [
+        {
+          "type": "damage",
+          "amount": 14,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Нанеси 14 урона всем врагам."
+    },
+    "tags": [
+      "attack"
+    ]
+  },
+  {
+    "id": "n_n_ice_shell",
+    "name": "Ледяная оболочка",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 8
+      }
+    ],
+    "description": "Получи 8 блока.",
+    "upgrade": {
+      "name": "Ледяная оболочка+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 11
+        }
+      ],
+      "description": "Получи 11 блока."
+    },
+    "tags": [
+      "block"
+    ]
+  },
+  {
+    "id": "n_n_mirror_ward",
+    "name": "Зеркальный щит",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 5
+      },
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 5 блока. Получи 2 Контрудара.",
+    "upgrade": {
+      "name": "Зеркальный щит+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 7
+        },
+        {
+          "type": "apply_status",
+          "status": "thorns",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 7 блока. Получи 3 Контрудара."
+    },
+    "tags": [
+      "block"
+    ]
+  },
+  {
+    "id": "n_n_bulwark",
+    "name": "Бастион протокола",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "block",
+        "amount": 14
+      },
+      {
+        "type": "apply_status",
+        "status": "barrier",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "description": "Получи 14 блока. Получи 1 Барьер.",
+    "upgrade": {
+      "name": "Бастион протокола+",
+      "effects": [
+        {
+          "type": "block",
+          "amount": 18
+        },
+        {
+          "type": "apply_status",
+          "status": "barrier",
+          "amount": 1,
+          "target": "self"
+        }
+      ],
+      "description": "Получи 18 блока. Получи 1 Барьер."
+    },
+    "tags": [
+      "block"
+    ]
+  },
+  {
+    "id": "n_n_static_noise",
+    "name": "Статический шум",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 2 Лага и 1 Брешь.",
+    "upgrade": {
+      "name": "Статический шум+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 3 Лага и 2 Бреши."
+    },
+    "tags": [
+      "debuff"
+    ]
+  },
+  {
+    "id": "n_n_corrode",
+    "name": "Коррозия кода",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 4,
+        "target": "enemy"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 4 Вируса и 1 Фрагментацию.",
+    "upgrade": {
+      "name": "Коррозия кода+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "virus",
+          "amount": 6,
+          "target": "enemy"
+        },
+        {
+          "type": "apply_status",
+          "status": "frail",
+          "amount": 2,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 6 Вируса и 2 Фрагментации."
+    },
+    "tags": [
+      "debuff",
+      "virus"
+    ]
+  },
+  {
+    "id": "n_n_blackout",
+    "name": "Блэкаут",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 2,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Наложи 2 Лага и 2 Бреши на всех врагов.",
+    "upgrade": {
+      "name": "Блэкаут+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "weak",
+          "amount": 3,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 3,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Наложи 3 Лага и 3 Бреши на всех врагов."
+    },
+    "tags": [
+      "debuff"
+    ]
+  },
+  {
+    "id": "n_n_cache_dump",
+    "name": "Выгрузка кэша",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "common",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 2
+      }
+    ],
+    "description": "Возьми 2 карты.",
+    "upgrade": {
+      "name": "Выгрузка кэша+",
+      "effects": [
+        {
+          "type": "draw",
+          "amount": 3
+        }
+      ],
+      "description": "Возьми 3 карты."
+    },
+    "tags": [
+      "draw"
+    ]
+  },
+  {
+    "id": "n_n_power_tap",
+    "name": "Врезка в сеть",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 0,
+    "target": "self",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "draw",
+        "amount": 1
+      }
+    ],
+    "description": "Получи 1 энергию. Возьми 1 карту. Сжигается.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Врезка в сеть+",
+      "effects": [
+        {
+          "type": "gain_energy",
+          "amount": 1
+        },
+        {
+          "type": "draw",
+          "amount": 2
+        }
+      ],
+      "description": "Получи 1 энергию. Возьми 2 карты. Сжигается."
+    },
+    "tags": [
+      "energy"
+    ]
+  },
+  {
+    "id": "n_n_recompile",
+    "name": "Перекомпиляция",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "discard_hand_draw",
+        "amount": 1
+      }
+    ],
+    "description": "Сбрось руку и возьми столько же карт +1.",
+    "upgrade": {
+      "name": "Перекомпиляция+",
+      "effects": [
+        {
+          "type": "discard_hand_draw",
+          "amount": 2
+        }
+      ],
+      "description": "Сбрось руку и возьми столько же карт +2."
+    },
+    "tags": [
+      "draw"
+    ]
+  },
+  {
+    "id": "n_n_mod_bastion",
+    "name": "Модуль «Бастион»",
+    "classId": "neutral",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "add_hook",
+        "hook": {
+          "on": "turn_end",
+          "effects": [
+            {
+              "type": "block",
+              "amount": 4
+            }
+          ]
+        }
+      }
+    ],
+    "description": "В конце хода: получи 4 блока.",
+    "upgrade": {
+      "name": "Модуль «Бастион»+",
+      "effects": [
+        {
+          "type": "add_hook",
+          "hook": {
+            "on": "turn_end",
+            "effects": [
+              {
+                "type": "block",
+                "amount": 6
+              }
+            ]
+          }
+        }
+      ],
+      "description": "В конце хода: получи 6 блока."
+    },
+    "tags": [
+      "block"
+    ]
+  },
+  {
+    "id": "n_n_mod_reactor",
+    "name": "Модуль «Реактор»",
+    "classId": "neutral",
+    "type": "power",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "self",
+    "effects": [
+      {
+        "type": "add_hook",
+        "hook": {
+          "on": "turn_start",
+          "effects": [
+            {
+              "type": "draw",
+              "amount": 1
+            }
+          ]
+        }
+      }
+    ],
+    "description": "В начале хода: возьми 1 карту.",
+    "upgrade": {
+      "name": "Модуль «Реактор»+",
+      "effects": [
+        {
+          "type": "add_hook",
+          "hook": {
+            "on": "turn_start",
+            "effects": [
+              {
+                "type": "draw",
+                "amount": 2
+              }
+            ]
+          }
+        }
+      ],
+      "description": "В начале хода: возьми 2 карты."
+    },
+    "tags": [
+      "draw"
+    ]
+  },
+  {
+    "id": "n_n_mod_turret",
+    "name": "Модуль «Турель»",
+    "classId": "neutral",
+    "type": "power",
+    "rarity": "uncommon",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "add_hook",
+        "hook": {
+          "on": "play_skill",
+          "effects": [
+            {
+              "type": "damage",
+              "amount": 3,
+              "target": "random_enemy"
+            }
+          ]
+        }
+      }
+    ],
+    "description": "Каждый раз, когда играешь навык: нанеси 3 урона случайному врагу.",
+    "upgrade": {
+      "name": "Модуль «Турель»+",
+      "effects": [
+        {
+          "type": "add_hook",
+          "hook": {
+            "on": "play_skill",
+            "effects": [
+              {
+                "type": "damage",
+                "amount": 5,
+                "target": "random_enemy"
+              }
+            ]
+          }
+        }
+      ],
+      "description": "Каждый раз, когда играешь навык: нанеси 5 урона случайному врагу."
+    },
+    "tags": [
+      "attack"
+    ]
+  },
+  {
+    "id": "n_n_glass_cannon",
+    "name": "Стеклянная пушка",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 1,
+    "target": "all_enemies",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 4
+      },
+      {
+        "type": "damage",
+        "amount": 14,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "description": "Потеряй 4 HP. Нанеси 14 урона всем врагам. Наложи 1 Брешь на всех.",
+    "upgrade": {
+      "name": "Стеклянная пушка+",
+      "effects": [
+        {
+          "type": "lose_hp",
+          "amount": 4
+        },
+        {
+          "type": "damage",
+          "amount": 18,
+          "target": "all_enemies"
+        },
+        {
+          "type": "apply_status",
+          "status": "vulnerable",
+          "amount": 2,
+          "target": "all_enemies"
+        }
+      ],
+      "description": "Потеряй 4 HP. Нанеси 18 урона всем врагам. Наложи 2 Бреши на всех."
+    },
+    "tags": [
+      "attack"
+    ]
+  },
+  {
+    "id": "n_n_echo_chamber",
+    "name": "Эхо-камера",
+    "classId": "neutral",
+    "type": "skill",
+    "rarity": "rare",
+    "cost": 1,
+    "target": "self",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "echo",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 5
+      }
+    ],
+    "description": "Получи 5 блока. Следующая карта сработает дважды.",
+    "exhaust": true,
+    "upgrade": {
+      "name": "Эхо-камера+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "echo",
+          "amount": 1,
+          "target": "self"
+        },
+        {
+          "type": "block",
+          "amount": 9
+        }
+      ],
+      "description": "Получи 9 блока. Следующая карта сработает дважды."
+    },
+    "tags": [
+      "echo"
+    ]
+  },
+  {
+    "id": "n_n_zero_day",
+    "name": "Нулевой день",
+    "classId": "neutral",
+    "type": "attack",
+    "rarity": "rare",
+    "cost": 2,
+    "target": "enemy",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "mark",
+        "amount": 3,
+        "target": "enemy"
+      },
+      {
+        "type": "damage",
+        "amount": 8,
+        "target": "enemy"
+      },
+      {
+        "type": "consume_status",
+        "status": "virus",
+        "damageMult": 2,
+        "target": "enemy"
+      }
+    ],
+    "description": "Наложи 3 Метки. Нанеси 8 урона. Сожги Вирус цели: 2 урона за стак.",
+    "upgrade": {
+      "name": "Нулевой день+",
+      "effects": [
+        {
+          "type": "apply_status",
+          "status": "mark",
+          "amount": 4,
+          "target": "enemy"
+        },
+        {
+          "type": "damage",
+          "amount": 11,
+          "target": "enemy"
+        },
+        {
+          "type": "consume_status",
+          "status": "virus",
+          "damageMult": 3,
+          "target": "enemy"
+        }
+      ],
+      "description": "Наложи 4 Метки. Нанеси 11 урона. Сожги Вирус цели: 3 урона за стак."
+    },
+    "tags": [
+      "virus"
+    ]
   }
 ]

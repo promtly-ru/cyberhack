@@ -110,3 +110,12 @@
 .card-terms--compact dl { gap: 5px; }
 .card-terms--compact .card-terms__item dt { font-size: 12.5px; }
 .card-terms--compact .card-terms__item dd { font-size: 12px; line-height: 1.3; }
+
+/* Цвет по категории (поверх типа): атака красная, защита синяя, ослабление фиолетовое, усиление оранжевое, ресурс зелёный, модуль жёлтый */
+.cat--attack { --accent: #ff3b4e; --accent-2: #ff8a5c; --frame-bg: #1a0709; }
+.cat--defense { --accent: #00c8ff; --accent-2: #7cf9ff; --frame-bg: #06121c; }
+.cat--debuff { --accent: #b26bff; --accent-2: #e09bff; --frame-bg: #12081c; }
+.cat--buff { --accent: #ff9f1c; --accent-2: #ffd27a; --frame-bg: #1a1006; }
+.cat--resource { --accent: #3dff8a; --accent-2: #b4ffd2; --frame-bg: #061a0f; }
+.cat--power { --accent: #e8ff3a; --accent-2: #fff59a; --frame-bg: #121407; }
+.cat--curse { --accent: #c0634a; --accent-2: #5a2418; --frame-bg: #160a07; }
