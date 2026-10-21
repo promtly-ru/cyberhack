@@ -41,7 +41,7 @@ test('обучение: от карты до конца первого боя и
 
   // Бой: пояснения
   await expect(page.getByTestId('combat')).toHaveAttribute('data-phase', 'player');
-  for (const id of ['player', 'class', 'enemy', 'intent', 'energy', 'hand']) await next(page, act, id);
+  for (const id of ['player', 'class', 'enemy', 'intent', 'energy', 'hand', 'card-kinds']) await next(page, act, id);
 
   // «Пинг» во врага
   await expect(step(page, 'ping')).toBeVisible();

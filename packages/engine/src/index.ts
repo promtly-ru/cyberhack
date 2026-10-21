@@ -126,7 +126,7 @@ export function weeklyClass(seed: string): ClassId {
 
 export * from './weekly';
 export * from './heat';
-export { canCool } from './combat';
+export { canCool, canVent } from './combat';
 export * from './zones';
 export { MAP_ROWS, BOSS_ROW, SECTORS, SECTOR_LENGTH, sectorOf } from './map';
 

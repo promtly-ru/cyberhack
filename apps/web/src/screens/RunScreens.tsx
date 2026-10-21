@@ -4,7 +4,7 @@ import { getEventDef, getFirmware, tryRelicDef, cardStats, getLegalActions, blac
 import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
-import { RelicGlyph, SynergyBar, firmwareNeeds } from '../components/Bits';
+import { RelicGlyph, SynergyBar, FirmwareChecklist } from '../components/Bits';
 import { PotionGlyph } from '../components/PotionBar';
 import { getMutator, getPotion, POTION_SLOTS, weeklyTitle } from '../game/engine';
 import { Icon } from '../components/Icon';
@@ -61,6 +61,7 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
           let icon: ReactNode;
           let label: string;
           let sub = '';
+          let extra: ReactNode = null;
           if (item.kind === 'gold') {
             icon = <Icon name="gold" size={26} />;
             label = `+${item.amount} кредитов`;
@@ -71,9 +72,10 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
             sub = d?.description ?? '';
           } else if (item.kind === 'firmware') {
             const fw = getFirmware(item.firmwareId);
-            icon = <span className="reward__fw">⚡</span>;
+            icon = <span className="reward__fw"><Icon name="firmware" size={26} /></span>;
             label = `Прошивка «${fw?.name ?? item.firmwareId}»`;
-            sub = `${fw?.description ?? ''}. Нужны: ${firmwareNeeds(item.firmwareId, run.deck)}`;
+            sub = fw?.description ?? '';
+            extra = <FirmwareChecklist firmwareId={item.firmwareId} deck={run.deck} />;
           } else if (item.kind === 'potion') {
             const p = getPotion(item.potionId);
             icon = <PotionGlyph id={item.potionId} size={26} />;
@@ -91,6 +93,7 @@ export function RewardScreen({ run, screen }: { run: RunState; screen: Extract<S
                 <span className="reward__text">
                   <b>{label}</b>
                   {sub ? <small>{sub}</small> : null}
+                  {extra}
                 </span>
                 <span className="reward__cta">{item.kind === 'potion' && slotsFull ? 'Нет места' : 'Забрать'}</span>
               </button>

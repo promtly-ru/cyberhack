@@ -1,8 +1,25 @@
-import { memo, type CSSProperties, type ReactNode } from 'react';
+import { memo, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { cardStats, describeCard, type CardType, type Rarity } from '../game/engine';
 import { CardArt } from './CardArt';
 import { cardTerms, getTerm, splitKeywords } from './glossary';
 import { tip } from './Tooltip';
+
+/** Блок текста карты: уменьшает шрифт, пока текст не влезет в рамку. */
+function FitText({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.fontSize = '';
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    const min = size * 0.55;
+    while (el.scrollHeight > el.clientHeight + 1 && size > min) {
+      size -= 0.5;
+      el.style.fontSize = `${size}px`;
+    }
+  });
+  return <div className="card__text" ref={ref}>{children}</div>;
+}
 
 export const TYPE_LABEL: Record<CardType, string> = {
   attack: 'Атака',
@@ -175,10 +192,10 @@ export const Card = memo(function Card({ defId, upgraded = false, className, sty
           <span>{CATEGORY_LABEL[cardCategory(def)]}</span>
           <span className="card__rarity">{RARITY_LABEL[def.rarity]}</span>
         </div>
-        <div className="card__text">
+        <FitText>
           <span>{formatCardText(text, upgraded)}</span>
           <CardKeywords stats={stats} text={text} />
-        </div>
+        </FitText>
         <div className="card__corner" aria-hidden="true" />
       </div>
       {costLabel !== null ? <div className={`card__cost${costChanged ? ' is-changed' : ''}`}>{costLabel}</div> : null}

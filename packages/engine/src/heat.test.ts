@@ -127,3 +127,24 @@ describe('режим «Перегрев»', () => {
     expect(back.combat!.heat).toBe(61);
   });
 });
+
+describe('«Слив ядра» и взрыв расплавления', () => {
+  it('слив доступен с Heat 50, бьёт врагов на 40% Heat и сбрасывает до 15, раз в ход', () => {
+    const low = fresh(49);
+    expect(getLegalActions(low).some((a) => a.type === 'vent')).toBe(false);
+    const s = fresh(80);
+    const r = applyAction(s, { type: 'vent' }).state;
+    expect(c0(r).heat).toBe(15);
+    expect(c0(r).enemies[0]!.hp).toBe(100 - 32);
+    expect(getLegalActions(r).some((a) => a.type === 'vent')).toBe(false);
+  });
+
+  it('расплавление бьёт врагов на 30 и игрока по-прежнему', () => {
+    const s = fresh(98);
+    const hp = c0(s).player.hp;
+    const r = play(s, c0(s).hand[0]!.uid, 'en0');
+    expect(c0(r).heat).toBe(40);
+    expect(c0(r).player.hp).toBeLessThan(hp);
+    expect(c0(r).enemies[0]!.hp).toBeLessThanOrEqual(100 - 30);
+  });
+});

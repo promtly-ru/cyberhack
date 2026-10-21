@@ -34,6 +34,10 @@ export interface MutatorMods {
   bonusDraw: number;
   /** В начале забега выдаётся дополнительный случайный реликт */
   bonusStartRelic: boolean;
+  /** «Охота за головой»: каждый бой один враг помечен */
+  bounty: boolean;
+  /** «Нестабильный код»: каждый ход одна карта в руке срабатывает дважды и сгорает */
+  volatileCard: boolean;
 }
 
 interface MutatorSpec extends MutatorDef {
@@ -130,6 +134,20 @@ const SPECS: readonly MutatorSpec[] = [
  * Ложатся на те же AscensionMods/MutatorMods, что и обычные мутаторы.
  */
 export const WEEKLY_RULES: readonly MutatorSpec[] = [
+  {
+    id: 'wk_bounty',
+    name: 'Охота за головой',
+    description: 'В каждом бою один враг помечен. Убей его до 3-го хода — получишь 8 HP и 20 золота. Не успеешь — он уйдёт в тень и получит 2 Разгона.',
+    scoreBonus: 0.1,
+    extra: (x) => (x.bounty = true),
+  },
+  {
+    id: 'wk_volatile',
+    name: 'Нестабильный код',
+    description: 'Каждый ход одна случайная карта в руке нестабильна: срабатывает дважды, но сгорает после розыгрыша. Выбирай, когда её тратить.',
+    scoreBonus: 0.1,
+    extra: (x) => (x.volatileCard = true),
+  },
   {
     id: 'wk_cursed_gift',
     name: 'Проклятый дар',
@@ -253,6 +271,8 @@ const NO_MUTATORS: MutatorMods = Object.freeze({
   turnEcho: false,
   bonusDraw: 0,
   bonusStartRelic: false,
+  bounty: false,
+  volatileCard: false,
 });
 
 export function getMutatorMods(ids: readonly string[] | undefined): MutatorMods {

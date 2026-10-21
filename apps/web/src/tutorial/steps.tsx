@@ -210,6 +210,14 @@ export const STEPS: Step[] = [
     target: () => ['[data-testid="hand"]'],
   },
   {
+    id: 'card-kinds',
+    mode: 'coach',
+    screens: ['combat'],
+    title: 'Категории карт',
+    text: () => 'Подпись и цвет рамки — категория карты: атака (красная), защита, ослабление, усиление, ресурс, модуль. Если текст не влезает, зажми карту — откроется подробное описание.',
+    target: () => ['[data-testid="hand"]'],
+  },
+  {
     id: 'ping',
     mode: 'action',
     screens: ['combat'],

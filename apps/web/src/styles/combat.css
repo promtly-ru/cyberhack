@@ -69,9 +69,9 @@
 .unit.is-targetable .unit__reticle { border-color: color-mix(in srgb, var(--unit-color) 70%, transparent); animation: spin calc(6s / var(--speed)) linear infinite; }
 .unit.is-hovered .unit__reticle { border-color: var(--acid); border-style: solid; box-shadow: 0 0 20px rgba(232, 255, 58, 0.5); }
 .unit.is-hovered .unit-art { filter: drop-shadow(0 0 14px var(--acid)); }
-.unit[data-dead] { pointer-events: none; animation: dead-fade 0.4s 1.2s forwards; }
+.unit[data-dead] { pointer-events: none; animation: dead-collapse 0.35s 0.6s forwards; }
 .unit[data-gone] .unit__sprite, .unit[data-gone] .unit__info { opacity: 0; transition: opacity 0.15s; }
-@keyframes dead-fade { to { opacity: 0; } }
+@keyframes dead-collapse { to { width: 0; min-width: 0; margin-inline: calc(var(--unit-gap, 0px) * -0.5); opacity: 0; visibility: hidden; } }
 
 /* HP */
 .hpbar { position: relative; height: 16px; border-radius: 4px; background: #1a0a12; border: 1px solid rgba(255, 59, 92, 0.5); overflow: visible; }
@@ -345,3 +345,19 @@
   .unit__name { display: none; }
   .battlefield { padding-top: 0; }
 }
+
+/* Имена и намерения не налезают друг на друга в тесной раскладке */
+.unit--enemy { flex: 0 1 var(--unit-size); }
+.unit--enemy .unit__name { overflow-wrap: anywhere; hyphens: auto; font-size: clamp(9px, 2.6vw, 15px); }
+
+/* Перегрев: слив ядра */
+.heat__vent { flex: none; min-height: 36px; padding: 0 14px; border-color: #ff8a3d; color: #ffb27a; }
+.heat__vent:not(:disabled) { box-shadow: 0 0 14px rgba(255, 138, 61, .55); animation: vent-pulse 1.1s ease-in-out infinite; }
+@keyframes vent-pulse { 50% { box-shadow: 0 0 24px rgba(255, 90, 40, .9); } }
+
+/* Неделя: метка охоты и нестабильная карта */
+.unit--enemy.is-bounty .unit__sprite { filter: drop-shadow(0 0 10px #ff3b5c); }
+.unit__bounty { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); z-index: 3; padding: 2px 8px; border-radius: 10px; background: #3a0a14; border: 1px solid #ff3b5c; color: #ff8aa0; font-size: 11px; white-space: nowrap; }
+.hand-card.is-volatile { animation: volatile-jitter .35s steps(2) infinite; filter: drop-shadow(0 0 8px #b8ff3b); }
+.hand-card.is-volatile::after { content: '⚡ ×2 · сгорит'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #d6ff7a; white-space: nowrap; }
+@keyframes volatile-jitter { 0% { translate: 0 0; } 100% { translate: 1px -1px; } }

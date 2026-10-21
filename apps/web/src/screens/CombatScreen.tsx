@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as RMouseEvent, type PointerEvent as RPointerEvent } from 'react';
 import type { CardInstance, CombatState, EnemyState, RunState } from '../game/engine';
-import { canCool, cardStats, describeCard, getEnemyDef, getLegalActions, HEAT_COOL_AMOUNT, HEAT_COOL_HP, HEAT_MAX, HEAT_THRESHOLDS, heatLevel } from '../game/engine';
+import { canCool, canVent, HEAT_VENT_MIN, HEAT_VENT_DMG_PER_HEAT, heatBlastDamage, cardStats, describeCard, getEnemyDef, getLegalActions, HEAT_COOL_AMOUNT, HEAT_COOL_HP, HEAT_MAX, HEAT_THRESHOLDS, heatLevel } from '../game/engine';
 import { useGame } from '../game/store';
 import { Card, CardTerms } from '../components/Card';
 import { HpBar, IntentBadge, StatusRow, SynergyBar } from '../components/Bits';
@@ -473,16 +473,18 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
             return (
               <div
                 key={e.uid}
-                className={`unit unit--enemy tier-${info.tier}${targetable ? ' is-targetable' : ''}${hovered ? ' is-hovered' : ''}`}
+                className={`unit unit--enemy tier-${info.tier}${combat.bountyUid === e.uid && !dead ? ' is-bounty' : ''}${targetable ? ' is-targetable' : ''}${hovered ? ' is-hovered' : ''}`}
                 data-testid="enemy"
                 data-hp={e.hp}
                 data-fx-target={e.uid}
                 data-target-uid={dead ? undefined : e.uid}
                 data-dead={dead ? '1' : undefined}
+                data-gone={dead ? '1' : undefined}
                 style={{ '--unit-color': enemyColor(e, info.tier) } as CSSProperties}
               >
                 <div className="unit__intent">{!dead ? <IntentBadge intent={e.intent} {...(info.moveName ? { moveName: info.moveName } : {})} /> : null}</div>
                 <div className="unit__sprite">
+                  {combat.bountyUid === e.uid && !dead ? <span className="unit__bounty" {...tip('Метка охоты', 'Убей до 3-го хода: +8 HP и 20 золота. Иначе уйдёт в тень с 2 Разгона.')}>☠ метка</span> : null}
                   <EnemyArt defId={e.defId} tier={info.tier} />
                   <div className="unit__reticle" aria-hidden="true" />
                 </div>
@@ -524,6 +526,11 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
             sfx('click');
             dispatch({ type: 'cool' });
           }}
+          canVent={playerPhase && canVent(combat)}
+          onVent={() => {
+            sfx('click');
+            dispatch({ type: 'vent' });
+          }}
         />
       ) : null}
 
@@ -555,7 +562,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
                   if (el) cardEls.current.set(c.uid, el);
                   else cardEls.current.delete(c.uid);
                 }}
-                className={`hand-card${isSel ? ' is-selected' : ''}${dragUid === c.uid ? ' is-dragging' : ''}${playable ? ' is-playable' : ''}`}
+                className={`hand-card${isSel ? ' is-selected' : ''}${dragUid === c.uid ? ' is-dragging' : ''}${combat.volatileUid === c.uid ? ' is-volatile' : ''}${playable ? ' is-playable' : ''}`}
                 style={style}
                 onPointerDown={(e) => onCardDown(e, c)}
                 onPointerMove={onCardMove}
@@ -668,7 +675,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   );
 }
 
-function HeatBar({ heat, canCool: can, onCool }: { heat: number; canCool: boolean; onCool: () => void }) {
+function HeatBar({ heat, canCool: can, onCool, canVent: ventOk, onVent }: { heat: number; canCool: boolean; onCool: () => void; canVent: boolean; onVent: () => void }) {
   const lvl = heatLevel(heat);
   const active = lvl > 0 ? HEAT_THRESHOLDS[lvl - 1]! : null;
   return (
@@ -685,6 +692,9 @@ function HeatBar({ heat, canCool: can, onCool }: { heat: number; canCool: boolea
       </div>
       <button className="btn heat__cool" data-testid="cool" disabled={!can} onClick={onCool} {...tip('Охладить', `−${HEAT_COOL_AMOUNT} Heat, стоит ${HEAT_COOL_HP} HP, раз в ход`)}>
         Охладить
+      </button>
+      <button className="btn heat__vent" data-testid="vent" disabled={!ventOk} onClick={onVent} {...tip('Слив ядра', `С Heat ${HEAT_VENT_MIN}+: взрыв по всем врагам на ${Math.round(HEAT_VENT_DMG_PER_HEAT * 100)}% от Heat (сейчас ${heatBlastDamage(heat, HEAT_VENT_DMG_PER_HEAT)} урона), Heat падает до 15. Бесплатно, раз в ход. На 100 ядро взорвётся само — слабее и с уроном по тебе.`)}>
+        Слив ядра{heat >= HEAT_VENT_MIN ? ` · ${heatBlastDamage(heat, HEAT_VENT_DMG_PER_HEAT)}` : ''}
       </button>
     </div>
   );

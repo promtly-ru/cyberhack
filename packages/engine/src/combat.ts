@@ -33,12 +33,18 @@ import {
 import { makeCard, nextUid } from './util';
 import {
   HEAT_AFTER_MELTDOWN, HEAT_COOL_AMOUNT, HEAT_COOL_HP, HEAT_IDLE_COOL, HEAT_MAX, HEAT_MELTDOWN_HP_PCT, HEAT_PER_CARD,
-  HEAT_PER_TURN, HEAT_START, heatEnemyDamageMult, heatLevel, heatPlayerDamageMult,
+  HEAT_PER_TURN, HEAT_START, HEAT_VENT_MIN, HEAT_AFTER_VENT, HEAT_VENT_DMG_PER_HEAT, HEAT_MELTDOWN_BLAST, heatBlastDamage,
+  heatEnemyDamageMult, heatLevel, heatPlayerDamageMult,
 } from './heat';
 
 export const BASE_ENERGY = 3;
 export const DRAW_PER_TURN = 5;
 export const HAND_LIMIT = 10;
+/** Неделя «Охота за головой»: награда за метку и ход, на котором метка уходит в тень */
+export const BOUNTY_HEAL = 8;
+export const BOUNTY_GOLD = 20;
+export const BOUNTY_DEADLINE_TURN = 3;
+export const BOUNTY_ESCAPE_STRENGTH = 2;
 /** Служебные счётчики статистики в CombatState.counters (не id реликвий) */
 export const COUNTER_VIRUS = '$virus';
 export const COUNTER_TURN_CARDS = '$turnCards';
@@ -120,6 +126,12 @@ function onDeath(ctx: CombatCtx, u: Unit): void {
   u.block = 0;
   ctx.ev.push({ type: 'enemy_died', enemyUid: u.uid });
   ctx.s.stats.enemiesKilled += 1;
+  if (ctx.c.bountyUid === u.uid) {
+    ctx.c.bountyUid = undefined;
+    heal(ctx, 'player', BOUNTY_HEAL);
+    ctx.s.gold += BOUNTY_GOLD;
+    ctx.ev.push({ type: 'gold_changed', amount: BOUNTY_GOLD });
+  }
   if (ctx.c.phase === 'player' && livingEnemies(ctx.c).length === 0) ctx.c.phase = 'won';
 }
 
@@ -763,6 +775,7 @@ export function startCombat(s: RunState, enemyIds: readonly string[], ev: GameEv
   // Мутаторы: стартовые статусы врагов и игрока
   for (const [id, n] of Object.entries(mm.enemyCombatStatuses)) for (const e of enemies) applyStatus(ctx, e, id, n);
   for (const [id, n] of Object.entries(mm.playerCombatStatuses)) applyStatus(ctx, 'player', id, n);
+  if (mm.bounty) c.bountyUid = rngOf(s, 'combat').pick(enemies).uid;
   for (const e of enemies) planNextMove(ctx, e);
   startPlayerTurn(ctx);
   return ctx;
@@ -805,6 +818,7 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   c.energy = c.maxEnergy;
   if (c.heat !== undefined) {
     c.heatCooled = false;
+    c.heatVented = false;
     addHeat(ctx, HEAT_PER_TURN);
     if (isOver(ctx)) return;
   }
@@ -817,6 +831,15 @@ export function startPlayerTurn(ctx: CombatCtx): void {
   const innate = c.turn === 1 ? c.drawPile.filter((card) => resolveCard(card.defId, card.upgraded).innate).length : 0;
   const heatDraw = c.heat !== undefined && heatLevel(c.heat) >= 2 ? 1 : 0;
   drawCards(ctx, Math.max(DRAW_PER_TURN + getMutatorMods(ctx.s.mutators).bonusDraw, innate) + heatDraw);
+  if (mutMods(ctx).volatileCard) {
+    const pool = c.hand.filter((h) => resolveCard(h.defId, h.upgraded).cost !== COST_UNPLAYABLE);
+    c.volatileUid = pool.length > 0 ? rngOf(ctx.s, 'combat').pick(pool).uid : undefined;
+  }
+  if (c.bountyUid && c.turn >= BOUNTY_DEADLINE_TURN) {
+    const target = c.enemies.find((e) => e.uid === c.bountyUid && e.hp > 0);
+    c.bountyUid = undefined;
+    if (target) applyStatus(ctx, target, STATUS.strength, BOUNTY_ESCAPE_STRENGTH);
+  }
   if (c.turn === 1) {
     triggerRelics(ctx, 'combat_start');
     applySynergies(ctx);
@@ -851,9 +874,30 @@ export function addHeat(ctx: CombatCtx, n: number): void {
   if (c.heat === undefined) return;
   c.heat = Math.max(0, Math.min(HEAT_MAX, c.heat + n));
   if (c.heat >= HEAT_MAX) {
+    const blast = heatBlastDamage(c.heat, HEAT_MELTDOWN_BLAST);
     c.heat = HEAT_AFTER_MELTDOWN;
-    hit(ctx, 'player', Math.max(1, Math.floor(c.player.maxHp * HEAT_MELTDOWN_HP_PCT)), true);
+    blastEnemies(ctx, blast);
+    if (!isOver(ctx)) hit(ctx, 'player', Math.max(1, Math.floor(c.player.maxHp * HEAT_MELTDOWN_HP_PCT)), true);
   }
+}
+
+function blastEnemies(ctx: CombatCtx, dmg: number): void {
+  for (const e of livingEnemies(ctx.c)) hit(ctx, e, dmg);
+}
+
+export function canVent(c: CombatState): boolean {
+  return c.phase === 'player' && c.heat !== undefined && !c.heatVented && c.heat >= HEAT_VENT_MIN;
+}
+
+/** Кнопка «Слив ядра»: взрыв по всем врагам (Heat × 0.4, блок работает), Heat → 15. Раз в ход, HP не стоит. */
+export function ventCore(ctx: CombatCtx): void {
+  if (!canVent(ctx.c)) throw new InvalidActionError('Cannot vent now');
+  const c = ctx.c;
+  c.heatVented = true;
+  const dmg = heatBlastDamage(c.heat ?? 0, HEAT_VENT_DMG_PER_HEAT);
+  c.heat = HEAT_AFTER_VENT;
+  blastEnemies(ctx, dmg);
+  if (!isOver(ctx)) refreshIntents(ctx);
 }
 
 export function canCool(c: CombatState): boolean {
@@ -900,9 +944,14 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
 
   // Эхо: карта срабатывает дважды, снимается 1 Эхо (проверяется до эффектов — Эхо от самой карты не тратится)
   let passes = 1;
+  const volatile = c.volatileUid === inst.uid;
+  if (volatile) {
+    c.volatileUid = undefined;
+    passes = 2;
+  }
   if (getStatus(c.player, STATUS.echo) > 0) {
     addStatus(c.player, STATUS.echo, -1);
-    passes = 2;
+    passes += 1;
   }
   const runEffects = (): void => {
     for (let r = 0; r < repeats && !isOver(ctx); r++) {
@@ -927,7 +976,7 @@ export function playCard(ctx: CombatCtx, cardUid: string, targetUid: string | un
   if (card.type === 'attack') trackAdaptive(ctx, inst.defId);
   // Силы (power) уходят из боя; exhaust — в сброшенные навсегда; остальное — в сброс.
   if (card.type !== 'power') {
-    if (card.exhaust) exhaustCard(ctx, inst);
+    if (card.exhaust || volatile) exhaustCard(ctx, inst);
     else c.discardPile.push(inst);
   }
 
@@ -953,6 +1002,7 @@ function trackAdaptive(ctx: CombatCtx, cardId: string): void {
 
 export function endTurn(ctx: CombatCtx): void {
   const c = ctx.c;
+  c.volatileUid = undefined;
   if (c.heat !== undefined && (c.counters[COUNTER_TURN_CARDS] ?? 0) === 0) addHeat(ctx, -HEAT_IDLE_COOL);
   triggerRelics(ctx, 'turn_end');
   if (isOver(ctx)) return;

@@ -60,6 +60,10 @@ export {
   HEAT_THRESHOLDS,
   heatLevel,
   canCool,
+  canVent,
+  HEAT_VENT_MIN,
+  HEAT_VENT_DMG_PER_HEAT,
+  heatBlastDamage,
 } from '@cyberhack/engine';
 
 const mocked = new Set<string>();

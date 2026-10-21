@@ -6,6 +6,8 @@ import { applyDifficulty, clampAscension, getAscensionMods, type AscensionMods }
 import { canUpgrade, needsEnemyTarget, resolveCard } from './cards';
 import {
   canCool,
+  canVent,
+  ventCore,
   coolDown,
   endTurn,
   isPlayable,
@@ -488,6 +490,12 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       afterCombatStep(s, ctx, ev);
       break;
     }
+    case 'vent': {
+      const ctx = combatCtx(s, ev);
+      ventCore(ctx);
+      afterCombatStep(s, ctx, ev);
+      break;
+    }
     case 'take_reward': {
       if (s.screen.kind !== 'reward') invalid('Not on reward screen');
       const items = s.screen.items;
@@ -891,6 +899,7 @@ export function getLegalActions(state: RunState): Action[] {
         } else actions.push({ type: 'play_card', cardUid: inst.uid });
       }
       if (canCool(c)) actions.push({ type: 'cool' });
+      if (canVent(c)) actions.push({ type: 'vent' });
       actions.push({ type: 'end_turn' });
       break;
     }

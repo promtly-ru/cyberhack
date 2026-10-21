@@ -244,6 +244,33 @@ export function firmwareNeeds(firmwareId: string, deck: readonly { defId: string
   return fw.needs.map((id) => `${have.has(id) ? '✓' : '✗'} ${cardName(id)}`).join(' · ');
 }
 
+/** Сегменты прогресса прошивки: заполненный = карта уже в колоде. */
+function FirmwarePips({ have, total }: { have: number; total: number }) {
+  return (
+    <span className="fw-pips" aria-hidden="true">
+      {Array.from({ length: total }, (_, i) => (
+        <i key={i} className={i < have ? 'is-on' : undefined} />
+      ))}
+    </span>
+  );
+}
+
+/** Чек-лист карт, нужных для прошивки (✓ есть в колоде, ✗ нет). */
+export function FirmwareChecklist({ firmwareId, deck }: { firmwareId: string; deck: readonly { defId: string }[] }) {
+  const fw = getFirmware(firmwareId);
+  if (!fw) return null;
+  const have = new Set(deck.map((c) => c.defId));
+  return (
+    <ul className="fw-needs" aria-label="Нужные карты">
+      {fw.needs.map((id) => (
+        <li key={id} className={have.has(id) ? 'is-have' : 'is-miss'}>
+          <span aria-hidden="true">{have.has(id) ? '✓' : '✗'}</span> {cardName(id)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function FirmwareBar({ firmwares, deck }: { firmwares: readonly string[]; deck: readonly { defId: string }[] }) {
   if (!firmwares.length) return null;
   const ids = deck.map((c) => c.defId);
@@ -257,6 +284,7 @@ export function FirmwareBar({ firmwares, deck }: { firmwares: readonly string[];
         if (!fw) return null;
         const { missing } = firmwareProgress(fw, ids);
         const active = missing.length === 0;
+        const have = fw.needs.length - missing.length;
         return (
           <span
             key={id}
@@ -265,8 +293,9 @@ export function FirmwareBar({ firmwares, deck }: { firmwares: readonly string[];
             aria-label={`${fw.name}: ${active ? 'активна' : `не хватает карт: ${missing.length}`}`}
             {...tip(`${active ? '⚡' : '○'} ${fw.name}`, `${fw.description}. ${active ? 'Активна!' : 'Не активна: собери все карты.'} ${firmwareNeeds(id, deck)}`)}
           >
-            {active ? '⚡' : '○'} {fw.name}
-            {!active ? <small>{fw.needs.length - missing.length}/{fw.needs.length}</small> : null}
+            <Icon name="firmware" size={14} />
+            <span className="firmware__name">{fw.name}</span>
+            <FirmwarePips have={have} total={fw.needs.length} />
           </span>
         );
       })}

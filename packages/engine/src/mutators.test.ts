@@ -129,3 +129,18 @@ describe('мутаторы: правила', () => {
     expect(newRun(o)).toEqual(newRun(o));
   });
 });
+
+describe('правила недели с механикой', () => {
+  it('«Охота за головой» и «Нестабильный код» включают свои флаги', () => {
+    expect(getMutatorMods(['wk_bounty']).bounty).toBe(true);
+    expect(getMutatorMods(['wk_volatile']).volatileCard).toBe(true);
+    expect(getMutatorMods([]).bounty).toBe(false);
+  });
+
+  it('в бою: метка на враге, нестабильная карта в руке', () => {
+    const s = enterCombat(OPTS);
+    s.mutators = ['wk_bounty', 'wk_volatile'];
+    const c = c0(setupCombat(s, { hand: ['strike', 'strike'], energy: 3 }));
+    expect(c.hand.length).toBe(2);
+  });
+});

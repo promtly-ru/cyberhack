@@ -10,6 +10,18 @@ export const HEAT_AFTER_MELTDOWN = 40;
 export const HEAT_MELTDOWN_HP_PCT = 0.15;
 export const HEAT_SCORE_MULT = 1.15;
 
+/** «Слив ядра»: доступен с этого Heat, сбрасывает до HEAT_AFTER_VENT и бьёт всех врагов на heat × HEAT_VENT_DMG_PER_HEAT. */
+export const HEAT_VENT_MIN = 50;
+export const HEAT_AFTER_VENT = 15;
+export const HEAT_VENT_DMG_PER_HEAT = 0.4;
+/** Расплавление при 100: тот же взрыв по врагам (множитель слабее слива), но игрок теряет HP. */
+export const HEAT_MELTDOWN_BLAST = 0.3;
+
+/** Урон по каждому врагу от слива/расплавления при данном Heat. */
+export function heatBlastDamage(heat: number, perHeat: number): number {
+  return Math.max(1, Math.floor(heat * perHeat));
+}
+
 export interface HeatThreshold {
   at: number;
   name: string;

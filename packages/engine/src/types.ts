@@ -373,6 +373,12 @@ export interface CombatState {
   heat?: number;
   /** Охлаждение (кнопка) уже использовано в этот ход */
   heatCooled?: boolean;
+  /** «Слив ядра» уже использован в этот ход */
+  heatVented?: boolean;
+  /** Неделя «Охота за головой»: uid помеченного врага (нет поля = нет метки) */
+  bountyUid?: string;
+  /** Неделя «Нестабильный код»: uid карты в руке, что сработает дважды и сгорит */
+  volatileUid?: string;
   /** Хуки игрока (от power-карт); нет поля = нет хуков */
   hooks?: CombatHook[];
   /** Атак сыграно в этот ход (сброс в начале хода) */
@@ -533,6 +539,8 @@ export type Action =
   | { type: 'end_turn' }
   /** Режим «Перегрев»: охладить (−30 Heat, −6 HP, раз в ход) */
   | { type: 'cool' }
+  /** Режим «Перегрев»: слить ядро (Heat ≥ 50) — урон всем врагам, Heat падает до 15, раз в ход */
+  | { type: 'vent' }
   | { type: 'take_reward'; index: number }
   | { type: 'pick_card'; cardId: string | null } // null = пропустить
   | { type: 'leave_reward' }

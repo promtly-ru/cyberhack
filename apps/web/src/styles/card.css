@@ -55,7 +55,7 @@
 .card__rarity { color: #b7c0dc; }
 .card__text {
   order: 3; flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;
-  padding: 1cqw 2cqw; font-size: 8.2cqw; line-height: 1.22; color: #e9eefc;
+  min-height: 0; overflow: hidden; padding: 1cqw 2cqw; font-size: 8.2cqw; line-height: 1.22; color: #e9eefc;
 }
 .card__text .num { font-family: var(--font-mono); color: #fff; }
 .card__text .num--up { color: var(--green); }
