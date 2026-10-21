@@ -37,6 +37,8 @@ class FakeSupabase {
       return { data: { subscription: { unsubscribe: () => this.listeners.delete(cb) } } };
     },
     signInWithOtp: vi.fn(async (_args: unknown) => ({ data: {}, error: null })),
+    verifyOtp: vi.fn(async (_args: unknown) => ({ data: {}, error: null })),
+    updateUser: vi.fn(async (_args: unknown) => ({ data: {}, error: null })),
     signInWithOAuth: vi.fn(async (_args: unknown) => ({ data: {}, error: null })),
     signOut: vi.fn(async (_args: unknown) => {
       this.session = null;
@@ -204,6 +206,16 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
 // ---------- tests ----------
 
 describe('supabase auth', () => {
+  it('вход по коду из письма и задание пароля', async () => {
+    const { fake, backend } = setup();
+    await backend.auth.verifyEmailCode(' neo@matrix.io ', '123 456');
+    expect(fake.auth.verifyOtp).toHaveBeenCalledWith({ email: 'neo@matrix.io', token: '123456', type: 'email' });
+    await expect(backend.auth.verifyEmailCode('neo@matrix.io', 'abc')).rejects.toBeInstanceOf(BackendError);
+    await backend.auth.setPassword('longpassword');
+    expect(fake.auth.updateUser).toHaveBeenCalledWith({ password: 'longpassword' });
+    await expect(backend.auth.setPassword('short')).rejects.toBeInstanceOf(BackendError);
+  });
+
   it('маппит пользователя и провайдера', async () => {
     const { fake, backend } = setup();
     expect(await backend.auth.getUser()).toBeNull();

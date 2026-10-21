@@ -71,6 +71,10 @@ export interface AuthApi {
   /** Регистрация по почте и паролю. true — нужно подтвердить почту по письму */
   signUpWithPassword(email: string, password: string): Promise<{ confirmEmail: boolean }>;
   signInWithPassword(email: string, password: string): Promise<void>;
+  /** Вход по 6-значному коду из письма (после signInWithEmail): работает в приложении, где ссылка из письма уводит на сайт */
+  verifyEmailCode(email: string, code: string): Promise<void>;
+  /** Задать/сменить пароль у вошедшего аккаунта: по нему можно войти в приложении */
+  setPassword(password: string): Promise<void>;
   signInWithOAuth(provider: 'google' | 'github'): Promise<void>;
   signOut(): Promise<void>;
 }

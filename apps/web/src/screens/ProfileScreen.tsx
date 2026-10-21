@@ -144,6 +144,7 @@ function AccountPanel() {
           )}
         </div>
       </div>
+      {!guest && user && user.provider !== 'local' ? <SetPassword busy={busy} act={act} /> : null}
       {msg ? (
         <p className={`account-msg ${msg.ok ? 'ok' : 'error'}`} role={msg.ok ? 'status' : 'alert'} data-testid="account-msg">
           {msg.text}
@@ -214,6 +215,51 @@ export function LocalMigrationGate() {
   );
 }
 
+/** Пароль для входа в приложении: у аккаунта, созданного по ссылке из письма или через Google/GitHub, его нет. */
+function SetPassword({ busy, act }: { busy: boolean; act: Act }) {
+  const [open, setOpen] = useState(false);
+  const [pw, setPw] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  if (!open)
+    return (
+      <p className="muted small">
+        <button className="btn btn--ghost btn--sm" type="button" onClick={() => setOpen(true)} data-testid="set-password-open">
+          Задать пароль для входа в приложении
+        </button>
+      </p>
+    );
+  return (
+    <form
+      className="login-form"
+      noValidate
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (pw.length < 8) return setError('Пароль — не короче 8 символов');
+        setError(null);
+        void act(() => accountAction((b) => b.auth.setPassword(pw)), 'Пароль сохранён — с ним можно войти в приложении', { close: false }).then((r) => {
+          if (!r) {
+            setPw('');
+            setOpen(false);
+          }
+        });
+      }}
+    >
+      <label className="field">
+        <span>Новый пароль (от 8 символов)</span>
+        <input className="acc-input" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} data-testid="set-password" />
+      </label>
+      {error ? (
+        <p className="error small" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <button className="btn btn--primary btn--sm" type="submit" disabled={busy}>
+        Сохранить пароль
+      </button>
+    </form>
+  );
+}
+
 /** Облачный вход: регистрация и вход по почте и паролю, ссылка из письма, Google, GitHub. */
 type LoginMode = 'signup' | 'signin' | 'link';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -224,6 +270,8 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+  const [sent, setSent] = useState(false);
   const needPassword = mode !== 'link';
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -231,8 +279,17 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
     if (mode === 'signup' && password.length < 8) return setError('Пароль — не короче 8 символов');
     if (mode === 'signin' && !password) return setError('Введи пароль');
     setError(null);
-    if (mode === 'link') {
-      void act(() => accountAction((b) => b.auth.signInWithEmail(email)), 'Готово! Открой письмо и нажми на ссылку для входа', { close: false });
+    if (mode === 'link' && sent && code.trim()) {
+      void act(() => accountAction((b) => b.auth.verifyEmailCode(email, code)), 'Ты вошёл', { close: false });
+    } else if (mode === 'link') {
+      void act(
+        async () => {
+          await accountAction((b) => b.auth.signInWithEmail(email));
+          setSent(true);
+        },
+        native ? 'Письмо отправлено. Введи код из письма ниже' : 'Готово! Открой письмо и нажми на ссылку для входа или введи код из письма',
+        { close: false },
+      );
     } else if (mode === 'signin') {
       void act(() => accountAction((b) => b.auth.signInWithPassword(email, password)), 'Ты вошёл', { close: false });
     } else {
@@ -254,13 +311,13 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
     ['signin', 'Вход'],
     ['link', 'По ссылке'],
   ];
-  const shownTabs = native ? tabs.filter(([id]) => id !== 'link') : tabs;
+  const shownTabs = tabs;
   return (
     <div className="account-block cloud-login" data-testid="cloud-login">
       <h3 className="account-block__title">Облачный аккаунт</h3>
       <p className="muted small">Прогресс сохранится в облаке: продолжай с любого устройства и попадай в таблицу лидеров.</p>
       {!cloud ? <p className="muted small">Сервер ещё не подключён — вход заработает после настройки Supabase.</p> : null}
-      {native ? <p className="muted small">Войди тем же email и паролем, что на сайте.</p> : null}
+      {native ? <p className="muted small">В приложении можно войти по почте и паролю или по коду из письма (вкладка «По ссылке»).</p> : null}
       <div className="login-tabs" role="tablist">
         {shownTabs.map(([id, label]) => (
           <button
@@ -304,7 +361,28 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
             />
           </label>
         ) : (
-          <p className="muted small">Пришлём на почту ссылку — нажми на неё, и ты в игре. Пароль не нужен.</p>
+          <>
+            <p className="muted small">
+              {native
+                ? 'Пришлём на почту письмо — введи код из него здесь. Пароль не нужен. (Если в письме только ссылка — открой её на телефоне: ты войдёшь на сайте, там можно задать пароль для приложения.)'
+                : 'Пришлём на почту ссылку — нажми на неё, и ты в игре. Можно и ввести код из письма. Пароль не нужен.'}
+            </p>
+            {sent ? (
+              <label className="field">
+                <span>Код из письма</span>
+                <input
+                  className="acc-input mono"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={8}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="123456"
+                  data-testid="email-code"
+                />
+              </label>
+            ) : null}
+          </>
         )}
         {error ? (
           <p className="error small" role="alert">
@@ -312,7 +390,7 @@ function CloudLogin({ busy, act, cloud }: { busy: boolean; act: Act; cloud: bool
           </p>
         ) : null}
         <button className="btn btn--primary" type="submit" disabled={busy}>
-          <Icon name="mail" size={18} /> {mode === 'signup' ? 'Зарегистрироваться' : mode === 'signin' ? 'Войти' : 'Получить ссылку'}
+          <Icon name="mail" size={18} /> {mode === 'signup' ? 'Зарегистрироваться' : mode === 'signin' ? 'Войти' : sent && code.trim() ? 'Войти по коду' : sent ? 'Отправить ещё раз' : 'Получить письмо'}
         </button>
       </form>
       {native ? null : <div className="login-or">или</div>}
