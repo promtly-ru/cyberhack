@@ -256,14 +256,16 @@
   display: flex; gap: 6px; align-items: flex-end;
   overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
   scroll-snap-type: x proximity; scrollbar-width: none;
-  padding: 18px 4px 4px; margin: 0 -8px;
-  mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  padding: 18px 8px 4px; margin: 0 -8px; scroll-padding-inline: 8px;
 }
 .hand.is-strip::-webkit-scrollbar { display: none; }
 .hand.is-strip > .hand-card:first-child { margin-left: auto; }
 .hand.is-strip > .hand-card:last-child { margin-right: auto; }
+/* Без filter/mask на телефоне: на Android они дают графический мусор поверх арта карты */
+.hand.is-strip .hand-card:not(.is-playable) .card { filter: none; opacity: 0.6; }
+.hand.is-strip .hand-card.is-selected .card { filter: none; outline: 2px solid var(--acid); outline-offset: 2px; border-radius: 8px; }
 .hand.is-strip .hand-card,
-.hand.is-strip .hand-card:hover:not(:disabled) { position: relative; flex: none; transform: none; touch-action: pan-x; scroll-snap-align: center; }
+.hand.is-strip .hand-card:hover:not(:disabled) { position: relative; flex: none; transform: none; touch-action: pan-x; scroll-snap-align: start; }
 .hand.is-strip .hand-card .hand-card__inner,
 .hand.is-strip .hand-card:hover:not(:disabled) .hand-card__inner { scale: 1; }
 .hand.is-strip .hand-card.is-selected { transform: translateY(-14px); }
@@ -361,3 +363,9 @@
 .hand-card.is-volatile { animation: volatile-jitter .35s steps(2) infinite; filter: drop-shadow(0 0 8px #b8ff3b); }
 .hand-card.is-volatile::after { content: '⚡ ×2 · сгорит'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #d6ff7a; white-space: nowrap; }
 @keyframes volatile-jitter { 0% { translate: 0 0; } 100% { translate: 1px -1px; } }
+
+/* Рука-лента: вложенные drop-shadow в прокручиваемом контейнере портят отрисовку арта на Android — заменяем тенью */
+.hand.is-strip .card-art { filter: none; }
+.hand.is-strip .rarity--uncommon { filter: none; box-shadow: 0 0 6px rgba(0, 240, 255, 0.4); }
+.hand.is-strip .rarity--rare { filter: none; box-shadow: 0 0 9px rgba(232, 255, 58, 0.5); }
+.hand.is-strip .card.is-doomed { filter: none; box-shadow: 0 0 8px rgba(255, 59, 92, 0.6); }
