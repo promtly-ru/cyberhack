@@ -108,7 +108,11 @@ html[data-motion='reduced'] [class*='art-'], html[data-motion='reduced'] .glitch
 .card__text { overflow-wrap: anywhere; hyphens: auto; }
 .card__name { overflow-wrap: anywhere; }
 
-/* Прошивки на телефоне переносятся на вторую строку, а не обрезаются */
+/* Прошивки на телефоне: одна прокручиваемая строка, чтобы шапка не отъедала место у арены */
 @media (max-width: 767px) and (min-height: 521px), (max-width: 767px) and (max-aspect-ratio: 5/4) {
-  .topbar .firmware-bar { flex-wrap: wrap; overflow: visible; gap: 4px; }
+  .topbar .firmware-bar { flex-wrap: nowrap; overflow-x: auto; gap: 4px; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+  .topbar .firmware-bar .topbar__relics-label { display: none; }
+  .topbar .firmware { flex: none; gap: 5px; padding: 2px 7px; font-size: 11px; }
+  .topbar .firmware__name { max-width: 11ch; }
+  .topbar .firmware-bar::-webkit-scrollbar { display: none; }
 }
