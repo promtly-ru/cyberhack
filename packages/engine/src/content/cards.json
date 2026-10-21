@@ -4912,7 +4912,7 @@
       {
         "type": "apply_status",
         "status": "strength",
-        "amount": 2,
+        "amount": 3,
         "target": "self"
       },
       {
@@ -4922,14 +4922,14 @@
         "target": "self"
       }
     ],
-    "description": "Получи 2 Разгона и 1 Шифрование.",
+    "description": "Получи 3 Разгона и 1 Шифрование.",
     "upgrade": {
       "name": "Бусидо+",
       "effects": [
         {
           "type": "apply_status",
           "status": "strength",
-          "amount": 3,
+          "amount": 4,
           "target": "self"
         },
         {
@@ -4939,7 +4939,7 @@
           "target": "self"
         }
       ],
-      "description": "Получи 3 Разгона и 2 Шифрования."
+      "description": "Получи 4 Разгона и 2 Шифрования."
     },
     "tags": [
       "blades"
@@ -5484,34 +5484,34 @@
       {
         "type": "apply_status",
         "status": "plating",
-        "amount": 4,
+        "amount": 5,
         "target": "self"
       },
       {
         "type": "apply_status",
         "status": "thorns",
-        "amount": 3,
+        "amount": 4,
         "target": "self"
       }
     ],
-    "description": "Получи 4 Броня-патча и 3 Контрудара.",
+    "description": "Получи 5 Броня-патча и 4 Контрудара.",
     "upgrade": {
       "name": "Бастион+",
       "effects": [
         {
           "type": "apply_status",
           "status": "plating",
-          "amount": 6,
+          "amount": 7,
           "target": "self"
         },
         {
           "type": "apply_status",
           "status": "thorns",
-          "amount": 4,
+          "amount": 5,
           "target": "self"
         }
       ],
-      "description": "Получи 6 Броня-патча и 4 Контрудара."
+      "description": "Получи 7 Броня-патча и 5 Контрударов."
     },
     "tags": [
       "plating"
@@ -6012,7 +6012,7 @@
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 4,
+        "amount": 3,
         "target": "self"
       },
       {
@@ -6022,14 +6022,14 @@
         "target": "self"
       }
     ],
-    "description": "Получи 4 Самовосстановления и 1 Броня-патч.",
+    "description": "Получи 3 Самовосстановления и 1 Броня-патч.",
     "upgrade": {
       "name": "Матрица регенерации+",
       "effects": [
         {
           "type": "apply_status",
           "status": "regen",
-          "amount": 5,
+          "amount": 4,
           "target": "self"
         },
         {
@@ -6039,7 +6039,7 @@
           "target": "self"
         }
       ],
-      "description": "Получи 5 Самовосстановления и 2 Броня-патча."
+      "description": "Получи 4 Самовосстановления и 2 Броня-патча."
     },
     "tags": [
       "regen"
@@ -6260,7 +6260,7 @@
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 6,
+        "amount": 5,
         "target": "self"
       },
       {
@@ -6270,7 +6270,7 @@
         "target": "self"
       }
     ],
-    "description": "Получи 6 Самовосстановления и 3 Броня-патча.",
+    "description": "Получи 5 Самовосстановления и 3 Броня-патча.",
     "upgrade": {
       "name": "Буйный рост+",
       "effects": [
@@ -8261,17 +8261,17 @@
       {
         "type": "apply_status",
         "status": "weak",
-        "amount": 3,
+        "amount": 2,
         "target": "all_enemies"
       },
       {
         "type": "apply_status",
         "status": "vulnerable",
-        "amount": 3,
+        "amount": 2,
         "target": "all_enemies"
       }
     ],
-    "description": "Получи 12 блока. Наложи 3 Лага на всех врагов. Наложи 3 Бреши на всех врагов. Сжигается.",
+    "description": "Получи 12 блока. Наложи 2 Лага на всех врагов. Наложи 2 Бреши на всех врагов. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Хроностазис+",
@@ -8283,17 +8283,17 @@
         {
           "type": "apply_status",
           "status": "weak",
-          "amount": 4,
+          "amount": 3,
           "target": "all_enemies"
         },
         {
           "type": "apply_status",
           "status": "vulnerable",
-          "amount": 4,
+          "amount": 3,
           "target": "all_enemies"
         }
       ],
-      "description": "Получи 16 блока. Наложи 4 Лага на всех врагов. Наложи 4 Бреши на всех врагов. Сжигается."
+      "description": "Получи 16 блока. Наложи 3 Лага на всех врагов. Наложи 3 Бреши на всех врагов. Сжигается."
     },
     "tags": [
       "stasis"
@@ -10228,7 +10228,7 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 6,
+        "amount": 8,
         "target": "enemy"
       },
       {
@@ -10238,13 +10238,13 @@
         "target": "self"
       }
     ],
-    "description": "Нанеси 6 урона. Получи 1 Контрудар.",
+    "description": "Нанеси 8 урона. Получи 1 Контрудар.",
     "upgrade": {
       "name": "Парирующий выпад+",
       "effects": [
         {
           "type": "damage",
-          "amount": 9,
+          "amount": 11,
           "target": "enemy"
         },
         {
@@ -10254,7 +10254,7 @@
           "target": "self"
         }
       ],
-      "description": "Нанеси 9 урона. Получи 2 Контрудара."
+      "description": "Нанеси 11 урона. Получи 2 Контрудара."
     },
     "tags": [
       "counter"
@@ -10381,23 +10381,23 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 3,
+        "amount": 4,
         "times": 3,
         "target": "enemy"
       }
     ],
-    "description": "Нанеси 3 урона 3 раза.",
+    "description": "Нанеси 4 урона 3 раза.",
     "upgrade": {
       "name": "Танец клинков+",
       "effects": [
         {
           "type": "damage",
-          "amount": 4,
+          "amount": 5,
           "times": 3,
           "target": "enemy"
         }
       ],
-      "description": "Нанеси 4 урона 3 раза."
+      "description": "Нанеси 5 урона 3 раза."
     },
     "tags": [
       "blades"
@@ -10609,29 +10609,29 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 7,
+        "amount": 8,
         "target": "enemy"
       },
       {
         "type": "block",
-        "amount": 3
+        "amount": 4
       }
     ],
-    "description": "Нанеси 7 урона. Получи 3 блока.",
+    "description": "Нанеси 8 урона. Получи 4 блока.",
     "upgrade": {
       "name": "Сварочный резак+",
       "effects": [
         {
           "type": "damage",
-          "amount": 10,
+          "amount": 11,
           "target": "enemy"
         },
         {
           "type": "block",
-          "amount": 4
+          "amount": 5
         }
       ],
-      "description": "Нанеси 10 урона. Получи 4 блока."
+      "description": "Нанеси 11 урона. Получи 5 блока."
     }
   },
   {
@@ -11275,32 +11275,32 @@
     "effects": [
       {
         "type": "heal",
-        "amount": 10
+        "amount": 8
       },
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 4,
+        "amount": 3,
         "target": "self"
       }
     ],
-    "description": "Восстанови 10 HP. Получи 4 Самовосстановления. Сжигается.",
+    "description": "Восстанови 8 HP. Получи 3 Самовосстановления. Сжигается.",
     "exhaust": true,
     "upgrade": {
       "name": "Панацея+",
       "effects": [
         {
           "type": "heal",
-          "amount": 14
+          "amount": 11
         },
         {
           "type": "apply_status",
           "status": "regen",
-          "amount": 5,
+          "amount": 4,
           "target": "self"
         }
       ],
-      "description": "Восстанови 14 HP. Получи 5 Самовосстановлений. Сжигается."
+      "description": "Восстанови 11 HP. Получи 4 Самовосстановления. Сжигается."
     },
     "tags": [
       "regen"
@@ -14964,7 +14964,7 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 11,
+        "amount": 13,
         "target": "enemy"
       },
       {
@@ -14972,13 +14972,13 @@
         "amount": 2
       }
     ],
-    "description": "Нанеси 11 урона. Потеряй 2 HP.",
+    "description": "Нанеси 13 урона. Потеряй 2 HP.",
     "upgrade": {
       "name": "Обоюдоострый клинок+",
       "effects": [
         {
           "type": "damage",
-          "amount": 14,
+          "amount": 16,
           "target": "enemy"
         },
         {
@@ -14986,7 +14986,7 @@
           "amount": 2
         }
       ],
-      "description": "Нанеси 14 урона. Потеряй 2 HP."
+      "description": "Нанеси 16 урона. Потеряй 2 HP."
     },
     "tags": [
       "blades"
@@ -15509,7 +15509,7 @@
     "effects": [
       {
         "type": "damage",
-        "amount": 7,
+        "amount": 8,
         "target": "all_enemies"
       },
       {
@@ -15519,13 +15519,13 @@
         "target": "all_enemies"
       }
     ],
-    "description": "Нанеси 7 урона всем врагам. Наложи 1 Брешь на всех врагов.",
+    "description": "Нанеси 8 урона всем врагам. Наложи 1 Брешь на всех врагов.",
     "upgrade": {
       "name": "Огнемёт+",
       "effects": [
         {
           "type": "damage",
-          "amount": 9,
+          "amount": 10,
           "target": "all_enemies"
         },
         {
@@ -15535,7 +15535,7 @@
           "target": "all_enemies"
         }
       ],
-      "description": "Нанеси 9 урона всем врагам. Наложи 1 Брешь на всех врагов."
+      "description": "Нанеси 10 урона всем врагам. Наложи 1 Брешь на всех врагов."
     },
     "tags": [
       "siege"
@@ -15552,7 +15552,7 @@
     "effects": [
       {
         "type": "block",
-        "amount": 10
+        "amount": 12
       },
       {
         "type": "apply_status",
@@ -15561,13 +15561,13 @@
         "target": "self"
       }
     ],
-    "description": "Получи 10 блока. Получи 2 Броня-патча.",
+    "description": "Получи 12 блока. Получи 2 Броня-патча.",
     "upgrade": {
       "name": "Генератор щита+",
       "effects": [
         {
           "type": "block",
-          "amount": 13
+          "amount": 15
         },
         {
           "type": "apply_status",
@@ -15576,7 +15576,7 @@
           "target": "self"
         }
       ],
-      "description": "Получи 13 блока. Получи 2 Броня-патча."
+      "description": "Получи 15 блока. Получи 2 Броня-патча."
     },
     "tags": [
       "plating"

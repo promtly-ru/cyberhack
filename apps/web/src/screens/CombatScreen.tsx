@@ -262,15 +262,10 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
         else setSelected(null);
         return;
       }
-      // Единственная возможная цель: сразу играем, без второго клика по врагу
-      if (isTargeted(c) && options.size === 1 && !tutorialActive) {
-        play(c.uid, [...options][0]);
-        return;
-      }
       sfx('select');
       setSelected(c.uid);
     },
-    [combat.energy, flashHint, isTargeted, legal, play, playerPhase, selected, tutorialActive],
+    [combat.energy, flashHint, isTargeted, legal, play, playerPhase, selected],
   );
 
   // ---------- Перетаскивание ----------
