@@ -87,6 +87,12 @@ export function createLocalAuth(device: DeviceAccounts): AuthApi {
     async signInWithPassword() {
       throw new BackendNotConfiguredError();
     },
+    async verifyEmailCode() {
+      throw new BackendNotConfiguredError();
+    },
+    async setPassword() {
+      throw new BackendNotConfiguredError();
+    },
     async signInWithOAuth() {
       throw new BackendNotConfiguredError();
     },

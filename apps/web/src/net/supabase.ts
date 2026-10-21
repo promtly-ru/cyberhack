@@ -486,6 +486,23 @@ export function createSupabaseBackend(opts: SupabaseBackendOptions): SupabaseBac
         throw new BackendError(`Не удалось войти: ${error.message}`);
       }
     },
+    async verifyEmailCode(email, code) {
+      const token = code.replace(/\s/g, '');
+      if (!/^\d{6,8}$/.test(token)) throw new BackendError('Код — 6 цифр из письма');
+      const { error } = await client.auth.verifyOtp({ email: email.trim(), token, type: 'email' });
+      if (error) {
+        if (isThrownNetworkError(error)) throw new NetworkError();
+        throw new BackendError(`Не удалось войти по коду: ${error.message}`);
+      }
+    },
+    async setPassword(password) {
+      if (password.length < 8) throw new BackendError('Пароль должен быть не короче 8 символов');
+      const { error } = await client.auth.updateUser({ password });
+      if (error) {
+        if (isThrownNetworkError(error)) throw new NetworkError();
+        throw new BackendError(`Не удалось задать пароль: ${error.message}`);
+      }
+    },
     async signInWithOAuth(provider) {
       const { error } = await client.auth.signInWithOAuth({ provider, options: { redirectTo: redirectTo() } });
       if (error) throw new BackendError(`Не удалось начать вход через ${provider}: ${error.message}`);
