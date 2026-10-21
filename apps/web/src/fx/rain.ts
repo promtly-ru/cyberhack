@@ -26,7 +26,7 @@ function buildAtlas(): Texture[] {
   g.fillStyle = '#fff';
   g.textAlign = 'center';
   g.textBaseline = 'middle';
-  g.font = `700 ${GLYPH * 0.72}px "JetBrains Mono", ui-monospace, monospace`;
+  g.font = `700 ${GLYPH * 0.72}px "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace`;
   for (let i = 0; i < CHARS.length; i++) g.fillText(CHARS[i]!, i * GLYPH + GLYPH / 2, GLYPH / 2 + 1);
   const base = Texture.from(cv);
   return Array.from({ length: CHARS.length }, (_, i) => new Texture({ source: base.source, frame: new Rectangle(i * GLYPH, 0, GLYPH, GLYPH) }));

@@ -14,9 +14,9 @@
   --red: #ff3b5c;
   --orange: #ff9f1c;
   --violet: #b48cff;
-  --font-display: 'Tektur', 'Exo 2', system-ui, sans-serif;
-  --font-body: 'Exo 2', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --font-display: 'Tektur Variable', 'Tektur', 'Exo 2 Variable', system-ui, sans-serif;
+  --font-body: 'Exo 2 Variable', 'Exo 2', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Consolas, monospace;
   --speed: 1;
   --radius: 10px;
   --gutter: 16px;

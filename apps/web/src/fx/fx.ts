@@ -238,7 +238,7 @@ class FxEngine {
     const t = new Text({
       text,
       style: {
-        fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+        fontFamily: 'JetBrains Mono Variable, JetBrains Mono, ui-monospace, monospace',
         fontWeight: '800',
         fontSize: size,
         fill: color,

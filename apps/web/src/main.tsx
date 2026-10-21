@@ -5,6 +5,10 @@ import { initBackend } from './game/store';
 import { applyToDocument } from './ui/settings';
 import { unlockAudio } from './audio/sfx';
 import { registerServiceWorker } from './pwa';
+// Шрифты лежат в бандле (а не на Google Fonts): игра выглядит так же без интернета, в приложении и в PWA
+import '@fontsource-variable/exo-2/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/tektur/wght.css';
 import './styles/base.css';
 import './styles/card.css';
 import './styles/combat.css';
