@@ -9,3 +9,4 @@ tmp/
 test-results/
 playwright-report/
 e2e/_playthrough/
+tmp-preview.log
