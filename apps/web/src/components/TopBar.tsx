@@ -75,9 +75,9 @@ export function TopBar({ run }: { run: RunState }) {
           <RelicIcon key={id} id={id} size="sm" />
         ))}
       </div>
-      <FirmwareButton mode="run" />
       <div className="topbar__actions">
         <PotionBar run={run} />
+        <FirmwareButton mode="run" />
         <button
           className="icon-btn icon-btn--count"
           onClick={() => {
