@@ -1,4 +1,4 @@
-import { rollableFirmwares } from './firmware';
+import { FIRMWARE_RARITY_CONFIG, rollableFirmwares } from './firmware';
 /**
  * Генерация наград и магазина.
  */
@@ -170,7 +170,9 @@ export function buildCombatRewards(s: RunState, tier: CombatTier, mods: Ascensio
   const fwPool = rollableFirmwares(s);
   const fwChance = tier === 'normal' ? 0.12 : 1;
   if (fwPool.length > 0 && rngOf(s, 'rewards').next() < fwChance) {
-    items.push({ kind: 'firmware', firmwareId: rngOf(s, 'rewards').pick(fwPool).id });
+    // Редкие прошивки выпадают реже (веса из FIRMWARE_RARITY_CONFIG)
+    const pick = rngOf(s, 'rewards').weighted(fwPool.map((f) => [f, FIRMWARE_RARITY_CONFIG[f.rarity].weight] as const));
+    items.push({ kind: 'firmware', firmwareId: pick.id });
   }
   // Расходник: свой поток ГСЧ (не сдвигает остальные награды); в конце списка — индексы прежних наград не меняются
   const potionChance = POTION_DROP_CHANCE[tier] + getMutatorMods(s.mutators).potionChanceBonus;

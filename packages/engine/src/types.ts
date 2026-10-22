@@ -500,7 +500,9 @@ export interface RunState {
   stats: RunStats;
   // ---- Расширения движка (опциональные) ----
   /** Метапрогрессия: карты/реликвии, закрытые для этого забега (не выпадают в наградах и магазине) */
-  locked?: { cards: string[]; relics: string[] };
+  locked?: { cards: string[]; relics: string[]; firmwares?: string[] };
+  /** Мета-уровни прошивок из коллекции игрока (id → 2..4); нет — уровень 1 */
+  firmwareLevels?: Record<string, number>;
   /** Награды, ожидающие на экране reward, пока открыт card_pick */
   pendingRewards?: RewardItem[];
   /** Товары магазина, пока открыт select_deck_card (удаление карты из магазина) */
@@ -617,7 +619,9 @@ export interface NewRunOptions {
    * Метапрогрессия: открытые игроком карты/реликвии из числа закрываемых (см. unlocks.ts).
    * Не передано — открыто всё (тесты, симулятор, еженедельный вызов).
    */
-  unlocked?: { cards?: readonly string[]; relics?: readonly string[] };
+  unlocked?: { cards?: readonly string[]; relics?: readonly string[]; firmwares?: readonly string[] };
+  /** Мета-уровни прошивок из коллекции (id → уровень 2..4). Не передано — все уровня 1 */
+  firmwareLevels?: Readonly<Record<string, number>>;
   /** Мутаторы забега (id из mutators.ts); в еженедельном вызове игнорируются (задаются неделей) */
   mutators?: readonly string[];
 }

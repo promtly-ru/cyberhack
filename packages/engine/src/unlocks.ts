@@ -5,6 +5,7 @@
  */
 import { MAX_ASCENSION } from './ascension';
 import { getContent } from './content';
+import { lockableFirmwares } from './firmware';
 import type { ClassId, NewRunOptions, RunState } from './types';
 
 /** Накопительная статистика между забегами: суммы (total*) и рекорды (best*). Слияние — максимум по ключу. */
@@ -451,12 +452,14 @@ export function lockableClasses(): ClassId[] {
 }
 
 /** Закрытое содержимое для забега по списку открытого игроком. */
-export function lockedContent(unlocked: NonNullable<NewRunOptions['unlocked']>): { cards: string[]; relics: string[] } {
+export function lockedContent(unlocked: NonNullable<NewRunOptions['unlocked']>): { cards: string[]; relics: string[]; firmwares: string[] } {
   const cards = new Set(unlocked.cards ?? []);
   const relics = new Set(unlocked.relics ?? []);
+  const firmwares = new Set(unlocked.firmwares ?? []);
   return {
     cards: lockableCards().filter((id) => !cards.has(id)),
     relics: lockableRelics().filter((id) => !relics.has(id)),
+    firmwares: lockableFirmwares().filter((id) => !firmwares.has(id)),
   };
 }
 

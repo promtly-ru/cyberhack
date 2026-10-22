@@ -3,6 +3,7 @@
  * Для тестов контент подменяется через setContentForTests()/resetContent().
  */
 import cardsJson from './cards.json';
+import cardsFirmwareJson from './cards-firmware.json';
 import classesJson from './classes.json';
 import encountersJson from './encounters.json';
 import enemiesJson from './enemies.json';
@@ -54,7 +55,7 @@ function asArray<T>(raw: unknown): T[] {
 }
 
 export const defaultContent: ContentData = {
-  cards: asArray<CardDef>(cardsJson),
+  cards: [...asArray<CardDef>(cardsJson), ...asArray<CardDef>(cardsFirmwareJson)],
   enemies: asArray<EnemyDef>(enemiesJson),
   relics: asArray<RelicDef>(relicsJson),
   statuses: asArray<StatusDef>(statusesJson),

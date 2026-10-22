@@ -1,4 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { lockableFirmwares } from './firmware';
 import { runBot } from './__fixtures__/helpers';
 import { getAscensionMods } from './ascension';
 import { getContent, resetContent } from './content';
@@ -42,7 +43,7 @@ function finished(opts: Partial<NewRunOptions> & { status: 'won' | 'lost' }, pat
   return s;
 }
 
-const LOCKED_NONE = { cards: [] as string[], relics: [] as string[] };
+const LOCKED_NONE = { cards: [] as string[], relics: [] as string[], firmwares: [] as string[] };
 
 describe('каталог разблокировок', () => {
   it('~20 достижений с уникальными id', () => {
@@ -72,7 +73,7 @@ describe('каталог разблокировок', () => {
     expect(some.cards).not.toContain(all.cards[0]);
     expect(some.relics).not.toContain(all.relics[0]);
     expect(some.cards.length).toBe(all.cards.length - 1);
-    expect(lockedContent({ cards: lockableCards(), relics: lockableRelics() })).toEqual(LOCKED_NONE);
+    expect(lockedContent({ cards: lockableCards(), relics: lockableRelics(), firmwares: lockableFirmwares() })).toEqual(LOCKED_NONE);
   });
 });
 
@@ -157,7 +158,7 @@ describe('детерминизм с unlocked', () => {
   it('всё открыто через unlocked ≡ без опции (кроме поля locked)', () => {
     const base: NewRunOptions = { seed: 'det-2', classId: 'netrunner' };
     const { state, actions } = runBot(base, 9);
-    const full = replay({ ...base, unlocked: { cards: lockableCards(), relics: lockableRelics() } }, actions);
+    const full = replay({ ...base, unlocked: { cards: lockableCards(), relics: lockableRelics(), firmwares: lockableFirmwares() } }, actions);
     expect(full.locked).toEqual(LOCKED_NONE);
     delete full.locked;
     expect(full).toEqual(state);

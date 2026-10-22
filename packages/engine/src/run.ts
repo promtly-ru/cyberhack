@@ -44,6 +44,18 @@ import {
   type Screen,
 } from './types';
 import { lockedContent } from './unlocks';
+import { getFirmware, MAX_FIRMWARE_LEVEL } from './firmware';
+
+/** Мета-уровни прошивок из опций: только известные id и уровни 2..MAX. */
+function sanitizeFirmwareLevels(raw: NewRunOptions['firmwareLevels']): Record<string, number> | undefined {
+  if (!raw) return undefined;
+  const out: Record<string, number> = {};
+  for (const [id, lv] of Object.entries(raw)) {
+    const n = Math.min(MAX_FIRMWARE_LEVEL, Math.floor(Number(lv) || 0));
+    if (getFirmware(id) && n > 1) out[id] = n;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
 import { makeCard } from './util';
 
 /** Итоговые модификаторы: Ascension → режим сложности → мутаторы забега. */
@@ -99,6 +111,8 @@ export function newRun(opts: NewRunOptions): RunState {
   };
 
   if (opts.unlocked) s.locked = lockedContent(opts.unlocked);
+  const fwLevels = sanitizeFirmwareLevels(opts.firmwareLevels);
+  if (fwLevels) s.firmwareLevels = fwLevels;
   s.stats.maxGold = s.gold;
 
   for (const id of cls.startingDeck) {

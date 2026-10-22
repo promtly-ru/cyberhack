@@ -787,7 +787,7 @@ function applyFirmwares(ctx: CombatCtx, trigger: FirmwareTrigger): void {
   const deck = ctx.s.deck.map((c) => c.defId);
   for (const fw of FIRMWARES) {
     if (fw.trigger !== trigger || !owned.includes(fw.id)) continue;
-    for (const eff of firmwareEffects(fw, firmwareLevel(fw, deck))) {
+    for (const eff of firmwareEffects(fw, firmwareLevel(fw, deck), ctx.s.firmwareLevels?.[fw.id] ?? 1)) {
       if (isOver(ctx)) return;
       applyRelicEffect(ctx, eff);
     }

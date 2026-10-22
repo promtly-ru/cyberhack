@@ -33,8 +33,32 @@ export type { ContentData } from './content';
 export { DIFFICULTY_CARDS, DIFFICULTY_INFO, getAscensionDescriptions, getAscensionMods, MAX_ASCENSION } from './ascension';
 export type { AscensionMods } from './ascension';
 export { computeScore } from './score';
-export { FIRMWARES, getFirmware, firmwareProgress, isFirmwareActive, firmwareLevel, firmwareEffects, partialEffects, describeFirmwareEffects } from './firmware';
-export type { FirmwareDef, FirmwareLevel, FirmwareTrigger } from './firmware';
+export {
+  FIRMWARES,
+  getFirmware,
+  firmwareProgress,
+  isFirmwareActive,
+  firmwareLevel,
+  firmwareEffects,
+  partialEffects,
+  describeFirmwareEffects,
+  FIRMWARE_RARITY_CONFIG,
+  MAX_FIRMWARE_LEVEL,
+  RARITIES,
+  scaleEffects,
+  lockableFirmwares,
+  listFirmwares,
+  listAvailableFirmwares,
+  isFirmwareUnlocked,
+  rollFirmwareChoices,
+  copiesForNextLevel,
+  addFirmwareCopy,
+  canUpgrade,
+  upgradeFirmware,
+  firmwareEffect,
+  firmwareRunLevels,
+} from './firmware';
+export type { FirmwareDef, FirmwareLevel, FirmwareTrigger, FirmwareLevelDef, FirmwareMeta, FirmwareState, FirmwareType, Rarity, RarityConfig, RngLike } from './firmware';
 export { SYNERGIES, getActiveSynergies } from './synergies';
 export type { SynergyDef } from './synergies';
 export { availableNodes, blackboxForceCost, blackboxHackCost, canUsePotionNow, currentNode, meetsRequires, RELAY_HEAL_PCT } from './run';
