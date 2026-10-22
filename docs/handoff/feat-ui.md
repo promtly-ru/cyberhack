@@ -22,5 +22,9 @@
 4. Правило уровней в заглушке: переход N → N+1 стоит `levels[N].copiesNeeded` копий. Если в feat/data иначе, поправить `copiesForNext`.
 5. Старая панель `AchievementsPanel` в профиле и `FirmwareBar` в `Bits.tsx` не удалены (чужие файлы). Можно убрать после мерджа.
 
+## Проверки
+typecheck ✓, lint ✓ (0 ошибок), vitest 333/333 ✓, e2e 39/39 ✓.
+Внимание: все worktree используют порт 4173, а `reuseExistingServer` подхватывает чужой preview. Прогон шёл через временный конфиг (не закоммичен), который наследует `playwright.config.ts`, но поднимает свой сервер на 4183 с `reuseExistingServer: false`.
+
 ## Просьбы к другим веткам
 - feat/perf: кнопка `.fw-btn` в шапке забега 44×44. Если perf-стили меняют `.topbar__actions`, проверьте, что она не обрезается на 390px.
