@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { RunState } from '../game/engine';
 import { Icon } from './Icon';
-import { FirmwareBar, RelicIcon } from './Bits';
+import { RelicIcon } from './Bits';
+import { FirmwareButton } from './firmware/FirmwareModal';
 import { tip } from './Tooltip';
 import { CardGridModal } from './CardGridModal';
 import { PotionBar } from './PotionBar';
@@ -74,7 +75,7 @@ export function TopBar({ run }: { run: RunState }) {
           <RelicIcon key={id} id={id} size="sm" />
         ))}
       </div>
-      <FirmwareBar firmwares={run.firmwares ?? []} deck={run.deck} />
+      <FirmwareButton mode="run" />
       <div className="topbar__actions">
         <PotionBar run={run} />
         <button

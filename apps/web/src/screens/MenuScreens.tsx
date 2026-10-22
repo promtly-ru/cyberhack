@@ -15,6 +15,8 @@ import { MutatorPicker, mutatorBonusPct } from './MutatorPicker';
 import { AccountChip } from './ProfileScreen';
 import { startTutorial } from '../tutorial/Tutorial';
 import { isInstalledApp } from '../download/DownloadScreen';
+import { AchievementsMenuButton } from './AchievementsScreen';
+import { FirmwareButton } from '../components/firmware/FirmwareModal';
 
 export function Logo({ small }: { small?: boolean }) {
   return (
@@ -123,6 +125,8 @@ export function MainMenu() {
               <Icon name="user" size={20} />
               <span>{user ? 'Профиль' : 'Вход'}</span>
             </button>
+            <AchievementsMenuButton />
+            <FirmwareButton mode="collection" className="menu-tool" label="Прошивки" />
             <button className="menu-tool" data-testid="menu-howto" onClick={click(() => setView('howto'))} {...tip('Как играть', 'Правила и словарь терминов')}>
               <Icon name="book" size={20} />
               <span>Правила</span>
