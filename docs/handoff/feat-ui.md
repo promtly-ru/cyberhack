@@ -148,6 +148,9 @@ export function useUnclaimedCount(): number {
 - Старая панель `AchievementsPanel` в профиле и `FirmwareBar` в `Bits.tsx` больше не используются в меню/шапке. Удалить можно после мерджа (чужие файлы).
 - Валюта (`metaExtra.currency`) и косметика в UI пока не показаны: нужен геймдизайн магазина.
 
+## Пробный мердж всех трёх веток
+origin/main (a4fa581) + feat/data (78114ea) + feat/perf (80db06e) + feat/ui, в таком порядке: конфликтов нет. С реальным `contract.ts`: typecheck 0 ошибок, lint 0 ошибок, vitest 366/366, e2e 39/39, шапка боя на 360px в порядке. Временный worktree удалён.
+
 ## Проверки
 feat/ui на заглушках: typecheck ✓, lint ✓ (0 ошибок), vitest 333/333 ✓, e2e 39/39 ✓.
 Внимание: все worktree используют порт 4173, а `reuseExistingServer` подхватывает чужой preview. Прогон шёл через временный конфиг (не закоммичен), который наследует `playwright.config.ts`, но поднимает свой сервер на 4183 с `reuseExistingServer: false`.
