@@ -1,0 +1,103 @@
+/* Прошивки: карточки, окно коллекции, награда 1 из 3 */
+.fwc {
+  --rar: #9aa6c8;
+  position: relative; display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 44px;
+  padding: 10px; text-align: left; color: var(--text); font: inherit; cursor: pointer;
+  background: linear-gradient(170deg, color-mix(in srgb, var(--rar) 14%, var(--panel-solid)), var(--panel-solid) 60%);
+  border: 2px solid color-mix(in srgb, var(--rar) 70%, transparent); border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4) inset, 0 0 14px color-mix(in srgb, var(--rar) 22%, transparent);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.fwc:hover, .fwc:focus-visible { transform: translateY(-2px); box-shadow: 0 0 22px color-mix(in srgb, var(--rar) 45%, transparent); outline: none; }
+.fwc:focus-visible { border-color: var(--rar); }
+.fwc--uncommon { --rar: var(--cyan); }
+.fwc--rare { --rar: var(--acid); }
+.fwc--epic { --rar: var(--violet); }
+.fwc--legendary { --rar: var(--orange); border-image: linear-gradient(135deg, var(--orange), var(--magenta)) 1; border-radius: 0; }
+.fwc.is-selected { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--rar), 0 0 30px color-mix(in srgb, var(--rar) 55%, transparent); }
+.fwc.is-locked { filter: grayscale(0.9) brightness(0.6); }
+.fwc.is-locked .fwc__desc { color: var(--text); font-style: italic; }
+.fwc__head { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+.fwc__type { display: inline-flex; align-items: center; gap: 4px; min-width: 0; text-transform: uppercase; letter-spacing: 0.04em; }
+.fwc__type-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.fwc__lvl { flex: none; white-space: nowrap; color: var(--rar); font-weight: 700; }
+.fwc__art { display: grid; place-items: center; aspect-ratio: 16 / 9; border-radius: 8px; color: var(--rar); background: radial-gradient(circle, color-mix(in srgb, var(--rar) 22%, transparent), transparent 70%), rgba(0, 0, 0, 0.35); }
+.fwc__name { font-family: var(--font-display); font-size: 15px; line-height: 1.2; overflow-wrap: break-word; hyphens: auto; }
+.fwc__rarity { font-size: 11px; color: var(--rar); text-transform: uppercase; letter-spacing: 0.06em; }
+.fwc__desc { font-size: 13px; color: var(--text-dim); line-height: 1.3; flex: 1; }
+.fwc__copies { position: relative; display: block; height: 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.fwc__copies-fill { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--rar, var(--cyan)) 70%, transparent); }
+.fwc__copies em { position: relative; display: block; text-align: center; font: 600 11px/16px var(--font-mono); font-style: normal; text-shadow: 0 0 3px #000, 0 0 2px #000; }
+.fwc__copies.is-ready .fwc__copies-fill { background: var(--green); }
+.fwc__copies.is-ready em { color: #04140a; text-shadow: none; }
+.fwc__copies.is-max { height: auto; padding: 1px 0; text-align: center; font-size: 11px; color: var(--acid); background: none; }
+
+/* Кнопка-иконка в шапке забега */
+.fw-btn { position: relative; display: inline-grid; place-items: center; width: 44px; height: 44px; flex: none; padding: 0; color: var(--cyan); background: rgba(0, 240, 255, 0.06); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+.fw-btn:hover, .fw-btn:focus-visible { background: rgba(0, 240, 255, 0.16); outline: none; box-shadow: 0 0 12px rgba(0, 240, 255, 0.35); }
+.fw-btn-host { position: relative; }
+.fw-dot { position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+/* Окно коллекции; не даём ленте фильтров распирать модалку на телефоне */
+.modal-backdrop:has(.fw-modal, .achx-screen) { grid-template-columns: minmax(0, 1fr); }
+.modal:has(.fw-modal, .achx-screen) { justify-self: center; min-width: 0; }
+.fw-modal { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.fw-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; justify-content: space-between; }
+.fw-chips { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.fw-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; font: inherit; font-size: 14px; color: var(--text-dim); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line-2); border-radius: 22px; cursor: pointer; }
+.fw-chip:hover { color: var(--text); border-color: var(--line); }
+.fw-chip[aria-pressed='true'], .fw-chip[aria-selected='true'] { color: #021014; background: var(--cyan); border-color: var(--cyan); font-weight: 600; }
+.fw-chip:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+.fw-selects { display: flex; gap: 8px; flex-wrap: wrap; }
+.fw-select { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--text-dim); min-width: 0; }
+.fw-select select { min-height: 44px; padding: 0 10px; font: inherit; font-size: 14px; color: var(--text); background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; max-width: 100%; }
+.fw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+
+.fw-detail { display: flex; flex-direction: column; gap: 12px; }
+.fw-back { align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.fw-detail__grid { display: grid; grid-template-columns: minmax(180px, 240px) 1fr; gap: 20px; align-items: start; }
+.fw-detail__info { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fw-detail__info h3 { margin: 0; font-family: var(--font-display); font-size: 22px; }
+.fw-detail__info p { margin: 0; }
+.fw-detail__info .fwc__copies { --rar: var(--cyan); height: 20px; }
+.fw-detail__info .fwc__copies em { line-height: 20px; font-size: 12px; }
+.fw-hint { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 8px; background: rgba(255, 159, 28, 0.1); border: 1px solid rgba(255, 159, 28, 0.4); color: var(--orange); }
+.fw-levels { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.fw-levels li { font-size: 14px; line-height: 1.35; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line-2); color: var(--text-dim); }
+.fw-levels li b { color: var(--text); margin-right: 6px; }
+.fw-levels li.is-done { color: var(--text); }
+.fw-levels li.is-current { border-color: var(--cyan); color: var(--text); background: rgba(0, 240, 255, 0.08); }
+.fw-detail__info .fwc__copies, .fw-upgrade { max-width: 420px; width: 100%; }
+.fw-upgrade { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* Награда 1 из 3 */
+.fw-reward { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgba(2, 3, 10, 0.96); animation: fade-in 0.2s; }
+.fw-reward__inner { width: min(760px, 100%); display: flex; flex-direction: column; gap: 14px; }
+.fw-reward__title { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0; font-family: var(--font-display); font-size: 26px; color: var(--cyan); }
+.fw-reward__inner > p { margin: 0; }
+.fw-reward__cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.fw-reward__slot { display: flex; flex-direction: column; gap: 6px; align-items: stretch; min-width: 0; }
+.fw-reward__slot .fwc { flex: 1; }
+.fw-reward__tag { text-align: center; font-size: 12px; color: var(--text-dim); }
+.fw-reward__tag.is-new { color: var(--green); font-weight: 600; }
+.fw-reward__actions { display: flex; justify-content: center; gap: 12px; }
+.fw-reward__actions .btn { min-height: 48px; min-width: 140px; }
+
+@media (max-width: 640px) {
+  .fw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .fwc { padding: 8px; }
+  .fwc__head { font-size: 11px; }
+  .fwc__name { font-size: 14px; }
+  .fwc__art svg { width: 30px; height: 30px; }
+  .fw-detail__grid { grid-template-columns: 1fr; }
+  .fw-detail__grid > .fwc { max-width: 240px; justify-self: center; width: 100%; }
+  .fw-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 2px; width: 100%; }
+  .fw-chip { flex: none; }
+  .fw-selects { width: 100%; }
+  .fw-select { flex: 1; }
+  .fw-reward__cards { grid-template-columns: 1fr; }
+  .fw-reward__slot { flex-direction: row; align-items: center; }
+  .fw-reward__slot .fwc__art { display: none; }
+  .fw-reward__tag { flex: none; width: 64px; }
+  .fw-reward__actions .btn { flex: 1; min-width: 0; }
+}

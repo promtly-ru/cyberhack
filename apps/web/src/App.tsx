@@ -14,6 +14,7 @@ import { RewardScreen, CardPickScreen, ShopScreen, RestScreen, NodeScreen, Event
 import { SettingsModal } from './screens/SettingsModal';
 import { useHistoryNav } from './game/historyNav';
 import { useUi } from './ui/uiStore';
+import { UiOverlays } from './ui-adapter/UiOverlays';
 
 const DevGallery = import.meta.env.DEV ? lazy(() => import('./dev/Gallery')) : null;
 
@@ -92,6 +93,7 @@ function GameApp() {
         </div>
       ) : null}
       {settingsOpen ? <SettingsModal /> : null}
+      <UiOverlays />
       <LocalMigrationGate />
       <TutorialLayer />
       <TooltipLayer />
