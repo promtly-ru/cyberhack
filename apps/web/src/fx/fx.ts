@@ -5,6 +5,7 @@
  */
 import { Application, Container, Graphics, Particle, ParticleContainer, Text, Texture, type Ticker } from 'pixi.js';
 import { animScale, isReducedMotion } from '../ui/settings';
+import { isLite } from './perf-mode';
 
 interface Part {
   p: Particle;
@@ -82,6 +83,7 @@ class FxEngine {
   private texts: FloatText[] = [];
   private flashAlpha = 0;
   private mountToken = 0;
+  private spawnSeq = 0;
 
   async mount(host: HTMLElement): Promise<void> {
     const token = ++this.mountToken;
@@ -125,6 +127,50 @@ class FxEngine {
     this.textLayer = new Container();
     app.stage.addChild(this.flashG, this.squares, this.glows, this.textLayer);
     app.ticker.add(this.tick);
+    this.prewarm(token);
+  }
+
+  /**
+   * Компиляция шейдеров, загрузка текстур и замер шрифта — в простое после старта,
+   * а не на первом ударе в бою (иначе первый эффект подвисает на 100–200 мс).
+   */
+  private prewarm(token: number): void {
+    const idle = (cb: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 1500));
+    idle(() => {
+      const app = this.app;
+      if (!app || token !== this.mountToken || !this.squares || !this.glows || !this.textLayer || !this.texSquare || !this.texGlow) return;
+      const a = new Particle({ texture: this.texSquare, x: -50, y: -50, alpha: 0.01 });
+      const b = new Particle({ texture: this.texGlow, x: -50, y: -50, alpha: 0.01 });
+      this.squares.addParticle(a);
+      this.glows.addParticle(b);
+      const t = this.makeText('0', 0xffffff, 30);
+      t.position.set(-100, -100);
+      this.textLayer.addChild(t);
+      this.squares.update();
+      this.glows.update();
+      app.render();
+      this.squares.removeParticle(a);
+      this.glows.removeParticle(b);
+      t.destroy();
+      if (!app.ticker.started) app.render();
+    });
+  }
+
+  private makeText(text: string, color: number, size: number): Text {
+    const lite = isLite();
+    return new Text({
+      text,
+      style: {
+        fontFamily: 'JetBrains Mono Variable, JetBrains Mono, ui-monospace, monospace',
+        fontWeight: '800',
+        fontSize: size,
+        fill: color,
+        stroke: { color: 0x05060f, width: Math.max(3, size / 7), join: 'round' },
+        // Размытая тень текста рисуется на CPU в canvas — в экономии без неё
+        ...(lite ? {} : { dropShadow: { color, alpha: 0.7, blur: 10, distance: 0, angle: 0 } }),
+        letterSpacing: 1,
+      },
+    });
   }
 
   unmount(): void {
@@ -218,6 +264,8 @@ class FxEngine {
     const tex = kind === 'square' ? this.texSquare : this.texGlow;
     const pc = kind === 'square' ? this.squares : this.glows;
     if (!tex || !pc) return;
+    // Экономия графики: каждая третья частица — эффект читается, нагрузка втрое меньше
+    if (isLite() && this.spawnSeq++ % 3 !== 0) return;
     const base = kind === 'square' ? 8 : 32;
     const s0 = o.s0 ?? 6;
     const p = new Particle({ texture: tex, x, y, anchorX: 0.5, anchorY: 0.5, tint: o.color, alpha: o.a0 ?? 1, scaleX: s0 / base, scaleY: s0 / base });
@@ -235,18 +283,7 @@ class FxEngine {
 
   number(x: number, y: number, text: string, color: number, size = 34, delay = 0): void {
     if (!this.app || !this.textLayer) return;
-    const t = new Text({
-      text,
-      style: {
-        fontFamily: 'JetBrains Mono Variable, JetBrains Mono, ui-monospace, monospace',
-        fontWeight: '800',
-        fontSize: size,
-        fill: color,
-        stroke: { color: 0x05060f, width: Math.max(3, size / 7), join: 'round' },
-        dropShadow: { color, alpha: 0.7, blur: 10, distance: 0, angle: 0 },
-        letterSpacing: 1,
-      },
-    });
+    const t = this.makeText(text, color, size);
     t.anchor.set(0.5);
     // Длинная надпись не уходит за край экрана: ужимаем и сдвигаем внутрь
     const vw = this.app.screen.width;
