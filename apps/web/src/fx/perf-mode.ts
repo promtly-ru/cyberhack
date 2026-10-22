@@ -82,10 +82,11 @@ function refresh(): void {
 reducedQuery?.addEventListener?.('change', refresh);
 
 /**
- * Замер FPS после старта (режим auto, один раз на устройство): если медиана кадра хуже ~30 FPS,
+ * Замер FPS в первом бою (режим auto, один раз на устройство): бой — самый тяжёлый экран,
+ * меню и карта слабую видеокарту не выдают. Если медиана кадра хуже ~30 FPS,
  * запоминаем устройство как медленное и включаем экономию.
  */
-export function probeFrameRate(ms = 4000): () => void {
+export function probeFrameRate(ms = 3000): () => void {
   if (useGfx.getState().pref !== 'auto' || useGfx.getState().lite || typeof requestAnimationFrame !== 'function') return () => {};
   const frames: number[] = [];
   let raf = 0;
@@ -110,9 +111,15 @@ export function probeFrameRate(ms = 4000): () => void {
       refresh();
     }
   };
-  // Первые секунды заняты загрузкой — меряем после неё
-  const delay = setTimeout(() => (raf = requestAnimationFrame(tick)), 2500);
+  // Ждём бой; первые полторы секунды после входа — анимации появления, их не считаем
+  let delay: ReturnType<typeof setTimeout> | undefined;
+  const wait = setInterval(() => {
+    if (!document.querySelector('[data-testid="combat"]')) return;
+    clearInterval(wait);
+    delay = setTimeout(() => (raf = requestAnimationFrame(tick)), 1500);
+  }, 1000);
   return () => {
+    clearInterval(wait);
     clearTimeout(delay);
     cancelAnimationFrame(raf);
   };

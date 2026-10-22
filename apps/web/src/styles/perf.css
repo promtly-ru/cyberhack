@@ -26,29 +26,39 @@
 }
 
 /* ---------- Экономия графики: <html data-gfx="lite"> (fx/perf-mode.ts) ---------- */
-/* Вечные декоративные анимации: фоны на background-position перерисовывают весь экран,
+/* Селекторы — только по классам (без «.x *»): иначе пересчёт стилей при входе в бой дорожает.
+   Вечные декоративные анимации: фоны на background-position перерисовывают весь экран,
    анимации внутри SVG юнитов заставляют заново растеризовать их вместе с drop-shadow */
-html[data-gfx='lite'] :is(.battlefield__grid, .battlefield, .combat, .menu, .map, .screen, .gameover, .zone-bg)::before,
-html[data-gfx='lite'] :is(.battlefield__grid, .battlefield, .combat, .menu, .map, .screen, .gameover, .zone-bg)::after,
-html[data-gfx='lite'] :is(.battlefield__grid, .combat[data-tier] .battlefield, .unit-art *, .ea, .ea *, .card-art *, .intent,
-  .energy *, .unit__reticle, .logo__word, .glitch, .rc-ring--1, .rc-ring--2, .rc-shield, .card.is-upgraded .card__plus,
-  .class-card.is-selected, .diff-card--zero_day.is-selected, .firmware.is-active, .stat--hp.is-low, .heat__fill, .heat__vent, .card__glow, .hand-card.is-volatile) {
+html[data-gfx='lite'] :is(.battlefield__grid, .battlefield, .combat, .menu, .map, .gameover, .zone-bg, .card__frame, .class-card, .diff-card--zero_day)::before,
+html[data-gfx='lite'] :is(.battlefield__grid, .battlefield, .combat, .menu, .map, .gameover, .zone-bg, .card__frame, .class-card, .diff-card--zero_day)::after,
+html[data-gfx='lite'] :is(.battlefield__grid, .combat[data-tier] .battlefield, .intent, .energy__ring1, .energy__core, .unit__reticle, .logo__word,
+  .rc-ring--1, .rc-ring--2, .rc-shield, .card__plus, .firmware.is-active, .stat--hp.is-low, .heat__fill, .heat__vent, .card__glow, .hand-card.is-volatile,
+  .art-float, .spin, .spin-slow, .spin-rev, .eye, .holo, .art-aim, .art-breathe, .art-crown, .art-ghost, .art-leg, .art-pulse, .art-ring,
+  .art-rise, .art-scan, .art-seg, .art-spin, .art-swarm, .art-sway, .art-twinkle, .art-visor-scan, .art-holo,
+  .ea-blink, .ea-bob, .ea-bob-s, .ea-body, .ea-core, .ea-crown, .ea-drift-0, .ea-drift-1, .ea-drift-2, .ea-flame, .ea-gaze, .ea-glitch,
+  .ea-leg, .ea-pulse, .ea-rotor, .ea-seg, .ea-spin-rev, .ea-spin-slow, .ea-sway-s, .ea-tier-boss) {
   animation: none !important;
 }
-html[data-gfx='lite'] :is(.class-card, .diff-card--zero_day, .card__frame)::after { animation: none !important; }
 html[data-gfx='lite'] .card__glow { mix-blend-mode: normal; }
 /* Фильтры: drop-shadow на SVG и картах, сетка пола, свечение энергии */
-html[data-gfx='lite'] :is(.unit-art, .unit-art *, .ea, .ea *, .unit__sprite, .card-art, .card-art *, .battlefield__grid, .energy, .energy *,
-  .relic-glyph, .potion-glyph, .potion-slot .icon, .pip, .art-crown, .class-card__art svg, .showcase__item .unit-art, .reward__icon,
-  .target-arrow path, .rarity--uncommon, .rarity--rare, .hand-card) {
+html[data-gfx='lite'] :is(.unit-art, .visor, .ea, .unit__sprite, .card-art, .art-hero, .art-up, .art-crown, .battlefield__grid, .energy, .energy__ring2,
+  .relic-glyph, .potion-glyph, .pip, .class-card__art svg, .reward__icon, .rarity--uncommon, .rarity--rare, .hand-card) {
   filter: none !important;
 }
-html[data-gfx='lite'] * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-html[data-gfx='lite'] :is(.glitch, .rarity--rare .card__frame)::before,
-html[data-gfx='lite'] :is(.glitch)::after { mix-blend-mode: normal; }
+html[data-gfx='lite'] .potion-slot .icon, html[data-gfx='lite'] .target-arrow path { filter: none !important; }
+html[data-gfx='lite'] .glitch::before, html[data-gfx='lite'] .glitch::after { animation: none; mix-blend-mode: normal; }
+html[data-gfx='lite'] .rarity--rare .card__frame::before { mix-blend-mode: normal; }
 /* Большие размытые тени — короче */
 html[data-gfx='lite'] .card__art { box-shadow: none; }
 html[data-gfx='lite'] .rarity--rare .card__frame { box-shadow: inset 0 0 6cqw color-mix(in srgb, var(--accent) 40%, transparent); }
 html[data-gfx='lite'] .battlefield::before { box-shadow: none; }
-/* Маски на анимированных слоях фона */
+/* Маски на слоях фона */
 html[data-gfx='lite'] .battlefield__grid, html[data-gfx='lite'] .battlefield::after { -webkit-mask-image: none; mask-image: none; opacity: 0.6; }
+
+/* Переключатель «Графика» (fx/PerfToggle.tsx) — в стиле .seg настроек */
+.gfx-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.gfx-toggle__hint { color: var(--muted, #8a91b4); font-size: 0.9em; }
+.gfx-toggle__opts { display: inline-flex; border: 1px solid var(--line-2); border-radius: 6px; overflow: hidden; }
+.gfx-toggle__opt { padding: 6px 12px; min-height: 36px; background: none; color: inherit; font: inherit; cursor: pointer; border: 0; }
+.gfx-toggle__opt + .gfx-toggle__opt { border-left: 1px solid var(--line-2); }
+.gfx-toggle__opt.is-on { background: rgba(0, 240, 255, 0.16); color: var(--cyan); font-weight: 700; }
