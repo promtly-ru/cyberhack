@@ -43,6 +43,32 @@ function cardLabel(c: CardInstance, playable: boolean): string {
 
 const LONG_PRESS_MS = 450;
 
+/**
+ * Ширина руки до первого замера. Если угадать неверно, после первого layout все карты меняют размер:
+ * второй рендер руки и второй полный layout при входе в бой (+60–100 мс на слабом CPU).
+ * Поэтому запоминаем замер для размера окна, а без него оцениваем по раскладке (responsive.css).
+ */
+const HAND_W_KEY = 'cyberhack.handw.v1';
+function initialHandW(strip: boolean): number {
+  if (typeof window === 'undefined') return 600;
+  const vw = window.innerWidth;
+  try {
+    const saved = JSON.parse(localStorage.getItem(HAND_W_KEY) ?? 'null') as { k?: string; w?: number } | null;
+    if (saved?.k === `${vw}x${window.innerHeight}` && typeof saved.w === 'number') return saved.w;
+  } catch {
+    /* нет хранилища — оценка ниже */
+  }
+  if (strip) return vw;
+  return vw >= 1024 ? vw - 376 : Math.round(vw * 0.6);
+}
+function rememberHandW(w: number): void {
+  try {
+    localStorage.setItem(HAND_W_KEY, JSON.stringify({ k: `${window.innerWidth}x${window.innerHeight}`, w }));
+  } catch {
+    /* не запомним — в следующий раз оценка */
+  }
+}
+
 function useMediaQuery(query: string): boolean {
   const [m, setM] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(query).matches);
   useEffect(() => {
@@ -94,9 +120,9 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const [hint, setHint] = useState<string | null>(null);
   const [banner, setBanner] = useState<{ key: number; text: string } | null>(null);
   const handRef = useRef<HTMLDivElement>(null);
-  const [handW, setHandW] = useState(600);
   /** Телефон: рука — горизонтальная лента со свайпом, карты крупнее */
   const strip = useMediaQuery('(max-width: 480px) and (min-height: 480px)');
+  const [handW, setHandW] = useState(() => initialHandW(strip));
   const drag = useRef<DragState | null>(null);
   const arrowRef = useRef<SVGPathElement>(null);
   const arrowSvgRef = useRef<SVGSVGElement>(null);
@@ -151,9 +177,11 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   useLayoutEffect(() => {
     const el = handRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(([entry]) => entry && setHandW(entry.contentRect.width));
+    // clientWidth, как и в первом замере: contentRect без padding дал бы другое число и лишний рендер руки
+    const ro = new ResizeObserver(() => setHandW(el.clientWidth));
     ro.observe(el);
     setHandW(el.clientWidth);
+    rememberHandW(el.clientWidth);
     return () => ro.disconnect();
   }, []);
 

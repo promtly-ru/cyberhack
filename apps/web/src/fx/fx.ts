@@ -97,6 +97,10 @@ class FxEngine {
         resolution: Math.min(window.devicePixelRatio || 1, window.innerWidth < 900 ? 1.25 : 2),
         preference: 'webgl',
         autoStart: false,
+        // Канвас не интерактивен (pointer-events: none); без этого Pixi слушает pointermove на всём document
+        // и на каждое движение мыши читает getBoundingClientRect — принудительный layout
+        eventMode: 'none',
+        eventFeatures: { move: false, globalMove: false, click: false, wheel: false },
       });
     } catch (e) {
       console.warn('[fx] Pixi не инициализирован:', e);
@@ -108,6 +112,7 @@ class FxEngine {
     }
     this.app = app;
     app.canvas.classList.add('fx-canvas');
+    app.renderer.events?.setTargetElement(null as unknown as HTMLElement); // снимаем слушатели событий Pixi совсем
     // Потеря WebGL-контекста (мало памяти GPU): прячем канвас, иначе он может залить экран белым
     app.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();

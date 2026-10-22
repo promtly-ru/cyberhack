@@ -46,7 +46,7 @@ class Rain {
     const token = ++this.token;
     const app = new Application();
     try {
-      await app.init({ backgroundAlpha: 0, resizeTo: window, antialias: false, autoDensity: true, resolution: window.innerWidth < 900 ? 1 : Math.min(window.devicePixelRatio || 1, 1.5), preference: 'webgl' });
+      await app.init({ backgroundAlpha: 0, resizeTo: window, antialias: false, autoDensity: true, resolution: window.innerWidth < 900 ? 1 : Math.min(window.devicePixelRatio || 1, 1.5), preference: 'webgl', eventMode: 'none', eventFeatures: { move: false, globalMove: false, click: false, wheel: false } });
     } catch (e) {
       console.warn('[rain] Pixi не инициализирован:', e);
       return;
@@ -56,6 +56,7 @@ class Rain {
       return;
     }
     this.app = app;
+    app.renderer.events?.setTargetElement(null as unknown as HTMLElement); // снимаем слушатели событий Pixi совсем
     app.ticker.maxFPS = window.innerWidth < 900 ? 15 : 30;
     app.canvas.classList.add('rain-canvas');
     // Потеря WebGL-контекста (мало памяти GPU): прячем канвас, иначе он может залить экран белым
