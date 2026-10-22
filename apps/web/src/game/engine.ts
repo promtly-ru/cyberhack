@@ -68,6 +68,7 @@ export {
   HEAT_VENT_MIN,
   HEAT_VENT_DMG_PER_HEAT,
   heatBlastDamage,
+  upgradableFirmwares,
 } from '@cyberhack/engine';
 
 const mocked = new Set<string>();

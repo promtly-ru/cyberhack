@@ -9,7 +9,7 @@ import { canUpgrade, COST_UNPLAYABLE, COST_X, needsEnemyTarget, resolveCard, typ
 import { getContent } from './content';
 import { rngOf } from './rng';
 import { getActiveSynergies } from './synergies';
-import { FIRMWARES, firmwareEffects, firmwareLevel, type FirmwareTrigger } from './firmware';
+import { FIRMWARES, firmwareEffects, firmwareLevel, isFirmwareUpgraded, type FirmwareTrigger } from './firmware';
 import { getMutatorMods, type MutatorMods } from './mutators';
 import { gainPotions, type PotionDef } from './potions';
 import { addStatus, calcAttackDamage, calcBlock, DEBUFF_STATUSES, getStatus, KNOWN_STATUSES, STATUS } from './statuses';
@@ -787,7 +787,7 @@ function applyFirmwares(ctx: CombatCtx, trigger: FirmwareTrigger): void {
   const deck = ctx.s.deck.map((c) => c.defId);
   for (const fw of FIRMWARES) {
     if (fw.trigger !== trigger || !owned.includes(fw.id)) continue;
-    for (const eff of firmwareEffects(fw, firmwareLevel(fw, deck), ctx.s.firmwareLevels?.[fw.id] ?? 1)) {
+    for (const eff of firmwareEffects(fw, firmwareLevel(fw, deck), isFirmwareUpgraded(ctx.s, fw.id))) {
       if (isOver(ctx)) return;
       applyRelicEffect(ctx, eff);
     }

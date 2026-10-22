@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import type { CardInstance, RewardItem, RunState, Screen, ShopItem } from '../game/engine';
-import { getEventDef, getFirmware, tryRelicDef, cardStats, getLegalActions, blackboxForceCost, blackboxHackCost, RELAY_HEAL_PCT, MAX_SHOP_REFRESHES } from '../game/engine';
+import { getEventDef, getFirmware, upgradableFirmwares, describeFirmwareEffects, tryRelicDef, cardStats, getLegalActions, blackboxForceCost, blackboxHackCost, RELAY_HEAL_PCT, MAX_SHOP_REFRESHES } from '../game/engine';
 import { useGame } from '../game/store';
 import { TopBar } from '../components/TopBar';
 import { Card, CardTerms } from '../components/Card';
@@ -194,7 +194,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
   const saleTag = (it: ShopItem) => (it.sale && !it.sold ? <span className="sale-tag" data-testid="sale-tag"><Icon name="sale" size={13} /> −30%</span> : null);
   const upgrades = indexed.filter((x) => x.it.kind === 'upgrade');
   const refreshes = indexed.filter((x) => x.it.kind === 'refresh');
-  const canUpgrade = run.deck.some((c) => !c.upgraded);
+  const canUpgrade = run.deck.some((c) => !c.upgraded) || upgradableFirmwares(run).length > 0;
   const quote = TRADER_QUOTES[Math.min(run.act, 4) - 1] ?? TRADER_QUOTES[0]!;
   return (
     <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты, импланты и расходники за кредиты или удали лишнюю карту из колоды. Импланты — бонусы на весь забег, расходники — разовые.">
@@ -246,7 +246,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
               <Icon name="upgrade" size={26} />
               <span>
                 <b>Улучшить карту</b>
-                <small>{canUpgrade ? 'Выбрать 1 из 3 случайных карт' : 'Все карты уже улучшены'}</small>
+                <small>{canUpgrade ? (upgradableFirmwares(run).length ? 'Карта (1 из 3) или прошивка' : 'Выбрать 1 из 3 случайных карт') : 'Всё уже улучшено'}</small>
               </span>
               {price(it)}
             </button>
@@ -399,7 +399,7 @@ export function NodeScreen({ run, kind }: { run: RunState; kind: 'lab' | 'blackb
 export function RestScreen({ run }: { run: RunState }) {
   const dispatch = useGame((s) => s.dispatch);
   const heal = Math.floor(run.maxHp * 0.3);
-  const canUpgrade = run.deck.some((c) => !c.upgraded);
+  const canUpgrade = run.deck.some((c) => !c.upgraded) || upgradableFirmwares(run).length > 0;
   return (
     <Shell run={run} className="rest-screen" eyebrow="Шифрованный канал" title="Безопасный узел" hint="Выбери одно: восстановить здоровье или улучшить карту.">
       <div className="rest-core" aria-hidden="true">
@@ -436,7 +436,7 @@ export function RestScreen({ run }: { run: RunState }) {
         >
           <Icon name="upgrade" size={34} />
           <b>Оптимизация кода</b>
-          <small>{canUpgrade ? 'Улучшить одну карту из колоды' : 'Все карты уже улучшены'}</small>
+          <small>{canUpgrade ? (upgradableFirmwares(run).length ? 'Улучшить карту или прошивку' : 'Улучшить одну карту из колоды') : 'Всё уже улучшено'}</small>
         </button>
       </div>
     </Shell>
@@ -511,7 +511,10 @@ export function EventScreen({ run, screen }: { run: RunState; screen: Extract<Sc
 export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extract<Screen, { kind: 'select_deck_card' }> }) {
   const dispatch = useGame((s) => s.dispatch);
   const [chosen, setChosen] = useState<CardInstance | null>(null);
+  const [chosenFw, setChosenFw] = useState<string | null>(null);
   const upgrade = screen.purpose === 'upgrade';
+  const fwOptions = upgrade ? upgradableFirmwares(run) : [];
+  const fwDef = chosenFw ? getFirmware(chosenFw) : undefined;
   const transform = screen.purpose === 'transform';
   const cards = useMemo(
     () => run.deck.filter((c) => (!upgrade || !c.upgraded) && (screen.purpose === 'remove' || !screen.offer || screen.offer.includes(c.uid))),
@@ -529,7 +532,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
       run={run}
       className="deck-select-screen"
       eyebrow={upgrade ? 'Оптимизация' : transform ? 'Мутация' : 'Очистка'}
-      title={upgrade ? 'Улучшить карту' : transform ? 'Трансформировать карту' : 'Удалить карту'}
+      title={upgrade ? (fwOptions.length ? 'Улучшить карту или прошивку' : 'Улучшить карту') : transform ? 'Трансформировать карту' : 'Удалить карту'}
       hint={upgrade ? `Тебе предложены ${cards.length} из колоды — выбери одну. Справа появится улучшенная версия.` : transform ? 'Выбери карту: она превратится в случайную другую (обычно иной редкости). Результат заранее неизвестен.' : 'Выбери карту, которую навсегда уберёшь из колоды.'}
     >
       <SynergyBar deck={run.deck} />
@@ -540,6 +543,7 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
             className={`select-card${chosen?.uid === c.uid ? ' is-chosen' : ''}`}
             onClick={() => {
               sfx('select');
+              setChosenFw(null);
               setChosen(c);
             }}
             aria-pressed={chosen?.uid === c.uid}
@@ -548,7 +552,59 @@ export function DeckSelectScreen({ run, screen }: { run: RunState; screen: Extra
           </button>
         ))}
       </div>
-      {chosen ? (
+      {fwOptions.length ? (
+        <div className="fw-upgrade-list" role="group" aria-label="Прошивки забега">
+          <span className="topbar__relics-label">Прошивки (каждую можно улучшить один раз за забег)</span>
+          {fwOptions.map((id) => (
+            <button
+              key={id}
+              type="button"
+              className={`btn btn--ghost fw-upgrade-opt${chosenFw === id ? ' is-chosen' : ''}`}
+              data-testid="upgrade-firmware-option"
+              aria-pressed={chosenFw === id}
+              onClick={() => {
+                sfx('select');
+                setChosen(null);
+                setChosenFw(id);
+              }}
+            >
+              <Icon name="firmware" size={18} /> {getFirmware(id)?.name ?? id}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      {fwDef ? (
+        <div className="confirm-bar" role="dialog" aria-label="Подтверждение">
+          <div className="upgrade-preview upgrade-preview--fw">
+            <span>
+              <b>{fwDef.name}</b>
+              <br />
+              {describeFirmwareEffects(fwDef, 2)}
+            </span>
+            <Icon name="play" size={22} className="arrow" />
+            <span>
+              <b>{fwDef.name}+</b>
+              <br />
+              {describeFirmwareEffects(fwDef, 2, true)}
+            </span>
+          </div>
+          <div className="actions">
+            <button className="btn btn--ghost" onClick={() => setChosenFw(null)}>
+              Назад
+            </button>
+            <button
+              className="btn btn--primary"
+              data-testid="upgrade-firmware-confirm"
+              onClick={() => {
+                sfx('buff');
+                dispatch({ type: 'upgrade_firmware', firmwareId: fwDef.id });
+              }}
+            >
+              Улучшить прошивку
+            </button>
+          </div>
+        </div>
+      ) : chosen ? (
         <div className="confirm-bar" role="dialog" aria-label="Подтверждение">
           {upgrade ? (
             <div className="upgrade-preview">

@@ -4,17 +4,7 @@
 import type { ClassId, Difficulty, NewRunOptions } from './engine';
 import { WEEKLY_ATTEMPTS, unlockedOptions, weeklyClass, weeklySeed, weeklyTitle } from './engine';
 import type { Profile } from '../net/types';
-import {
-  MAX_FIRMWARE_LEVEL,
-  addFirmwareCopy,
-  firmwareRunLevels,
-  metaUnlockedContent,
-  rollFirmwareChoices,
-  syncAchievements,
-  type MetaExtraState,
-  type RngLike,
-  type RunState,
-} from '@cyberhack/engine';
+import { lockableFirmwares, metaUnlockedContent, syncAchievements, type MetaExtraState } from '@cyberhack/engine';
 
 const WEEKLY_KEY = 'cyberhack:weekly-attempts';
 
@@ -49,7 +39,6 @@ export function regularRunOptions(
     ascension,
     difficulty,
     unlocked: metaRunUnlocked(profile, activeMetaExtra),
-    ...metaRunLevels(activeMetaExtra),
     ...(mutators.length ? { mutators: [...mutators] } : {}),
     ...(heat ? { heat: true } : {}),
   };
@@ -99,7 +88,7 @@ export function withWeeklyTitle(profile: Profile, seed: string): Profile {
   return profile.titles?.includes(title) ? profile : { ...profile, titles: [...(profile.titles ?? []), title].sort() };
 }
 
-// ---------------- Мета-прогресс v2: коллекция прошивок, ачивки с наградами, валюта, косметика ----------------
+// ---------------- Мета-прогресс v2: открытые прошивки, ачивки с наградами, валюта, косметика ----------------
 
 /**
  * Данные, которых нет в старом Profile. Хранятся отдельно (localStorage по пользователю), чтобы
@@ -108,26 +97,18 @@ export function withWeeklyTitle(profile: Profile, seed: string): Profile {
  */
 export interface MetaExtra extends MetaExtraState {
   v: typeof META_EXTRA_VERSION;
-  /** Награда «1 из 3» после забега, ждёт выбора игрока */
-  pendingFirmwareChoice: string[] | null;
-  /** Ключи уже учтённых забегов (защита от двойной выдачи копий) */
-  processedRuns: string[];
 }
 
 export const META_EXTRA_VERSION = 1;
 const META_EXTRA_KEY = 'cyberhack:meta-extra';
-const MAX_PROCESSED = 20;
 
 export function defaultMetaExtra(): MetaExtra {
   return {
     v: META_EXTRA_VERSION,
     unlockedFirmwares: [],
-    firmwareCollection: {},
     achievements: {},
     currency: 0,
     cosmetics: [],
-    pendingFirmwareChoice: null,
-    processedRuns: [],
   };
 }
 
@@ -150,21 +131,15 @@ function nat(v: unknown, max = 1_000_000_000): number {
  * Привести сохранённые данные к MetaExtra (миграция без потери данных):
  * - нет данных / мусор → значения по умолчанию;
  * - v0: achievements как string[] (забранные), claimedAchievements: string[], firmwares/ownedFirmwares: string[];
- * - коллекция: уровень 1..MAX, копии ≥ 0; незнакомые id сохраняются (контент мог временно пропасть).
+ * - старая коллекция прошивок (firmwareCollection, firmwares, ownedFirmwares): закрываемые прошивки из неё
+ *   остаются открытыми, уровни и копии отбрасываются — прошивки теперь живут только в забеге.
  */
 export function normalizeMetaExtra(raw: unknown): MetaExtra {
   const out = defaultMetaExtra();
   if (!isObj(raw)) return out;
-  out.unlockedFirmwares = strList(raw.unlockedFirmwares);
-  if (isObj(raw.firmwareCollection)) {
-    for (const [id, st] of Object.entries(raw.firmwareCollection)) {
-      if (!isObj(st) || id.length === 0 || id.length > 64) continue;
-      out.firmwareCollection[id] = { id, level: Math.max(1, Math.min(MAX_FIRMWARE_LEVEL, nat(st.level) || 1)), copies: nat(st.copies) };
-    }
-  }
-  for (const id of [...strList(raw.firmwares), ...strList(raw.ownedFirmwares)]) {
-    out.firmwareCollection[id] ??= { id, level: 1, copies: 0 };
-  }
+  const lockable = new Set(lockableFirmwares());
+  const legacy = [...(isObj(raw.firmwareCollection) ? Object.keys(raw.firmwareCollection) : []), ...strList(raw.firmwares), ...strList(raw.ownedFirmwares)];
+  out.unlockedFirmwares = [...new Set([...strList(raw.unlockedFirmwares), ...legacy.filter((id) => lockable.has(id))])];
   if (Array.isArray(raw.achievements)) {
     for (const id of strList(raw.achievements)) out.achievements[id] = { completed: true, claimed: true };
   } else if (isObj(raw.achievements)) {
@@ -178,9 +153,6 @@ export function normalizeMetaExtra(raw: unknown): MetaExtra {
   for (const id of strList(raw.claimedAchievements)) out.achievements[id] = { completed: true, claimed: true };
   out.currency = nat(raw.currency);
   out.cosmetics = strList(raw.cosmetics);
-  const pending = strList(raw.pendingFirmwareChoice, 5);
-  out.pendingFirmwareChoice = pending.length > 0 ? pending : null;
-  out.processedRuns = strList(raw.processedRuns, MAX_PROCESSED);
   return out;
 }
 
@@ -188,20 +160,12 @@ export function normalizeMetaExtra(raw: unknown): MetaExtra {
 export function mergeMetaExtra(a: MetaExtra, b: MetaExtra): MetaExtra {
   const out = defaultMetaExtra();
   out.unlockedFirmwares = [...new Set([...a.unlockedFirmwares, ...b.unlockedFirmwares])].sort();
-  for (const id of new Set([...Object.keys(a.firmwareCollection), ...Object.keys(b.firmwareCollection)])) {
-    const x = a.firmwareCollection[id];
-    const y = b.firmwareCollection[id];
-    const best = !x ? y! : !y ? x : x.level !== y.level ? (x.level > y.level ? x : y) : x.copies >= y.copies ? x : y;
-    out.firmwareCollection[id] = { ...best };
-  }
   for (const id of new Set([...Object.keys(a.achievements), ...Object.keys(b.achievements)])) {
     const claimed = !!(a.achievements[id]?.claimed || b.achievements[id]?.claimed);
     out.achievements[id] = { completed: true, ...(claimed ? { claimed } : {}) };
   }
   out.currency = Math.max(a.currency, b.currency);
   out.cosmetics = [...new Set([...a.cosmetics, ...b.cosmetics])].sort();
-  out.pendingFirmwareChoice = a.pendingFirmwareChoice ?? b.pendingFirmwareChoice;
-  out.processedRuns = [...new Set([...a.processedRuns, ...b.processedRuns])].slice(-MAX_PROCESSED);
   return out;
 }
 
@@ -251,34 +215,7 @@ export function metaRunUnlocked(profile: Profile, extra: MetaExtra | null): NonN
   return { ...base, cards: [...new Set([...(base.cards ?? []), ...meta.cards])], firmwares: meta.firmwares };
 }
 
-function metaRunLevels(extra: MetaExtra | null): Pick<NewRunOptions, 'firmwareLevels'> {
-  const levels = firmwareRunLevels(extra);
-  return Object.keys(levels).length > 0 ? { firmwareLevels: levels } : {};
-}
-
 /** Отметить выполненные ачивки (липко). */
 export function syncMetaAchievements(profile: Profile, extra: MetaExtra): { extra: MetaExtra; newlyCompleted: string[] } {
   return syncAchievements(profile, extra);
-}
-
-function runKey(s: RunState): string {
-  return `${s.seed}|${s.classId}|${s.floor}|${s.stats.cardsPlayed}`;
-}
-
-const mathRng: RngLike = { next: () => Math.random() };
-
-/**
- * Итоги забега для коллекции: каждая полученная в забеге прошивка даёт копию (новая — в коллекцию),
- * победа или убитый босс — награда «1 из 3». Один забег учитывается один раз.
- */
-export function applyRunToMetaExtra(extra: MetaExtra, s: RunState, rng: RngLike = mathRng): MetaExtra {
-  const key = runKey(s);
-  if (extra.processedRuns.includes(key)) return extra;
-  let next: MetaExtra = { ...extra, processedRuns: [...extra.processedRuns, key].slice(-MAX_PROCESSED) };
-  for (const id of s.firmwares ?? []) next = addFirmwareCopy(next, id);
-  if (!next.pendingFirmwareChoice && (s.status === 'won' || s.stats.bossesKilled > 0)) {
-    const choice = rollFirmwareChoices(next, rng, 3);
-    if (choice.length > 0) next = { ...next, pendingFirmwareChoice: choice };
-  }
-  return next;
 }

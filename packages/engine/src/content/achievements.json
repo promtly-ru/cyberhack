@@ -21,9 +21,8 @@
     "goal": 10,
     "metric": "totalRuns",
     "reward": {
-      "kind": "copies",
-      "id": "fw_miner",
-      "amount": 2
+      "kind": "currency",
+      "amount": 100
     }
   },
   {
@@ -61,9 +60,8 @@
     "goal": 3,
     "metric": "bestAct",
     "reward": {
-      "kind": "copies",
-      "id": "fw_siege",
-      "amount": 2
+      "kind": "currency",
+      "amount": 100
     }
   },
   {
@@ -179,9 +177,8 @@
     "goal": 250,
     "metric": "enemiesKilled",
     "reward": {
-      "kind": "copies",
-      "id": "fw_supernova",
-      "amount": 3
+      "kind": "currency",
+      "amount": 150
     }
   },
   {
@@ -232,9 +229,8 @@
     "goal": 150,
     "metric": "elitesKilled",
     "reward": {
-      "kind": "copies",
-      "id": "fw_meltdown",
-      "amount": 5
+      "kind": "currency",
+      "amount": 250
     }
   },
   {
@@ -298,9 +294,8 @@
     "goal": 50000,
     "metric": "damageDealt",
     "reward": {
-      "kind": "copies",
-      "id": "fw_war_drums",
-      "amount": 3
+      "kind": "currency",
+      "amount": 150
     }
   },
   {
@@ -540,25 +535,24 @@
   {
     "id": "ach_fw_owned_1",
     "title": "Первые чипы",
-    "desc": "Собрать 3 прошивки в коллекции",
+    "desc": "Получить 3 прошивки в забегах",
     "category": "firmware",
     "tier": "bronze",
     "goal": 3,
-    "metric": "firmwaresOwned",
+    "metric": "firmwaresObtained",
     "reward": {
-      "kind": "copies",
-      "id": "fw_patchwork",
-      "amount": 2
+      "kind": "currency",
+      "amount": 100
     }
   },
   {
     "id": "ach_fw_owned_2",
     "title": "Склад чипов",
-    "desc": "Собрать 12 прошивок в коллекции",
+    "desc": "Получить 12 прошивок в забегах",
     "category": "firmware",
     "tier": "silver",
     "goal": 12,
-    "metric": "firmwaresOwned",
+    "metric": "firmwaresObtained",
     "reward": {
       "kind": "currency",
       "amount": 150
@@ -567,21 +561,20 @@
   {
     "id": "ach_fw_upgrade_1",
     "title": "Перепрошивка",
-    "desc": "Улучшить прошивку",
+    "desc": "Улучшить прошивку в забеге",
     "category": "firmware",
     "tier": "bronze",
     "goal": 1,
     "metric": "firmwareUpgrades",
     "reward": {
-      "kind": "copies",
-      "id": "fw_vent_cycle",
-      "amount": 2
+      "kind": "currency",
+      "amount": 100
     }
   },
   {
     "id": "ach_fw_upgrade_2",
     "title": "Мастер прошивок",
-    "desc": "Улучшить прошивки 10 раз",
+    "desc": "Улучшить прошивки в забегах 10 раз",
     "category": "firmware",
     "tier": "silver",
     "goal": 10,
@@ -593,12 +586,12 @@
   },
   {
     "id": "ach_fw_max",
-    "title": "Предел железа",
-    "desc": "Улучшить прошивку до максимального уровня",
+    "title": "Полный слот",
+    "desc": "Собрать 3 прошивки за один забег",
     "category": "firmware",
     "tier": "gold",
-    "goal": 4,
-    "metric": "maxFirmwareLevel",
+    "goal": 3,
+    "metric": "bestFirmwaresInRun",
     "reward": {
       "kind": "currency",
       "amount": 400
@@ -607,7 +600,7 @@
   {
     "id": "ach_fw_legendary",
     "title": "Легендарный чип",
-    "desc": "Получить легендарную прошивку",
+    "desc": "Получить легендарную прошивку в забеге",
     "category": "firmware",
     "tier": "gold",
     "goal": 1,
@@ -639,9 +632,8 @@
     "goal": 10,
     "metric": "achievementsClaimed",
     "reward": {
-      "kind": "copies",
-      "id": "fw_ronin",
-      "amount": 3
+      "kind": "currency",
+      "amount": 150
     }
   },
   {

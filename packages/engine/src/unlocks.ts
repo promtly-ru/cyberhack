@@ -3,6 +3,7 @@
  * На старте закрыты классы phreaker и ghost и ~30% карт/реликвий из наград.
  * Чистые функции: профиль на входе не мутируется.
  */
+import { getFirmware } from './firmware';
 import { MAX_ASCENSION } from './ascension';
 import { getContent } from './content';
 import { lockableFirmwares } from './firmware';
@@ -36,6 +37,12 @@ export interface LifetimeStats {
   bestElitesInRun?: number;
   bestRelics?: number;
   bestUpgraded?: number;
+  /** Прошивки, полученные в забегах (всего) */
+  firmwaresObtained?: number;
+  /** Улучшения прошивок в забегах (всего) */
+  firmwareUpgrades?: number;
+  legendaryFirmwares?: number;
+  bestFirmwaresInRun?: number;
 }
 
 /** Структурное подмножество web-профиля (net/types.ts → Profile), которое нужно движку. */
@@ -539,6 +546,11 @@ function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, vict
   best('bestElitesInRun', st.elitesKilled);
   best('bestRelics', s.relics.length);
   best('bestUpgraded', s.deck.filter((c) => c.upgraded).length);
+  const fws = s.firmwares ?? [];
+  add('firmwaresObtained', fws.length);
+  add('firmwareUpgrades', (s.upgradedFirmwares ?? []).length);
+  add('legendaryFirmwares', fws.filter((id) => getFirmware(id)?.rarity === 'legendary').length);
+  best('bestFirmwaresInRun', fws.length);
   return l;
 }
 

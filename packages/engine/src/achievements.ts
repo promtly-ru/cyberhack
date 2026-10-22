@@ -4,17 +4,17 @@
  * Классические достижения (unlocks.ts) остаются как есть и продолжают открывать классы/карты.
  */
 import achievementsJson from './content/achievements.json';
-import { addFirmwareCopy, getFirmware, type FirmwareMeta } from './firmware';
+import { getFirmware, type FirmwareMeta } from './firmware';
 import type { LifetimeStats, MetaProfile } from './unlocks';
 
 export type AchievementTier = 'bronze' | 'silver' | 'gold';
-export type RewardKind = 'card' | 'firmware' | 'copies' | 'currency' | 'cosmetic';
+export type RewardKind = 'card' | 'firmware' | 'currency' | 'cosmetic';
 
 export interface MetaReward {
   kind: RewardKind;
-  /** card/firmware/copies/cosmetic — id */
+  /** card/firmware/cosmetic — id */
   id?: string;
-  /** copies/currency — количество */
+  /** currency — количество */
   amount?: number;
 }
 
@@ -26,10 +26,6 @@ export type AchievementMetric =
   | 'classesUnlocked'
   | 'classesWon'
   | 'legacyAchievements'
-  | 'firmwaresOwned'
-  | 'firmwareUpgrades'
-  | 'maxFirmwareLevel'
-  | 'legendaryFirmwares'
   | 'achievementsClaimed';
 
 export interface MetaAchievementDef {
@@ -57,10 +53,9 @@ export interface AchievementRecord {
   claimed?: boolean;
 }
 
-/** Мета-данные игрока, которых нет в старом профиле: коллекция прошивок, ачивки v2, валюта, косметика. */
+/** Мета-данные игрока, которых нет в старом профиле: открытые прошивки, ачивки v2, валюта, косметика. */
 export interface MetaExtraState extends FirmwareMeta {
   unlockedFirmwares: string[];
-  firmwareCollection: Record<string, { id: string; level: number; copies: number }>;
   achievements: Record<string, AchievementRecord>;
   currency: number;
   cosmetics: string[];
@@ -78,7 +73,6 @@ const WIN_KEYS = ['winsNetrunner', 'winsPhreaker', 'winsGhost', 'winsSamurai', '
 
 /** Значение метрики. */
 export function metricValue(metric: AchievementMetric, p: MetaProfile, extra: Partial<MetaExtraState> = {}): number {
-  const coll = Object.values(extra.firmwareCollection ?? {});
   switch (metric) {
     case 'totalRuns':
       return p.totalRuns;
@@ -90,14 +84,6 @@ export function metricValue(metric: AchievementMetric, p: MetaProfile, extra: Pa
       return WIN_KEYS.filter((k) => (p.lifetime?.[k] ?? 0) > 0).length;
     case 'legacyAchievements':
       return p.achievements.length;
-    case 'firmwaresOwned':
-      return coll.length;
-    case 'firmwareUpgrades':
-      return coll.reduce((s, f) => s + Math.max(0, f.level - 1), 0);
-    case 'maxFirmwareLevel':
-      return coll.reduce((m, f) => Math.max(m, f.level), 0);
-    case 'legendaryFirmwares':
-      return coll.filter((f) => getFirmware(f.id)?.rarity === 'legendary').length;
     case 'achievementsClaimed':
       return Object.values(extra.achievements ?? {}).filter((r) => r.claimed).length;
     default:
@@ -143,13 +129,9 @@ export function applyMetaReward<P extends MetaProfile, E extends MetaExtraState>
     case 'card':
       if (!reward.id || profile.unlockedCards.includes(reward.id)) return { profile, extra };
       return { profile: { ...profile, unlockedCards: [...profile.unlockedCards, reward.id] }, extra };
-    case 'firmware': {
-      if (!reward.id || !getFirmware(reward.id)) return { profile, extra };
-      const opened = extra.unlockedFirmwares.includes(reward.id) ? extra : { ...extra, unlockedFirmwares: [...extra.unlockedFirmwares, reward.id] };
-      return { profile, extra: opened.firmwareCollection[reward.id] ? opened : addFirmwareCopy(opened, reward.id) };
-    }
-    case 'copies':
-      return reward.id ? { profile, extra: addFirmwareCopy(extra, reward.id, Math.max(1, reward.amount ?? 1)) } : { profile, extra };
+    case 'firmware':
+      if (!reward.id || !getFirmware(reward.id) || extra.unlockedFirmwares.includes(reward.id)) return { profile, extra };
+      return { profile, extra: { ...extra, unlockedFirmwares: [...extra.unlockedFirmwares, reward.id] } };
     case 'currency':
       return { profile, extra: { ...extra, currency: extra.currency + Math.max(0, reward.amount ?? 0) } };
     case 'cosmetic':
@@ -182,7 +164,7 @@ export function claimMetaAchievement<P extends MetaProfile, E extends MetaExtraS
 export function metaUnlockedContent(p: MetaProfile, extra: Partial<MetaExtraState>): { cards: string[]; firmwares: string[] } {
   const done = new Set(computeAchievementStates(p, extra).filter((s) => s.completed).map((s) => s.id));
   const cards = new Set(p.unlockedCards);
-  const firmwares = new Set([...(extra.unlockedFirmwares ?? []), ...Object.keys(extra.firmwareCollection ?? {})]);
+  const firmwares = new Set(extra.unlockedFirmwares ?? []);
   for (const a of META_ACHIEVEMENTS) {
     if (!done.has(a.id) || !a.reward.id) continue;
     if (a.reward.kind === 'card') cards.add(a.reward.id);

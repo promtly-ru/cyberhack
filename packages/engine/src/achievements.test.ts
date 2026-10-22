@@ -28,7 +28,6 @@ const profile = (over: Partial<MetaProfile> = {}): MetaProfile => ({
 });
 const extra = (over: Partial<MetaExtraState> = {}): MetaExtraState => ({
   unlockedFirmwares: [],
-  firmwareCollection: {},
   achievements: {},
   currency: 0,
   cosmetics: [],
@@ -40,9 +39,9 @@ describe('ачивки v2: данные', () => {
     expect(META_ACHIEVEMENTS.length).toBeGreaterThanOrEqual(40);
     expect(new Set(META_ACHIEVEMENTS.map((a) => a.id)).size).toBe(META_ACHIEVEMENTS.length);
     for (const t of ['bronze', 'silver', 'gold']) expect(META_ACHIEVEMENTS.some((a) => a.tier === t), t).toBe(true);
-    for (const k of ['card', 'firmware', 'copies', 'currency', 'cosmetic']) expect(META_ACHIEVEMENTS.some((a) => a.reward.kind === k), k).toBe(true);
+    for (const k of ['card', 'firmware', 'currency', 'cosmetic']) expect(META_ACHIEVEMENTS.some((a) => a.reward.kind === k), k).toBe(true);
   });
-  it('награды ссылаются на существующее; копии — только на открытые с начала прошивки', () => {
+  it('награды ссылаются на существующее', () => {
     const cards = getContent().cards;
     for (const a of META_ACHIEVEMENTS) {
       expect(a.goal, a.id).toBeGreaterThan(0);
@@ -50,11 +49,6 @@ describe('ачивки v2: данные', () => {
       const r = a.reward;
       if (r.kind === 'card') expect(cards.has(r.id!), a.id).toBe(true);
       if (r.kind === 'firmware') expect(getFirmware(r.id!)?.unlock, a.id).toBe(a.id);
-      if (r.kind === 'copies') {
-        expect(getFirmware(r.id!), a.id).toBeDefined();
-        expect(getFirmware(r.id!)!.unlock, a.id).toBeUndefined();
-        expect(r.amount!, a.id).toBeGreaterThan(0);
-      }
       if (r.kind === 'currency') expect(r.amount!, a.id).toBeGreaterThan(0);
       if (r.kind === 'cosmetic') expect(r.id, a.id).toBeTruthy();
     }
@@ -93,31 +87,20 @@ describe('ачивки v2: прогресс и выдача', () => {
     expect(again.ok).toBe(false);
     expect(again.extra.currency).toBe(50);
   });
-  it('награды: карта, прошивка, копии, валюта, косметика', () => {
+  it('награды: карта, прошивка (открытие), валюта, косметика', () => {
     const p = profile();
     const e = extra();
     expect(applyMetaReward(p, e, { kind: 'card', id: 'nr_f_singularity' }).profile.unlockedCards).toEqual(['nr_f_singularity']);
     const fw = applyMetaReward(p, e, { kind: 'firmware', id: 'fw_zero_hour' }).extra;
-    expect(fw.unlockedFirmwares).toContain('fw_zero_hour');
-    expect(fw.firmwareCollection.fw_zero_hour).toEqual({ id: 'fw_zero_hour', level: 1, copies: 0 });
-    // Повторная выдача прошивки, которая уже есть, не сбрасывает уровень
-    const lv = extra({ firmwareCollection: { fw_zero_hour: { id: 'fw_zero_hour', level: 3, copies: 2 } }, unlockedFirmwares: ['fw_zero_hour'] });
-    expect(applyMetaReward(p, lv, { kind: 'firmware', id: 'fw_zero_hour' }).extra.firmwareCollection.fw_zero_hour!.level).toBe(3);
-    const cp = applyMetaReward(p, extra({ firmwareCollection: { fw_miner: { id: 'fw_miner', level: 1, copies: 1 } } }), { kind: 'copies', id: 'fw_miner', amount: 2 });
-    expect(cp.extra.firmwareCollection.fw_miner!.copies).toBe(3);
+    expect(fw.unlockedFirmwares).toEqual(['fw_zero_hour']);
+    expect(applyMetaReward(p, fw, { kind: 'firmware', id: 'fw_zero_hour' }).extra).toBe(fw);
     expect(applyMetaReward(p, e, { kind: 'currency', amount: 150 }).extra.currency).toBe(150);
     expect(applyMetaReward(p, e, { kind: 'cosmetic', id: 'frame_boss' }).extra.cosmetics).toEqual(['frame_boss']);
     expect(e).toEqual(extra());
   });
-  it('метрики коллекции и забранных наград', () => {
-    const e = extra({
-      firmwareCollection: {
-        fw_bloom: { id: 'fw_bloom', level: 4, copies: 0 },
-        fw_stolen_time: { id: 'fw_stolen_time', level: 1, copies: 0 },
-        fw_miner: { id: 'fw_miner', level: 2, copies: 0 },
-      },
-    });
-    const st = new Map(computeAchievementStates(profile(), e).map((s) => [s.id, s]));
+  it('метрики прошивок считаются по забегам (lifetime)', () => {
+    const lifetime = { firmwaresObtained: 4, firmwareUpgrades: 4, bestFirmwaresInRun: 3, legendaryFirmwares: 1 };
+    const st = new Map(computeAchievementStates(profile({ lifetime }), extra()).map((s) => [s.id, s]));
     expect(st.get('ach_fw_owned_1')!.completed).toBe(true);
     expect(st.get('ach_fw_upgrade_1')!.completed).toBe(true);
     expect(st.get('ach_fw_upgrade_2')!.progress).toBe(4);

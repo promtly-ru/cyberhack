@@ -27,7 +27,7 @@ export function getAchievementStates(): AchievementState[] {
   return computeAchievementStates(profile, metaExtra);
 }
 
-/** Забрать награду (карта, прошивка, копии, валюта, косметика). false — нельзя. */
+/** Забрать награду (карта, открытие прошивки, валюта, косметика). false — нельзя. */
 export function claimAchievement(id: string): boolean {
   return useGame.getState().claimAchievement(id);
 }

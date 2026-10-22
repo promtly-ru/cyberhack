@@ -40,8 +40,6 @@ export function rewardLabel(r: Reward): string {
       return `${r.amount ?? 0} кредитов`;
     case 'firmware':
       return `Прошивка «${(r.id && getFirmwareDef(r.id)?.name) || r.id}»`;
-    case 'copies':
-      return `${r.amount ?? 1} коп. «${(r.id && getFirmwareDef(r.id)?.name) || r.id}»`;
     case 'card':
       return r.id ? `Карта «${cardName(r.id)}»` : 'Новая карта';
     case 'cosmetic':
@@ -49,4 +47,4 @@ export function rewardLabel(r: Reward): string {
   }
 }
 
-export const REWARD_ICON: Record<Reward['kind'], string> = { currency: 'gold', firmware: 'firmware', copies: 'chip', card: 'deck', cosmetic: 'crown' };
+export const REWARD_ICON: Record<Reward['kind'], string> = { currency: 'gold', firmware: 'firmware', card: 'deck', cosmetic: 'crown' };

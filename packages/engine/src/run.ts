@@ -44,18 +44,7 @@ import {
   type Screen,
 } from './types';
 import { lockedContent } from './unlocks';
-import { getFirmware, MAX_FIRMWARE_LEVEL } from './firmware';
-
-/** Мета-уровни прошивок из опций: только известные id и уровни 2..MAX. */
-function sanitizeFirmwareLevels(raw: NewRunOptions['firmwareLevels']): Record<string, number> | undefined {
-  if (!raw) return undefined;
-  const out: Record<string, number> = {};
-  for (const [id, lv] of Object.entries(raw)) {
-    const n = Math.min(MAX_FIRMWARE_LEVEL, Math.floor(Number(lv) || 0));
-    if (getFirmware(id) && n > 1) out[id] = n;
-  }
-  return Object.keys(out).length > 0 ? out : undefined;
-}
+import { upgradableFirmwares } from './firmware';
 import { makeCard } from './util';
 
 /** Итоговые модификаторы: Ascension → режим сложности → мутаторы забега. */
@@ -111,8 +100,6 @@ export function newRun(opts: NewRunOptions): RunState {
   };
 
   if (opts.unlocked) s.locked = lockedContent(opts.unlocked);
-  const fwLevels = sanitizeFirmwareLevels(opts.firmwareLevels);
-  if (fwLevels) s.firmwareLevels = fwLevels;
   s.stats.maxGold = s.gold;
 
   for (const id of cls.startingDeck) {
@@ -384,6 +371,11 @@ function upgradableCards(s: RunState): CardInstance[] {
   return s.deck.filter((c) => canUpgrade(c.defId, c.upgraded));
 }
 
+/** Есть что улучшить: карта или ещё не улучшенная прошивка. */
+function canUpgradeAny(s: RunState): boolean {
+  return upgradableCards(s).length > 0 || upgradableFirmwares(s).length > 0;
+}
+
 /** Улучшение: игроку предлагают случайные 3 карты (или меньше, если их меньше). */
 const UPGRADE_OFFER_SIZE = 3;
 /** Набор карт для выбора запоминается по узлу: «Отмена» и повторное открытие не пересоздают его (иначе можно крутить до нужных карт). */
@@ -439,7 +431,7 @@ export function meetsRequires(s: RunState, r: EventRequires | undefined): boolea
   if (r.hp !== undefined && s.hp <= r.hp) return false;
   if (r.potion && potionsOf(s).length === 0) return false;
   if (r.cardType && !s.deck.some((c) => resolveCard(c.defId, c.upgraded).type === r.cardType)) return false;
-  if (r.upgradable && upgradableCards(s).length === 0) return false;
+  if (r.upgradable && !canUpgradeAny(s)) return false;
   if (r.flag && !(s.flags ?? []).includes(r.flag)) return false;
   if (r.noFlag && (s.flags ?? []).includes(r.noFlag)) return false;
   return true;
@@ -580,7 +572,7 @@ export function applyAction(state: RunState, action: Action): ActionResult {
         s.savedShop = items;
         s.screen = { kind: 'select_deck_card', purpose: 'remove', returnTo: 'shop' };
       } else if (item.kind === 'upgrade') {
-        if (upgradableCards(s).length === 0) invalid('No cards to upgrade');
+        if (!canUpgradeAny(s)) invalid('No cards to upgrade');
         s.savedShop = items;
         s.screen = { ...(upgradeScreen(s) as Extract<Screen, { kind: 'select_deck_card' }>), returnTo: 'shop' };
       } else if (item.kind === 'refresh') {
@@ -603,11 +595,14 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       break;
     case 'rest_upgrade':
       if (s.screen.kind !== 'rest') invalid('Not at rest site');
-      if (upgradableCards(s).length === 0) invalid('No cards to upgrade');
+      if (!canUpgradeAny(s)) invalid('No cards to upgrade');
       s.screen = upgradeScreen(s);
       break;
     case 'select_deck_card':
       selectDeckCard(s, action.cardUid, ev);
+      break;
+    case 'upgrade_firmware':
+      upgradeRunFirmware(s, action.firmwareId, ev);
       break;
     case 'event_choice': {
       if (s.screen.kind !== 'event') invalid('Not in event');
@@ -672,6 +667,33 @@ function transformCard(s: RunState, card: CardInstance, ev: GameEvent[]): void {
   if (cands.length > 0) addCardToDeck(s, rng.pick(cands).id, ev);
 }
 
+function payShopUpgrade(s: RunState, returnTo: 'map' | 'shop'): void {
+  if (returnTo !== 'shop' || !s.savedShop) return;
+  const item = s.savedShop.find((i) => i.kind === 'upgrade' && !i.sold);
+  if (!item || s.gold < item.price) invalid('Card upgrade is not available');
+  s.gold -= item.price;
+  item.sold = true;
+  s.shopUpgrades = (s.shopUpgrades ?? 0) + 1;
+}
+
+function finishUpgrade(s: RunState, returnTo: 'map' | 'shop', fromRest: boolean, ev: GameEvent[]): void {
+  if (fromRest) triggerOutOfCombatRelics(s, 'rest', ev);
+  if (s.hp <= 0) return defeat(s);
+  returnFromDeckSelect(s, returnTo);
+}
+
+/** Улучшить прошивку забега на экране улучшения (вместо карты). Каждую — один раз. */
+function upgradeRunFirmware(s: RunState, firmwareId: string, ev: GameEvent[]): void {
+  if (s.screen.kind !== 'select_deck_card' || s.screen.purpose !== 'upgrade') invalid('Not upgrading');
+  if (!upgradableFirmwares(s).includes(firmwareId)) invalid(`Firmware ${firmwareId} cannot be upgraded`);
+  const { returnTo } = s.screen;
+  const fromRest = backScreen(s, returnTo)?.kind === 'rest';
+  payShopUpgrade(s, returnTo);
+  (s.upgradedFirmwares ??= []).push(firmwareId);
+  ev.push({ type: 'firmware_upgraded', firmwareId });
+  finishUpgrade(s, returnTo, fromRest, ev);
+}
+
 function selectDeckCard(s: RunState, cardUid: string | null, ev: GameEvent[]): void {
   if (s.screen.kind !== 'select_deck_card') invalid('Not selecting a deck card');
   const { purpose, returnTo } = s.screen;
@@ -693,18 +715,10 @@ function selectDeckCard(s: RunState, cardUid: string | null, ev: GameEvent[]): v
   }
   if (purpose === 'upgrade') {
     if (!canUpgrade(card.defId, card.upgraded)) invalid(`Card ${cardUid} cannot be upgraded`);
-    if (returnTo === 'shop' && s.savedShop) {
-      const item = s.savedShop.find((i) => i.kind === 'upgrade' && !i.sold);
-      if (!item || s.gold < item.price) invalid('Card upgrade is not available');
-      s.gold -= item.price;
-      item.sold = true;
-      s.shopUpgrades = (s.shopUpgrades ?? 0) + 1;
-    }
+    payShopUpgrade(s, returnTo);
     card.upgraded = true;
     ev.push({ type: 'card_upgraded', cardUid, defId: card.defId });
-    if (fromRest) triggerOutOfCombatRelics(s, 'rest', ev);
-    if (s.hp <= 0) return defeat(s);
-    returnFromDeckSelect(s, returnTo);
+    finishUpgrade(s, returnTo, fromRest, ev);
     return;
   }
   // remove
@@ -747,7 +761,7 @@ function nodeChoice(s: RunState, index: number, ev: GameEvent[]): void {
   switch (s.screen.kind) {
     case 'lab':
       if (index === 0) {
-        if (upgradableCards(s).length === 0) invalid('No cards to upgrade');
+        if (!canUpgradeAny(s)) invalid('No cards to upgrade');
         s.screen = upgradeScreen(s);
       } else if (index === 1) {
         if (s.deck.length === 0) invalid('Deck is empty');
@@ -840,7 +854,7 @@ function applyEventOption(s: RunState, opt: EventOption, ev: GameEvent[]): void 
       else goToMap(s);
       return;
     case 'upgrade_card':
-      if (upgradableCards(s).length > 0) s.screen = upgradeScreen(s);
+      if (canUpgradeAny(s)) s.screen = upgradeScreen(s);
       else goToMap(s);
       return;
     case 'transform_card':
@@ -932,14 +946,14 @@ export function getLegalActions(state: RunState): Action[] {
       screen.items.forEach((item, index) => {
         if (item.sold || s.gold < item.price) return;
         if (item.kind === 'remove' && s.deck.length === 0) return;
-        if (item.kind === 'upgrade' && upgradableCards(s).length === 0) return;
+        if (item.kind === 'upgrade' && !canUpgradeAny(s)) return;
         if (item.kind === 'potion' && !hasFreePotionSlot(s)) return;
         actions.push({ type: 'shop_buy', index });
       });
       actions.push({ type: 'leave_shop' });
       break;
     case 'lab':
-      if (upgradableCards(s).length > 0) actions.push({ type: 'node_choice', index: 0 });
+      if (canUpgradeAny(s)) actions.push({ type: 'node_choice', index: 0 });
       if (s.deck.length > 0) actions.push({ type: 'node_choice', index: 1 });
       actions.push({ type: 'leave_node' });
       break;
@@ -953,7 +967,7 @@ export function getLegalActions(state: RunState): Action[] {
       break;
     case 'rest':
       actions.push({ type: 'rest_heal' });
-      if (upgradableCards(s).length > 0) actions.push({ type: 'rest_upgrade' });
+      if (canUpgradeAny(s)) actions.push({ type: 'rest_upgrade' });
       break;
     case 'event':
       for (const index of legalEventOptions(s, screen.eventId)) actions.push({ type: 'event_choice', index });
@@ -962,6 +976,7 @@ export function getLegalActions(state: RunState): Action[] {
       const base = screen.purpose === 'upgrade' ? upgradableCards(s) : s.deck;
       const cards = screen.purpose === 'remove' ? base : base.filter((c) => !screen.offer || screen.offer.includes(c.uid));
       for (const c of cards) actions.push({ type: 'select_deck_card', cardUid: c.uid });
+      if (screen.purpose === 'upgrade') for (const firmwareId of upgradableFirmwares(s)) actions.push({ type: 'upgrade_firmware', firmwareId });
       actions.push({ type: 'select_deck_card', cardUid: null });
       break;
     }

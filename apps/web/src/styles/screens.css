@@ -322,3 +322,7 @@ a[aria-disabled='true'] { opacity: 0.5; pointer-events: none; }
 .end-confirm p { margin: 0; }
 .end-confirm__actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
 .end-confirm__actions .btn { flex: 1 1 140px; }
+.fw-upgrade-list { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin: 12px 0; }
+.fw-upgrade-list .topbar__relics-label { flex-basis: 100%; text-align: center; }
+.fw-upgrade-opt.is-chosen { border-color: var(--cyan); background: rgba(0, 240, 255, 0.1); }
+.upgrade-preview--fw > span { max-width: 260px; font-size: 14px; line-height: 1.4; }

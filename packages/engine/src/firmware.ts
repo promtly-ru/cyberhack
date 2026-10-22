@@ -4,9 +4,9 @@
  * В забеге: 3/3 карт из needs в колоде — полный бонус; 2/3 — ослабленный (половина чисел,
  * без энергии/добора/создания карт; если ничего не осталось — немного блока); меньше — не работает.
  *
- * Мета-прогресс (как у карт в коллекционках): у прошивки есть тип, редкость и уровень 1..MAX.
- * Дубликаты дают копии, копии тратятся на улучшение. Чем выше редкость, тем сильнее рост эффекта
- * и тем больше копий нужно. Все пороги и множители — в FIRMWARE_RARITY_CONFIG.
+ * Прошивки живут только внутри забега: получил — можно один раз улучшить (как карту: привал,
+ * лаборатория, магазин, события), конец забега — всё сбрасывается. Вне забега у игрока только
+ * список открытых прошивок (закрытые открываются ачивками).
  */
 import { getContent } from './content';
 import type { Effect, RunState } from './types';
@@ -21,13 +21,6 @@ export type FirmwareType = 'attack' | 'defense' | 'economy' | 'utility' | 'combo
 
 export const RARITIES: readonly Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
-/** Уровень мета-прогресса: copiesNeeded — сколько копий потратить, чтобы получить этот уровень (у 1-го — 0). */
-export interface FirmwareLevelDef {
-  copiesNeeded: number;
-  /** Эффекты прошивки на этом уровне (полный бонус 3/3) */
-  effect: readonly Effect[];
-}
-
 export interface FirmwareDef {
   id: string;
   name: string;
@@ -41,37 +34,24 @@ export interface FirmwareDef {
   icon: string;
   /** id ачивки, которая открывает прошивку; нет — открыта с начала */
   unlock?: string;
-  /** Уровни 1..MAX_FIRMWARE_LEVEL (индекс 0 — уровень 1) */
-  levels: readonly FirmwareLevelDef[];
   /** Класс, для которого прошивка полезна ('neutral' — всем) */
   classId: string;
   /** Карты (defId), которые все должны лежать в колоде */
   needs: string[];
   trigger: FirmwareTrigger;
-  /** Базовые эффекты (уровень 1) */
+  /** Базовые эффекты (без улучшения) */
   effects: Effect[];
+  /** Эффекты после улучшения в забеге */
+  upgradedEffects: readonly Effect[];
 }
 
-// ---------------- Конфиг редкостей (единственное место с порогами и множителями) ----------------
+// ---------------- Редкости и улучшение ----------------
 
-export const MAX_FIRMWARE_LEVEL = 4;
+/** Вес редкости в дропе забега */
+export const FIRMWARE_RARITY_WEIGHT: Readonly<Record<Rarity, number>> = { common: 50, uncommon: 28, rare: 14, epic: 6, legendary: 2 };
 
-export interface RarityConfig {
-  /** Вес в наградах «1 из 3» и в дропе забега */
-  weight: number;
-  /** Копий на переход к уровню 1..MAX (первый — 0: получение) */
-  copies: readonly number[];
-  /** Множитель эффектов на уровне 1..MAX */
-  mult: readonly number[];
-}
-
-export const FIRMWARE_RARITY_CONFIG: Readonly<Record<Rarity, RarityConfig>> = {
-  common: { weight: 50, copies: [0, 2, 3, 5], mult: [1, 1.15, 1.3, 1.5] },
-  uncommon: { weight: 28, copies: [0, 3, 4, 6], mult: [1, 1.2, 1.4, 1.7] },
-  rare: { weight: 14, copies: [0, 4, 5, 8], mult: [1, 1.25, 1.5, 1.9] },
-  epic: { weight: 6, copies: [0, 5, 7, 10], mult: [1, 1.3, 1.65, 2.1] },
-  legendary: { weight: 2, copies: [0, 6, 9, 12], mult: [1, 1.35, 1.8, 2.5] },
-};
+/** Множитель чисел у улучшенной прошивки */
+export const FIRMWARE_UPGRADE_MULT = 1.5;
 
 const TYPE_ICON: Record<FirmwareType, string> = {
   attack: 'strength',
@@ -101,9 +81,15 @@ export function scaleEffects(effects: readonly Effect[], mult: number): Effect[]
   });
 }
 
-function buildLevels(rarity: Rarity, effects: readonly Effect[]): FirmwareLevelDef[] {
-  const cfg = FIRMWARE_RARITY_CONFIG[rarity];
-  return cfg.copies.map((copiesNeeded, i) => ({ copiesNeeded, effect: i === 0 ? effects : scaleEffects(effects, cfg.mult[i] ?? 1) }));
+/** Улучшенные эффекты: числа ×1.5 (минимум +1); энергия/добор/карты не растут — если чисел нет, добавляется блок. */
+function upgradeOf(effects: readonly Effect[], trigger: FirmwareTrigger): Effect[] {
+  const out = scaleEffects(effects, FIRMWARE_UPGRADE_MULT).map((e, i): Effect => {
+    const was = effects[i]!;
+    if ((e.type === 'apply_status' || e.type === 'block' || e.type === 'heal') && 'amount' in was && e.amount <= was.amount) return { ...e, amount: was.amount + 1 };
+    return e;
+  });
+  if (!out.some((e) => e.type === 'apply_status' || e.type === 'block' || e.type === 'heal')) out.push({ type: 'block', amount: trigger === 'combat_start' ? 8 : 4 });
+  return out;
 }
 
 // ---------------- Данные ----------------
@@ -180,7 +166,7 @@ function build(r: RawFirmware): FirmwareDef {
     ...r,
     desc: r.description,
     icon: r.icon ?? TYPE_ICON[r.type],
-    levels: buildLevels(r.rarity, r.effects),
+    upgradedEffects: upgradeOf(r.effects, r.trigger),
   };
 }
 
@@ -209,15 +195,9 @@ export function firmwareLevel(fw: FirmwareDef, deckDefIds: readonly string[]): F
   return missing.length === 1 && fw.needs.length >= 3 ? 1 : 0;
 }
 
-function clampMetaLevel(level: number | undefined): number {
-  const n = Math.floor(Number(level) || 1);
-  return Math.max(1, Math.min(MAX_FIRMWARE_LEVEL, n));
-}
-
-/** Эффекты прошивки на мета-уровне (1..MAX). Контракт: firmwareEffect(def, level). */
-export function firmwareEffect(def: FirmwareDef, level: number): readonly Effect[] {
-  const lv = clampMetaLevel(level);
-  return lv === 1 ? def.effects : (def.levels[lv - 1]?.effect ?? def.effects);
+/** Эффекты при полном бонусе (3/3) с учётом улучшения. */
+export function firmwareEffect(def: FirmwareDef, upgraded = false): readonly Effect[] {
+  return upgraded ? def.upgradedEffects : def.effects;
 }
 
 function partialOf(effects: readonly Effect[], trigger: FirmwareTrigger): Effect[] {
@@ -229,14 +209,14 @@ function partialOf(effects: readonly Effect[], trigger: FirmwareTrigger): Effect
   return out;
 }
 
-/** Ослабленные эффекты (уровень 1): числа пополам, без энергии/добора/карт; пусто → немного блока. */
-export function partialEffects(fw: FirmwareDef, metaLevel = 1): Effect[] {
-  return partialOf(firmwareEffect(fw, metaLevel), fw.trigger);
+/** Ослабленные эффекты (2/3): числа пополам, без энергии/добора/карт; пусто → немного блока. */
+export function partialEffects(fw: FirmwareDef, upgraded = false): Effect[] {
+  return partialOf(firmwareEffect(fw, upgraded), fw.trigger);
 }
 
-/** Эффекты прошивки для уровня колоды (0 — пусто) с учётом мета-уровня (1 — базовые). */
-export function firmwareEffects(fw: FirmwareDef, level: FirmwareLevel, metaLevel = 1): readonly Effect[] {
-  return level === 2 ? firmwareEffect(fw, metaLevel) : level === 1 ? partialEffects(fw, metaLevel) : [];
+/** Эффекты прошивки для уровня колоды (0 — пусто) с учётом улучшения. */
+export function firmwareEffects(fw: FirmwareDef, level: FirmwareLevel, upgraded = false): readonly Effect[] {
+  return level === 2 ? firmwareEffect(fw, upgraded) : level === 1 ? partialEffects(fw, upgraded) : [];
 }
 
 function statusName(id: string): string {
@@ -244,9 +224,9 @@ function statusName(id: string): string {
 }
 
 /** Текст эффектов для UI. */
-export function describeFirmwareEffects(fw: FirmwareDef, level: 1 | 2, metaLevel = 1): string {
+export function describeFirmwareEffects(fw: FirmwareDef, level: 1 | 2, upgraded = false): string {
   const when = fw.trigger === 'combat_start' ? 'В начале боя' : fw.trigger === 'turn_end' ? 'В конце каждого хода' : 'Каждый ход';
-  const parts = firmwareEffects(fw, level, metaLevel).map((e) => {
+  const parts = firmwareEffects(fw, level, upgraded).map((e) => {
     switch (e.type) {
       case 'block':
         return `${e.amount} блока`;
@@ -286,113 +266,32 @@ export function rollableFirmwares(s: Pick<RunState, 'classId' | 'firmwares'> & P
   );
 }
 
-// ---------------- Мета-прогресс: коллекция, копии, улучшения ----------------
-
-export interface FirmwareState {
-  id: string;
-  /** 1..MAX_FIRMWARE_LEVEL */
-  level: number;
-  /** Накопленные копии для следующего улучшения */
-  copies: number;
+/** Улучшена ли прошивка в этом забеге. */
+export function isFirmwareUpgraded(s: Pick<RunState, 'upgradedFirmwares'>, id: string): boolean {
+  return (s.upgradedFirmwares ?? []).includes(id);
 }
 
-/** Часть профиля, которую используют функции коллекции (остальные поля сохраняются как есть). */
+/** Прошивки забега, которые ещё можно улучшить (каждую — один раз). */
+export function upgradableFirmwares(s: Pick<RunState, 'firmwares' | 'upgradedFirmwares'>): string[] {
+  return (s.firmwares ?? []).filter((id) => getFirmware(id) && !isFirmwareUpgraded(s, id));
+}
+
+// ---------------- Вне забега: только открытые прошивки ----------------
+
 export interface FirmwareMeta {
   unlockedFirmwares: readonly string[];
-  firmwareCollection: Readonly<Record<string, FirmwareState>>;
-}
-
-/** Минимальный ГСЧ: подходит и Rng движка, и обёртка над Math.random. */
-export interface RngLike {
-  next(): number;
 }
 
 export function listFirmwares(): readonly FirmwareDef[] {
   return FIRMWARES;
 }
 
-/** Открыта ли прошивка: без unlock — всегда; иначе — есть в unlockedFirmwares или уже в коллекции. */
+/** Открыта ли прошивка: без unlock — всегда; иначе — есть в unlockedFirmwares. */
 export function isFirmwareUnlocked(def: FirmwareDef, meta?: Partial<FirmwareMeta> | null): boolean {
-  if (def.unlock === undefined) return true;
-  return (meta?.unlockedFirmwares ?? []).includes(def.id) || meta?.firmwareCollection?.[def.id] !== undefined;
+  return def.unlock === undefined || (meta?.unlockedFirmwares ?? []).includes(def.id);
 }
 
-/** Прошивки, доступные игроку (закрытые не попадают ни в награды, ни в пул забега). */
+/** Прошивки, доступные игроку (закрытые не попадают в пул забега). */
 export function listAvailableFirmwares(meta?: Partial<FirmwareMeta> | null): FirmwareDef[] {
   return FIRMWARES.filter((f) => isFirmwareUnlocked(f, meta));
-}
-
-function isMaxed(meta: Partial<FirmwareMeta> | null | undefined, id: string): boolean {
-  return (meta?.firmwareCollection?.[id]?.level ?? 0) >= MAX_FIRMWARE_LEVEL;
-}
-
-/**
- * Награда «1 из n»: n разных открытых прошивок, редкость — по весам FIRMWARE_RARITY_CONFIG.
- * Прошивки максимального уровня не предлагаются (копия им бесполезна). Возвращает id.
- */
-export function rollFirmwareChoices(meta: Partial<FirmwareMeta> | null | undefined, rng: RngLike, n = 3): string[] {
-  const pool = listAvailableFirmwares(meta).filter((f) => !isMaxed(meta, f.id));
-  const out: string[] = [];
-  while (out.length < n) {
-    const left = pool.filter((f) => !out.includes(f.id));
-    if (left.length === 0) break;
-    const rarities = RARITIES.filter((r) => left.some((f) => f.rarity === r));
-    const total = rarities.reduce((s, r) => s + FIRMWARE_RARITY_CONFIG[r].weight, 0);
-    let roll = rng.next() * total;
-    let rarity = rarities[rarities.length - 1]!;
-    for (const r of rarities) {
-      roll -= FIRMWARE_RARITY_CONFIG[r].weight;
-      if (roll < 0) {
-        rarity = r;
-        break;
-      }
-    }
-    const cands = left.filter((f) => f.rarity === rarity);
-    out.push(cands[Math.min(cands.length - 1, Math.floor(rng.next() * cands.length))]!.id);
-  }
-  return out;
-}
-
-/** Сколько копий нужно для следующего уровня (null — максимум или прошивки нет в коллекции). */
-export function copiesForNextLevel(state: Partial<FirmwareMeta> | null | undefined, id: string): number | null {
-  const def = getFirmware(id);
-  const st = state?.firmwareCollection?.[id];
-  if (!def || !st || st.level >= MAX_FIRMWARE_LEVEL) return null;
-  return def.levels[st.level]?.copiesNeeded ?? null;
-}
-
-/**
- * Получить прошивку или её копию: новая → в коллекцию уровнем 1 (и открывается);
- * дубликат → +1 копия (на максимальном уровне копии не копятся). Профиль не мутируется.
- */
-export function addFirmwareCopy<T extends FirmwareMeta>(state: T, id: string, amount = 1): T {
-  const def = getFirmware(id);
-  if (!def || amount <= 0) return state;
-  const coll = { ...state.firmwareCollection };
-  const cur = coll[id];
-  if (!cur) coll[id] = { id, level: 1, copies: Math.max(0, amount - 1) };
-  else if (cur.level < MAX_FIRMWARE_LEVEL) coll[id] = { ...cur, copies: cur.copies + amount };
-  else return state;
-  const unlocked = state.unlockedFirmwares.includes(id) || def.unlock === undefined ? state.unlockedFirmwares : [...state.unlockedFirmwares, id];
-  return { ...state, unlockedFirmwares: unlocked, firmwareCollection: coll };
-}
-
-export function canUpgrade(state: Partial<FirmwareMeta> | null | undefined, id: string): boolean {
-  const need = copiesForNextLevel(state, id);
-  return need !== null && (state?.firmwareCollection?.[id]?.copies ?? 0) >= need;
-}
-
-/** Улучшить прошивку: тратит копии, уровень +1. Нельзя — профиль возвращается без изменений. */
-export function upgradeFirmware<T extends FirmwareMeta>(state: T, id: string): T {
-  if (!canUpgrade(state, id)) return state;
-  const cur = state.firmwareCollection[id]!;
-  const need = copiesForNextLevel(state, id)!;
-  return { ...state, firmwareCollection: { ...state.firmwareCollection, [id]: { id, level: cur.level + 1, copies: cur.copies - need } } };
-}
-
-/** Уровни коллекции для NewRunOptions.firmwareLevels (только > 1). */
-export function firmwareRunLevels(meta: Partial<FirmwareMeta> | null | undefined): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const [id, st] of Object.entries(meta?.firmwareCollection ?? {})) if (getFirmware(id) && st.level > 1) out[id] = clampMetaLevel(st.level);
-  return out;
 }

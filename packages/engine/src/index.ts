@@ -42,21 +42,17 @@ export {
   firmwareEffects,
   partialEffects,
   describeFirmwareEffects,
-  FIRMWARE_RARITY_CONFIG,
-  MAX_FIRMWARE_LEVEL,
+  FIRMWARE_RARITY_WEIGHT,
+  FIRMWARE_UPGRADE_MULT,
   RARITIES,
   scaleEffects,
   lockableFirmwares,
   listFirmwares,
   listAvailableFirmwares,
   isFirmwareUnlocked,
-  rollFirmwareChoices,
-  copiesForNextLevel,
-  addFirmwareCopy,
-  canUpgrade,
-  upgradeFirmware,
   firmwareEffect,
-  firmwareRunLevels,
+  isFirmwareUpgraded,
+  upgradableFirmwares,
 } from './firmware';
 export {
   META_ACHIEVEMENTS,
@@ -79,7 +75,7 @@ export type {
   AchievementRecord,
   MetaExtraState,
 } from './achievements';
-export type { FirmwareDef, FirmwareLevel, FirmwareTrigger, FirmwareLevelDef, FirmwareMeta, FirmwareState, FirmwareType, Rarity as FirmwareRarity, RarityConfig, RngLike } from './firmware';
+export type { FirmwareDef, FirmwareLevel, FirmwareTrigger, FirmwareMeta, FirmwareType, Rarity as FirmwareRarity } from './firmware';
 export { SYNERGIES, getActiveSynergies } from './synergies';
 export type { SynergyDef } from './synergies';
 export { availableNodes, blackboxForceCost, blackboxHackCost, canUsePotionNow, currentNode, meetsRequires, RELAY_HEAL_PCT } from './run';

@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import type { Action, ClassId, Difficulty, CombatState, GameEvent, NewRunOptions, RunEndResult, RunState } from './engine';
 import { applyAction, evaluateRunEnd, newRun } from './engine';
 import { markWeeklyLocal, regularRunOptions, weeklyAttemptsLeft, weeklyRunOptions, withWeeklyAttempt, withWeeklyTitle } from './meta';
-import { applyRunToMetaExtra, loadMetaExtra, saveMetaExtra, setActiveMetaExtra, syncMetaAchievements, type MetaExtra } from './meta';
-import { addFirmwareCopy, claimMetaAchievement, upgradeFirmware as upgradeFirmwareMeta } from '@cyberhack/engine';
+import { loadMetaExtra, saveMetaExtra, setActiveMetaExtra, syncMetaAchievements, type MetaExtra } from './meta';
+import { claimMetaAchievement } from '@cyberhack/engine';
 import type { Backend, DeviceProfile, Profile, SavedRun, SubmitWeeklyResult, User } from '../net/types';
 import { defaultProfile, getBackend, peekBackend } from './backend';
 import { sfx } from '../audio/sfx';
@@ -64,17 +64,11 @@ interface GameStore {
   abandonRun(): Promise<void>;
   clearError(): void;
 
-  // ---- Мета-прогресс v2 (контракт данных: прошивки-коллекция, ачивки с наградами) ----
-  /** Коллекция прошивок, ачивки v2, валюта, косметика, ожидающая награда «1 из 3» */
+  // ---- Мета-прогресс v2 (контракт данных: открытые прошивки, ачивки с наградами) ----
+  /** Открытые прошивки, ачивки v2, валюта, косметика */
   metaExtra: MetaExtra;
   /** Забрать награду ачивки. false — не выполнена, уже забрана или нет такой */
   claimAchievement(id: string): boolean;
-  /** Выбрать прошивку из награды «1 из 3» (дубликат → копия). false — нет такой в предложении */
-  pickFirmwareChoice(id: string): boolean;
-  /** Отказаться от награды «1 из 3» */
-  skipFirmwareChoice(): void;
-  /** Улучшить прошивку за копии. false — копий не хватает или максимум */
-  upgradeFirmware(id: string): boolean;
 }
 
 let eventSeq = 0;
@@ -233,26 +227,6 @@ export const useGame = create<GameStore>((set, get) => ({
     }
     return true;
   },
-
-  pickFirmwareChoice(id) {
-    const { metaExtra } = get();
-    if (!metaExtra.pendingFirmwareChoice?.includes(id)) return false;
-    setMetaExtra({ ...addFirmwareCopy(metaExtra, id), pendingFirmwareChoice: null });
-    return true;
-  },
-
-  skipFirmwareChoice() {
-    const { metaExtra } = get();
-    if (metaExtra.pendingFirmwareChoice) setMetaExtra({ ...metaExtra, pendingFirmwareChoice: null });
-  },
-
-  upgradeFirmware(id) {
-    const { metaExtra } = get();
-    const next = upgradeFirmwareMeta(metaExtra, id);
-    if (next === metaExtra) return false;
-    setMetaExtra(next);
-    return true;
-  },
 }));
 
 // ---------------- Мета-прогресс v2: хранение и автоматические события ----------------
@@ -271,8 +245,8 @@ function setMetaExtra(extra: MetaExtra): void {
 }
 
 /**
- * Смена пользователя → его мета-данные; новый профиль → липкая отметка выполненных ачивок;
- * конец забега (победа, поражение, брошен) → копии полученных прошивок и награда «1 из 3».
+ * Смена пользователя → его мета-данные; новый профиль → липкая отметка выполненных ачивок.
+ * Прошивки забега в мета-данные не попадают: они живут только внутри забега.
  */
 useGame.subscribe((s, prev) => {
   const userChanged = (s.user?.id ?? null) !== (prev.user?.id ?? null);
@@ -283,9 +257,7 @@ useGame.subscribe((s, prev) => {
     return;
   }
   let extra = s.metaExtra;
-  const ended = prev.run?.status === 'active' && (!s.run || s.run.status !== 'active') ? (s.run ?? prev.run) : null;
-  if (ended) extra = applyRunToMetaExtra(extra, ended);
-  if (s.profile !== prev.profile || extra !== s.metaExtra) extra = syncMetaAchievements(s.profile, extra).extra;
+  if (s.profile !== prev.profile) extra = syncMetaAchievements(s.profile, extra).extra;
   if (extra !== s.metaExtra) setMetaExtra(extra);
 });
 
