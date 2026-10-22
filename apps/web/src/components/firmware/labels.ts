@@ -1,5 +1,6 @@
 import type { AchievementTier, FirmwareDef, FirmwareType, Rarity, Reward } from '../../ui-adapter/contract';
 import { getFirmwareDef, listAchievements } from '../../ui-adapter/contract';
+import { cardStats } from '../../game/engine';
 
 export const RARITY_ORDER: Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 export const RARITY_NAME: Record<Rarity, string> = { common: 'Обычная', uncommon: 'Необычная', rare: 'Редкая', epic: 'Эпическая', legendary: 'Легендарная' };
@@ -23,6 +24,16 @@ export function unlockHint(def: FirmwareDef): string {
   return ach ? `Достижение «${ach.title}»: ${ach.desc.toLowerCase()}` : def.unlock;
 }
 
+const COSMETIC_NAME: Record<string, string> = { frame: 'Рамка профиля', cardback: 'Рубашка карт', title: 'Титул', avatar: 'Аватар', theme: 'Тема оформления' };
+
+function cardName(id: string): string {
+  try {
+    return cardStats(id, false).name;
+  } catch {
+    return 'новая';
+  }
+}
+
 export function rewardLabel(r: Reward): string {
   switch (r.kind) {
     case 'currency':
@@ -32,9 +43,9 @@ export function rewardLabel(r: Reward): string {
     case 'copies':
       return `${r.amount ?? 1} коп. «${(r.id && getFirmwareDef(r.id)?.name) || r.id}»`;
     case 'card':
-      return 'Новая карта';
+      return r.id ? `Карта «${cardName(r.id)}»` : 'Новая карта';
     case 'cosmetic':
-      return 'Оформление';
+      return COSMETIC_NAME[r.id?.split('_')[0] ?? ''] ?? 'Оформление';
   }
 }
 
