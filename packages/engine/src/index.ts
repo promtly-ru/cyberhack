@@ -79,7 +79,7 @@ export type {
   AchievementRecord,
   MetaExtraState,
 } from './achievements';
-export type { FirmwareDef, FirmwareLevel, FirmwareTrigger, FirmwareLevelDef, FirmwareMeta, FirmwareState, FirmwareType, Rarity, RarityConfig, RngLike } from './firmware';
+export type { FirmwareDef, FirmwareLevel, FirmwareTrigger, FirmwareLevelDef, FirmwareMeta, FirmwareState, FirmwareType, Rarity as FirmwareRarity, RarityConfig, RngLike } from './firmware';
 export { SYNERGIES, getActiveSynergies } from './synergies';
 export type { SynergyDef } from './synergies';
 export { availableNodes, blackboxForceCost, blackboxHackCost, canUsePotionNow, currentNode, meetsRequires, RELAY_HEAL_PCT } from './run';
