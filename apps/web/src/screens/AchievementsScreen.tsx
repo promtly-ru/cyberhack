@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import type { AchievementDef, AchievementState, AchievementTier } from '../ui-adapter/contract';
-import { claimAchievement, getAchievementStates, listAchievements, unclaimedCount, useContractVersion } from '../ui-adapter/contract';
+import { claimAchievement, listAchievements, useAchievementStates, useUnclaimedCount } from '../ui-adapter/contract';
 import { useOverlays } from '../ui-adapter/overlays';
 import { Modal } from '../components/Bits';
 import { Icon } from '../components/Icon';
-import { REWARD_ICON, rewardLabel, TIER_NAME } from '../components/firmware/labels';
+import { categoryName, REWARD_ICON, rewardLabel, TIER_NAME } from '../components/firmware/labels';
 import '../styles/firmware-ui.css';
 import '../styles/achievements-ui.css';
 
@@ -59,14 +59,15 @@ function AchievementItem({ a, st }: { a: AchievementDef; st: AchievementState })
 /** Меню достижений: категории, тиры, прогресс, награды, «забрать», фильтры, поиск, счётчик. */
 export function AchievementsScreen() {
   const open = useOverlays((s) => s.achievements);
-  const ver = useContractVersion();
   const [cat, setCat] = useState('all');
   const [status, setStatus] = useState<Status>('all');
   const [tier, setTier] = useState<AchievementTier | 'all'>('all');
   const [q, setQ] = useState('');
 
   const all = listAchievements();
-  const states = getAchievementStates();
+  const stateList = useAchievementStates();
+  const states = useMemo(() => Object.fromEntries(stateList.map((s) => [s.id, s])) as Record<string, AchievementState>, [stateList]);
+  const toClaim = useUnclaimedCount();
   const cats = useMemo(() => [...new Set(all.map((a) => a.category))], [all]);
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -81,12 +82,10 @@ export function AchievementsScreen() {
         return !needle || a.title.toLowerCase().includes(needle) || a.desc.toLowerCase().includes(needle);
       })
       .sort((x, y) => rank[statusOf(states[x.id]!)] - rank[statusOf(states[y.id]!)] || states[y.id]!.progress / y.goal - states[x.id]!.progress / x.goal);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [all, states, cat, tier, status, q, ver]);
+  }, [all, states, cat, tier, status, q]);
 
   if (!open) return null;
   const done = all.filter((a) => states[a.id]?.completed).length;
-  const toClaim = unclaimedCount();
   const claimAll = () => all.forEach((a) => states[a.id] && statusOf(states[a.id]!) === 'claim' && claimAchievement(a.id));
 
   return (
@@ -106,7 +105,7 @@ export function AchievementsScreen() {
         <div className="achx-tabs" role="tablist" aria-label="Категории">
           {['all', ...cats].map((c) => (
             <button type="button" key={c} role="tab" aria-selected={cat === c} className="fw-chip" onClick={() => setCat(c)}>
-              {c === 'all' ? 'Все' : c}
+              {c === 'all' ? 'Все' : categoryName(c)}
             </button>
           ))}
         </div>
@@ -153,8 +152,7 @@ export function AchievementsScreen() {
 
 /** Кнопка меню «Достижения» с индикатором невзятых наград. */
 export function AchievementsMenuButton({ className = 'menu-tool' }: { className?: string }) {
-  useContractVersion();
-  const n = unclaimedCount();
+  const n = useUnclaimedCount();
   return (
     <button type="button" className={`${className} achx-menu-btn`} data-testid="menu-achievements" onClick={() => useOverlays.getState().openAchievements(true)} aria-label={n ? `Достижения, наград к получению: ${n}` : 'Достижения'}>
       <Icon name="trophy" size={20} />

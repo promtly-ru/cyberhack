@@ -10,6 +10,12 @@ export const TYPE_ICON: Record<FirmwareType, string> = { attack: 'attack', defen
 
 export const TIER_NAME: Record<AchievementTier, string> = { bronze: 'Бронза', silver: 'Серебро', gold: 'Золото' };
 
+/** Категории ачивок приходят id (content/achievements.json). */
+const CATEGORY_NAME: Record<string, string> = { progress: 'Прогресс', combat: 'Бой', classes: 'Классы', firmware: 'Прошивки', records: 'Рекорды', meta: 'Коллекция' };
+export function categoryName(id: string): string {
+  return CATEGORY_NAME[id] ?? id;
+}
+
 /** Подсказка, как открыть закрытую прошивку. */
 export function unlockHint(def: FirmwareDef): string {
   if (!def.unlock) return 'Выпадает в забегах';

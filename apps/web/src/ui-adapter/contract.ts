@@ -1,7 +1,7 @@
 /**
  * UI-адаптер: единственная точка, через которую интерфейс прошивок и достижений берёт данные.
- * Пока feat/data не влит — заглушки по общему контракту. После мерджа заменить тела функций
- * реальными импортами из @cyberhack/engine (firmware.ts) и game/achievements.ts, сигнатуры не менять.
+ * Пока feat/data не влит — заглушки, повторяющие его API (firmware.ts в engine, game/achievements.ts, store.metaExtra).
+ * После мерджа заменить тела функций по docs/handoff/feat-ui.md; экспорты и их сигнатуры не менять.
  */
 import { useSyncExternalStore } from 'react';
 
@@ -11,7 +11,7 @@ export type FirmwareType = 'attack' | 'defense' | 'economy' | 'utility' | 'combo
 
 export interface FirmwareLevelDef {
   copiesNeeded: number;
-  /** Описание эффекта уровня (в реальном движке может быть объектом — UI покажет через firmwareEffectText) */
+  /** В движке — Effect[]; текст для UI даёт firmwareEffectText */
   effect: unknown;
 }
 
@@ -22,20 +22,17 @@ export interface FirmwareDef {
   type: FirmwareType;
   rarity: Rarity;
   icon: string;
-  /** id ачивки или условие открытия */
+  /** id ачивки, которая открывает; нет — открыта с начала */
   unlock?: string;
-  levels: FirmwareLevelDef[];
+  /** Уровни 1..N, индекс 0 — уровень 1 */
+  levels: readonly FirmwareLevelDef[];
 }
 
 export interface FirmwareState {
   id: string;
+  /** 1..N; 0 — ещё нет в коллекции */
   level: number;
   copies: number;
-}
-
-export interface FirmwareMeta {
-  unlockedFirmwares: string[];
-  firmwareCollection: Record<string, FirmwareState>;
 }
 
 export type AchievementTier = 'bronze' | 'silver' | 'gold';
@@ -63,7 +60,7 @@ export interface AchievementState {
   claimed: boolean;
 }
 
-// ---- Подписка на изменения (для перерисовки React) ----
+// ---- Подписка на изменения заглушек (после мерджа — подписка на useGame) ----
 let version = 0;
 const subs = new Set<() => void>();
 function emit() {
@@ -74,8 +71,8 @@ function subscribe(f: () => void) {
   subs.add(f);
   return () => subs.delete(f);
 }
-/** Хук: компонент перерисуется после upgrade/claim/pick. */
-export function useContractVersion(): number {
+/** Хук: компонент перерисуется после улучшения/выбора/получения награды. */
+export function useContractVersion(): unknown {
   return useSyncExternalStore(subscribe, () => version);
 }
 
@@ -97,22 +94,22 @@ const STUB_FIRMWARES: FirmwareDef[] = [
 ];
 
 const STUB_ACHIEVEMENTS: AchievementDef[] = [
-  { id: 'ach_first_win', title: 'Первый взлом', desc: 'Победите в любом бою', category: 'Бой', tier: 'bronze', goal: 1, reward: { kind: 'currency', amount: 50 } },
-  { id: 'ach_kill_100', title: 'Сборщик логов', desc: 'Уничтожьте 100 врагов', category: 'Бой', tier: 'silver', goal: 100, reward: { kind: 'copies', id: 'fw_citadel', amount: 2 } },
-  { id: 'ach_no_damage', title: 'Без следа', desc: 'Выиграйте бой с элитой без урона', category: 'Бой', tier: 'gold', goal: 1, reward: { kind: 'firmware', id: 'fw_ghostly' } },
-  { id: 'ach_combo_10', title: 'Цепь команд', desc: 'Сыграйте 10 карт за один ход', category: 'Мастерство', tier: 'gold', goal: 10, reward: { kind: 'firmware', id: 'fw_chain' } },
-  { id: 'ach_virus_100', title: 'Пациент ноль', desc: 'Нанесите 100 урона Вирусом', category: 'Мастерство', tier: 'silver', goal: 100, reward: { kind: 'firmware', id: 'fw_plague' } },
-  { id: 'ach_run_1', title: 'Первый забег', desc: 'Пройдите первый акт', category: 'Забеги', tier: 'bronze', goal: 1, reward: { kind: 'card', id: 'n_miner' } },
-  { id: 'ach_runs_10', title: 'Завсегдатай сети', desc: 'Завершите 10 забегов', category: 'Забеги', tier: 'silver', goal: 10, reward: { kind: 'currency', amount: 200 } },
-  { id: 'ach_boss_act4', title: 'За горизонтом', desc: 'Победите босса 4-го акта', category: 'Забеги', tier: 'gold', goal: 1, reward: { kind: 'firmware', id: 'fw_singularity' } },
-  { id: 'ach_win_samurai', title: 'Путь клинка', desc: 'Победите самураем', category: 'Классы', tier: 'silver', goal: 1, reward: { kind: 'firmware', id: 'fw_bushido' } },
-  { id: 'ach_all_classes', title: 'Мультикласс', desc: 'Сыграйте каждым классом', category: 'Классы', tier: 'gold', goal: 8, reward: { kind: 'cosmetic', id: 'frame_prism' } },
-  { id: 'ach_collect_5', title: 'Коллекционер', desc: 'Откройте 5 прошивок', category: 'Коллекция', tier: 'bronze', goal: 5, reward: { kind: 'copies', id: 'fw_miner', amount: 3 } },
-  { id: 'ach_upgrade_max', title: 'Полный апгрейд', desc: 'Улучшите прошивку до максимума', category: 'Коллекция', tier: 'silver', goal: 1, reward: { kind: 'currency', amount: 150 } },
+  { id: 'ach_first_win', title: 'Первый взлом', desc: 'Победите в любом бою', category: 'combat', tier: 'bronze', goal: 1, reward: { kind: 'currency', amount: 50 } },
+  { id: 'ach_kill_100', title: 'Сборщик логов', desc: 'Уничтожьте 100 врагов', category: 'combat', tier: 'silver', goal: 100, reward: { kind: 'copies', id: 'fw_citadel', amount: 2 } },
+  { id: 'ach_no_damage', title: 'Без следа', desc: 'Выиграйте бой с элитой без урона', category: 'combat', tier: 'gold', goal: 1, reward: { kind: 'firmware', id: 'fw_ghostly' } },
+  { id: 'ach_combo_10', title: 'Цепь команд', desc: 'Сыграйте 10 карт за один ход', category: 'records', tier: 'gold', goal: 10, reward: { kind: 'firmware', id: 'fw_chain' } },
+  { id: 'ach_virus_100', title: 'Пациент ноль', desc: 'Нанесите 100 урона Вирусом', category: 'records', tier: 'silver', goal: 100, reward: { kind: 'firmware', id: 'fw_plague' } },
+  { id: 'ach_run_1', title: 'Первый забег', desc: 'Пройдите первый акт', category: 'progress', tier: 'bronze', goal: 1, reward: { kind: 'card', id: 'n_miner' } },
+  { id: 'ach_runs_10', title: 'Завсегдатай сети', desc: 'Завершите 10 забегов', category: 'progress', tier: 'silver', goal: 10, reward: { kind: 'currency', amount: 200 } },
+  { id: 'ach_boss_act4', title: 'За горизонтом', desc: 'Победите босса 4-го акта', category: 'progress', tier: 'gold', goal: 1, reward: { kind: 'firmware', id: 'fw_singularity' } },
+  { id: 'ach_win_samurai', title: 'Путь клинка', desc: 'Победите самураем', category: 'classes', tier: 'silver', goal: 1, reward: { kind: 'firmware', id: 'fw_bushido' } },
+  { id: 'ach_all_classes', title: 'Мультикласс', desc: 'Сыграйте каждым классом', category: 'classes', tier: 'gold', goal: 8, reward: { kind: 'cosmetic', id: 'frame_prism' } },
+  { id: 'ach_collect_5', title: 'Коллекционер', desc: 'Откройте 5 прошивок', category: 'firmware', tier: 'bronze', goal: 5, reward: { kind: 'copies', id: 'fw_miner', amount: 3 } },
+  { id: 'ach_upgrade_max', title: 'Полный апгрейд', desc: 'Улучшите прошивку до максимума', category: 'firmware', tier: 'silver', goal: 1, reward: { kind: 'currency', amount: 150 } },
 ];
 
-const meta: FirmwareMeta = {
-  unlockedFirmwares: ['fw_overdrive', 'fw_meltdown', 'fw_citadel', 'fw_miner', 'fw_biosync', 'fw_scanner'],
+const meta: { unlockedFirmwares: string[]; firmwareCollection: Record<string, FirmwareState> } = {
+  unlockedFirmwares: [],
   firmwareCollection: {
     fw_overdrive: { id: 'fw_overdrive', level: 1, copies: 2 },
     fw_meltdown: { id: 'fw_meltdown', level: 2, copies: 1 },
@@ -122,95 +119,107 @@ const meta: FirmwareMeta = {
   },
 };
 
-const achStates: Record<string, AchievementState> = Object.fromEntries(
-  STUB_ACHIEVEMENTS.map((a, i) => {
-    const progress = [1, 64, 0, 7, 100, 1, 3, 0, 1, 5, 5, 0][i] ?? 0;
-    const completed = progress >= a.goal;
-    return [a.id, { id: a.id, progress: Math.min(progress, a.goal), completed, claimed: completed && i === 0 }];
-  }),
-);
+let achStates: AchievementState[] = STUB_ACHIEVEMENTS.map((a, i) => {
+  const progress = Math.min(a.goal, [1, 64, 0, 7, 100, 1, 3, 0, 1, 5, 5, 0][i] ?? 0);
+  const completed = progress >= a.goal;
+  return { id: a.id, progress, completed, claimed: completed && i === 0 };
+});
+
+let pendingChoice: string[] | null = null;
 
 // ---- Прошивки ----
-export function listFirmwares(): FirmwareDef[] {
+export function listFirmwares(): readonly FirmwareDef[] {
   return STUB_FIRMWARES;
-}
-export function getFirmwareMeta(): FirmwareMeta {
-  return meta;
 }
 export function getFirmwareDef(id: string): FirmwareDef | undefined {
   return STUB_FIRMWARES.find((f) => f.id === id);
 }
+/** Как в движке: без unlock — открыта; иначе — в unlockedFirmwares или уже в коллекции. */
 export function isFirmwareUnlocked(id: string): boolean {
-  return meta.unlockedFirmwares.includes(id);
+  const def = getFirmwareDef(id);
+  if (!def) return false;
+  return def.unlock === undefined || meta.unlockedFirmwares.includes(id) || meta.firmwareCollection[id] !== undefined;
 }
-export function listAvailableFirmwares(): FirmwareDef[] {
-  return STUB_FIRMWARES.filter((f) => isFirmwareUnlocked(f.id));
-}
-/** Состояние прошивки; у открытой без копий — уровень 0 (ещё не собрана). */
 export function firmwareStateOf(id: string): FirmwareState {
   return meta.firmwareCollection[id] ?? { id, level: 0, copies: 0 };
 }
-/** Сколько копий нужно до следующего уровня (null — максимум). Уровень N → N+1 требует levels[N].copiesNeeded. */
-export function copiesForNext(def: FirmwareDef, st: FirmwareState): number | null {
-  if (st.level >= def.levels.length) return null;
-  return Math.max(1, def.levels[st.level]?.copiesNeeded ?? 1);
+/** Копий до следующего уровня; null — максимум или прошивки нет в коллекции. */
+export function copiesForNext(id: string): number | null {
+  const def = getFirmwareDef(id);
+  const st = meta.firmwareCollection[id];
+  if (!def || !st || st.level >= def.levels.length) return null;
+  return def.levels[st.level]?.copiesNeeded ?? null;
 }
 export function canUpgrade(id: string): boolean {
+  const need = copiesForNext(id);
+  return need !== null && firmwareStateOf(id).copies >= need;
+}
+export function upgradeFirmware(id: string): void {
+  if (!canUpgrade(id)) return;
+  const st = firmwareStateOf(id);
+  meta.firmwareCollection[id] = { id, level: st.level + 1, copies: st.copies - copiesForNext(id)! };
+  emit();
+}
+function addCopy(id: string, amount = 1) {
   const def = getFirmwareDef(id);
-  if (!def || !isFirmwareUnlocked(id)) return false;
-  const st = firmwareStateOf(id);
-  const need = copiesForNext(def, st);
-  return need !== null && st.level > 0 && st.copies >= need;
+  if (!def) return;
+  const cur = meta.firmwareCollection[id];
+  if (!cur) meta.firmwareCollection[id] = { id, level: 1, copies: amount - 1 };
+  else if (cur.level < def.levels.length) meta.firmwareCollection[id] = { ...cur, copies: cur.copies + amount };
 }
-export function upgradeFirmware(id: string): boolean {
-  if (!canUpgrade(id)) return false;
-  const def = getFirmwareDef(id)!;
-  const st = firmwareStateOf(id);
-  meta.firmwareCollection[id] = { id, level: st.level + 1, copies: st.copies - copiesForNext(def, st)! };
-  emit();
-  return true;
-}
-export function addFirmwareCopy(id: string): void {
-  const st = meta.firmwareCollection[id];
-  meta.firmwareCollection[id] = st ? { ...st, copies: st.copies + 1 } : { id, level: 1, copies: 0 };
-  emit();
-}
-export function firmwareEffect(def: FirmwareDef, level: number): unknown {
-  return def.levels[Math.max(0, Math.min(level, def.levels.length) - 1)]?.effect;
-}
+/** Текст эффекта на уровне (в движке: describeFirmwareEffects(fw, 2, level)). */
 export function firmwareEffectText(def: FirmwareDef, level: number): string {
-  const e = firmwareEffect(def, level);
+  const e = def.levels[Math.max(1, Math.min(level, def.levels.length)) - 1]?.effect;
   return typeof e === 'string' ? e : def.desc;
 }
-export function rollFirmwareChoices(n = 3): FirmwareDef[] {
-  const pool = [...listAvailableFirmwares()];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j]!, pool[i]!];
-  }
-  return pool.slice(0, n);
+
+// ---- Награда «1 из 3» (в сторе: metaExtra.pendingFirmwareChoice) ----
+export function usePendingFirmwareChoice(): string[] | null {
+  useContractVersion();
+  return pendingChoice;
+}
+export function pickFirmwareChoice(id: string): void {
+  if (!pendingChoice?.includes(id)) return;
+  addCopy(id);
+  pendingChoice = null;
+  emit();
+}
+export function skipFirmwareChoice(): void {
+  pendingChoice = null;
+  emit();
+}
+/** Только для разработки/e2e: предложить выбор (в реальной игре награду выдаёт store в конце забега). */
+export function devOfferFirmwareChoice(ids: string[]): void {
+  pendingChoice = ids;
+  emit();
 }
 
 // ---- Достижения ----
-export function listAchievements(): AchievementDef[] {
+export function listAchievements(): readonly AchievementDef[] {
   return STUB_ACHIEVEMENTS;
 }
-export function getAchievementStates(): Record<string, AchievementState> {
+export function getAchievementStates(): AchievementState[] {
+  return achStates;
+}
+export function useAchievementStates(): AchievementState[] {
+  useContractVersion();
   return achStates;
 }
 export function claimAchievement(id: string): boolean {
-  const st = achStates[id];
+  const st = achStates.find((s) => s.id === id);
   if (!st || !st.completed || st.claimed) return false;
-  achStates[id] = { ...st, claimed: true };
-  const def = STUB_ACHIEVEMENTS.find((a) => a.id === id);
-  if (def?.reward.kind === 'firmware' && def.reward.id && !meta.unlockedFirmwares.includes(def.reward.id)) meta.unlockedFirmwares.push(def.reward.id);
-  if (def?.reward.kind === 'copies' && def.reward.id) for (let i = 0; i < (def.reward.amount ?? 1); i++) addFirmwareCopy(def.reward.id);
+  achStates = achStates.map((s) => (s.id === id ? { ...s, claimed: true } : s));
+  const r = STUB_ACHIEVEMENTS.find((a) => a.id === id)?.reward;
+  if (r?.kind === 'firmware' && r.id && !meta.unlockedFirmwares.includes(r.id)) meta.unlockedFirmwares.push(r.id);
+  if (r?.kind === 'copies' && r.id) addCopy(r.id, r.amount ?? 1);
   emit();
   return true;
 }
 export function hasUnclaimed(): boolean {
-  return Object.values(achStates).some((s) => s.completed && !s.claimed);
+  return achStates.some((s) => s.completed && !s.claimed);
 }
-export function unclaimedCount(): number {
-  return Object.values(achStates).filter((s) => s.completed && !s.claimed).length;
+export function useUnclaimedCount(): number {
+  return useAchievementStates().filter((s) => s.completed && !s.claimed).length;
 }
+
+if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __offerFirmware: typeof devOfferFirmwareChoice }).__offerFirmware = devOfferFirmwareChoice;

@@ -15,7 +15,7 @@ function FirmwareDetail({ def, onBack }: { def: FirmwareDef; onBack: () => void 
   const st = firmwareStateOf(def.id);
   const locked = !isFirmwareUnlocked(def.id);
   const ready = canUpgrade(def.id);
-  const need = copiesForNext(def, st);
+  const need = copiesForNext(def.id);
   return (
     <div className="fw-detail" data-testid="firmware-detail">
       <button type="button" className="btn btn--ghost fw-back" onClick={onBack}>
@@ -43,7 +43,7 @@ function FirmwareDetail({ def, onBack }: { def: FirmwareDef; onBack: () => void 
           </ol>
           {!locked && st.level > 0 ? (
             <>
-              <CopiesBar def={def} st={st} />
+              <CopiesBar st={st} />
               <button type="button" className="btn btn--primary fw-upgrade" disabled={!ready} onClick={() => upgradeFirmware(def.id)} data-testid="firmware-upgrade">
                 <Icon name="upgrade" size={18} />
                 {need === null ? 'Максимальный уровень' : ready ? `Улучшить до ур. ${st.level + 1}` : `Нужно копий: ${need - st.copies}`}

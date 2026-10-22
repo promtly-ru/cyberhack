@@ -1,24 +1,19 @@
 import { useState } from 'react';
-import { addFirmwareCopy, firmwareStateOf } from '../ui-adapter/contract';
-import { useOverlays } from '../ui-adapter/overlays';
+import { firmwareStateOf, getFirmwareDef, pickFirmwareChoice, skipFirmwareChoice, usePendingFirmwareChoice } from '../ui-adapter/contract';
 import { FirmwareCard } from '../components/firmware/FirmwareCard';
 import { Icon } from '../components/Icon';
 import '../styles/firmware-ui.css';
 
-/** Награда «выбери 1 из 3» прошивок. Открывается через useOverlays.openFirmwareReward(choices, onPick). */
+/** Награда «выбери 1 из 3» прошивок: показывается, пока есть отложенный выбор (metaExtra.pendingFirmwareChoice). */
 export function FirmwareRewardScreen() {
-  const reward = useOverlays((s) => s.reward);
+  const choices = usePendingFirmwareChoice();
   const [picked, setPicked] = useState<string | null>(null);
-  if (!reward) return null;
-  const close = () => {
+  if (!choices?.length) return null;
+  const defs = choices.map(getFirmwareDef).filter((d) => d !== undefined);
+  const done = (pick: boolean) => {
+    if (pick && picked) pickFirmwareChoice(picked);
+    else skipFirmwareChoice();
     setPicked(null);
-    useOverlays.getState().openFirmwareReward(null);
-  };
-  const confirm = () => {
-    if (!picked) return;
-    addFirmwareCopy(picked);
-    reward.onPick?.(picked);
-    close();
   };
   return (
     <div className="fw-reward" role="dialog" aria-modal="true" aria-label="Награда: прошивка" data-testid="firmware-reward">
@@ -27,8 +22,8 @@ export function FirmwareRewardScreen() {
           <Icon name="firmware" size={26} /> Выберите прошивку
         </h2>
         <p className="muted center">Новая прошивка или копия для улучшения уже имеющейся</p>
-        <div className="fw-reward__cards" role="radiogroup" aria-label="Варианты">
-          {reward.choices.map((d) => {
+        <div className="fw-reward__cards" role="group" aria-label="Варианты">
+          {defs.map((d) => {
             const st = firmwareStateOf(d.id);
             return (
               <div key={d.id} className="fw-reward__slot">
@@ -39,10 +34,10 @@ export function FirmwareRewardScreen() {
           })}
         </div>
         <div className="fw-reward__actions">
-          <button type="button" className="btn btn--ghost" onClick={close} data-testid="firmware-reward-skip">
+          <button type="button" className="btn btn--ghost" onClick={() => done(false)} data-testid="firmware-reward-skip">
             Пропустить
           </button>
-          <button type="button" className="btn btn--primary" disabled={!picked} onClick={confirm} data-testid="firmware-reward-take">
+          <button type="button" className="btn btn--primary" disabled={!picked} onClick={() => done(true)} data-testid="firmware-reward-take">
             Забрать
           </button>
         </div>
