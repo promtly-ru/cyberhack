@@ -58,6 +58,27 @@ export {
   firmwareEffect,
   firmwareRunLevels,
 } from './firmware';
+export {
+  META_ACHIEVEMENTS,
+  getMetaAchievement,
+  metricValue,
+  computeAchievementStates,
+  syncAchievements,
+  metaRewardCards,
+  applyMetaReward,
+  claimMetaAchievement,
+  metaUnlockedContent,
+} from './achievements';
+export type {
+  AchievementTier,
+  RewardKind,
+  MetaReward,
+  AchievementMetric,
+  MetaAchievementDef,
+  MetaAchievementState,
+  AchievementRecord,
+  MetaExtraState,
+} from './achievements';
 export type { FirmwareDef, FirmwareLevel, FirmwareTrigger, FirmwareLevelDef, FirmwareMeta, FirmwareState, FirmwareType, Rarity, RarityConfig, RngLike } from './firmware';
 export { SYNERGIES, getActiveSynergies } from './synergies';
 export type { SynergyDef } from './synergies';

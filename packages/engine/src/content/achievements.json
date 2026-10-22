@@ -1,0 +1,660 @@
+[
+  {
+    "id": "ach_runs_1",
+    "title": "Первое подключение",
+    "desc": "Сыграть 1 забег",
+    "category": "progress",
+    "tier": "bronze",
+    "goal": 1,
+    "metric": "totalRuns",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_runs_2",
+    "title": "Завсегдатай сети",
+    "desc": "Сыграть 10 забегов",
+    "category": "progress",
+    "tier": "silver",
+    "goal": 10,
+    "metric": "totalRuns",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_miner",
+      "amount": 2
+    }
+  },
+  {
+    "id": "ach_runs_3",
+    "title": "Ветеран даркнета",
+    "desc": "Сыграть 50 забегов",
+    "category": "progress",
+    "tier": "gold",
+    "goal": 50,
+    "metric": "totalRuns",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "frame_veteran"
+    }
+  },
+  {
+    "id": "ach_act_1",
+    "title": "Второй периметр",
+    "desc": "Дойти до 2-го акта",
+    "category": "progress",
+    "tier": "bronze",
+    "goal": 2,
+    "metric": "bestAct",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_act_2",
+    "title": "Глубже в ядро",
+    "desc": "Дойти до 3-го акта",
+    "category": "progress",
+    "tier": "silver",
+    "goal": 3,
+    "metric": "bestAct",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_siege",
+      "amount": 2
+    }
+  },
+  {
+    "id": "ach_act_3",
+    "title": "Край сети",
+    "desc": "Дойти до 4-го акта",
+    "category": "progress",
+    "tier": "gold",
+    "goal": 4,
+    "metric": "bestAct",
+    "reward": {
+      "kind": "card",
+      "id": "ch_f_stolen_second"
+    }
+  },
+  {
+    "id": "ach_wins_1",
+    "title": "Доступ получен",
+    "desc": "Победить в забеге",
+    "category": "progress",
+    "tier": "bronze",
+    "goal": 1,
+    "metric": "wins",
+    "reward": {
+      "kind": "card",
+      "id": "nr_f_singularity"
+    }
+  },
+  {
+    "id": "ach_wins_2",
+    "title": "Серийный взломщик",
+    "desc": "Победить в 5 забегах",
+    "category": "progress",
+    "tier": "silver",
+    "goal": 5,
+    "metric": "wins",
+    "reward": {
+      "kind": "currency",
+      "amount": 150
+    }
+  },
+  {
+    "id": "ach_wins_3",
+    "title": "Легенда сети",
+    "desc": "Победить в 15 забегах",
+    "category": "progress",
+    "tier": "gold",
+    "goal": 15,
+    "metric": "wins",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_singularity"
+    }
+  },
+  {
+    "id": "ach_ascension_1",
+    "title": "Выше нуля",
+    "desc": "Победить на Ascension 1+",
+    "category": "progress",
+    "tier": "bronze",
+    "goal": 1,
+    "metric": "bestWinAscension",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_ascension_2",
+    "title": "Восхождение",
+    "desc": "Победить на Ascension 5+",
+    "category": "progress",
+    "tier": "silver",
+    "goal": 5,
+    "metric": "bestWinAscension",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "title_ascendant"
+    }
+  },
+  {
+    "id": "ach_ascension_3",
+    "title": "Над системой",
+    "desc": "Победить на Ascension 10+",
+    "category": "progress",
+    "tier": "gold",
+    "goal": 10,
+    "metric": "bestWinAscension",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_stolen_time"
+    }
+  },
+  {
+    "id": "ach_kills_1",
+    "title": "Чистка логов",
+    "desc": "Уничтожить 25 врагов",
+    "category": "combat",
+    "tier": "bronze",
+    "goal": 25,
+    "metric": "enemiesKilled",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_kills_2",
+    "title": "Антивирус",
+    "desc": "Уничтожить 250 врагов",
+    "category": "combat",
+    "tier": "silver",
+    "goal": 250,
+    "metric": "enemiesKilled",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_supernova",
+      "amount": 3
+    }
+  },
+  {
+    "id": "ach_kills_3",
+    "title": "Тысяча процессов",
+    "desc": "Уничтожить 1000 врагов",
+    "category": "combat",
+    "tier": "gold",
+    "goal": 1000,
+    "metric": "enemiesKilled",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "cardback_crimson"
+    }
+  },
+  {
+    "id": "ach_elites_1",
+    "title": "Охота началась",
+    "desc": "Уничтожить 5 элитных врагов",
+    "category": "combat",
+    "tier": "bronze",
+    "goal": 5,
+    "metric": "elitesKilled",
+    "reward": {
+      "kind": "card",
+      "id": "en_f_bastion_core"
+    }
+  },
+  {
+    "id": "ach_elite_hunter_2",
+    "title": "Гроза элиты",
+    "desc": "Уничтожить 40 элитных врагов",
+    "category": "combat",
+    "tier": "silver",
+    "goal": 40,
+    "metric": "elitesKilled",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_core_breach"
+    }
+  },
+  {
+    "id": "ach_elites_3",
+    "title": "Истребитель элиты",
+    "desc": "Уничтожить 150 элитных врагов",
+    "category": "combat",
+    "tier": "gold",
+    "goal": 150,
+    "metric": "elitesKilled",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_meltdown",
+      "amount": 5
+    }
+  },
+  {
+    "id": "ach_bosses_1",
+    "title": "Первый файрвол",
+    "desc": "Победить босса",
+    "category": "combat",
+    "tier": "bronze",
+    "goal": 1,
+    "metric": "bossesKilled",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_bosses_2",
+    "title": "Ломатель стен",
+    "desc": "Победить 10 боссов",
+    "category": "combat",
+    "tier": "silver",
+    "goal": 10,
+    "metric": "bossesKilled",
+    "reward": {
+      "kind": "card",
+      "id": "dr_f_carrier"
+    }
+  },
+  {
+    "id": "ach_bosses_3",
+    "title": "Цареубийца",
+    "desc": "Победить 40 боссов",
+    "category": "combat",
+    "tier": "gold",
+    "goal": 40,
+    "metric": "bossesKilled",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "frame_boss"
+    }
+  },
+  {
+    "id": "ach_damage_1",
+    "title": "Перегрузка",
+    "desc": "Нанести 5 000 урона (за все забеги)",
+    "category": "combat",
+    "tier": "bronze",
+    "goal": 5000,
+    "metric": "damageDealt",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_damage_2",
+    "title": "Шторм пакетов",
+    "desc": "Нанести 50 000 урона (за все забеги)",
+    "category": "combat",
+    "tier": "silver",
+    "goal": 50000,
+    "metric": "damageDealt",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_war_drums",
+      "amount": 3
+    }
+  },
+  {
+    "id": "ach_damage_3",
+    "title": "Конец света",
+    "desc": "Нанести 250 000 урона (за все забеги)",
+    "category": "combat",
+    "tier": "gold",
+    "goal": 250000,
+    "metric": "damageDealt",
+    "reward": {
+      "kind": "currency",
+      "amount": 400
+    }
+  },
+  {
+    "id": "ach_big_hit_1",
+    "title": "Тяжёлый пакет",
+    "desc": "Нанести 30 урона одним ударом",
+    "category": "records",
+    "tier": "bronze",
+    "goal": 30,
+    "metric": "bestHit",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_big_hit_2",
+    "title": "Пробивной",
+    "desc": "Нанести 60 урона одним ударом",
+    "category": "records",
+    "tier": "silver",
+    "goal": 60,
+    "metric": "bestHit",
+    "reward": {
+      "kind": "card",
+      "id": "sm_f_final_cut"
+    }
+  },
+  {
+    "id": "ach_big_hit_3",
+    "title": "Один удар — один сервер",
+    "desc": "Нанести 120 урона одним ударом",
+    "category": "records",
+    "tier": "gold",
+    "goal": 120,
+    "metric": "bestHit",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_final_judgment"
+    }
+  },
+  {
+    "id": "ach_virus_1",
+    "title": "Инкубатор",
+    "desc": "Накопить 20 Вируса на враге",
+    "category": "records",
+    "tier": "bronze",
+    "goal": 20,
+    "metric": "bestVirusInCombat",
+    "reward": {
+      "kind": "card",
+      "id": "ph_f_zero_hour"
+    }
+  },
+  {
+    "id": "ach_virus_2",
+    "title": "Пандемия",
+    "desc": "Накопить 60 Вируса на враге",
+    "category": "records",
+    "tier": "silver",
+    "goal": 60,
+    "metric": "bestVirusInCombat",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_zero_hour"
+    }
+  },
+  {
+    "id": "ach_cards_1",
+    "title": "Колода в деле",
+    "desc": "Сыграть 200 карт (за все забеги)",
+    "category": "records",
+    "tier": "bronze",
+    "goal": 200,
+    "metric": "cardsPlayed",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_cards_2",
+    "title": "Скоростной ввод",
+    "desc": "Сыграть 8 карт за один ход",
+    "category": "records",
+    "tier": "silver",
+    "goal": 8,
+    "metric": "bestCardsInTurn",
+    "reward": {
+      "kind": "card",
+      "id": "gh_f_vanish"
+    }
+  },
+  {
+    "id": "ach_gold_1",
+    "title": "Крипто-кошелёк",
+    "desc": "Накопить 300 золота",
+    "category": "records",
+    "tier": "bronze",
+    "goal": 300,
+    "metric": "bestGold",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_gold_2",
+    "title": "Крипто-кит",
+    "desc": "Накопить 600 золота",
+    "category": "records",
+    "tier": "silver",
+    "goal": 600,
+    "metric": "bestGold",
+    "reward": {
+      "kind": "card",
+      "id": "vb_f_full_house"
+    }
+  },
+  {
+    "id": "ach_relics_1",
+    "title": "Коллекционер железа",
+    "desc": "Собрать 10 реликвий за забег",
+    "category": "records",
+    "tier": "silver",
+    "goal": 10,
+    "metric": "bestRelics",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "avatar_collector"
+    }
+  },
+  {
+    "id": "ach_win_ghost",
+    "title": "Невидимка",
+    "desc": "Победить за Призрака",
+    "category": "classes",
+    "tier": "silver",
+    "goal": 1,
+    "metric": "winsGhost",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_vanishing_act"
+    }
+  },
+  {
+    "id": "ach_win_engineer",
+    "title": "Главный инженер",
+    "desc": "Победить за Инженера",
+    "category": "classes",
+    "tier": "silver",
+    "goal": 1,
+    "metric": "winsEngineer",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_bastion"
+    }
+  },
+  {
+    "id": "ach_win_biohacker",
+    "title": "Живой код",
+    "desc": "Победить за Биохакера",
+    "category": "classes",
+    "tier": "silver",
+    "goal": 1,
+    "metric": "winsBiohacker",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_venom_lab"
+    }
+  },
+  {
+    "id": "ach_win_droneop",
+    "title": "Командир роя",
+    "desc": "Победить за Оператора дронов",
+    "category": "classes",
+    "tier": "silver",
+    "goal": 1,
+    "metric": "winsDroneop",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_carrier_group"
+    }
+  },
+  {
+    "id": "ach_win_vabanker",
+    "title": "Ва-банк",
+    "desc": "Победить за Ва-банкера",
+    "category": "classes",
+    "tier": "silver",
+    "goal": 1,
+    "metric": "winsVabanker",
+    "reward": {
+      "kind": "firmware",
+      "id": "fw_high_stakes"
+    }
+  },
+  {
+    "id": "ach_classes_unlocked",
+    "title": "Пять профессий",
+    "desc": "Открыть 5 классов",
+    "category": "classes",
+    "tier": "silver",
+    "goal": 5,
+    "metric": "classesUnlocked",
+    "reward": {
+      "kind": "currency",
+      "amount": 150
+    }
+  },
+  {
+    "id": "ach_classes_won",
+    "title": "Полиглот",
+    "desc": "Победить за 5 разных классов",
+    "category": "classes",
+    "tier": "gold",
+    "goal": 5,
+    "metric": "classesWon",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "title_polyglot"
+    }
+  },
+  {
+    "id": "ach_fw_owned_1",
+    "title": "Первые чипы",
+    "desc": "Собрать 3 прошивки в коллекции",
+    "category": "firmware",
+    "tier": "bronze",
+    "goal": 3,
+    "metric": "firmwaresOwned",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_patchwork",
+      "amount": 2
+    }
+  },
+  {
+    "id": "ach_fw_owned_2",
+    "title": "Склад чипов",
+    "desc": "Собрать 12 прошивок в коллекции",
+    "category": "firmware",
+    "tier": "silver",
+    "goal": 12,
+    "metric": "firmwaresOwned",
+    "reward": {
+      "kind": "currency",
+      "amount": 150
+    }
+  },
+  {
+    "id": "ach_fw_upgrade_1",
+    "title": "Перепрошивка",
+    "desc": "Улучшить прошивку",
+    "category": "firmware",
+    "tier": "bronze",
+    "goal": 1,
+    "metric": "firmwareUpgrades",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_vent_cycle",
+      "amount": 2
+    }
+  },
+  {
+    "id": "ach_fw_upgrade_2",
+    "title": "Мастер прошивок",
+    "desc": "Улучшить прошивки 10 раз",
+    "category": "firmware",
+    "tier": "silver",
+    "goal": 10,
+    "metric": "firmwareUpgrades",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "frame_circuit"
+    }
+  },
+  {
+    "id": "ach_fw_max",
+    "title": "Предел железа",
+    "desc": "Улучшить прошивку до максимального уровня",
+    "category": "firmware",
+    "tier": "gold",
+    "goal": 4,
+    "metric": "maxFirmwareLevel",
+    "reward": {
+      "kind": "currency",
+      "amount": 400
+    }
+  },
+  {
+    "id": "ach_fw_legendary",
+    "title": "Легендарный чип",
+    "desc": "Получить легендарную прошивку",
+    "category": "firmware",
+    "tier": "gold",
+    "goal": 1,
+    "metric": "legendaryFirmwares",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "cardback_legend"
+    }
+  },
+  {
+    "id": "ach_legacy_1",
+    "title": "Старая гвардия",
+    "desc": "Получить 5 классических достижений",
+    "category": "meta",
+    "tier": "bronze",
+    "goal": 5,
+    "metric": "legacyAchievements",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_claimed_1",
+    "title": "Охотник за наградами",
+    "desc": "Забрать 10 наград за ачивки",
+    "category": "meta",
+    "tier": "silver",
+    "goal": 10,
+    "metric": "achievementsClaimed",
+    "reward": {
+      "kind": "copies",
+      "id": "fw_ronin",
+      "amount": 3
+    }
+  },
+  {
+    "id": "ach_claimed_2",
+    "title": "Платиновый профиль",
+    "desc": "Забрать 30 наград за ачивки",
+    "category": "meta",
+    "tier": "gold",
+    "goal": 30,
+    "metric": "achievementsClaimed",
+    "reward": {
+      "kind": "cosmetic",
+      "id": "theme_neon_gold"
+    }
+  }
+]

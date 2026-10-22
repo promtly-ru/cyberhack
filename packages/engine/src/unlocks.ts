@@ -6,6 +6,7 @@
 import { MAX_ASCENSION } from './ascension';
 import { getContent } from './content';
 import { lockableFirmwares } from './firmware';
+import { metaRewardCards } from './achievements';
 import type { ClassId, NewRunOptions, RunState } from './types';
 
 /** Накопительная статистика между забегами: суммы (total*) и рекорды (best*). Слияние — максимум по ключу. */
@@ -437,7 +438,9 @@ function lockableIds(kind: 'card' | 'relic'): string[] {
 /** Все карты, которые закрыты до получения достижения (только существующие в текущем контенте). */
 export function lockableCards(): string[] {
   const cards = getContent().cards;
-  return lockableIds('card').filter((id) => cards.has(id));
+  const ids = lockableIds('card');
+  for (const id of metaRewardCards()) if (!ids.includes(id)) ids.push(id);
+  return ids.filter((id) => cards.has(id));
 }
 
 export function lockableRelics(): string[] {
