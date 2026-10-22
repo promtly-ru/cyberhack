@@ -59,12 +59,15 @@ function FirmwareDetail({ def, onBack }: { def: FirmwareDef; onBack: () => void 
 /** Окно «Прошивки»: сетка, фильтры, сортировка, детальный просмотр, улучшение. */
 export function FirmwareModal() {
   const mode = useOverlays((s) => s.firmware);
-  const close = () => useOverlays.getState().openFirmware(null);
   const ver = useContractVersion();
   const [type, setType] = useState<FirmwareType | 'all'>('all');
   const [rarity, setRarity] = useState<Rarity | 'all'>('all');
   const [sort, setSort] = useState<SortKey>('rarity');
   const [detail, setDetail] = useState<string | null>(null);
+  const close = () => {
+    setDetail(null);
+    useOverlays.getState().openFirmware(null);
+  };
 
   const all = listFirmwares();
   const list = useMemo(() => {
@@ -96,12 +99,12 @@ export function FirmwareModal() {
         ) : (
           <>
             <div className="fw-filters" role="group" aria-label="Фильтры">
-              <div className="fw-chips" role="radiogroup" aria-label="Тип">
-                <button type="button" role="radio" aria-checked={type === 'all'} className="fw-chip" onClick={() => setType('all')}>
+              <div className="fw-chips" role="group" aria-label="Тип">
+                <button type="button" aria-pressed={type === 'all'} className="fw-chip" onClick={() => setType('all')}>
                   Все
                 </button>
                 {TYPE_ORDER.map((t) => (
-                  <button type="button" key={t} role="radio" aria-checked={type === t} className="fw-chip" onClick={() => setType(t)}>
+                  <button type="button" key={t} aria-pressed={type === t} className="fw-chip" onClick={() => setType(t)}>
                     <Icon name={TYPE_ICON[t]} size={16} />
                     {TYPE_NAME[t]}
                   </button>

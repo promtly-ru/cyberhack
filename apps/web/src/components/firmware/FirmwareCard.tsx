@@ -33,9 +33,9 @@ export function FirmwareCard({ def, st, locked, onClick, selected, compact }: { 
       <span className="fwc__head">
         <span className="fwc__type">
           <Icon name={TYPE_ICON[def.type]} size={14} />
-          {TYPE_NAME[def.type]}
+          <span className="fwc__type-name">{TYPE_NAME[def.type]}</span>
         </span>
-        {locked ? <Icon name="lock" size={16} /> : <span className="fwc__lvl mono">Ур. {st.level}/{max}</span>}
+        {locked ? <Icon name="lock" size={16} /> : <span className="fwc__lvl mono">{st.level ? `Ур. ${st.level}/${max}` : 'Не собрана'}</span>}
       </span>
       <span className="fwc__art" aria-hidden>
         <Icon name={def.icon} size={40} strokeWidth={1.4} />
@@ -43,7 +43,7 @@ export function FirmwareCard({ def, st, locked, onClick, selected, compact }: { 
       <b className="fwc__name">{def.name}</b>
       <span className="fwc__rarity">{RARITY_NAME[def.rarity]}</span>
       <span className="fwc__desc">{locked ? unlockHint(def) : firmwareEffectText(def, Math.max(1, st.level))}</span>
-      {!locked && st.level > 0 ? <CopiesBar def={def} st={st} /> : null}
+      {!locked && st.level > 0 && !compact ? <CopiesBar def={def} st={st} /> : null}
     </button>
   );
 }

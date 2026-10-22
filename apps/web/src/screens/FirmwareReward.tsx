@@ -32,7 +32,7 @@ export function FirmwareRewardScreen() {
             const st = firmwareStateOf(d.id);
             return (
               <div key={d.id} className="fw-reward__slot">
-                <FirmwareCard def={d} st={st.level ? st : { ...st, level: 1 }} selected={picked === d.id} onClick={() => setPicked(d.id)} />
+                <FirmwareCard def={d} st={st.level ? st : { ...st, level: 1 }} compact={!st.level} selected={picked === d.id} onClick={() => setPicked(d.id)} />
                 <span className={`fw-reward__tag${st.level ? '' : ' is-new'}`}>{st.level ? '+1 копия' : 'Новая'}</span>
               </div>
             );
