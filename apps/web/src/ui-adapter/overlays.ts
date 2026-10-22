@@ -21,3 +21,6 @@ export const useOverlays = create<OverlayStore>((set) => ({
   openAchievements: (achievements) => set({ achievements }),
   openFirmwareReward: (choices, onPick) => set({ reward: choices ? { choices, onPick } : null }),
 }));
+
+// Dev: открыть награду из консоли/e2e — window.__overlays.getState().openFirmwareReward(...)
+if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __overlays: typeof useOverlays }).__overlays = useOverlays;

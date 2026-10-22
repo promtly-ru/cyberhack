@@ -148,12 +148,13 @@ export function FirmwareModal() {
 }
 
 /** Иконка-кнопка вместо строки прошивок. Точка — есть что улучшить. */
-export function FirmwareButton({ mode = 'run', className = '' }: { mode?: 'run' | 'collection'; className?: string }) {
+export function FirmwareButton({ mode = 'run', className = 'fw-btn', label }: { mode?: 'run' | 'collection'; className?: string; label?: string }) {
   useContractVersion();
   const ready = listFirmwares().some((d) => canUpgrade(d.id));
   return (
-    <button type="button" className={`fw-btn ${className}`} data-testid="firmware-button" aria-label={ready ? 'Прошивки — есть улучшения' : 'Прошивки'} title="Прошивки" onClick={() => useOverlays.getState().openFirmware(mode)}>
-      <Icon name="firmware" size={22} />
+    <button type="button" className={`${className} fw-btn-host`} data-testid="firmware-button" aria-label={ready ? 'Прошивки — есть улучшения' : 'Прошивки'} title="Прошивки" onClick={() => useOverlays.getState().openFirmware(mode)}>
+      <Icon name="firmware" size={label ? 20 : 22} />
+      {label ? <span>{label}</span> : null}
       {ready ? <span className="fw-dot" aria-hidden /> : null}
     </button>
   );
