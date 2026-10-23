@@ -252,9 +252,21 @@ export function lockableFirmwares(): string[] {
   return FIRMWARES.filter((f) => f.unlock !== undefined).map((f) => f.id);
 }
 
-/** Прошивки, которые можно выдать в забеге: свой класс или нейтральные, ещё не полученные, открытые, все карты существуют. */
-export function rollableFirmwares(s: Pick<RunState, 'classId' | 'firmwares'> & Partial<Pick<RunState, 'locked'>>): FirmwareDef[] {
-  const cards = getContent().cards;
+/** Можно ли получить карту в этом забеге: уже в колоде или выпадает в наградах/магазине (свой класс или нейтральная, не закрыта). */
+function isCardObtainable(s: Pick<RunState, 'classId'> & Partial<Pick<RunState, 'locked' | 'deck'>>, id: string): boolean {
+  if (s.deck?.some((c) => c.defId === id)) return true;
+  const c = getContent().cards.get(id);
+  if (!c || (c.classId !== s.classId && c.classId !== 'neutral')) return false;
+  if (c.rarity !== 'common' && c.rarity !== 'uncommon' && c.rarity !== 'rare') return false;
+  if (c.type === 'curse' || c.type === 'status') return false;
+  return !(s.locked?.cards ?? []).includes(id);
+}
+
+/**
+ * Прошивки, которые можно выдать в забеге: свой класс или нейтральные, ещё не полученные, открытые,
+ * и каждую нужную карту реально получить (закрытые карты — нельзя, такая прошивка не выпадает).
+ */
+export function rollableFirmwares(s: Pick<RunState, 'classId' | 'firmwares'> & Partial<Pick<RunState, 'locked' | 'deck'>>): FirmwareDef[] {
   const owned = new Set(s.firmwares ?? []);
   const locked = new Set(s.locked?.firmwares ?? []);
   return FIRMWARES.filter(
@@ -262,7 +274,7 @@ export function rollableFirmwares(s: Pick<RunState, 'classId' | 'firmwares'> & P
       !owned.has(f.id) &&
       !locked.has(f.id) &&
       (f.classId === s.classId || f.classId === 'neutral') &&
-      f.needs.every((id) => cards.has(id)),
+      f.needs.every((id) => isCardObtainable(s, id)),
   );
 }
 

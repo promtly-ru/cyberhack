@@ -42,10 +42,26 @@ describe('прошивки: закрытые не выпадают', () => {
       const r = newRun({ seed: `lock${i}`, classId: 'phreaker', unlocked: { cards: [], relics: [] } });
       for (const it of buildCombatRewards(r, 'elite', mods)) if (it.kind === 'firmware') expect(r.locked!.firmwares).not.toContain(it.firmwareId);
     }
-    const open = newRun({ seed: 'lock', classId: 'phreaker', unlocked: { firmwares: ['fw_zero_hour'] } });
+    // Прошивка открыта, но её карты закрыты — не выпадает; открыли карты — выпадает
+    const fwOnly = newRun({ seed: 'lock', classId: 'phreaker', unlocked: { cards: [], relics: [], firmwares: ['fw_zero_hour'] } });
+    expect(rollableFirmwares(fwOnly).map((f) => f.id)).not.toContain('fw_zero_hour');
+    const open = newRun({ seed: 'lock', classId: 'phreaker', unlocked: { cards: getFirmware('fw_zero_hour')!.needs, relics: [], firmwares: ['fw_zero_hour'] } });
     expect(rollableFirmwares(open).map((f) => f.id)).toContain('fw_zero_hour');
     // Без опции unlocked (еженедельный вызов, тесты) открыто всё
     expect(newRun({ seed: 'lock', classId: 'phreaker' }).locked).toBeUndefined();
+  });
+});
+
+describe('прошивки: нужные карты должны быть доступны', () => {
+  it('прошивка с закрытой картой не выпадает; карта уже в колоде — выпадает', () => {
+    const s = newRun({ seed: 'need', classId: 'netrunner', unlocked: { cards: [], relics: [], firmwares: lockableFirmwares() } });
+    const fw = getFirmware('fw_overdrive')!;
+    expect(fw.needs.some((id) => s.locked!.cards.includes(id))).toBe(true);
+    const ids = () => rollableFirmwares(s).map((f) => f.id);
+    expect(ids()).not.toContain('fw_overdrive');
+    for (const f of rollableFirmwares(s)) for (const id of f.needs) expect(s.locked!.cards, `${f.id}: ${id}`).not.toContain(id);
+    for (const id of fw.needs) if (s.locked!.cards.includes(id)) s.deck.push({ uid: `n_${id}`, defId: id, upgraded: false });
+    expect(ids()).toContain('fw_overdrive');
   });
 });
 
