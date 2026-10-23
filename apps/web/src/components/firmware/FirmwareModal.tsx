@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import type { FirmwareDef, FirmwareType, Rarity } from '../../ui-adapter/contract';
-import { firmwareEffectText, firmwareRunState, isFirmwareUnlocked, listFirmwares, useContractVersion, useRunFirmwares } from '../../ui-adapter/contract';
+import { firmwareEffectText, firmwareNeeds, firmwareRunState, isFirmwareUnlocked, listFirmwares, useContractVersion, useRunFirmwares } from '../../ui-adapter/contract';
 import { useOverlays } from '../../ui-adapter/overlays';
 import { Modal } from '../Bits';
 import { Icon } from '../Icon';
 import { FirmwareCard } from './FirmwareCard';
-import { RARITY_NAME, RARITY_ORDER, TYPE_ICON, TYPE_NAME, TYPE_ORDER, unlockHint } from './labels';
+import { cardName, RARITY_NAME, RARITY_ORDER, TYPE_ICON, TYPE_NAME, TYPE_ORDER, unlockHint } from './labels';
 
 type SortKey = 'rarity' | 'name';
 const SORT_NAME: Record<SortKey, string> = { rarity: 'По редкости', name: 'По названию' };
@@ -34,6 +34,15 @@ function FirmwareDetail({ def, onBack }: { def: FirmwareDef; onBack: () => void 
               <Icon name="lock" size={16} /> {unlockHint(def)}
             </p>
           ) : null}
+          <h4 className="fw-needs-title">Нужные карты в колоде</h4>
+          <ul className="fw-needs" aria-label="Нужные карты" data-testid="firmware-needs">
+            {firmwareNeeds(def.id).map((n) => (
+              <li key={n.cardId} className={st.owned ? (n.have ? 'is-have' : 'is-miss') : undefined}>
+                {st.owned ? <span aria-hidden="true">{n.have ? '✓' : '✗'}</span> : null} {cardName(n.cardId)}
+              </li>
+            ))}
+          </ul>
+          <p className="muted small">Все 3 карты — полный бонус, 2 из 3 — вполсилы (числа вдвое меньше, без энергии и добора), меньше — не работает.</p>
           <ol className="fw-levels">
             <li className={st.owned && !st.upgraded ? 'is-current' : st.upgraded ? 'is-done' : undefined}>
               <b>Обычная</b> {firmwareEffectText(def, false)}

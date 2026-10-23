@@ -26,7 +26,7 @@ export function unlockHint(def: FirmwareDef): string {
 
 const COSMETIC_NAME: Record<string, string> = { frame: 'Рамка профиля', cardback: 'Рубашка карт', title: 'Титул', avatar: 'Аватар', theme: 'Тема оформления' };
 
-function cardName(id: string): string {
+export function cardName(id: string): string {
   try {
     return cardStats(id, false).name;
   } catch {

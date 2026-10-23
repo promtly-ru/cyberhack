@@ -56,6 +56,11 @@ export function firmwareRunState(id: string): FirmwareRunState {
   const run = useGame.getState().run;
   return { owned: !!run?.firmwares?.includes(id), upgraded: !!run?.upgradedFirmwares?.includes(id) };
 }
+/** Карты, нужные прошивке: have — лежит в колоде текущего забега (вне забега — false). */
+export function firmwareNeeds(id: string): { cardId: string; have: boolean }[] {
+  const deck = new Set((useGame.getState().run?.deck ?? []).map((c) => c.defId));
+  return (getFirmware(id)?.needs ?? []).map((cardId) => ({ cardId, have: deck.has(cardId) }));
+}
 /** Хук: id прошивок текущего забега (пусто вне забега). */
 export function useRunFirmwares(): readonly string[] {
   return useGame((s) => s.run?.firmwares ?? EMPTY);
