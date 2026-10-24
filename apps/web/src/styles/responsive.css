@@ -21,13 +21,6 @@
 
 /* ---------- Телефон горизонтально (низкий широкий экран) ---------- */
 @media (max-height: 520px) and (min-aspect-ratio: 5/4) {
-  .topbar { display: flex; flex-wrap: nowrap; gap: 6px; padding: 4px var(--gutter); padding-top: max(4px, env(safe-area-inset-top)); }
-  .topbar__stats { flex: none; gap: 4px; }
-  .topbar .stat { padding: 3px 7px; font-size: 13px; }
-  .topbar .topbar__relics { flex: 1 1 0; min-width: 0; min-height: 0; padding: 0 !important; }
-  .topbar .potion-bar { position: static; }
-  .topbar__actions { flex: none; gap: 4px; align-items: center; }
-  .topbar .icon-btn { width: 40px; height: 40px; min-width: 40px; }
 
   .combat-hud { grid-template-columns: 96px 1fr 104px; grid-template-areas: 'left hand right'; gap: 0 6px; padding: 0 8px max(4px, env(safe-area-inset-bottom)); }
   .combat-hud .hud-hint { display: none; }
@@ -86,33 +79,6 @@ html[data-motion='reduced'] [class*='art-'], html[data-motion='reduced'] .glitch
 /* Щит не закрывает цифры HP: текст сдвигается вправо от значка блока */
 .hpbar.has-block .hpbar__text { padding-left: 34px; }
 
-/* Шапка на телефоне (вертикально): явная сетка, ничего не наезжает.
-   1 ряд: статы | колода, настройки; 2 ряд: прошивки (прокрутка); 3 ряд: импланты (расходники прижаты справа, см. mechanics.css) */
-@media (max-width: 767px) and (min-height: 521px), (max-width: 767px) and (max-aspect-ratio: 5/4) {
-  .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'stats actions' 'fw fw' 'relics relics'; align-items: center; row-gap: 4px; }
-  .topbar__stats { grid-area: stats; }
-  .topbar__actions { grid-area: actions; }
-  .topbar .topbar__relics { grid-area: relics; grid-column: auto; grid-row: auto; }
-  .topbar .firmware-bar { grid-area: fw; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .topbar .firmware-bar:empty { display: none; }
-  .topbar .firmware { padding: 2px 8px; font-size: 11px; }
-}
-
-/* Телефон горизонтально: прошивки в общей строке шапки, ужаты и прокручиваются */
-@media (max-height: 520px) and (min-aspect-ratio: 5/4) {
-  .topbar .firmware-bar { flex: 0 1 auto; max-width: 30%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .topbar .firmware { padding: 2px 7px; font-size: 11px; }
-}
-
 /* Длинные слова («Самовосстановления») переносятся внутри карты, а не вылезают за край */
 .card__text { overflow-wrap: anywhere; hyphens: auto; }
 .card__name { overflow-wrap: anywhere; }
-
-/* Прошивки на телефоне: одна прокручиваемая строка, чтобы шапка не отъедала место у арены */
-@media (max-width: 767px) and (min-height: 521px), (max-width: 767px) and (max-aspect-ratio: 5/4) {
-  .topbar .firmware-bar { flex-wrap: nowrap; overflow-x: auto; gap: 4px; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
-  .topbar .firmware-bar .topbar__relics-label { display: none; }
-  .topbar .firmware { flex: none; gap: 5px; padding: 2px 7px; font-size: 11px; }
-  .topbar .firmware__name { max-width: 11ch; }
-  .topbar .firmware-bar::-webkit-scrollbar { display: none; }
-}

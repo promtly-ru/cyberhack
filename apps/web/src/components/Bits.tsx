@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { cardStats, describeFirmwareEffects, firmwareLevel, firmwareProgress, getActiveSynergies, getFirmware, tryRelicDef, tryStatusDef, type Intent } from '../game/engine';
 import { hash, r2, rng } from '../ui/rand';
 import { Icon, hasIcon } from './Icon';
@@ -195,7 +196,8 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
       prev?.focus?.();
     };
   }, []);
-  return (
+  // Портал в body: модалка не наследует контекст наложения родителя (топбар z-30), шкала z-index — в styles/layout.css
+  return createPortal(
     <div className="modal-backdrop" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal${wide ? ' modal--wide' : ''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}>
         <header className="modal__head">
@@ -206,7 +208,8 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
         </header>
         <div className="modal__body">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

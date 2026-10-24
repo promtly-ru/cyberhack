@@ -131,14 +131,12 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
 
 /* ---------- Топбар ---------- */
 .topbar {
-  position: sticky; top: 0; z-index: 30;
-  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+  position: sticky; top: 0; z-index: var(--z-topbar, 30);
   padding: 8px var(--gutter); padding-top: max(8px, env(safe-area-inset-top));
   background: linear-gradient(to bottom, rgba(5, 6, 15, 0.95), rgba(5, 6, 15, 0.75));
   border-bottom: 1px solid var(--line);
 
 }
-.topbar__stats { display: flex; gap: 6px; align-items: center; }
 .stat { display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line-2); font-weight: 700; font-size: 14px; white-space: nowrap; }
 .stat--hp { color: #ff8da1; }
 .stat--hp .mono { color: var(--text); }
@@ -149,8 +147,6 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
 .stat--floor { color: var(--cyan); }
 .stat--floor .mono { color: var(--text); }
 .stat--asc { color: var(--orange); }
-.topbar__relics { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; padding: 2px; }
-.topbar__actions { display: flex; gap: 6px; }
 .stat { cursor: help; }
 .stat__label, .topbar__relics-label { display: none; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #aab4d4; }
 .stat__act { display: none; }
@@ -164,21 +160,11 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
 
 @media (max-width: 767px) {
   .hide-sm { display: none; }
-  .topbar { grid-template-columns: 1fr auto; row-gap: 6px; padding-top: max(6px, env(safe-area-inset-top)); padding-bottom: 6px; }
-  .topbar__relics { grid-column: 1 / -1; grid-row: 2; }
   .stat { padding: 4px 6px; font-size: 13px; gap: 4px; }
-  .topbar { gap: 6px; padding-left: 10px; padding-right: 10px; }
-  .topbar__stats { gap: 4px; min-width: 0; }
   .stat--floor .dim { display: none; }
-  .topbar__actions { gap: 4px; }
   .icon-btn { padding: 0 6px; }
   .stat--weekly { display: none; }
   .icon-btn { min-width: 40px; height: 40px; }
-}
-/* Узкий телефон: 4 кнопки справа не влезают рядом с тремя показателями — этаж виден на карте («Шаг N из 16») */
-@media (max-width: 420px) {
-  .stat--floor { display: none; }
-  .topbar__stats { overflow: hidden; }
 }
 
 /* ---------- Реликвии ---------- */
@@ -257,8 +243,6 @@ html[data-motion='reduced'] .glitch::before, html[data-motion='reduced'] .glitch
 @media (prefers-reduced-motion: reduce) { .firmware.is-active { animation: none; } }
 
 @media (max-width: 359px) {
-  .topbar { padding-left: 6px; padding-right: 6px; gap: 4px; }
-  .topbar__stats { gap: 3px; }
   .stat { padding: 4px 4px; font-size: 12px; gap: 3px; }
   .icon-btn { min-width: 34px; padding: 0 4px; }
 }

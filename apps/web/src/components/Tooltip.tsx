@@ -39,7 +39,8 @@ export function TooltipLayer() {
     };
     const down = (e: PointerEvent) => {
       if (e.pointerType !== 'touch') return;
-      const el = findTip(e.target);
+      // Внутри [data-tip-touch="off"] тап — это действие (например, ряд имплантов открывает меню), а не подсказка
+      const el = e.target instanceof Element && e.target.closest('[data-tip-touch="off"]') ? null : findTip(e.target);
       clearTimeout(touchTimer.current);
       if (el) {
         show(el);

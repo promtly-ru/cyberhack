@@ -41,7 +41,7 @@
 .imp-card__desc { margin: 0; }
 .imp-card__cond { margin: 0; display: flex; gap: 6px; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
 .imp-card.is-flying { animation: imp-fly 0.42s ease-in forwards; pointer-events: none; }
-@keyframes imp-fly { to { transform: translate(40vw, -48vh) scale(0.05); opacity: 0; } }
+@keyframes imp-fly { to { transform: translate(var(--imp-fly-x, 40vw), var(--imp-fly-y, -48vh)) scale(0.05); opacity: 0; } }
 
 /* Меню */
 .imp-menu { padding: 12px; overflow-y: auto; }
