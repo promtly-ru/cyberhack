@@ -6,7 +6,8 @@ import { create } from 'zustand';
 import { unlockedOptions, type ClassId, type Difficulty, type NewRunOptions } from '../game/engine';
 import { useGame } from '../game/store';
 import { readTutorialFlag, writeTutorialFlag, type TutorialFlag } from './storage';
-import { STEPS, TUTORIAL_SEED, makeSnap, type Ctx, type ScreenKey, type Snap } from './steps';
+import { randomSeed } from '../game/meta';
+import { STEPS, makeSnap, type Ctx, type ScreenKey, type Snap } from './steps';
 
 interface TutorialState {
   active: boolean;
@@ -43,6 +44,9 @@ export function screenOf(g: GameView): ScreenKey {
   const run = g.run;
   if (g.view !== 'run' || !run) return 'none';
   if (g.heldCombat) return 'combat';
+  if (run.screen.kind === 'game_over') return 'game_over';
+  // Крупная карточка нового импланта поверх любого экрана
+  if (run.implantQueue && run.implantQueue.length > 0) return 'implant';
   switch (run.screen.kind) {
     case 'combat':
       return run.combat ? 'combat' : 'map';
@@ -52,6 +56,14 @@ export function screenOf(g: GameView): ScreenKey {
       return 'reward';
     case 'card_pick':
       return 'card_pick';
+    case 'event':
+      return 'event';
+    case 'implant_node':
+      return 'implant_node';
+    case 'shop':
+      return 'shop';
+    case 'rest':
+      return 'rest';
     default:
       return 'other';
   }
@@ -94,8 +106,8 @@ function onGameChange(g: GameState): void {
   const t = useTutorial.getState();
   if (!t.active) return;
   const run = g.run;
-  // Забег сменился или закончился — обучение молча завершается
-  if (!run || run.seed !== TUTORIAL_SEED || run.status !== 'active') {
+  // Забег сменился, проигран или это не обучение — обучение молча завершается
+  if (!run || !run.tutorial || run.status === 'lost') {
     stop();
     return;
   }
@@ -117,7 +129,7 @@ function stop(): void {
   useTutorial.setState({ active: false, index: 0, confirm: false, setup: false });
 }
 
-/** Начать обучение: обычный забег с фиксированным сидом, выбранные класс и режим, A0. */
+/** Начать обучение: короткий забег (1 акт) со случайным сидом, выбранные класс и режим, A0. */
 export function beginTutorial(classId: ClassId = 'netrunner', difficulty: Difficulty = 'normal'): void {
   const g = useGame.getState();
   let unlocked: NewRunOptions['unlocked'];
@@ -126,10 +138,12 @@ export function beginTutorial(classId: ClassId = 'netrunner', difficulty: Diffic
   } catch {
     unlocked = undefined;
   }
-  const opts: NewRunOptions = { seed: TUTORIAL_SEED, classId, ascension: 0, difficulty, ...(unlocked ? { unlocked } : {}) };
+  const seed = randomSeed();
+  const opts: NewRunOptions = { seed, classId, ascension: 0, difficulty, tutorial: true, ...(unlocked ? { unlocked } : {}) };
   useTutorial.setState({ confirm: false, setup: false, inviteClosed: true });
   g.startRun(opts);
-  if (useGame.getState().run?.seed !== TUTORIAL_SEED) return; // движок вернул ошибку — её покажет тост
+  const run = useGame.getState().run;
+  if (!run?.tutorial || run.seed !== seed) return; // движок вернул ошибку — её покажет тост
   unsubscribe?.();
   unsubscribe = useGame.subscribe(onGameChange);
   useTutorial.setState({ active: true });
@@ -178,6 +192,12 @@ export function finishTutorial(toMenu = false): void {
   markFlag('done');
   stop();
   if (toMenu) useGame.getState().toMenu();
+}
+
+/** После обучения сразу к выбору класса для настоящего забега. */
+export function finishToNewRun(): void {
+  finishTutorial(true);
+  useGame.getState().openClassSelect(false);
 }
 
 export function declineInvite(): void {

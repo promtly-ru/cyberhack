@@ -9,7 +9,7 @@ import { CLASS_STYLE } from '../screens/MenuScreens';
 import { isReducedMotion } from '../ui/settings';
 import { sfx } from '../audio/sfx';
 import { COUNTED, STEPS, type Step } from './steps';
-import { beginTutorial, canGoBack, ctxOf, declineInvite, finishTutorial, hasActiveRun, nextStep, prevStep, skipTutorial, useTutorial } from './tutorialStore';
+import { beginTutorial, canGoBack, ctxOf, declineInvite, finishToNewRun, finishTutorial, hasActiveRun, nextStep, prevStep, skipTutorial, useTutorial } from './tutorialStore';
 import { ScreenHint, TopPlaque } from './hints';
 
 /** Запустить обучение (из меню или из приглашения при первом запуске). */
@@ -192,7 +192,7 @@ function Coach() {
       if (t && t !== document.body && t.closest('button, a, input, select, textarea, [role="button"], [tabindex]')) return;
       if (step.mode === 'final') {
         e.preventDefault();
-        finishTutorial();
+        finishTutorial(true);
       } else if (showNext) {
         e.preventDefault();
         nextStep();
@@ -215,7 +215,7 @@ function Coach() {
   const titleId = `tut-title-${step.id}`;
 
   return (
-    <div className={`tut-layer tut-layer--${step.mode}`} data-testid="tutorial" data-step={step.id}>
+    <div className={`tut-layer tut-layer--${step.mode}${ctx.screen === 'implant' ? ' tut-layer--top' : ''}`} data-testid="tutorial" data-step={step.id}>
       {rect && step.mode !== 'final' ? (
         <div key={step.id} className="tut-spot" style={{ left: rect.left, top: rect.top, width: rect.width, height: rect.height }} aria-hidden="true" />
       ) : (
@@ -246,19 +246,19 @@ function Coach() {
         </div>
         {step.mode === 'final' ? (
           <div className="tut-bubble__actions">
-            <button className="btn btn--ghost btn--sm" data-testid="tutorial-menu" onClick={() => finishTutorial(true)}>
-              В меню
+            <button className="btn btn--ghost btn--sm" data-testid="tutorial-new-run" onClick={finishToNewRun}>
+              Новый забег
             </button>
             <button
               ref={primaryRef}
               className="btn btn--primary btn--sm"
-              data-testid="tutorial-continue"
+              data-testid="tutorial-menu"
               onClick={() => {
                 sfx('click');
-                finishTutorial();
+                finishTutorial(true);
               }}
             >
-              Играть дальше
+              В меню
             </button>
           </div>
         ) : (
@@ -346,7 +346,7 @@ function Invite() {
   if (!want || !ready) return null;
   return (
     <TutModal title="Впервые в CyberHack?" onEsc={() => useTutorial.setState({ inviteClosed: true })} testId="tutorial-invite">
-      <p className="tut-modal__text">Короткое обучение, около 5 минут: один бой с подсказками, и ты в деле. Забег после него продолжится как обычный.</p>
+      <p className="tut-modal__text">Короткий учебный забег: один акт, где по разу встретится всё — бой, награды, событие, импланты, рынок, элита, привал и босс. Карты и враги каждый раз новые.</p>
       <div className="tut-modal__actions">
         <button className="btn btn--ghost" data-testid="invite-decline" onClick={declineInvite}>
           Я уже умею играть

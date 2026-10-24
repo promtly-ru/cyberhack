@@ -2,6 +2,8 @@
 
 /* Слой поверх игры: ниже модалок (100), выше FX (70) и стрелки цели (60). Клики проходят насквозь. */
 .tut-layer { position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+/* Поверх крупной карточки импланта (.imp-overlay, z-index 400) */
+.tut-layer--top { z-index: 410; }
 .tut-dim { position: fixed; inset: 0; background: rgba(2, 3, 10, 0.72); animation: fade-in 0.2s; }
 .tut-shield { position: fixed; inset: 0; pointer-events: auto; }
 

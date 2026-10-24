@@ -28,70 +28,67 @@ test('чистый профиль: приглашение в обучение, �
   await expect(invite).toHaveCount(0);
 });
 
-test('обучение: от карты до конца первого боя и снова на карту', async ({ page, act }) => {
+test('обучение: короткий акт, первый бой с подсказками и награды', async ({ page, act }) => {
   await page.goto('./');
   await act(page.getByTestId('invite-accept'));
   await act(page.getByTestId('tutorial-setup-start'));
 
-  // Карта
+  // Карта: путь без развилок — доступен один узел
   await expect(page.getByTestId('map')).toBeVisible();
+  await expect(page.locator('[data-testid="map-node"][data-state="available"]')).toHaveCount(1);
   await next(page, act, 'map-intro');
+  await next(page, act, 'map-kinds');
   await expect(step(page, 'map-node')).toBeVisible();
-  await act(page.locator('[data-testid="map-node"][data-state="available"][data-kind="combat"]').first());
+  await act(page.locator('[data-testid="map-node"][data-state="available"]').first());
 
   // Бой: пояснения
   await expect(page.getByTestId('combat')).toHaveAttribute('data-phase', 'player');
   for (const id of ['player', 'enemy', 'intent', 'energy', 'hand']) await next(page, act, id);
 
-  // «Пинг» во врага
-  await expect(step(page, 'ping')).toBeVisible();
-  const hpBefore = Number(await page.getByTestId('enemy').first().getAttribute('data-hp'));
-  const ping = page.locator('[data-testid="hand-card"][data-def="nr_ping"][data-playable="1"]').first();
-  await act(ping);
-  await expect(ping).toHaveAttribute('aria-pressed', 'true');
-  await act(page.locator('[data-testid="enemy-hit"]:not([disabled])').first());
-  await expect.poll(async () => Number(await page.getByTestId('enemy').first().getAttribute('data-hp'))).toBeLessThan(hpBefore);
+  // Атака — любой картой с целью (карты зависят от сида)
+  await expect(step(page, 'attack')).toBeVisible();
+  const attack = page.locator('[data-testid="hand-card"][data-targeted="1"][data-playable="1"]').first();
+  if (await attack.count()) {
+    await act(attack);
+    await act(page.locator('[data-testid="enemy-hit"]:not([disabled])').first());
+  } else await act(page.getByTestId('tutorial-next'));
 
-  // «Файрвол» — блок
+  // Блок
   await expect(step(page, 'block')).toBeVisible();
-  const wall = page.locator('[data-testid="hand-card"][data-def="nr_firewall"][data-playable="1"]').first();
-  const wallUid = await wall.getAttribute('data-uid');
-  await act(wall);
-  await act(page.locator(`[data-testid="hand-card"][data-uid="${wallUid}"]`));
-  await expect(page.locator(`[data-testid="hand-card"][data-uid="${wallUid}"]`)).toHaveCount(0);
+  const wall = page.locator('[data-testid="hand-card"][data-block="1"][data-playable="1"]').first();
+  if (await wall.count()) {
+    const uid = await wall.getAttribute('data-uid');
+    await act(wall);
+    await act(page.locator(`[data-testid="hand-card"][data-uid="${uid}"]`));
+  } else await act(page.getByTestId('tutorial-next'));
 
-  // Конец хода → разбор хода врага
+  // Конец хода → разбор хода врага → статусы
   await expect(step(page, 'end-turn')).toBeVisible();
   await act(page.getByTestId('end-turn'));
   await expect(step(page, 'after-enemy')).toBeVisible();
   await expect(bubble(page)).toContainText('блок');
-  await act(page.getByTestId('tutorial-next'));
+  await next(page, act, 'after-enemy');
+  await next(page, act, 'statuses');
 
-  // Дальше сам: напоминание-плашка не мешает доиграть бой
+  // Дальше сам: плашка не мешает доиграть бой
   await expect(page.getByTestId('tutorial-mini')).toBeVisible();
   await winCombat(page, act);
 
-  // Награды
+  // Награды: кредиты, карта, гарантированный расходник
   await expect(page.getByTestId('reward-screen')).toBeVisible();
   await next(page, act, 'reward-gold');
   await next(page, act, 'reward-card');
-  // Прошивка выпадает не всегда: если выпала, обучение объясняет и её
-  if (await step(page, 'reward-firmware').isVisible().catch(() => false)) await next(page, act, 'reward-firmware');
-  await expect(page.getByTestId('tutorial')).toHaveCount(0); // дальше игрок сам, экран подсказывает строкой
+  await next(page, act, 'reward-potion');
+  await expect(page.getByTestId('tutorial')).toHaveCount(0);
   await collectRewards(page, act);
   if (await page.getByTestId('reward-screen').isVisible()) await act(page.getByTestId('reward-leave'));
 
-  // Снова карта: типы узлов и финал
+  // Снова карта: как пользоваться расходником, затем событие
   await expect(page.getByTestId('map')).toBeVisible();
-  await next(page, act, 'map-kinds');
-  await next(page, act, 'difficulty');
-  await expect(step(page, 'done')).toBeVisible();
-  await expect(bubble(page)).toContainText('Готово!');
-  expect(await page.evaluate((k) => localStorage.getItem(k), TUTORIAL_KEY)).toBe('done');
-  await act(page.getByTestId('tutorial-continue'));
-  await expect(page.getByTestId('tutorial')).toHaveCount(0);
-  // Забег продолжается: можно идти дальше по карте
-  await expect(page.locator('[data-testid="map-node"][data-state="available"]').first()).toBeVisible();
+  await next(page, act, 'potion-use');
+  await expect(step(page, 'map-event')).toBeVisible();
+  await act(page.locator('[data-testid="map-node"][data-state="available"]').first());
+  await next(page, act, 'event-intro');
 });
 
 test('«Пропустить обучение» работает, флаг переживает перезагрузку', async ({ page, act }) => {
@@ -119,7 +116,7 @@ test('Esc пропускает обучение', async ({ page, act }, testInfo
   await act(page.getByTestId('tutorial-setup-start'));
   await expect(step(page, 'map-intro')).toBeVisible();
   await page.keyboard.press('Enter');
-  await expect(step(page, 'map-node')).toBeVisible();
+  await expect(step(page, 'map-kinds')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('tutorial')).toHaveCount(0);
 });
