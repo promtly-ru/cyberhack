@@ -190,7 +190,7 @@ describe('награды', () => {
     expect(items(s)[0]!.kind).toBe('relic');
     // без доступных реликвий — золото
     const c = fixtureContent();
-    c.relics = c.relics.filter((r) => r.rarity === 'starter' || r.rarity === 'boss');
+    c.relics = c.relics.filter((r) => r.rarity === 'starter');
     setContentForTests(c);
     const g = enterKind('treasure');
     expect(items(g)[0]!.kind).toBe('gold');
@@ -218,7 +218,7 @@ describe('боссы и акты', () => {
     expect(gold.amount).toBeGreaterThanOrEqual(95);
     expect(gold.amount).toBeLessThanOrEqual(105);
     const relic = it.find((i) => i.kind === 'relic') as { relicId: string };
-    expect(relic.relicId.startsWith('r_boss')).toBe(true);
+    expect(relic).toBeDefined(); // Импланты v2: босс роллит по тем же весам цветов
     const cards = it.find((i) => i.kind === 'card_choice') as { cardIds: string[] };
     expect(cards.cardIds.sort()).toEqual(['battery', 'cleanup', 'ritual_code']);
     s.hp = 30;
@@ -257,7 +257,9 @@ describe('магазин', () => {
     const shop = s.screen.kind === 'shop' ? s.screen.items : [];
     const cards = shop.filter((i) => i.kind === 'card');
     expect(cards).toHaveLength(7);
-    expect(shop.filter((i) => i.kind === 'relic')).toHaveLength(3);
+    const imps = shop.filter((i) => i.kind === 'relic').length;
+    expect(imps).toBeGreaterThanOrEqual(1);
+    expect(imps).toBeLessThanOrEqual(2);
     expect(shop.filter((i) => i.kind === 'remove')).toEqual([{ kind: 'remove', price: 75, sold: false }]);
     expect(shop.filter((i) => i.sale)).toHaveLength(1);
     expect(shop.filter((i) => i.kind === 'upgrade' || i.kind === 'refresh')).toHaveLength(2);
@@ -270,8 +272,8 @@ describe('магазин', () => {
       expect(c.basePrice ?? c.price).toBeLessThanOrEqual(hi);
     }
     for (const r of shop.filter((i) => i.kind === 'relic')) {
-      expect(r.basePrice ?? r.price).toBeGreaterThanOrEqual(150);
-      expect(r.basePrice ?? r.price).toBeLessThanOrEqual(300);
+      expect(r.basePrice ?? r.price).toBeGreaterThanOrEqual(80);
+      expect(r.basePrice ?? r.price).toBeLessThanOrEqual(320);
     }
   });
 
@@ -295,7 +297,7 @@ describe('магазин', () => {
     const removeIdx = shop().findIndex((i) => i.kind === 'remove');
     let sel = act(s, { type: 'shop_buy', index: removeIdx });
     expect(sel.screen).toEqual({ kind: 'select_deck_card', purpose: 'remove', returnTo: 'shop' });
-    expect(getLegalActions(sel)).toHaveLength(12);
+    expect(getLegalActions(sel).filter((a) => a.type === 'select_deck_card')).toHaveLength(12);
     // отмена: золото не тратится, магазин на месте
     const cancel = act(sel, { type: 'select_deck_card', cardUid: null });
     expect(cancel.screen.kind).toBe('shop');

@@ -11,7 +11,7 @@ export const SECTOR_LENGTH = 5;
 export const MAP_ROWS = SECTORS * SECTOR_LENGTH;
 export const MAP_COLS = 7;
 export const BOSS_ROW = MAP_ROWS;
-/** Тайник — в развилке среднего сектора */
+/** Ряд развилки среднего сектора: раньше Тайник, теперь гарантированный Сигнал (Импланты v2) */
 export const TREASURE_ROW = SECTOR_LENGTH + 2;
 /** Последний ряд перед боссом: отдых и магазин */
 export const REST_ROW = MAP_ROWS - 1;
@@ -30,20 +30,20 @@ export function nodeWeights(act: number): Record<RollKind, number> {
     rest: 11,
     shop: 4,
     lab: [2, 5, 8][a - 1]!,
-    blackbox: [0, 5, 6][a - 1]!,
+    blackbox: 0, // Импланты v2: не генерируется (экран оставлен для старых сохранений)
     relay: 4,
     ambush: [3, 7, 8][a - 1]!,
-    // Импланты v2 — веса выставляет движок (feat/implants-engine)
-    signal: 0,
-    synth: 0,
-    ripperdoc: 0,
-    quarantine: 0,
-    beacon: 0,
+    // Импланты v2
+    signal: a === 1 ? 4 : 5,
+    synth: 3,
+    ripperdoc: 3,
+    quarantine: 3,
+    beacon: 2, // не больше 1 на акт, не гарантирован
   };
 }
 
-const REGULAR: readonly RollKind[] = ['combat', 'event', 'lab', 'relay'];
-const RISK: readonly RollKind[] = ['elite', 'ambush', 'blackbox'];
+const REGULAR: readonly RollKind[] = ['combat', 'event', 'lab', 'relay', 'signal', 'synth', 'ripperdoc', 'quarantine', 'beacon'];
+const RISK: readonly RollKind[] = ['elite', 'ambush'];
 
 export function nodeId(act: number, row: number, col: number): string {
   return `${act}-${row}-${col}`;
@@ -61,10 +61,10 @@ export function sectorOf(row: number): 1 | 2 | 3 {
 const COLS: Record<number, number[]> = { 2: [2, 4], 3: [1, 3, 5] };
 
 /** Типы узлов ряда. Неболевые типы не повторяются; бой не стоит рядом с боем — любой выбор из соседних узлов разнороден. */
-function rowKinds(row: number, act: number, rng: Rng, eliteMult: number): MapNodeKind[] {
+function rowKinds(row: number, act: number, rng: Rng, eliteMult: number, used: Set<MapNodeKind>): MapNodeKind[] {
   const pos = row % SECTOR_LENGTH;
   const w = nodeWeights(act);
-  const weight = (k: RollKind) => (k === 'elite' ? w[k] * eliteMult : w[k]);
+  const weight = (k: RollKind) => (k === 'elite' ? w[k] * eliteMult : k === 'beacon' && used.has('beacon') ? 0 : w[k]);
   if (pos === SECTOR_LENGTH - 1) return rng.shuffle<MapNodeKind>(['rest', 'shop']);
 
   const size = rng.int(2, 3);
@@ -78,15 +78,17 @@ function rowKinds(row: number, act: number, rng: Rng, eliteMult: number): MapNod
   if (pos === 2) {
     const risks = RISK.map((k) => [k, weight(k)] as const).filter(([, x]) => x > 0);
     place(risks.length > 0 ? rng.weighted(risks) : 'event');
-    if (row === TREASURE_ROW) place('treasure');
+    if (row === TREASURE_ROW) place('signal');
     pool = [...REGULAR, ...RISK];
   }
   for (const i of free()) {
     const options = pool
       .filter((k) => (k === 'combat' ? kinds[i - 1] !== 'combat' && kinds[i + 1] !== 'combat' : !kinds.includes(k)))
-      .map((k) => [k, weight(k)] as const);
+      .map((k) => [k, weight(k)] as const)
+      .filter(([, x]) => x > 0);
     kinds[i] = rng.weighted(options);
   }
+  for (const k of kinds) if (k) used.add(k);
   return kinds as MapNodeKind[];
 }
 
@@ -111,8 +113,9 @@ function linkRows(a: number, b: number, rng: Rng): number[][] {
 export function generateMap(act: 1 | 2 | 3 | 4, rng: Rng, eliteWeightMult = 1): MapNode[] {
   const bossId = bossNodeId(act);
   const rows: MapNode[][] = [];
+  const used = new Set<MapNodeKind>();
   for (let r = 0; r < MAP_ROWS; r++) {
-    const kinds = rowKinds(r, act, rng, eliteWeightMult);
+    const kinds = rowKinds(r, act, rng, eliteWeightMult, used);
     const cols = COLS[kinds.length]!;
     rows.push(kinds.map((kind, i) => ({ id: nodeId(act, r, cols[i]!), act, row: r, col: cols[i]!, kind, next: [], sector: sectorOf(r) })));
   }

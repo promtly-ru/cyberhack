@@ -4,6 +4,7 @@ import { FIRMWARE_RARITY_WEIGHT, rollableFirmwares } from './firmware';
  */
 import type { AscensionMods } from './ascension';
 import { getContent } from './content';
+import { colorOf, IMPLANT_PRICES, redImplants, redRemovePrice, rollImplant } from './implants';
 import { getMutatorMods } from './mutators';
 import { getPotion, POTION_DROP_CHANCE, POTION_PRICES, rollPotion } from './potions';
 import { extRng, rngOf, type Rng } from './rng';
@@ -132,30 +133,14 @@ export function rollCardChoice(s: RunState, rng: Rng, tier: CombatTier, mods: As
   return ids;
 }
 
-function relicAvailable(s: RunState, r: RelicDef): boolean {
-  return (
-    !s.relics.includes(r.id) &&
-    (r.classId === 'neutral' || r.classId === s.classId) &&
-    !(s.locked && s.locked.relics.includes(r.id))
-  );
-}
-
-/** Случайная реликвия (не босс/стартовая/магазинная): common 50 / uncommon 33 / rare 17. */
+/** Случайный имплант (Импланты v2: цвет по IMPLANT_COLOR_WEIGHTS, шанс Классового) */
 export function rollRelic(s: RunState, rng: Rng): string | undefined {
-  const pool = getContent().data.relics.filter((r) => relicAvailable(s, r) && isRewardRarity(r.rarity));
-  if (pool.length === 0) return undefined;
-  const rarity = rng.weighted<RewardRarity>([
-    ['common', 50],
-    ['uncommon', 33],
-    ['rare', 17],
-  ]);
-  const ofRarity = pool.filter((r) => r.rarity === rarity);
-  return rng.pick(ofRarity.length > 0 ? ofRarity : pool).id;
+  return rollImplant(s, rng);
 }
 
+/** Босс выдаёт имплант по тем же весам */
 export function rollBossRelic(s: RunState, rng: Rng): string | undefined {
-  const pool = getContent().data.relics.filter((r) => relicAvailable(s, r) && r.rarity === 'boss');
-  return pool.length > 0 ? rng.pick(pool).id : undefined;
+  return rollImplant(s, rng);
 }
 
 /** Золото и реликвии — поток rewards, карты — поток cards. */
@@ -205,14 +190,17 @@ export function buildShop(s: RunState, rng: Rng, mods: AscensionMods, refreshes 
     const range = CARD_PRICES[isRewardRarity(c.rarity) ? c.rarity : 'common'];
     items.push({ kind: 'card', id: c.id, price: price(rng, range, mods), sold: false });
   }
-  const relicPool = getContent().data.relics.filter(
-    (r) => relicAvailable(s, r) && (isRewardRarity(r.rarity) || r.rarity === 'shop'),
-  );
-  rng.shuffle(relicPool);
-  for (const r of relicPool.slice(0, 3)) {
-    items.push({ kind: 'relic', id: r.id, price: price(rng, RELIC_PRICES[r.rarity], mods), sold: false });
+  // 1–2 импланта: цвет по тем же весам, красные не продаются; цена по цвету
+  const implantCount = rng.int(1, 2);
+  const offered: string[] = [];
+  for (let i = 0; i < implantCount; i++) {
+    const id = rollImplant(s, rng, { noRed: true, avoid: offered });
+    if (!id) break;
+    offered.push(id);
+    items.push({ kind: 'relic', id, price: Math.round(IMPLANT_PRICES[colorOf(id)] * mods.shopPriceMult), sold: false });
   }
   items.push({ kind: 'remove', price: removePrice(s, mods), sold: false });
+  if (redImplants(s).length > 0) items.push({ kind: 'remove_red', price: redRemovePrice(s, mods.shopPriceMult), sold: false });
   // SHOP_POTIONS расходников (поток 'potions'), в конце списка
   const prng = extRng(s, 'potions');
   for (let i = 0; i < SHOP_POTIONS; i++) {
@@ -241,7 +229,7 @@ export function refreshShop(s: RunState, old: readonly ShopItem[], rng: Rng, mod
   const n = (old.find((i) => i.kind === 'refresh')?.n ?? 0) + 1;
   const items = buildShop(s, rng, mods, n);
   for (const it of items) {
-    if (it.kind === 'remove' || it.kind === 'upgrade') it.sold = old.find((o) => o.kind === it.kind)?.sold ?? false;
+    if (it.kind === 'remove' || it.kind === 'upgrade' || it.kind === 'remove_red') it.sold = old.find((o) => o.kind === it.kind)?.sold ?? false;
   }
   return items;
 }

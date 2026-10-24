@@ -229,6 +229,8 @@ export interface EncounterDef {
   early?: boolean;
   /** Вес при выборе босса акта (по умолчанию 1; секретный босс — меньше) */
   weight?: number;
+  /** Импланты v2: бой узла «Карантин» (короткий бой с вирусом) */
+  quarantine?: boolean;
 }
 
 export type RelicTrigger =
@@ -511,6 +513,8 @@ export interface RunState {
   redRemovals?: number;
   /** Очередь только что полученных имплантов — UI показывает крупную карточку, ack_implant убирает первый */
   implantQueue?: string[];
+  /** HP в начале текущего боя (для задач «без потери HP») */
+  combatStartHp?: number;
   /** Прошивки: работают, пока в колоде собраны их карты (см. firmware.ts) */
   firmwares?: string[];
   map: MapNode[];

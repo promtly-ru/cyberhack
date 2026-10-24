@@ -46,6 +46,24 @@ import {
 import { lockedContent } from './unlocks';
 import { upgradableFirmwares } from './firmware';
 import { makeCard } from './util';
+import {
+  BEACON_BONUS,
+  CLASS_FULL_BASE,
+  colorOf,
+  implantNodeOptions,
+  onImplantCombatWon,
+  onImplantEvent,
+  quarantineOptions,
+  redImplants,
+  registerImplant,
+  removeImplant,
+  rollImplant,
+  rollImplantOfColor,
+  shiftColor,
+  synthGroups,
+  trackCombatEvents,
+  type ImplantNodeKind,
+} from './implants';
 
 /** Итоговые модификаторы: Ascension → режим сложности → мутаторы забега. */
 export function modsOf(s: Pick<RunState, 'ascension' | 'difficulty' | 'mutators'>): AscensionMods {
@@ -86,6 +104,9 @@ export function newRun(opts: NewRunOptions): RunState {
     gold: cls.startingGold,
     deck: [],
     relics: [],
+    implantState: {},
+    classFullChance: CLASS_FULL_BASE,
+    implantQueue: [],
     firmwares: [],
     map: [],
     currentNodeId: null,
@@ -119,6 +140,7 @@ export function newRun(opts: NewRunOptions): RunState {
     );
     if (pool.length > 0) obtainRelic(s, rngOf(s, 'cards').pick(pool).id, ev);
   }
+  s.implantQueue = []; // стартовые импланты не показываем крупной карточкой
   startAct(s, 1, ev);
   s.score = computeScore(s);
   return s;
@@ -188,7 +210,17 @@ function enterNode(s: RunState, node: MapNode, ev: GameEvent[]): void {
       s.screen = { kind: 'shop', items: buildShop(s, rngOf(s, 'shop'), modsOf(s)) };
       return;
     case 'rest':
+      onImplantEvent(s, 'rest', ev);
       s.screen = { kind: 'rest' };
+      return;
+    case 'signal':
+    case 'synth':
+    case 'ripperdoc':
+    case 'beacon':
+      s.screen = { kind: 'implant_node', node: node.kind, options: implantNodeOptions(s, node.kind) };
+      return;
+    case 'quarantine':
+      startEncounter(s, 'normal', ev, false, true);
       return;
     case 'treasure': {
       const relicId = rollRelic(s, rngOf(s, 'rewards'));
@@ -205,15 +237,21 @@ function enterNode(s: RunState, node: MapNode, ev: GameEvent[]): void {
 
 // ---------- бой ----------
 
-function pickEncounterEnemies(s: RunState, tier: CombatTier, hard = false): string[] {
+function pickEncounterEnemies(s: RunState, tier: CombatTier, hard = false, quarantine = false): string[] {
   const content = getContent();
+  if (quarantine) {
+    const q = content.data.encounters.filter((e) => e.quarantine);
+    const qa = q.filter((e) => e.act === s.act);
+    const qp = qa.length > 0 ? qa : q;
+    if (qp.length > 0) return rngOf(s, 'map').pick(qp).enemies;
+  }
   if (tier === 'boss' && s.bossEncounterId) {
     const enc = content.encounters.get(s.bossEncounterId);
     if (enc) return enc.enemies;
   }
   const rng = rngOf(s, 'map');
   const all = content.data.encounters;
-  let pool = all.filter((e) => e.act === s.act && e.tier === tier);
+  let pool = all.filter((e) => e.act === s.act && e.tier === tier && !e.quarantine);
   if (tier === 'normal' && pool.length > 0) {
     const fought = s.map.filter(
       (n) => n.kind === 'combat' && n.id !== s.currentNodeId && s.visited.includes(n.id),
@@ -236,9 +274,10 @@ function pickEncounterEnemies(s: RunState, tier: CombatTier, hard = false): stri
   return [rng.pick(ep).id];
 }
 
-function startEncounter(s: RunState, tier: CombatTier, ev: GameEvent[], hard = false): void {
-  const enemyIds = pickEncounterEnemies(s, tier, hard);
+function startEncounter(s: RunState, tier: CombatTier, ev: GameEvent[], hard = false, quarantine = false): void {
+  const enemyIds = pickEncounterEnemies(s, tier, hard, quarantine);
   s.screen = { kind: 'combat' };
+  s.combatStartHp = s.hp;
   const ctx = startCombat(s, enemyIds, ev, modsOf(s));
   afterCombatStep(s, ctx, ev);
 }
@@ -254,6 +293,7 @@ function combatTier(ctx: CombatCtx): CombatTier {
 function afterCombatStep(s: RunState, ctx: CombatCtx, ev: GameEvent[]): void {
   s.hp = ctx.c.player.hp;
   s.maxHp = ctx.c.player.maxHp;
+  trackCombatEvents(s, ev);
   if (ctx.c.phase === 'won') onCombatWon(s, ctx, ev);
   else if (ctx.c.phase === 'lost') {
     ev.push({ type: 'combat_lost' });
@@ -269,14 +309,22 @@ function onCombatWon(s: RunState, ctx: CombatCtx, ev: GameEvent[]): void {
   if (tier === 'elite') s.stats.elitesKilled += 1;
   if (tier === 'boss') s.stats.bossesKilled += 1;
   s.combat = null;
+  onImplantCombatWon(s, tier, ev);
   if (tier === 'boss' && s.act >= finalAct()) {
     s.status = 'won';
     s.screen = { kind: 'game_over', victory: true };
     return;
   }
+  if (currentNode(s)?.kind === 'quarantine' && tier === 'normal') {
+    const gold = rngOf(s, 'rewards').int(QUARANTINE_GOLD[0], QUARANTINE_GOLD[1]);
+    s.screen = { kind: 'implant_node', node: 'quarantine', options: quarantineOptions(s, gold) };
+    return;
+  }
   const ambush = currentNode(s)?.kind === 'ambush' && tier === 'normal';
   s.screen = { kind: 'reward', items: buildCombatRewards(s, tier, modsOf(s), ambush) };
 }
+
+export const QUARANTINE_GOLD: [number, number] = [40, 60];
 
 function defeat(s: RunState): void {
   s.hp = 0;
@@ -301,6 +349,7 @@ function obtainRelic(s: RunState, relicId: string, ev: GameEvent[]): void {
   const def = getContent().relics.get(relicId);
   if (!def) throw new Error(`Unknown relic id: ${relicId}`);
   s.relics.push(relicId);
+  registerImplant(s, relicId, ev);
   ev.push({ type: 'relic_obtained', relicId });
   if (def.trigger === 'pickup') {
     ev.push({ type: 'relic_triggered', relicId });
@@ -543,6 +592,7 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       if (s.screen.kind !== 'reward') invalid('Not on reward screen');
       if (currentNode(s)?.kind === 'boss' && s.act < finalAct()) {
         healRun(s, (s.maxHp - s.hp) * modsOf(s).actHealPct, ev);
+        onImplantEvent(s, 'act_end', ev);
         startAct(s, (s.act + 1) as 2 | 3 | 4, ev);
       } else goToMap(s);
       break;
@@ -575,6 +625,13 @@ export function applyAction(state: RunState, action: Action): ActionResult {
         if (!canUpgradeAny(s)) invalid('No cards to upgrade');
         s.savedShop = items;
         s.screen = { ...(upgradeScreen(s) as Extract<Screen, { kind: 'select_deck_card' }>), returnTo: 'shop' };
+      } else if (item.kind === 'remove_red') {
+        const red = redImplants(s)[0];
+        if (!red) invalid('No red implant');
+        s.gold -= item.price;
+        item.sold = true;
+        s.redRemovals = (s.redRemovals ?? 0) + 1;
+        removeImplant(s, red, 'removed', ev);
       } else if (item.kind === 'refresh') {
         if ((item.n ?? 0) >= MAX_SHOP_REFRESHES) invalid('Refresh limit reached');
         s.gold -= item.price;
@@ -592,6 +649,16 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       triggerOutOfCombatRelics(s, 'rest', ev);
       if (s.hp <= 0) defeat(s);
       else goToMap(s);
+      break;
+    case 'rest_burn_red':
+      if (s.screen.kind !== 'rest') invalid('Not at rest site');
+      if (!s.relics.includes(action.relicId) || colorOf(action.relicId) !== 'red') invalid('Not a red implant');
+      removeImplant(s, action.relicId, 'removed', ev);
+      goToMap(s);
+      break;
+    case 'ack_implant':
+      if (!s.implantQueue || s.implantQueue.length === 0) invalid('No implant to acknowledge');
+      s.implantQueue.shift();
       break;
     case 'rest_upgrade':
       if (s.screen.kind !== 'rest') invalid('Not at rest site');
@@ -618,7 +685,9 @@ export function applyAction(state: RunState, action: Action): ActionResult {
       nodeChoice(s, action.index, ev);
       break;
     case 'leave_node':
-      if (s.screen.kind !== 'lab' && s.screen.kind !== 'blackbox' && s.screen.kind !== 'relay') invalid('Nothing to leave');
+      if (s.screen.kind === 'implant_node') {
+        if (!canLeaveImplantNode(s.screen.node)) invalid('Must choose an option');
+      } else if (s.screen.kind !== 'lab' && s.screen.kind !== 'blackbox' && s.screen.kind !== 'relay') invalid('Nothing to leave');
       goToMap(s);
       break;
     case 'use_potion':
@@ -757,8 +826,60 @@ function giveRelicOrGold(s: RunState, ev: GameEvent[]): string {
   return 'Реликвий не осталось: +60 кредитов.';
 }
 
+/** С Сигнала и награды Карантина уйти без выбора нельзя (имплант берётся всегда) */
+function canLeaveImplantNode(node: ImplantNodeKind): boolean {
+  return node !== 'signal' && node !== 'quarantine';
+}
+
+function implantChoice(s: RunState, screen: Extract<Screen, { kind: 'implant_node' }>, index: number, ev: GameEvent[]): void {
+  const opt = screen.options[index];
+  if (!opt || opt.disabled) invalid(`No implant option ${index}`);
+  const rng = rngOf(s, 'rewards');
+  const give = (id: string | undefined): void => {
+    if (id) obtainRelic(s, id, ev);
+    else s.gold += 40;
+  };
+  switch (screen.node) {
+    case 'signal':
+      give(rollImplant(s, rng));
+      break;
+    case 'beacon':
+      if ((s.beaconActs ?? []).includes(s.act)) invalid('Beacon already used this act');
+      s.classFullChance = (s.classFullChance ?? CLASS_FULL_BASE) + BEACON_BONUS;
+      (s.beaconActs ??= []).push(s.act);
+      break;
+    case 'synth': {
+      const group = synthGroups(s)[index];
+      if (!group) invalid(`No synth option ${index}`);
+      const [color, ids] = group;
+      const two = rng.shuffle([...ids]).slice(0, 2);
+      for (const id of two) removeImplant(s, id, 'synth', ev);
+      give(rollImplantOfColor(s, rng, shiftColor(color, 1), two));
+      break;
+    }
+    case 'ripperdoc': {
+      const id = opt.relicIds?.[0];
+      if (!id || !s.relics.includes(id)) invalid('Implant not owned');
+      const color = shiftColor(colorOf(id), rng.next() < 0.5 ? 1 : -1);
+      removeImplant(s, id, 'swap', ev);
+      give(rollImplantOfColor(s, rng, color, [id]));
+      break;
+    }
+    case 'quarantine': {
+      const id = opt.relicIds?.[0];
+      if (id) removeImplant(s, id, 'removed', ev);
+      else s.gold += opt.gold ?? 0;
+      break;
+    }
+  }
+  if (s.hp <= 0) return defeat(s);
+  goToMap(s);
+}
+
 function nodeChoice(s: RunState, index: number, ev: GameEvent[]): void {
   switch (s.screen.kind) {
+    case 'implant_node':
+      return implantChoice(s, s.screen, index, ev);
     case 'lab':
       if (index === 0) {
         if (!canUpgradeAny(s)) invalid('No cards to upgrade');
@@ -948,6 +1069,7 @@ export function getLegalActions(state: RunState): Action[] {
         if (item.kind === 'remove' && s.deck.length === 0) return;
         if (item.kind === 'upgrade' && !canUpgradeAny(s)) return;
         if (item.kind === 'potion' && !hasFreePotionSlot(s)) return;
+        if (item.kind === 'remove_red' && redImplants(s).length === 0) return;
         actions.push({ type: 'shop_buy', index });
       });
       actions.push({ type: 'leave_shop' });
@@ -965,9 +1087,16 @@ export function getLegalActions(state: RunState): Action[] {
     case 'relay':
       actions.push({ type: 'node_choice', index: 0 }, { type: 'leave_node' });
       break;
+    case 'implant_node':
+      screen.options.forEach((o, index) => {
+        if (!o.disabled) actions.push({ type: 'node_choice', index });
+      });
+      if (canLeaveImplantNode(screen.node) || actions.length === 0) actions.push({ type: 'leave_node' });
+      break;
     case 'rest':
       actions.push({ type: 'rest_heal' });
       if (canUpgradeAny(s)) actions.push({ type: 'rest_upgrade' });
+      for (const relicId of redImplants(s)) actions.push({ type: 'rest_burn_red', relicId });
       break;
     case 'event':
       for (const index of legalEventOptions(s, screen.eventId)) actions.push({ type: 'event_choice', index });
@@ -983,6 +1112,7 @@ export function getLegalActions(state: RunState): Action[] {
     case 'game_over':
       break;
   }
+  if (s.implantQueue && s.implantQueue.length > 0) actions.push({ type: 'ack_implant' });
   pushPotionActions(s, actions);
   return actions;
 }

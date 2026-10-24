@@ -48,7 +48,9 @@ function checkMap(nodes: MapNode[], act: 1 | 2 | 3 | 4): void {
     if (pos === SECTOR_LENGTH - 1) expect([...kinds].sort()).toEqual(['rest', 'shop']);
   }
   expect(row(0)[0]!.kind).toBe('combat');
-  expect(row(TREASURE_ROW).map((n) => n.kind)).toContain('treasure');
+  expect(row(TREASURE_ROW).map((n) => n.kind)).toContain('signal');
+  expect(nodes.some((n) => n.kind === 'treasure' || n.kind === 'blackbox')).toBe(false);
+  expect(nodes.filter((n) => n.kind === 'beacon').length).toBeLessThanOrEqual(1);
   // Перед боссом: магазин, затем отдых
   const shop = row(SHOP_ROW).find((n) => n.kind === 'shop')!;
   expect(shop).toBeDefined();
