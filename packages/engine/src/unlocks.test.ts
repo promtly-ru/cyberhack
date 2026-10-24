@@ -58,7 +58,7 @@ describe('каталог разблокировок', () => {
     for (const id of cards) expect(['common', 'uncommon', 'rare']).toContain(c.cards.get(id)?.rarity);
     for (const id of relics) expect(c.relics.get(id)?.rarity).not.toBe('starter');
     const cardPool = (['netrunner', 'phreaker', 'ghost', 'neutral'] as const).flatMap((k) => rewardCardPool(k));
-    const relicPool = c.data.relics.filter((r) => r.rarity !== 'starter');
+    const relicPool = c.data.relics.filter((r) => r.rarity !== 'starter' && r.color !== 'red');
     expect(cards.length / cardPool.length).toBeGreaterThan(0.2);
     expect(cards.length / cardPool.length).toBeLessThan(0.4);
     expect(relics.length / relicPool.length).toBeGreaterThan(0.2);

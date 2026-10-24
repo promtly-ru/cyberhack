@@ -1,40 +1,94 @@
 [
   {
     "id": "r_neuroshunt",
-    "name": "Нейрошунт",
+    "name": "Нейрошунт (ослаблен)",
     "rarity": "starter",
     "classId": "netrunner",
-    "description": "В конце боя восстанавливает 6 HP.",
+    "description": "В конце боя восстанавливает 4 HP.",
     "trigger": "combat_end",
     "effects": [
       {
         "type": "heal",
-        "amount": 6
+        "amount": 4
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_neuroshunt_full"
+  },
+  {
+    "id": "r_neuroshunt_full",
+    "name": "Нейрошунт",
+    "rarity": "starter",
+    "classId": "netrunner",
+    "description": "В конце боя восстанавливает 9 HP.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "heal",
+        "amount": 9
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_neuroshunt"
   },
   {
     "id": "r_infected_usb",
-    "name": "Заражённая флешка",
+    "name": "Заражённая флешка (ослаблен)",
     "rarity": "starter",
     "classId": "phreaker",
-    "description": "В начале боя накладывает 4 Вируса на всех врагов.",
+    "description": "В начале боя накладывает 2 Вируса на всех врагов.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 4,
+        "amount": 2,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_infected_usb_full"
+  },
+  {
+    "id": "r_infected_usb_full",
+    "name": "Заражённая флешка",
+    "rarity": "starter",
+    "classId": "phreaker",
+    "description": "В начале боя накладывает 6 Вируса на всех врагов.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 6,
+        "target": "all_enemies"
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_infected_usb"
   },
   {
     "id": "r_cloak_module",
-    "name": "Маскировочный модуль",
+    "name": "Маскировочный модуль (ослаблен)",
     "rarity": "starter",
     "classId": "ghost",
-    "description": "В начале боя возьми 1 дополнительную карту и получи 4 блока.",
+    "description": "В начале боя возьми 1 дополнительную карту и получи 2 блока.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -43,9 +97,39 @@
       },
       {
         "type": "block",
-        "amount": 4
+        "amount": 2
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_cloak_module_full"
+  },
+  {
+    "id": "r_cloak_module_full",
+    "name": "Маскировочный модуль",
+    "rarity": "starter",
+    "classId": "ghost",
+    "description": "В начале боя возьми 2 дополнительные карты и получи 6 блока.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "draw",
+        "amount": 2
+      },
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_cloak_module"
   },
   {
     "id": "r_backup_shield",
@@ -59,7 +143,12 @@
         "type": "block",
         "amount": 10
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_oc_cpu",
@@ -75,7 +164,12 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_sleep_pod",
@@ -89,7 +183,12 @@
         "type": "heal",
         "amount": 15
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_anon_wallet",
@@ -103,7 +202,12 @@
         "type": "gain_gold",
         "amount": 75
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_vuln_scanner",
@@ -119,7 +223,12 @@
         "amount": 1,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_med_patch",
@@ -133,7 +242,12 @@
         "type": "heal",
         "amount": 3
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_static_mesh",
@@ -149,7 +263,12 @@
         "amount": 3,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_metronome",
@@ -166,14 +285,19 @@
         "target": "self"
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_shuriken_script",
     "name": "Скрипт-сюрикен",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждая 3-я сыгранная атака даёт 1 Разгон.",
+    "description": "Каждая 3-я сыгранная атака даёт 1 Разгон. Действует 3 боёв.",
     "trigger": "attack_played",
     "effects": [
       {
@@ -183,7 +307,13 @@
         "target": "self"
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 3
+    }
   },
   {
     "id": "r_clock_counter",
@@ -198,21 +328,35 @@
         "amount": 1
       }
     ],
-    "every": 10
+    "every": 10,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_damper",
     "name": "Демпфер",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "В конце хода получи 3 блока.",
+    "description": "В конце хода получи 3 блока. Сгорает, когда сыграешь 20 атак.",
     "trigger": "turn_end",
     "effects": [
       {
         "type": "block",
         "amount": 3
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_attacks",
+        "n": 20
+      }
+    }
   },
   {
     "id": "r_signal_booster",
@@ -227,7 +371,12 @@
         "amount": 1
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_resonator",
@@ -243,7 +392,12 @@
         "target": "random_enemy"
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_nanopatch",
@@ -259,14 +413,19 @@
         "amount": 2,
         "target": "self"
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_exploit_gen",
     "name": "Генератор эксплойтов",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "В начале хода наносит 2 урона всем врагам.",
+    "description": "В начале хода наносит 2 урона всем врагам. До босса.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -274,14 +433,20 @@
         "amount": 2,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "until",
+      "event": "boss"
+    }
   },
   {
     "id": "r_thread_pool",
     "name": "Пул потоков",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "Каждая 6-я сыгранная карта: возьми 1 карту.",
+    "description": "Каждая 6-я сыгранная карта: возьми 1 карту. Действует 5 боёв.",
     "trigger": "card_played",
     "effects": [
       {
@@ -289,14 +454,20 @@
         "amount": 1
       }
     ],
-    "every": 6
+    "every": 6,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 5
+    }
   },
   {
     "id": "r_blood_overclock",
     "name": "Кровавый оверклок",
     "rarity": "boss",
     "classId": "neutral",
-    "description": "В начале хода получи 1 энергию и потеряй 1 HP.",
+    "description": "В начале хода получи 1 энергию и потеряй 1 HP. Сгорает, когда убьёшь 15 врагов.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -307,7 +478,16 @@
         "type": "lose_hp",
         "amount": 1
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "kill_enemies",
+        "n": 15
+      }
+    }
   },
   {
     "id": "r_unstable_reactor",
@@ -327,14 +507,19 @@
         "to": "discard",
         "count": 1
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ai_shard",
     "name": "Осколок ИИ-ядра",
     "rarity": "boss",
     "classId": "neutral",
-    "description": "Каждый 2-й ход в конце хода получи 1 Разгон.",
+    "description": "Каждый 2-й ход в конце хода получи 1 Разгон. До конца акта.",
     "trigger": "turn_end",
     "effects": [
       {
@@ -344,7 +529,13 @@
         "target": "self"
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "until",
+      "event": "act_end"
+    }
   },
   {
     "id": "r_zero_day_archive",
@@ -364,14 +555,19 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_class_a_firewall",
     "name": "Брандмауэр класса А",
     "rarity": "shop",
     "classId": "neutral",
-    "description": "В начале боя получи 2 Броня-патча.",
+    "description": "В начале боя получи 2 Броня-патча. Действует 8 боёв.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -380,7 +576,13 @@
         "amount": 2,
         "target": "self"
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 8
+    }
   },
   {
     "id": "r_laundry_script",
@@ -394,7 +596,12 @@
         "type": "gain_gold",
         "amount": 12
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_trace_jammer",
@@ -410,7 +617,12 @@
         "amount": 1,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_nr_overclock_chip",
@@ -430,7 +642,12 @@
         "type": "lose_hp",
         "amount": 4
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_nr_aux_battery",
@@ -444,7 +661,12 @@
         "type": "gain_energy",
         "amount": 1
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_nr_coolant",
@@ -459,7 +681,12 @@
         "amount": 2
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_nr_multiplexer",
@@ -475,7 +702,12 @@
         "target": "random_enemy"
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_nr_thermal_reactor",
@@ -494,7 +726,12 @@
         "type": "lose_hp",
         "amount": 1
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ph_botnet_node",
@@ -511,7 +748,12 @@
         "target": "all_enemies"
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ph_packet_analyzer",
@@ -527,7 +769,12 @@
         "amount": 2,
         "target": "random_enemy"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ph_mailserver",
@@ -544,7 +791,12 @@
         "target": "random_enemy"
       }
     ],
-    "every": 5
+    "every": 5,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ph_zero_patient",
@@ -561,7 +813,12 @@
         "target": "random_enemy"
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ph_pandemic",
@@ -577,7 +834,12 @@
         "amount": 2,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_gh_null_cache",
@@ -592,7 +854,12 @@
         "amount": 3
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_gh_crypto_core",
@@ -608,7 +875,12 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_gh_shadow_drive",
@@ -624,14 +896,19 @@
         "to": "hand",
         "count": 2
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_gh_ghost_cache",
     "name": "Призрачный кэш",
     "rarity": "rare",
     "classId": "ghost",
-    "description": "Каждая 10-я сыгранная карта: возьми 1 карту.",
+    "description": "Каждая 10-я сыгранная карта: возьми 1 карту. Сгорает после 4 побед.",
     "trigger": "card_played",
     "effects": [
       {
@@ -639,7 +916,16 @@
         "amount": 1
       }
     ],
-    "every": 10
+    "every": 10,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 4
+      }
+    }
   },
   {
     "id": "r_gh_stealth_matrix",
@@ -659,7 +945,12 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_spike_cable",
@@ -675,7 +966,12 @@
         "target": "random_enemy"
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_pocket_router",
@@ -690,7 +986,12 @@
         "amount": 5
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_bug_bounty",
@@ -704,7 +1005,12 @@
         "type": "gain_gold",
         "amount": 8
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_first_aid",
@@ -718,7 +1024,12 @@
         "type": "heal",
         "amount": 30
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_coffee_maker",
@@ -732,7 +1043,12 @@
         "type": "gain_gold",
         "amount": 30
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_net_filter",
@@ -748,7 +1064,12 @@
         "amount": 1,
         "target": "random_enemy"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_spare_ram",
@@ -762,14 +1083,19 @@
         "type": "draw",
         "amount": 1
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_turbo_fan",
     "name": "Турбокулер",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждый 3-й ход получи 1 энергию.",
+    "description": "Каждый 3-й ход получи 1 энергию. Действует 4 боёв.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -777,7 +1103,13 @@
         "amount": 1
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 4
+    }
   },
   {
     "id": "r_logic_bomb",
@@ -793,7 +1125,12 @@
         "target": "random_enemy"
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_watchdog",
@@ -808,7 +1145,12 @@
         "amount": 4
       }
     ],
-    "every": 5
+    "every": 5,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_disassembler",
@@ -830,7 +1172,12 @@
         "amount": 1,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_quantum_gen",
@@ -845,28 +1192,42 @@
         "amount": 1
       }
     ],
-    "every": 6
+    "every": 6,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_signal_mirror",
     "name": "Зеркало сигнала",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "В начале хода получи 2 блока.",
+    "description": "В начале хода получи 2 блока. Сгорает, когда сыграешь 25 навыков.",
     "trigger": "turn_start",
     "effects": [
       {
         "type": "block",
         "amount": 2
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_skills",
+        "n": 25
+      }
+    }
   },
   {
     "id": "r_neuro_accel",
     "name": "Нейроускоритель",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "Каждый 2-й ход возьми 1 дополнительную карту.",
+    "description": "Каждый 2-й ход возьми 1 дополнительную карту. Действует 3 боёв.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -874,7 +1235,13 @@
         "amount": 1
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 3
+    }
   },
   {
     "id": "r_black_ice_shard",
@@ -891,14 +1258,19 @@
         "target": "random_enemy"
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_auto_patcher",
     "name": "Автопатчер",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "Каждый 3-й ход в конце хода получи 1 Броня-патч.",
+    "description": "Каждый 3-й ход в конце хода получи 1 Броня-патч. Сгорает, когда сыграешь 20 атак.",
     "trigger": "turn_end",
     "effects": [
       {
@@ -908,7 +1280,16 @@
         "target": "self"
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_attacks",
+        "n": 20
+      }
+    }
   },
   {
     "id": "r_debug_port",
@@ -924,7 +1305,12 @@
         "to": "hand",
         "count": 1
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_quantum_battery",
@@ -944,14 +1330,19 @@
         "to": "discard",
         "count": 1
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_singularity_core",
     "name": "Ядро сингулярности",
     "rarity": "boss",
     "classId": "neutral",
-    "description": "В начале боя получи 2 Разгона и 2 Шифрования, но потеряй 5 HP.",
+    "description": "В начале боя получи 2 Разгона и 2 Шифрования, но потеряй 5 HP. До босса.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -970,7 +1361,13 @@
         "type": "lose_hp",
         "amount": 5
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "until",
+      "event": "boss"
+    }
   },
   {
     "id": "r_premium_vpn",
@@ -985,7 +1382,12 @@
         "amount": 4
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_loyalty_card",
@@ -1003,7 +1405,12 @@
         "type": "heal",
         "amount": 2
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_smart_watch",
@@ -1022,59 +1429,152 @@
         "amount": 1
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_katana_chip",
-    "name": "Чип катаны",
+    "name": "Чип катаны (ослаблен)",
     "rarity": "starter",
     "classId": "samurai",
-    "description": "В начале боя получи 2 Контрудара и 4 блока.",
+    "description": "В начале боя получи 1 Контрудар и 2 блока.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "thorns",
-        "amount": 2,
+        "amount": 1,
         "target": "self"
       },
       {
         "type": "block",
-        "amount": 4
+        "amount": 2
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_katana_chip_full"
+  },
+  {
+    "id": "r_katana_chip_full",
+    "name": "Чип катаны",
+    "rarity": "starter",
+    "classId": "samurai",
+    "description": "В начале боя получи 3 Контрудара и 6 блока.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 3,
+        "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 6
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_katana_chip"
   },
   {
     "id": "r_toolkit",
-    "name": "Набор инженера",
+    "name": "Набор инженера (ослаблен)",
     "rarity": "starter",
     "classId": "engineer",
-    "description": "В начале боя получи 2 Броня-патча.",
+    "description": "В начале боя получи 1 Броня-патч.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "plating",
-        "amount": 2,
+        "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_toolkit_full"
+  },
+  {
+    "id": "r_toolkit_full",
+    "name": "Набор инженера",
+    "rarity": "starter",
+    "classId": "engineer",
+    "description": "В начале боя получи 3 Броня-патча.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_toolkit"
   },
   {
     "id": "r_biolab",
-    "name": "Биолаборатория",
+    "name": "Биолаборатория (ослаблен)",
     "rarity": "starter",
     "classId": "biohacker",
-    "description": "В начале боя получи 2 Самовосстановления.",
+    "description": "В начале боя получи 1 Самовосстановление.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 2,
+        "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_biolab_full"
+  },
+  {
+    "id": "r_biolab_full",
+    "name": "Биолаборатория",
+    "rarity": "starter",
+    "classId": "biohacker",
+    "description": "В начале боя получи 3 Самовосстановления.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "regen",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_biolab"
   },
   {
     "id": "r_overclock_fan",
@@ -1089,7 +1589,12 @@
         "amount": 1
       }
     ],
-    "every": 3
+    "every": 3,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_spiked_gloves",
@@ -1104,7 +1609,12 @@
         "amount": 5
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_data_leech",
@@ -1118,7 +1628,12 @@
         "type": "heal",
         "amount": 4
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_pocket_server",
@@ -1132,7 +1647,12 @@
         "type": "gain_gold",
         "amount": 80
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_adaptive_armor",
@@ -1148,7 +1668,12 @@
         "amount": 2,
         "target": "self"
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_hot_swap",
@@ -1163,7 +1688,12 @@
         "amount": 1
       }
     ],
-    "every": 8
+    "every": 8,
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_scrap_armor",
@@ -1183,14 +1713,19 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_energy_drink",
     "name": "Энергетик",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждый 4-й ход получи 1 энергию и восстанови 2 HP.",
+    "description": "Каждый 4-й ход получи 1 энергию и восстанови 2 HP. Действует 5 боёв.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1202,7 +1737,13 @@
         "amount": 2
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 5
+    }
   },
   {
     "id": "r_cyber_eye",
@@ -1217,14 +1758,19 @@
         "amount": 5
       }
     ],
-    "every": 7
+    "every": 7,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ice_pick",
     "name": "Ледоруб",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждая 5-я сыгранная атака накладывает 1 Брешь на случайного врага.",
+    "description": "Каждая 5-я сыгранная атака накладывает 1 Брешь на случайного врага. Сгорает, когда убьёшь 15 врагов.",
     "trigger": "attack_played",
     "effects": [
       {
@@ -1234,7 +1780,16 @@
         "target": "random_enemy"
       }
     ],
-    "every": 5
+    "every": 5,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "kill_enemies",
+        "n": 15
+      }
+    }
   },
   {
     "id": "r_rust_shield",
@@ -1254,7 +1809,12 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_old_modem",
@@ -1272,7 +1832,12 @@
         "type": "heal",
         "amount": 10
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_neon_tattoo",
@@ -1290,7 +1855,12 @@
         "type": "heal",
         "amount": 2
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_trauma_kit",
@@ -1308,7 +1878,12 @@
         "type": "gain_gold",
         "amount": 15
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_overflow_valve",
@@ -1323,7 +1898,12 @@
         "amount": 6
       }
     ],
-    "every": 2
+    "every": 2,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_chain_lightning",
@@ -1339,7 +1919,12 @@
         "target": "all_enemies"
       }
     ],
-    "every": 5
+    "every": 5,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_dead_mans_switch",
@@ -1365,7 +1950,12 @@
         "type": "lose_hp",
         "amount": 3
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_mirror_mask",
@@ -1385,7 +1975,12 @@
         "type": "block",
         "amount": 4
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_neuro_overload",
@@ -1405,7 +2000,12 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_kamikaze_core",
@@ -1425,14 +2025,19 @@
         "type": "lose_hp",
         "amount": 8
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_dr_remote",
-    "name": "Пульт оператора",
+    "name": "Пульт оператора (ослаблен)",
     "rarity": "starter",
     "classId": "droneop",
-    "description": "Каждый 2-й ход добавляет в руку Дрона-стрелка.",
+    "description": "Каждый 3-й ход добавляет в руку Дрона-стрелка.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1442,7 +2047,36 @@
         "count": 1
       }
     ],
-    "every": 2
+    "every": 3,
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_dr_remote_full"
+  },
+  {
+    "id": "r_dr_remote_full",
+    "name": "Пульт оператора",
+    "rarity": "starter",
+    "classId": "droneop",
+    "description": "Каждый 2-й ход добавляет в руку 2 Дронов-стрелков.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "dr_t_gun",
+        "to": "hand",
+        "count": 2
+      }
+    ],
+    "every": 2,
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_dr_remote"
   },
   {
     "id": "r_dr_charging_dock",
@@ -1458,7 +2092,12 @@
         "to": "hand",
         "count": 2
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_dr_hive_core",
@@ -1478,14 +2117,19 @@
         "type": "lose_hp",
         "amount": 1
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ch_chronometer",
-    "name": "Хронометр",
+    "name": "Хронометр (ослаблен)",
     "rarity": "starter",
     "classId": "chrono",
-    "description": "Каждый 2-й ход получи 1 энергию и возьми 1 карту.",
+    "description": "Каждый 3-й ход получи 1 энергию и возьми 1 карту.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1497,7 +2141,38 @@
         "amount": 1
       }
     ],
-    "every": 2
+    "every": 3,
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_ch_chronometer_full"
+  },
+  {
+    "id": "r_ch_chronometer_full",
+    "name": "Хронометр",
+    "rarity": "starter",
+    "classId": "chrono",
+    "description": "Каждый 2-й ход получи 1 энергию и возьми 2 карты.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gain_energy",
+        "amount": 1
+      },
+      {
+        "type": "draw",
+        "amount": 2
+      }
+    ],
+    "every": 2,
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_ch_chronometer"
   },
   {
     "id": "r_ch_flux_coil",
@@ -1517,14 +2192,19 @@
         "type": "block",
         "amount": 4
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ch_paradox_engine",
     "name": "Парадокс-движок",
     "rarity": "boss",
     "classId": "chrono",
-    "description": "В начале хода получи 1 энергию, но потеряй 2 HP.",
+    "description": "В начале хода получи 1 энергию, но потеряй 2 HP. До конца акта.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1535,19 +2215,57 @@
         "type": "lose_hp",
         "amount": 2
       }
-    ]
+    ],
+    "color": "gold",
+    "kind": "buff",
+    "duration": {
+      "kind": "until",
+      "event": "act_end"
+    }
   },
   {
     "id": "r_vb_lucky_chip",
-    "name": "Счастливая фишка",
+    "name": "Счастливая фишка (ослаблен)",
     "rarity": "starter",
     "classId": "vabanker",
-    "description": "В начале хода 50%: получи 1 энергию и возьми 1 карту. Иначе получи 4 блока.",
+    "description": "В начале хода 40%: получи 1 энергию. Иначе получи 2 блока.",
     "trigger": "turn_start",
     "effects": [
       {
         "type": "gamble",
-        "amount": 50,
+        "amount": 40,
+        "win": [
+          {
+            "type": "gain_energy",
+            "amount": 1
+          }
+        ],
+        "lose": [
+          {
+            "type": "block",
+            "amount": 2
+          }
+        ]
+      }
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "fullId": "r_vb_lucky_chip_full"
+  },
+  {
+    "id": "r_vb_lucky_chip_full",
+    "name": "Счастливая фишка",
+    "rarity": "starter",
+    "classId": "vabanker",
+    "description": "В начале хода 60%: получи 1 энергию и возьми 2 карты. Иначе получи 6 блока.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "gamble",
+        "amount": 60,
         "win": [
           {
             "type": "gain_energy",
@@ -1555,17 +2273,23 @@
           },
           {
             "type": "draw",
-            "amount": 1
+            "amount": 2
           }
         ],
         "lose": [
           {
             "type": "block",
-            "amount": 4
+            "amount": 6
           }
         ]
       }
-    ]
+    ],
+    "color": "class",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    },
+    "weakId": "r_vb_lucky_chip"
   },
   {
     "id": "r_vb_rabbit_foot",
@@ -1597,14 +2321,19 @@
           }
         ]
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_vb_house_chip",
     "name": "Фишка казино",
     "rarity": "boss",
     "classId": "vabanker",
-    "description": "В начале хода получи 1 энергию. 35%: потеряй 5 HP.",
+    "description": "В начале хода получи 1 энергию. 35%: потеряй 5 HP. Действует 8 боёв.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1621,7 +2350,13 @@
           }
         ]
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 8
+    }
   },
   {
     "id": "r_lucky_coin",
@@ -1635,7 +2370,12 @@
         "type": "gain_gold",
         "amount": 10
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_barbed_cable",
@@ -1652,7 +2392,12 @@
         "target": "self"
       }
     ],
-    "every": 5
+    "every": 5,
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_ration_pack",
@@ -1666,14 +2411,19 @@
         "type": "gain_max_hp",
         "amount": 1
       }
-    ]
+    ],
+    "color": "gray",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_focus_lens",
     "name": "Фокусирующая линза",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "В начале боя накладывает 3 Метки на всех врагов.",
+    "description": "В начале боя накладывает 3 Метки на всех врагов. Сгорает после 4 побед.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -1682,14 +2432,23 @@
         "amount": 3,
         "target": "all_enemies"
       }
-    ]
+    ],
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 4
+      }
+    }
   },
   {
     "id": "r_rage_core",
     "name": "Ядро ярости",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждая 4-я сыгранная атака наносит 5 урона всем врагам.",
+    "description": "Каждая 4-я сыгранная атака наносит 5 урона всем врагам. Действует 4 боёв.",
     "trigger": "attack_played",
     "effects": [
       {
@@ -1698,7 +2457,13 @@
         "target": "all_enemies"
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "blue",
+    "kind": "buff",
+    "duration": {
+      "kind": "combats",
+      "n": 4
+    }
   },
   {
     "id": "r_stim_dispenser",
@@ -1715,7 +2480,12 @@
         "target": "self"
       }
     ],
-    "every": 4
+    "every": 4,
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_mirror_shard",
@@ -1731,7 +2501,12 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "green",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_adrenal_port",
@@ -1759,14 +2534,19 @@
         "amount": 2,
         "target": "self"
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
   },
   {
     "id": "r_echo_chamber",
     "name": "Эхо-камера",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "В начале боя получи 1 Эхо: следующая карта сработает дважды.",
+    "description": "В начале боя получи 1 Эхо: следующая карта сработает дважды. Сгорает, когда сыграешь 25 навыков.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -1775,7 +2555,16 @@
         "amount": 1,
         "target": "self"
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_skills",
+        "n": 25
+      }
+    }
   },
   {
     "id": "r_black_ledger",
@@ -1793,6 +2582,761 @@
         "type": "heal",
         "amount": 3
       }
-    ]
+    ],
+    "color": "purple",
+    "kind": "buff",
+    "duration": {
+      "kind": "run"
+    }
+  },
+  {
+    "id": "r_red_trojan",
+    "name": "Троян",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя подсовывает Глитч в колоду. Снимается: выиграй бой без урона.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "glitch",
+        "to": "draw",
+        "count": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_no_damage"
+      }
+    }
+  },
+  {
+    "id": "r_red_memleak",
+    "name": "Утечка памяти",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале хода ты теряешь 1 HP. Снимается: сыграй 15 атак.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_attacks",
+        "n": 15
+      }
+    }
+  },
+  {
+    "id": "r_red_bad_sector",
+    "name": "Битый сектор",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя добавляет 2 Спама в колоду. Пропадает через 3 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "spam",
+        "to": "draw",
+        "count": 2
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 3
+    }
+  },
+  {
+    "id": "r_red_spy_chip",
+    "name": "Шпионский чип",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя добавляет Корпоративный жучок в колоду. Снимается: убей 6 врагов.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "corp_tracker",
+        "to": "draw",
+        "count": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "kill_enemies",
+        "n": 6
+      }
+    }
+  },
+  {
+    "id": "r_red_backdoor_agent",
+    "name": "Бэкдор-агент",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя кладёт Бэкдор в сброс. Снимается: выиграй 3 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "backdoor",
+        "to": "discard",
+        "count": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 3
+      }
+    }
+  },
+  {
+    "id": "r_red_lag_virus",
+    "name": "Лаг-вирус",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя ты получаешь 2 Лага. Пропадает через 3 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 3
+    }
+  },
+  {
+    "id": "r_red_breach_worm",
+    "name": "Червь-брешь",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя ты получаешь 2 Бреши. Снимается: победи элиту.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_elite"
+      }
+    }
+  },
+  {
+    "id": "r_red_fragmenter",
+    "name": "Фрагментатор",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя ты получаешь 2 Фрагментации. Пропадает через 4 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 2,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 4
+    }
+  },
+  {
+    "id": "r_red_hidden_miner",
+    "name": "Скрытый майнер",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя списывает 8 кредитов. Пропадает через 5 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": -8
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 5
+    }
+  },
+  {
+    "id": "r_red_ransomware",
+    "name": "Вымогатель",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "После каждого боя списывает 10 кредитов. Снимается: выиграй 4 боёв.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": -10
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 4
+      }
+    }
+  },
+  {
+    "id": "r_red_overheat",
+    "name": "Перегрев",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В конце хода ты теряешь 1 HP. Снимается: закончи бой с HP не ниже 70%.",
+    "trigger": "turn_end",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "end_combat_hp_above",
+        "pct": 70
+      }
+    }
+  },
+  {
+    "id": "r_red_bleeding_port",
+    "name": "Кровоточащий порт",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя ты получаешь 3 Кровотечения. Пропадает через 2 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "bleed",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 2
+    }
+  },
+  {
+    "id": "r_red_root_virus",
+    "name": "Корневой вирус",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя ты получаешь 3 Вируса. Снимается: выиграй бой без урона.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "virus",
+        "amount": 3,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_no_damage"
+      }
+    }
+  },
+  {
+    "id": "r_red_enemy_overclock",
+    "name": "Разгон врага",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя все враги получают 1 Разгон. Пропадает через 4 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 4
+    }
+  },
+  {
+    "id": "r_red_data_cult",
+    "name": "Культ данных",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя все враги получают 1 Ритуал. Снимается: убей 8 врагов.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "ritual",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "kill_enemies",
+        "n": 8
+      }
+    }
+  },
+  {
+    "id": "r_red_enemy_plating",
+    "name": "Чужая броня",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя все враги получают 3 Броня-патча. Снимается: выиграй 3 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "plating",
+        "amount": 3,
+        "target": "all_enemies"
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 3
+      }
+    }
+  },
+  {
+    "id": "r_red_spike_trap",
+    "name": "Шипы-ловушка",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя все враги получают 2 Контрудара. Снимается: сыграй 12 атак.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "thorns",
+        "amount": 2,
+        "target": "all_enemies"
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_attacks",
+        "n": 12
+      }
+    }
+  },
+  {
+    "id": "r_red_foreign_barrier",
+    "name": "Чужой барьер",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя все враги получают 1 Барьер. Пропадает через 3 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "barrier",
+        "amount": 1,
+        "target": "all_enemies"
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 3
+    }
+  },
+  {
+    "id": "r_red_neural_noise",
+    "name": "Нейрошум",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "Каждая 5-я сыгранная карта отнимает 1 HP. Снимается: убей 5 врагов.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "kill_enemies",
+        "n": 5
+      }
+    },
+    "every": 5
+  },
+  {
+    "id": "r_red_broken_hand",
+    "name": "Битая рука",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале хода случайная карта в руке сгорает. Снимается: сыграй 12 навыков.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "exhaust_random_hand",
+        "amount": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_skills",
+        "n": 12
+      }
+    }
+  },
+  {
+    "id": "r_red_glitch_pack",
+    "name": "Пакет глитчей",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя кладёт 2 Глитча в сброс. Снимается: победи элиту.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "glitch",
+        "to": "discard",
+        "count": 2
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_elite"
+      }
+    }
+  },
+  {
+    "id": "r_red_parasite",
+    "name": "Паразит",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "Каждый 2-й ход ты теряешь 1 HP. Действует весь забег.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 1
+      }
+    ],
+    "duration": {
+      "kind": "run"
+    },
+    "every": 2
+  },
+  {
+    "id": "r_red_debt",
+    "name": "Кредитная кабала",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "После каждого боя списывает 5 кредитов. Действует весь забег.",
+    "trigger": "combat_end",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": -5
+      }
+    ],
+    "duration": {
+      "kind": "run"
+    }
+  },
+  {
+    "id": "r_red_burnout",
+    "name": "Выгорание",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя добавляет Спам в колоду. Действует весь забег.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "spam",
+        "to": "draw",
+        "count": 1
+      }
+    ],
+    "duration": {
+      "kind": "run"
+    }
+  },
+  {
+    "id": "r_red_recoil",
+    "name": "Откат",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "Каждая 4-я атака отнимает у тебя 2 HP. Снимается: сыграй 20 атак.",
+    "trigger": "attack_played",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 2
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "play_attacks",
+        "n": 20
+      }
+    },
+    "every": 4
+  },
+  {
+    "id": "r_red_static",
+    "name": "Статика",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "На привале ты теряешь 5 HP. До конца акта.",
+    "trigger": "rest",
+    "effects": [
+      {
+        "type": "lose_hp",
+        "amount": 5
+      }
+    ],
+    "duration": {
+      "kind": "until",
+      "event": "act_end"
+    }
+  },
+  {
+    "id": "r_red_bad_firmware",
+    "name": "Кривая прошивка",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя ты получаешь 1 Лаг и 1 Брешь. Снимается: выиграй 2 боёв.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "self"
+      },
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 2
+      }
+    }
+  },
+  {
+    "id": "r_red_data_leak",
+    "name": "Утечка данных",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя списывает 12 кредитов и кладёт Спам в сброс. Снимается: закончи бой с HP не ниже 50%.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "gain_gold",
+        "amount": -12
+      },
+      {
+        "type": "add_card",
+        "cardId": "spam",
+        "to": "discard",
+        "count": 1
+      }
+    ],
+    "duration": {
+      "kind": "task",
+      "task": {
+        "kind": "end_combat_hp_above",
+        "pct": 50
+      }
+    }
+  },
+  {
+    "id": "r_red_killswitch",
+    "name": "Рубильник",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "Каждый 3-й ход ты получаешь 1 Лаг. Пропадает через 5 боёв.",
+    "trigger": "turn_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 5
+    },
+    "every": 3
+  },
+  {
+    "id": "r_red_sniffer",
+    "name": "Сниффер",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "Каждый 2-й ход в конце ты получаешь 1 Брешь. До босса.",
+    "trigger": "turn_end",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "vulnerable",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "until",
+      "event": "boss"
+    },
+    "every": 2
+  },
+  {
+    "id": "r_red_hostile_net",
+    "name": "Враждебная сеть",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "В начале боя враги получают 2 Разгона, а ты 1 Фрагментацию. До босса.",
+    "trigger": "combat_start",
+    "effects": [
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 2,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "frail",
+        "amount": 1,
+        "target": "self"
+      }
+    ],
+    "duration": {
+      "kind": "until",
+      "event": "boss"
+    }
+  },
+  {
+    "id": "r_red_corruption",
+    "name": "Порча",
+    "rarity": "common",
+    "classId": "neutral",
+    "color": "red",
+    "kind": "debuff",
+    "description": "Каждая 6-я сыгранная карта кладёт Глитч в сброс. Пропадает через 4 боёв.",
+    "trigger": "card_played",
+    "effects": [
+      {
+        "type": "add_card",
+        "cardId": "glitch",
+        "to": "discard",
+        "count": 1
+      }
+    ],
+    "duration": {
+      "kind": "combats",
+      "n": 4
+    },
+    "every": 6
   }
 ]
