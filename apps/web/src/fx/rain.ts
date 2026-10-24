@@ -41,6 +41,8 @@ class Rain {
   private resizeTimer: ReturnType<typeof setTimeout> | undefined;
   private cell = 20;
   private rows = 40;
+  /** Сколько раз сцену пересоздавали после потери контекста (больше 3 — сдаёмся, фон остаётся CSS) */
+  private restarts = 0;
 
   async mount(host: HTMLElement): Promise<void> {
     const token = ++this.token;
@@ -59,13 +61,18 @@ class Rain {
     app.renderer.events?.setTargetElement(null as unknown as HTMLElement); // снимаем слушатели событий Pixi совсем
     app.ticker.maxFPS = window.innerWidth < 900 ? 15 : 30;
     app.canvas.classList.add('rain-canvas');
-    // Потеря WebGL-контекста (мало памяти GPU): прячем канвас, иначе он может залить экран белым
+    // Потеря WebGL-контекста (мало памяти GPU, вкладка в фоне): прячем канвас, иначе он может залить экран
+    // белым, и пересоздаём сцену — восстановленный контекст Pixi текстуры не возвращает, фон пропадал насовсем
     app.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
       app.canvas.style.visibility = 'hidden';
-    });
-    app.canvas.addEventListener('webglcontextrestored', () => {
-      app.canvas.style.visibility = '';
+      if (this.restarts >= 3) return;
+      this.restarts++;
+      setTimeout(() => {
+        if (this.app !== app) return;
+        this.unmount();
+        void this.mount(host);
+      }, 1000);
     });
     app.canvas.setAttribute('aria-hidden', 'true');
     host.appendChild(app.canvas);
