@@ -177,3 +177,4 @@ export function checkSaveCompat(state: unknown): { ok: true } | { ok: false; rea
   if (v === SAVE_VERSION) return { ok: true };
   return { ok: false, reason: 'Забег создан в старой версии игры (карта и враги обновились). Начните новый забег — профиль и достижения сохранены.' };
 }
+export * from './implants';

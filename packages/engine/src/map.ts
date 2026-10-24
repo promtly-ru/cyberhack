@@ -33,6 +33,12 @@ export function nodeWeights(act: number): Record<RollKind, number> {
     blackbox: [0, 5, 6][a - 1]!,
     relay: 4,
     ambush: [3, 7, 8][a - 1]!,
+    // Импланты v2 — веса выставляет движок (feat/implants-engine)
+    signal: 0,
+    synth: 0,
+    ripperdoc: 0,
+    quarantine: 0,
+    beacon: 0,
   };
 }
 

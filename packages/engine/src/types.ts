@@ -251,6 +251,17 @@ export interface RelicDef {
   effects: Effect[];
   /** Срабатывает каждые N триггеров (например, каждая 3-я атака) */
   every?: number;
+  // ---- Импланты v2 (см. implants.ts) ----
+  /** Цвет (редкость); нет поля — старый формат, считается по rarity */
+  color?: import('./implants').ImplantColor;
+  /** buff — польза, debuff — вред (все красные) */
+  kind?: 'buff' | 'debuff';
+  /** Сколько действует; нет поля — до конца забега */
+  duration?: import('./implants').ImplantDuration;
+  /** Классовый: id полной версии (у ослабленной) */
+  fullId?: string;
+  /** Классовый: id ослабленной версии (у полной) */
+  weakId?: string;
 }
 
 export interface ClassDef {
@@ -395,7 +406,9 @@ export interface CombatState {
 
 // ---------- Карта забега ----------
 
-export type MapNodeKind = 'combat' | 'elite' | 'event' | 'shop' | 'rest' | 'treasure' | 'boss' | 'lab' | 'blackbox' | 'relay' | 'ambush';
+export type MapNodeKind = 'combat' | 'elite' | 'event' | 'shop' | 'rest' | 'treasure' | 'boss' | 'lab' | 'blackbox' | 'relay' | 'ambush'
+  /** Импланты v2: treasure и blackbox больше не генерируются (оставлены для старых сохранений) */
+  | 'signal' | 'synth' | 'ripperdoc' | 'quarantine' | 'beacon';
 
 export interface MapNode {
   id: string; // `${act}-${row}-${col}`
@@ -418,7 +431,7 @@ export type RewardItem =
   | { kind: 'potion'; potionId: string };
 
 export interface ShopItem {
-  kind: 'card' | 'relic' | 'remove' | 'potion' | 'upgrade' | 'refresh';
+  kind: 'card' | 'relic' | 'remove' | 'potion' | 'upgrade' | 'refresh' | 'remove_red';
   id?: string; // id карты/реликвии/расходника
   price: number;
   sold: boolean;
@@ -440,6 +453,8 @@ export type Screen =
   | { kind: 'lab' }
   | { kind: 'blackbox' }
   | { kind: 'relay' }
+  /** Импланты v2: узлы с выбором через node_choice; options — что показать (порядок = index) */
+  | { kind: 'implant_node'; node: 'signal' | 'synth' | 'ripperdoc' | 'quarantine' | 'beacon'; options: import('./implants').ImplantNodeOption[] }
   | { kind: 'event'; eventId: string }
   | { kind: 'select_deck_card'; purpose: 'remove' | 'upgrade' | 'transform'; returnTo: 'map' | 'shop'; /** uid карт, из которых можно выбрать улучшение (1 из 3) */ offer?: string[] }
   | { kind: 'game_over'; victory: boolean };
@@ -484,7 +499,18 @@ export interface RunState {
   maxHp: number;
   gold: number;
   deck: CardInstance[];
+  /** Импланты игрока (id). Внутри кода — «relic», в игре — «имплант» */
   relics: string[];
+  /** Состояние условий имплантов: id → счётчики (см. implants.ts) */
+  implantState?: Record<string, import('./implants').ImplantProgress>;
+  /** Шанс выпадения полного Классового импланта (база CLASS_FULL_BASE, Маяк +BEACON_BONUS) */
+  classFullChance?: number;
+  /** Акты, в которых уже взят Маяк */
+  beaconActs?: number[];
+  /** Сколько красных имплантов снято за кредиты (цена растёт) */
+  redRemovals?: number;
+  /** Очередь только что полученных имплантов — UI показывает крупную карточку, ack_implant убирает первый */
+  implantQueue?: string[];
   /** Прошивки: работают, пока в колоде собраны их карты (см. firmware.ts) */
   firmwares?: string[];
   map: MapNode[];
@@ -550,6 +576,10 @@ export type Action =
   | { type: 'leave_shop' }
   | { type: 'rest_heal' }
   | { type: 'rest_upgrade' } // переводит на select_deck_card
+  /** Привал: выжечь красный имплант (вместо отдыха/улучшения) */
+  | { type: 'rest_burn_red'; relicId: string }
+  /** Закрыть крупную карточку полученного импланта (первый в implantQueue) */
+  | { type: 'ack_implant' }
   | { type: 'select_deck_card'; cardUid: string | null }
   /** На экране улучшения (select_deck_card, purpose upgrade) — улучшить прошивку вместо карты */
   | { type: 'upgrade_firmware'; firmwareId: string }
@@ -583,6 +613,9 @@ export type GameEvent =
   | { type: 'card_exhausted'; cardUid: string }
   | { type: 'gold_changed'; amount: number }
   | { type: 'relic_obtained'; relicId: string }
+  /** Имплант кончился (условие выполнено / бои закончились) или снят */
+  | { type: 'implant_expired'; relicId: string; reason: 'duration' | 'task' | 'removed' | 'synth' | 'swap' }
+  | { type: 'implant_progress'; relicId: string; progress: number; goal: number }
   | { type: 'card_obtained'; defId: string }
   | { type: 'card_removed'; cardUid: string; defId: string }
   | { type: 'card_upgraded'; cardUid: string; defId: string }
