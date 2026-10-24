@@ -170,6 +170,8 @@ export * from './heat';
 export { canCool, canVent } from './combat';
 export * from './zones';
 export { MAP_ROWS, BOSS_ROW, SECTORS, SECTOR_LENGTH, sectorOf } from './map';
+export { TUTORIAL_PATH, generateTutorialMap } from './map';
+export { TUTORIAL_HP_MULT } from './run';
 
 /** Совместим ли сохранённый забег с текущим движком; иначе — причина для игрока (профиль не трогаем). */
 export function checkSaveCompat(state: unknown): { ok: true } | { ok: false; reason: string } {

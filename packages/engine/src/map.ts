@@ -132,3 +132,21 @@ export function generateMap(act: 1 | 2 | 3 | 4, rng: Rng, eliteWeightMult = 1): 
   const boss: MapNode = { id: bossId, act, row: BOSS_ROW, col: 3, kind: 'boss', next: [] };
   return [...rows.flat(), boss];
 }
+
+/** Порядок узлов обучения: каждая механика по разу, затем босс акта 1 */
+export const TUTORIAL_PATH: readonly MapNodeKind[] = ['combat', 'event', 'combat', 'signal', 'shop', 'elite', 'rest', 'boss'];
+
+/** Карта обучения: один путь без развилок, акт 1 */
+export function generateTutorialMap(): MapNode[] {
+  const last = TUTORIAL_PATH.length - 1;
+  const nodes: MapNode[] = TUTORIAL_PATH.map((kind, row) => ({
+    id: nodeId(1, row, 3),
+    act: 1,
+    row,
+    col: 3,
+    kind,
+    next: row < last ? [nodeId(1, row + 1, 3)] : [],
+    ...(row < last ? { sector: (Math.min(2, Math.floor((row * 3) / last)) + 1) as 1 | 2 | 3 } : {}),
+  }));
+  return nodes;
+}

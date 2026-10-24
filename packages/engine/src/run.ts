@@ -19,7 +19,7 @@ import {
   type CombatCtx,
 } from './combat';
 import { getContent } from './content';
-import { generateMap } from './map';
+import { generateMap, generateTutorialMap } from './map';
 import { applyMutators, getMutatorMods, normalizeMutators, ZERO_DAY_RULE_ID } from './mutators';
 import { weeklyMutatorIds } from './weekly';
 import { addPotion, gainPotions, getPotion, hasFreePotionSlot, potionsOf } from './potions';
@@ -66,9 +66,15 @@ import {
 } from './implants';
 
 /** Итоговые модификаторы: Ascension → режим сложности → мутаторы забега. */
-export function modsOf(s: Pick<RunState, 'ascension' | 'difficulty' | 'mutators'>): AscensionMods {
-  return applyMutators(applyDifficulty(getAscensionMods(s.ascension), s.difficulty), s.mutators);
+export function modsOf(s: Pick<RunState, 'ascension' | 'difficulty' | 'mutators'> & { tutorial?: true }): AscensionMods {
+  const m = applyMutators(applyDifficulty(getAscensionMods(s.ascension), s.difficulty), s.mutators);
+  if (!s.tutorial) return m;
+  // Обучение: враги на 30% слабее по HP
+  return { ...m, normalHpMult: m.normalHpMult * TUTORIAL_HP_MULT, eliteHpMult: m.eliteHpMult * TUTORIAL_HP_MULT, bossHpMult: m.bossHpMult * TUTORIAL_HP_MULT };
 }
+
+/** Множитель HP врагов в обучении */
+export const TUTORIAL_HP_MULT = 0.7;
 
 function invalid(msg: string): never {
   throw new InvalidActionError(msg);
@@ -95,6 +101,7 @@ export function newRun(opts: NewRunOptions): RunState {
     ...(opts.difficulty && opts.difficulty !== 'normal' ? { difficulty: opts.difficulty } : {}),
     ...(mutators.length > 0 ? { mutators } : {}),
     ...(opts.weekly ? { weekly: opts.weekly } : {}),
+    ...(opts.tutorial && !opts.weekly ? { tutorial: true as const } : {}),
     ...(opts.heat ? { heat: true } : {}),
     ...(opts.zoneRules === false ? { noZoneRules: true } : {}),
     act: 1,
@@ -155,7 +162,7 @@ function finalAct(): number {
 
 function startAct(s: RunState, act: 1 | 2 | 3 | 4, ev: GameEvent[]): void {
   s.act = act;
-  s.map = generateMap(act, rngOf(s, 'map'), modsOf(s).eliteWeightMult);
+  s.map = s.tutorial ? generateTutorialMap() : generateMap(act, rngOf(s, 'map'), modsOf(s).eliteWeightMult);
   s.currentNodeId = null;
   const bosses = getContent().data.encounters.filter((e) => e.tier === 'boss' && e.act === act);
   if (bosses.length > 0) s.bossEncounterId = rngOf(s, 'map').weighted(bosses.map((b) => [b.id, b.weight ?? 1] as [string, number]));
@@ -310,7 +317,7 @@ function onCombatWon(s: RunState, ctx: CombatCtx, ev: GameEvent[]): void {
   if (tier === 'boss') s.stats.bossesKilled += 1;
   s.combat = null;
   onImplantCombatWon(s, tier, ev);
-  if (tier === 'boss' && s.act >= finalAct()) {
+  if (tier === 'boss' && (s.tutorial || s.act >= finalAct())) {
     s.status = 'won';
     s.screen = { kind: 'game_over', victory: true };
     return;
@@ -841,7 +848,8 @@ function implantChoice(s: RunState, screen: Extract<Screen, { kind: 'implant_nod
   };
   switch (screen.node) {
     case 'signal':
-      give(rollImplant(s, rng));
+      // Обучение: первый имплант с Перехвата не красный — показываем нормальный
+      give(rollImplant(s, rng, s.tutorial ? { noRed: true } : {}));
       break;
     case 'beacon':
       if ((s.beaconActs ?? []).includes(s.act)) invalid('Beacon already used this act');

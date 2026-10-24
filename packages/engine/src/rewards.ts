@@ -166,7 +166,9 @@ export function buildCombatRewards(s: RunState, tier: CombatTier, mods: Ascensio
   }
   // Расходник: свой поток ГСЧ (не сдвигает остальные награды); в конце списка — индексы прежних наград не меняются
   const potionChance = POTION_DROP_CHANCE[tier] + getMutatorMods(s.mutators).potionChanceBonus;
-  if (ambush || extRng(s, 'potions').next() < potionChance) items.push({ kind: 'potion', potionId: rollPotion(s) });
+  // Обучение: в первой награде расходник гарантирован
+  const tutorialPotion = !!s.tutorial && s.floor <= 1;
+  if (ambush || tutorialPotion || extRng(s, 'potions').next() < potionChance) items.push({ kind: 'potion', potionId: rollPotion(s) });
   return items;
 }
 
