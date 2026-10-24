@@ -55,8 +55,6 @@
 @media (max-width: 767px) {
   .potion-bar .topbar__relics-label { display: none; }
   .potion-slot { width: 30px; height: 30px; }
-  .topbar .potion-bar { position: absolute; right: 10px; bottom: 6px; }
-  .topbar .topbar__relics { padding-right: 112px; min-height: 32px; }
 }
 
 /* ---------- Награда и магазин ---------- */

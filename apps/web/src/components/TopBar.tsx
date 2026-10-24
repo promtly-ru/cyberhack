@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { RunState } from '../game/engine';
 import { Icon } from './Icon';
-import { ImplantIcon, ImplantMenuButton, ImplantQueueOverlay } from './implants';
+import { ImplantRow, ImplantQueueOverlay } from './implants';
 import { FirmwareButton } from './firmware/FirmwareModal';
 import { tip } from './Tooltip';
 import { CardGridModal } from './CardGridModal';
@@ -65,19 +65,11 @@ export function TopBar({ run }: { run: RunState }) {
           </span>
         ) : null}
       </div>
-      <div className="topbar__relics" aria-label="Импланты">
-        {run.relics.length ? (
-          <span className="topbar__relics-label" aria-hidden="true">
-            Импланты
-          </span>
-        ) : null}
-        {run.relics.map((id) => (
-          <ImplantIcon key={id} id={id} run={run} size="sm" />
-        ))}
+      <div className="topbar__row2">
+        <ImplantRow run={run} />
+        <PotionBar run={run} />
       </div>
       <div className="topbar__actions">
-        <PotionBar run={run} />
-        <ImplantMenuButton run={run} />
         <FirmwareButton mode="run" />
         <button
           className="icon-btn icon-btn--count"

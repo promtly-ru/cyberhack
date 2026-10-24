@@ -57,7 +57,7 @@ export function implantCondition(def: RelicDef | null | undefined, st?: ImplantP
   return `${isRed(def) ? 'Снимется' : 'Сгорит'}, когда ${taskText(d.task)} (${st?.progress ?? 0}/${implantGoal(d)})`;
 }
 
-export function ImplantIcon({ id, run, size = 'md', onClick }: { id: string; run?: Pick<RunState, 'implantState'>; size?: 'sm' | 'md' | 'lg'; onClick?: () => void }) {
+export function ImplantIcon({ id, run, size = 'md', onClick, focusable = true }: { id: string; run?: Pick<RunState, 'implantState'>; size?: 'sm' | 'md' | 'lg'; onClick?: () => void; focusable?: boolean }) {
   const def = tryRelicDef(id) ?? null;
   const color = implantColor(def);
   const st = run?.implantState?.[id];
@@ -65,7 +65,7 @@ export function ImplantIcon({ id, run, size = 'md', onClick }: { id: string; run
   const title = def?.name ?? id;
   const text = `${IMPLANT_COLOR_NAMES[color]} · ${def?.description ?? ''} ${implantCondition(def, st)}`;
   return (
-    <span className={`relic relic--${size} imp imp--${color}`} tabIndex={0} role={onClick ? 'button' : undefined} data-fx-target={`relic-${id}`} aria-label={`${title}: ${text}`} onClick={onClick} {...tip(title, text)}>
+    <span className={`relic relic--${size} imp imp--${color}`} tabIndex={focusable ? 0 : undefined} role={onClick ? 'button' : undefined} data-fx-target={`relic-${id}`} aria-label={`${title}: ${text}`} onClick={onClick} {...tip(title, text)}>
       <RelicGlyph id={id} />
       {badge ? <span className="imp__badge mono">{badge}</span> : null}
     </span>
@@ -113,32 +113,56 @@ export function ImplantQueueOverlay({ run }: { run: RunState }) {
       dispatch({ type: 'ack_implant' });
       return;
     }
+    // Карточка летит в ряд имплантов на топбаре (data-fx-target="implant-menu")
+    const target = document.querySelector('[data-fx-target="implant-menu"]')?.getBoundingClientRect();
+    if (target) {
+      document.documentElement.style.setProperty('--imp-fly-x', `${Math.round(target.left + target.width / 2 - innerWidth / 2)}px`);
+      document.documentElement.style.setProperty('--imp-fly-y', `${Math.round(target.top + target.height / 2 - innerHeight / 2)}px`);
+    }
     setFlying(true);
     window.setTimeout(() => dispatch({ type: 'ack_implant' }), 420);
   };
   return <ImplantCardView id={id} run={run} action={accept} label="Принять" flying={flying} />;
 }
 
-export function ImplantMenuButton({ run }: { run: RunState }) {
+/** Ряд имплантов на топбаре — единственная кнопка меню имплантов. ПК: тултипы на иконках (hover); тап/клик — меню. */
+export function ImplantRow({ run }: { run: RunState }) {
   const [open, setOpen] = useState(false);
   const n = run.relics.length;
+  const show = () => {
+    sfx('click');
+    setOpen(true);
+  };
   return (
     <>
-      <button
-        className="icon-btn icon-btn--count"
+      <div
+        className={`topbar__relics${n ? '' : ' is-empty'}`}
+        role="button"
+        tabIndex={0}
         data-fx-target="implant-menu"
         data-testid="implant-menu-btn"
-        aria-label={`Импланты: ${n}`}
-        onClick={() => {
-          sfx('click');
-          setOpen(true);
+        data-tip-touch="off"
+        aria-label={`Импланты: ${n}. Открыть меню имплантов`}
+        onClick={show}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            show();
+          }
         }}
-        {...tip(`Импланты: ${n}`, 'Все твои импланты: цвет, описание и условие.')}
       >
-        <Icon name="crown" />
-        <span className="stat__label">Импланты</span>
-        <span className="count mono">{n}</span>
-      </button>
+        <span className="topbar__relics-label" aria-hidden="true">
+          Импланты
+        </span>
+        <span className="topbar__relics-list">
+          {run.relics.map((id) => (
+            <ImplantIcon key={id} id={id} run={run} size="sm" focusable={false} />
+          ))}
+        </span>
+        <span className="topbar__relics-count mono" aria-hidden="true">
+          {n}
+        </span>
+      </div>
       {open ? <ImplantMenu run={run} onClose={() => setOpen(false)} /> : null}
     </>
   );
