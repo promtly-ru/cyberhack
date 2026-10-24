@@ -106,9 +106,15 @@ function onGameChange(g: GameState): void {
   const t = useTutorial.getState();
   if (!t.active) return;
   const run = g.run;
-  // Забег сменился, проигран или это не обучение — обучение молча завершается
-  if (!run || !run.tutorial || run.status === 'lost') {
+  // Забег сменился или это не обучение — обучение молча завершается
+  if (!run || !run.tutorial) {
     stop();
+    return;
+  }
+  // Проиграл — финал «Почти получилось» с повтором (обучение не засчитывается)
+  if (run.status === 'lost') {
+    const lost = STEPS.findIndex((s) => s.id === 'lost');
+    if (t.index !== lost) useTutorial.setState({ index: lost });
     return;
   }
   const step = STEPS[t.index];
@@ -181,6 +187,19 @@ export function prevStep(): void {
   const c = ctxOf(useGame.getState(), t);
   const i = c ? prevIndex(t.index, c) : -1;
   if (i >= 0) useTutorial.setState({ index: i });
+}
+
+/** Проиграл в обучении — новый учебный забег тем же классом (сид снова случайный). */
+export function retryTutorial(): void {
+  const run = useGame.getState().run;
+  stop();
+  beginTutorial(run?.classId, run?.difficulty);
+}
+
+/** Выйти из проигранного обучения в меню, не засчитывая его. */
+export function stopToMenu(): void {
+  stop();
+  useGame.getState().toMenu();
 }
 
 export function skipTutorial(): void {

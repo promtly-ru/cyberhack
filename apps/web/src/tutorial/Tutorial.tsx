@@ -9,7 +9,7 @@ import { CLASS_STYLE } from '../screens/MenuScreens';
 import { isReducedMotion } from '../ui/settings';
 import { sfx } from '../audio/sfx';
 import { COUNTED, STEPS, type Step } from './steps';
-import { beginTutorial, canGoBack, ctxOf, declineInvite, finishToNewRun, finishTutorial, hasActiveRun, nextStep, prevStep, skipTutorial, useTutorial } from './tutorialStore';
+import { beginTutorial, canGoBack, ctxOf, declineInvite, finishToNewRun, finishTutorial, hasActiveRun, nextStep, prevStep, retryTutorial, skipTutorial, stopToMenu, useTutorial } from './tutorialStore';
 import { ScreenHint, TopPlaque } from './hints';
 
 /** Запустить обучение (из меню или из приглашения при первом запуске). */
@@ -182,7 +182,8 @@ function Coach() {
     const onKey = (e: KeyboardEvent) => {
       if (document.querySelector('.modal')) return; // открыта модалка (стопка, настройки) — Esc закрывает её
       if (e.key === 'Escape') {
-        if (step.mode === 'final') finishTutorial();
+        if (step.id === 'lost') stopToMenu();
+        else if (step.mode === 'final') finishTutorial();
         else skipTutorial();
         return;
       }
@@ -192,7 +193,8 @@ function Coach() {
       if (t && t !== document.body && t.closest('button, a, input, select, textarea, [role="button"], [tabindex]')) return;
       if (step.mode === 'final') {
         e.preventDefault();
-        finishTutorial(true);
+        if (step.id === 'lost') retryTutorial();
+        else finishTutorial(true);
       } else if (showNext) {
         e.preventDefault();
         nextStep();
@@ -246,19 +248,26 @@ function Coach() {
         </div>
         {step.mode === 'final' ? (
           <div className="tut-bubble__actions">
-            <button className="btn btn--ghost btn--sm" data-testid="tutorial-new-run" onClick={finishToNewRun}>
-              Новый забег
-            </button>
+            {step.id === 'lost' ? (
+              <button className="btn btn--ghost btn--sm" data-testid="tutorial-menu" onClick={() => { sfx('click'); stopToMenu(); }}>
+                В меню
+              </button>
+            ) : (
+              <button className="btn btn--ghost btn--sm" data-testid="tutorial-new-run" onClick={finishToNewRun}>
+                Новый забег
+              </button>
+            )}
             <button
               ref={primaryRef}
               className="btn btn--primary btn--sm"
-              data-testid="tutorial-menu"
+              data-testid={step.id === 'lost' ? 'tutorial-retry' : 'tutorial-menu'}
               onClick={() => {
                 sfx('click');
-                finishTutorial(true);
+                if (step.id === 'lost') retryTutorial();
+                else finishTutorial(true);
               }}
             >
-              В меню
+              {step.id === 'lost' ? 'Ещё раз' : 'В меню'}
             </button>
           </div>
         ) : (
