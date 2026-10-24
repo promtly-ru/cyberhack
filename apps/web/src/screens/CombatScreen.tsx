@@ -115,6 +115,15 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   const dispatch = useGame((s) => s.dispatch);
   const [selected, setSelected] = useState<string | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
+  // Убитые враги: через ~1 с (эффект смерти отыграл) убираем с поля — иначе невидимые «пустые» юниты
+  // занимали место, живые уезжали в сторону и мельчали (особенно после призывов)
+  const [goneUids, setGoneUids] = useState<ReadonlySet<string>>(() => new Set());
+  const deadKey = combat.enemies.filter((e) => e.hp <= 0).map((e) => e.uid).join(',');
+  useEffect(() => {
+    if (!deadKey) return;
+    const t = setTimeout(() => setGoneUids((prev) => new Set([...prev, ...deadKey.split(',')])), 950);
+    return () => clearTimeout(t);
+  }, [deadKey]);
   const [dragUid, setDragUid] = useState<string | null>(null);
   const [pile, setPile] = useState<'draw' | 'discard' | 'exhaust' | null>(null);
   const [hint, setHint] = useState<string | null>(null);
@@ -466,6 +475,8 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   }
 
   const player = combat.player;
+  // Последнего убитого оставляем, пока бой не закончится (экран победы сменит бой сам)
+  const shownEnemies = combat.enemies.filter((e) => !goneUids.has(e.uid) || combat.enemies.every((x) => x.hp <= 0));
   return (
     <div
       className={`screen combat${frozen ? ' is-frozen' : ''}${selectedTargeted ? ' is-targeting' : ''}`}
@@ -477,7 +488,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
     >
       <div className="zone-bg" aria-hidden="true" />
       <TopBar run={run} />
-      <div className="battlefield" onClick={onFieldClick}>
+      <div className="battlefield" onClick={onFieldClick} data-enemies={shownEnemies.length}>
         <div className="battlefield__grid" aria-hidden="true" />
         <div className={`player-zone${hoverTarget === 'play' ? ' is-drop' : ''}`} data-tut="player">
           <div className="unit unit--player" data-fx-target="player" style={{ '--unit-color': CLASS_COLOR[run.classId] } as CSSProperties}>
@@ -492,8 +503,8 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
             </div>
           </div>
         </div>
-        <div className={`enemy-zone n-${combat.enemies.length}`}>
-          {combat.enemies.map((e) => {
+        <div className={`enemy-zone n-${shownEnemies.length}`}>
+          {shownEnemies.map((e) => {
             const info = enemyInfo(e);
             const dead = e.hp <= 0;
             const targetable = !!(selectedTargeted && validTargets?.has(e.uid));

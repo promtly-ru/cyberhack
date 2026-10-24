@@ -1026,7 +1026,7 @@ export function replay(opts: NewRunOptions, actions: Action[]): RunState {
 // ---------------------------------------------------------------------------
 
 export type DevScenario = 'map' | 'combat' | 'reward' | 'card_pick' | 'shop' | 'rest' | 'event' | 'deck' | 'defeat' | 'victory' | 'implants' | 'implant_node'
-  | 'shop_none' | 'shop_one' | 'shop_red' | 'synth_empty' | 'ripperdoc' | 'quarantine' | 'beacon' | 'signal';
+  | 'shop_none' | 'shop_one' | 'shop_red' | 'synth_empty' | 'ripperdoc' | 'quarantine' | 'beacon' | 'signal' | 'combat_dead' | 'upgrade';
 
 /** Реалистичный забег в середине первого акта: бой с 2 врагами, рука 5 карт, статусы, намерения. */
 export function mockCombatRun(): RunState {
@@ -1074,6 +1074,15 @@ export function mockCombatRun(): RunState {
 export function mockScenario(kind: DevScenario): RunState {
   const s = mockCombatRun();
   if (kind === 'combat') return s;
+  // Бой после призыва: 4 врага, двое крайних уже убиты — живые должны встать на место (проверка вёрстки)
+  if (kind === 'combat_dead' && s.combat) {
+    const [a, b] = s.combat.enemies;
+    if (a && b) {
+      const ghost = (src: typeof a, uid: string) => ({ ...src, uid, hp: 0, statuses: {} });
+      s.combat.enemies = [ghost(b, 'dead1'), a, ghost(b, 'dead2'), b];
+    }
+    return s;
+  }
   s.combat = null;
   switch (kind) {
     case 'map':
@@ -1098,6 +1107,9 @@ export function mockScenario(kind: DevScenario): RunState {
       break;
     case 'deck':
       s.screen = { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' };
+      break;
+    case 'upgrade':
+      s.screen = { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map', offer: s.deck.filter((c) => !c.upgraded).slice(0, 3).map((c) => c.uid) };
       break;
     case 'implants':
       s.relics = MOCK_IMPLANTS.map((r) => r.id);

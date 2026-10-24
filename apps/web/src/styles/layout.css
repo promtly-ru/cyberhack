@@ -117,7 +117,8 @@
 /* ---------- Экраны забега: закреплённая панель кнопок ----------
    Тело экрана оставляет снизу место под подсказку (--plaque-h), поэтому в конце прокрутки
    панель кнопок не наезжает на последние товары/разделы, а подсказка — на кнопки. */
-.run-screen__body { padding-bottom: calc(16px + var(--plaque-h, 0px)); scroll-padding-bottom: 96px; }
+.run-screen__body { padding-bottom: 16px; scroll-padding-bottom: 96px; }
+.shop-screen .run-screen__body { padding-bottom: calc(16px + var(--plaque-h, 0px)); }
 .run-screen__body > .actions,
 .run-screen__body .upgrade-pick > .actions {
   z-index: var(--z-sticky);
@@ -227,4 +228,21 @@ html { scroll-padding-top: 116px; scroll-padding-bottom: 96px; }
   .shop-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
   .shop-cards > .shop-item { flex: 0 0 168px; max-width: 168px; }
   .shop-lower { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+}
+
+/* ---------- Выбор карты из колоды (улучшение / удаление / трансформация) ----------
+   Мало карт — крупные и по центру; на широком экране две колонки: слева выбор, справа «было → стало»,
+   чтобы на больших разрешениях ничего не листать. */
+.card-grid--select { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.card-grid--select .select-card { flex: 0 0 136px; max-width: 136px; }
+.card-grid--few .select-card { flex-basis: clamp(140px, 13vw, 200px); max-width: clamp(140px, 13vw, 200px); }
+.card-grid--select .select-card .card { max-width: none; }
+.deck-select__placeholder { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0; padding: 22px; border: 1px dashed var(--line-2); border-radius: 14px; color: var(--text-dim); text-align: center; }
+@media (min-width: 1100px) and (min-height: 640px) {
+  .deck-select__layout.is-split { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr); gap: 28px; align-items: center; }
+  .deck-select__layout.is-split .confirm-bar { position: static; }
+  .deck-select__layout.is-split .upgrade-preview { --card-w: clamp(150px, 12vw, 200px); }
+  .deck-select__layout.is-split .deck-select__placeholder { min-height: 300px; }
+  .deck-select__layout.is-split .card-grid--few { flex-wrap: nowrap; }
+  .deck-select__layout.is-split .card-grid--few .select-card { flex-shrink: 1; }
 }
