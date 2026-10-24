@@ -1139,7 +1139,7 @@ export function mockScenario(kind: DevScenario): RunState {
       s.screen = { kind: 'implant_node', node: 'quarantine', options: [{ label: 'Снять: Лаг-вирус', hint: 'Красный имплант удаляется', relicIds: ['imp_red_lag'] }, { label: '+38 кредитов', gold: 38 }] };
       break;
     case 'beacon':
-      s.screen = { kind: 'implant_node', node: 'beacon', options: [{ label: '+5% к шансу Классового', hint: 'До конца забега', disabled: true }] };
+      s.screen = { kind: 'implant_node', node: 'beacon', options: [{ label: '+5% к шансу Классового', hint: 'Уже использован в этом акте', disabled: true }] };
       break;
     case 'signal':
       s.relics = [];

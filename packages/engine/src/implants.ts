@@ -308,7 +308,7 @@ export function implantNodeOptions(s: RunState, node: Exclude<ImplantNodeKind, '
       return [
         {
           label: `+${Math.round(BEACON_BONUS * 100)}% к шансу Классового`,
-          hint: 'До конца забега',
+          hint: (s.beaconActs ?? []).includes(s.act) ? 'Уже использован в этом акте' : 'До конца забега',
           disabled: (s.beaconActs ?? []).includes(s.act),
         },
       ];
