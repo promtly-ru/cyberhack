@@ -971,5 +971,41 @@
       "boss_forgotten"
     ],
     "weight": 0.25
+  },
+  {
+    "id": "a1_q_camera",
+    "act": 1,
+    "tier": "normal",
+    "enemies": [
+      "a1_camera"
+    ],
+    "quarantine": true
+  },
+  {
+    "id": "a2_q_rack_rat",
+    "act": 2,
+    "tier": "normal",
+    "enemies": [
+      "a2_rack_rat"
+    ],
+    "quarantine": true
+  },
+  {
+    "id": "a3_q_token_swarm",
+    "act": 3,
+    "tier": "normal",
+    "enemies": [
+      "a3_token_swarm"
+    ],
+    "quarantine": true
+  },
+  {
+    "id": "a4_q_glitch_shard",
+    "act": 4,
+    "tier": "normal",
+    "enemies": [
+      "a4_glitch_shard"
+    ],
+    "quarantine": true
   }
 ]

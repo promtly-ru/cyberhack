@@ -180,4 +180,57 @@ describe('content', () => {
     const idx = buildIndex(fixtureContent());
     expect(idx.cards.get('strike')?.id).toBe('strike');
   });
+
+  describe('импланты v2 (данные)', () => {
+    const relics = defaultContent.relics;
+    const colors = ['red', 'gray', 'green', 'blue', 'purple', 'gold', 'class'];
+
+    it('у каждого импланта есть цвет и kind', () => {
+      for (const r of relics) {
+        expect(colors, r.id).toContain(r.color);
+        expect(['buff', 'debuff'], r.id).toContain(r.kind);
+      }
+    });
+
+    it('красные: kind debuff, не меньше 26', () => {
+      const reds = relics.filter((r) => r.color === 'red');
+      expect(reds.length).toBeGreaterThanOrEqual(26);
+      for (const r of reds) expect(r.kind, r.id).toBe('debuff');
+      expect(relics.filter((r) => r.kind === 'debuff').every((r) => r.color === 'red')).toBe(true);
+    });
+
+    it('duration валиден', () => {
+      const taskKinds = ['win_no_damage', 'play_attacks', 'play_skills', 'kill_enemies', 'win_combats', 'win_elite', 'end_combat_hp_above'];
+      for (const r of relics) {
+        const d = r.duration!;
+        expect(['run', 'combats', 'until', 'task'], r.id).toContain(d.kind);
+        if (d.kind === 'combats') expect(d.n, r.id).toBeGreaterThan(0);
+        if (d.kind === 'until') expect(['boss', 'rest', 'act_end'], r.id).toContain(d.event);
+        if (d.kind === 'task') expect(taskKinds, r.id).toContain(d.task.kind);
+      }
+    });
+
+    it('классовые: стартовый ослаблен, полная версия связана назад', () => {
+      const byId = new Map(relics.map((r) => [r.id, r]));
+      for (const c of defaultContent.classes) {
+        const weak = byId.get(c.startingRelic)!;
+        expect(weak.color, c.id).toBe('class');
+        expect(weak.fullId, c.id).toBeTruthy();
+        const full = byId.get(weak.fullId!)!;
+        expect(full, c.id).toBeDefined();
+        expect(full.color).toBe('class');
+        expect(full.weakId).toBe(weak.id);
+      }
+    });
+
+    it('карантинные энкаунтеры есть, враги существуют', () => {
+      const q = defaultContent.encounters.filter((e) => (e as { quarantine?: boolean }).quarantine);
+      expect(q.length).toBeGreaterThanOrEqual(3);
+      const enemyIds = new Set(defaultContent.enemies.map((e) => e.id));
+      for (const e of q) {
+        expect(e.tier).toBe('normal');
+        for (const id of e.enemies) expect(enemyIds.has(id), id).toBe(true);
+      }
+    });
+  });
 });
