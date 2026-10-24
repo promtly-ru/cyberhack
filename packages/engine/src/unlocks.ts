@@ -571,6 +571,8 @@ function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, vict
  */
 export function evaluateRunEnd(profile: MetaProfile, finalState: RunState): RunEndResult {
   const s = finalState;
+  // Обучение не идёт в рекорды, счётчики и достижения
+  if (s.tutorial) return { newAchievements: [], unlocked: { classes: [], cards: [], relics: [] }, profile };
   const victory = s.status === 'won';
   const next: MetaProfile = {
     ...profile,
