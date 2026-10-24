@@ -13,6 +13,7 @@
 .kind-shop { --k: var(--acid); } .kind-rest { --k: var(--green); } .kind-treasure { --k: var(--cyan); }
 .kind-boss { --k: var(--magenta); } .kind-lab { --k: #7df9c2; } .kind-blackbox { --k: #ffd23f; }
 .kind-relay { --k: #5ec8ff; } .kind-ambush { --k: #ff5470; }
+.kind-signal { --k: #5ec8ff; } .kind-synth { --k: #3dff8a; } .kind-ripperdoc { --k: #b86bff; } .kind-quarantine { --k: #ff3b5c; } .kind-beacon { --k: #ffd23f; }
 
 .mm-here { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 10px; padding: 6px 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--k, var(--text)); font-size: 14px; }
 .mm-here span { color: var(--text); }

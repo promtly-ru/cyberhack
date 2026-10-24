@@ -31,12 +31,17 @@ export const NODE_REWARD_MARKS: Partial<Record<MapNodeKind, string[]>> = {
   elite: ['crown', 'deck'],
   ambush: ['deck', 'potion', 'gold'],
   treasure: ['crown'],
+  signal: ['crown'],
+  ripperdoc: ['crown'],
+  synth: ['crown'],
   relay: ['potion'],
   blackbox: ['crown'],
 };
 const MARK_NAME: Record<string, string> = { deck: 'карты', crown: 'имплант', potion: 'расходник', gold: 'кредиты' };
 
-const RISK_KINDS: MapNodeKind[] = ['elite', 'ambush', 'blackbox'];
+const RISK_KINDS: MapNodeKind[] = ['elite', 'ambush', 'blackbox', 'quarantine'];
+/** Старые узлы: на карте больше не генерируются, остаются в NODE_LABEL ради старых сохранений */
+const LEGACY_KINDS: MapNodeKind[] = ['treasure', 'blackbox'];
 
 function Marks({ kind }: { kind: MapNodeKind }) {
   const marks = NODE_REWARD_MARKS[kind] ?? [];
@@ -81,7 +86,7 @@ export function MapScreen({ run }: { run: RunState }) {
   // Рекомендуемый безопасный путь: от текущей позиции вперёд, избегая элит и засад
   const safePath = useMemo(() => {
     const out = new Set<string>();
-    const cost = (k: MapNodeKind) => (k === 'elite' ? 4 : k === 'ambush' ? 3 : k === 'blackbox' ? 1.5 : k === 'combat' ? 1 : k === 'rest' || k === 'relay' ? -1 : 0);
+    const cost = (k: MapNodeKind) => (k === 'elite' ? 4 : k === 'ambush' ? 3 : k === 'blackbox' || k === 'quarantine' ? 1.5 : k === 'combat' ? 1 : k === 'rest' || k === 'relay' ? -1 : 0);
     const memo = new Map<string, number>();
     const best = (id: string): number => {
       const m = memo.get(id);
@@ -212,7 +217,7 @@ export function MapScreen({ run }: { run: RunState }) {
         <details className="mm-fold map-legend">
           <summary>Легенда</summary>
           <ul>
-            {(Object.keys(NODE_LABEL) as MapNodeKind[]).map((k) => (
+            {(Object.keys(NODE_LABEL) as MapNodeKind[]).filter((k) => !LEGACY_KINDS.includes(k)).map((k) => (
               <li key={k} className={`kind-${k}`}>
                 <span className="legend-icon">
                   <Icon name={k} size={20} />
@@ -224,7 +229,7 @@ export function MapScreen({ run }: { run: RunState }) {
               </li>
             ))}
           </ul>
-          <p className="muted small">Значки наград на карточках: карты, имплант, расходник, кредиты. «Рекомендуем» — узел безопасного пути, «Риск» — элита, засада или чёрный ящик.</p>
+          <p className="muted small">Значки наград на карточках: карты, имплант, расходник, кредиты. «Рекомендуем» — узел безопасного пути, «Риск» — элита, засада или карантин.</p>
         </details>
       </div>
     </div>

@@ -107,7 +107,7 @@ function legendVisible(): boolean {
 }
 
 function NodeKinds() {
-  const kinds: MapNodeKind[] = ['combat', 'elite', 'event', 'shop', 'rest', 'treasure', 'boss'];
+  const kinds: MapNodeKind[] = ['combat', 'elite', 'event', 'shop', 'rest', 'signal', 'boss'];
   return (
     <ul className="tut-kinds">
       {kinds.map((k) => (

@@ -449,6 +449,40 @@ const P: Record<string, ReactNode> = {
       <path d="M4 20.5v-5h5" />
     </>
   ),
+  signal: (
+    <>
+      <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
+      <path d="M8 8a5.7 5.7 0 0 0 0 8M16 8a5.7 5.7 0 0 1 0 8M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14" />
+    </>
+  ),
+  synth: (
+    <>
+      <circle cx="8" cy="9" r="4.5" />
+      <circle cx="16" cy="9" r="4.5" />
+      <path d="M12 15v6M9 18l3 3 3-3" />
+    </>
+  ),
+  ripperdoc: (
+    <>
+      <path d="M4 8h16M4 16h16" />
+      <path d="M16.5 4.5L20 8l-3.5 3.5M7.5 12.5L4 16l3.5 3.5" />
+    </>
+  ),
+  quarantine: (
+    <>
+      <path d="M12 3l9 16H3z" />
+      <path d="M12 9.5v4.5" />
+      <circle cx="12" cy="16.6" r=".9" fill="currentColor" stroke="none" />
+    </>
+  ),
+  beacon: (
+    <>
+      <path d="M12 10l-4 11h8z" />
+      <path d="M9.5 16h5" />
+      <circle cx="12" cy="7.5" r="2" fill="currentColor" stroke="none" />
+      <path d="M12 2v1.5M5.5 4.5l1 1M18.5 4.5l-1 1" />
+    </>
+  ),
   crown: (
     <>
       <path d="M3.5 18.5L2.5 7l5.5 5 4-7 4 7 5.5-5-1 11.5z" />

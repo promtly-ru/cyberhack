@@ -10,6 +10,9 @@ import { getMutator, getPotion, POTION_SLOTS, weeklyTitle } from '../game/engine
 import { Icon } from '../components/Icon';
 import { tip } from '../components/Tooltip';
 import { sfx } from '../audio/sfx';
+import { ImplantIcon, implantColor, implantCondition } from '../components/implants';
+import { IMPLANT_COLOR_NAMES } from '../game/engine';
+import { NODE_LABEL } from './MapScreen';
 import { RunEndUnlocks, WeeklyBoard, weekLabel } from './MetaBits';
 
 function cardName(id: string | undefined): string {
@@ -193,6 +196,8 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
   );
   const saleTag = (it: ShopItem) => (it.sale && !it.sold ? <span className="sale-tag" data-testid="sale-tag"><Icon name="sale" size={13} /> −30%</span> : null);
   const upgrades = indexed.filter((x) => x.it.kind === 'upgrade');
+  const removeReds = indexed.filter((x) => x.it.kind === 'remove_red');
+  const hasRed = run.relics.some((id) => implantColor(tryRelicDef(id)) === 'red');
   const refreshes = indexed.filter((x) => x.it.kind === 'refresh');
   const canUpgrade = run.deck.some((c) => !c.upgraded) || upgradableFirmwares(run).length > 0;
   const quote = TRADER_QUOTES[Math.min(run.act, 4) - 1] ?? TRADER_QUOTES[0]!;
@@ -218,9 +223,10 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
             {relics.map(({ it, i }) => {
               const d = it.id ? tryRelicDef(it.id) : null;
               return (
-                <button key={i} className={`shop-relic${it.sold ? ' is-sold' : ''}${it.sale ? ' is-sale' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}${it.sold ? ' — продано' : `, цена ${it.price}`}`} {...tip(d?.name ?? '', d?.description ?? '')}>
+                <button key={i} className={`shop-relic imp-shop imp--${implantColor(d)}${it.sold ? ' is-sold' : ''}${it.sale ? ' is-sale' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}, ${IMPLANT_COLOR_NAMES[implantColor(d)]}${it.sold ? ' — продано' : `, цена ${it.price}`}`} {...tip(d?.name ?? '', `${IMPLANT_COLOR_NAMES[implantColor(d)]} · ${d?.description ?? ''} ${implantCondition(d)}`)}>
                   <span className="shop-relic__icon">{it.id ? <RelicGlyph id={it.id} /> : null}</span>
-                  <span className="shop-relic__name">{d?.name ?? it.id}</span>
+                  <span className={`shop-relic__name imp-text--${implantColor(d)}`}>{d?.name ?? it.id}</span>
+                  <small className="imp-shop__color">{IMPLANT_COLOR_NAMES[implantColor(d)]}</small>
                   {saleTag(it)}
                   {price(it)}
                 </button>
@@ -237,6 +243,16 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
               <span>
                 <b>Удалить карту</b>
                 <small>Стереть одну карту из колоды</small>
+              </span>
+              {price(it)}
+            </button>
+          ))}
+          {removeReds.map(({ it, i }) => (
+            <button key={i} className={`shop-service${it.sold ? ' is-sold' : ''}`} data-testid="shop-remove-red" onClick={() => buy(i, it)} disabled={it.sold || !hasRed}>
+              <Icon name="skull" size={26} />
+              <span>
+                <b>Снять красный имплант</b>
+                <small>{hasRed ? 'Убрать один красный имплант (цена растёт)' : 'Красных имплантов нет'}</small>
               </span>
               {price(it)}
             </button>
@@ -400,8 +416,14 @@ export function RestScreen({ run }: { run: RunState }) {
   const dispatch = useGame((s) => s.dispatch);
   const heal = Math.floor(run.maxHp * 0.3);
   const canUpgrade = run.deck.some((c) => !c.upgraded) || upgradableFirmwares(run).length > 0;
+  const reds = run.relics.filter((id) => implantColor(tryRelicDef(id)) === 'red');
+  const [picking, setPicking] = useState(false);
+  const burn = (id: string) => {
+    sfx('select');
+    dispatch({ type: 'rest_burn_red', relicId: id });
+  };
   return (
-    <Shell run={run} className="rest-screen" eyebrow="Шифрованный канал" title="Безопасный узел" hint="Выбери одно: восстановить здоровье или улучшить карту.">
+    <Shell run={run} className="rest-screen" eyebrow="Шифрованный канал" title="Безопасный узел" hint="Выбери одно: восстановить здоровье, улучшить карту или выжечь красный имплант.">
       <div className="rest-core" aria-hidden="true">
         <svg viewBox="0 0 200 200">
           <circle cx="100" cy="100" r="86" className="rc-ring rc-ring--1" />
@@ -438,7 +460,25 @@ export function RestScreen({ run }: { run: RunState }) {
           <b>Оптимизация кода</b>
           <small>{canUpgrade ? (upgradableFirmwares(run).length ? 'Улучшить карту или прошивку' : 'Улучшить одну карту из колоды') : 'Всё уже улучшено'}</small>
         </button>
+        {reds.length ? (
+          <button className="choice choice--danger" data-testid="rest-burn-red" onClick={() => (reds.length === 1 ? burn(reds[0]!) : setPicking(!picking))}>
+            <Icon name="skull" size={34} />
+            <b>Выжечь красный</b>
+            <small>{reds.length === 1 ? `Снять «${tryRelicDef(reds[0]!)?.name ?? reds[0]}»` : 'Выбрать, какой снять'}</small>
+          </button>
+        ) : null}
       </div>
+      {picking && reds.length > 1 ? (
+        <div className="imp-node__opts" data-testid="burn-pick">
+          {reds.map((id) => (
+            <button key={id} className="choice" onClick={() => burn(id)}>
+              <ImplantIcon id={id} run={run} size="sm" />
+              <b>{tryRelicDef(id)?.name ?? id}</b>
+              <small>{implantCondition(tryRelicDef(id), run.implantState?.[id])}</small>
+            </button>
+          ))}
+        </div>
+      ) : null}
     </Shell>
   );
 }
@@ -733,5 +773,39 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
         </div>
       </div>
     </div>
+  );
+}
+
+// ---------------- Импланты v2: Перехват / Синтезатор / Рипердок / Карантин / Маяк ----------------
+
+export function ImplantNodeScreen({ run, screen }: { run: RunState; screen: Extract<Screen, { kind: 'implant_node' }> }) {
+  const dispatch = useGame((s) => s.dispatch);
+  const label = NODE_LABEL[screen.node];
+  return (
+    <Shell run={run} className={`imp-node imp-node--${screen.node}`} eyebrow="Узел имплантов" title={label.name} hint={label.text}>
+      <div className="rest-options imp-node__opts">
+        {screen.options.map((o, i) => (
+          <button
+            key={i}
+            className="choice"
+            disabled={o.disabled}
+            data-testid={`node-option-${i}`}
+            onClick={() => {
+              sfx('select');
+              dispatch({ type: 'node_choice', index: i });
+            }}
+          >
+            <Icon name={screen.node} size={30} />
+            <b>{o.label}</b>
+            {o.hint ? <small>{o.hint}</small> : null}
+          </button>
+        ))}
+      </div>
+      <div className="actions">
+        <button className="btn btn--ghost" data-testid="leave-node" onClick={() => { sfx('click'); dispatch({ type: 'leave_node' }); }}>
+          Уйти
+        </button>
+      </div>
+    </Shell>
   );
 }

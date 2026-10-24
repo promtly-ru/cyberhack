@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { RunState } from '../game/engine';
 import { Icon } from './Icon';
-import { RelicIcon } from './Bits';
+import { ImplantIcon, ImplantMenuButton, ImplantQueueOverlay } from './implants';
 import { FirmwareButton } from './firmware/FirmwareModal';
 import { tip } from './Tooltip';
 import { CardGridModal } from './CardGridModal';
@@ -72,11 +72,12 @@ export function TopBar({ run }: { run: RunState }) {
           </span>
         ) : null}
         {run.relics.map((id) => (
-          <RelicIcon key={id} id={id} size="sm" />
+          <ImplantIcon key={id} id={id} run={run} size="sm" />
         ))}
       </div>
       <div className="topbar__actions">
         <PotionBar run={run} />
+        <ImplantMenuButton run={run} />
         <FirmwareButton mode="run" />
         <button
           className="icon-btn icon-btn--count"
@@ -102,6 +103,7 @@ export function TopBar({ run }: { run: RunState }) {
           <Icon name="gear" />
         </button>
       </div>
+      <ImplantQueueOverlay run={run} />
       {deckOpen ? <CardGridModal title="Колода" cards={run.deck} onClose={() => setDeckOpen(false)} /> : null}
     </header>
   );

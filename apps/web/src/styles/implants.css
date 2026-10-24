@@ -1,0 +1,65 @@
+/* ---------- Импланты v2: цвета (тема в проекте одна, тёмная) ---------- */
+:root {
+  --imp-red: #ff3b5c;
+  --imp-gray: #aab3c5;
+  --imp-green: #3dff8a;
+  --imp-blue: #3da5ff;
+  --imp-purple: #b86bff;
+  --imp-gold: #ffd23f;
+  --imp-class: linear-gradient(110deg, #ff3b5c, #ff9f1c, #e8ff3a, #3dff8a, #00f0ff, #b48cff, #ff2bd6, #ff3b5c);
+}
+.imp--red { --ic: var(--imp-red); } .imp--gray { --ic: var(--imp-gray); } .imp--green { --ic: var(--imp-green); }
+.imp--blue { --ic: var(--imp-blue); } .imp--purple { --ic: var(--imp-purple); } .imp--gold { --ic: var(--imp-gold); }
+.imp--class { --ic: #e8ff3a; }
+.imp { position: relative; color: var(--ic); border: 2px solid var(--ic); background: rgba(5, 6, 15, 0.7); }
+.imp--gold { box-shadow: 0 0 8px rgba(255, 210, 63, 0.55); }
+.imp--class {
+  border-color: transparent;
+  background: linear-gradient(#0b0f22, #0b0f22) padding-box, var(--imp-class) border-box;
+  background-size: 100% 100%, 300% 100%;
+  animation: imp-rainbow 4s linear infinite;
+  box-shadow: 0 0 10px rgba(180, 140, 255, 0.6);
+}
+@keyframes imp-rainbow { to { background-position: 0 0, 300% 0; } }
+.imp__badge { position: absolute; right: -4px; bottom: -6px; min-width: 14px; padding: 0 3px; border-radius: 6px; font-size: 9px; line-height: 13px; text-align: center; color: var(--text); background: var(--panel-solid); border: 1px solid var(--ic); white-space: nowrap; }
+.imp-text--red { color: var(--imp-red); } .imp-text--gray { color: var(--imp-gray); } .imp-text--green { color: var(--imp-green); }
+.imp-text--blue { color: var(--imp-blue); } .imp-text--purple { color: var(--imp-purple); } .imp-text--gold { color: var(--imp-gold); }
+.imp-text--class { background: var(--imp-class); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: imp-rainbow 4s linear infinite; }
+
+/* Крупная карточка */
+.imp-overlay { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: 16px; background: rgba(2, 3, 10, 0.86); animation: fade-in 0.25s; }
+.imp-card { --glow: var(--imp-gray); width: min(340px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 18px; text-align: center; background: var(--panel-solid); border: 2px solid var(--glow); border-radius: 16px; box-shadow: 0 0 28px var(--glow); animation: imp-pop 0.35s ease-out; }
+.imp-card--red { --glow: var(--imp-red); } .imp-card--green { --glow: var(--imp-green); } .imp-card--blue { --glow: var(--imp-blue); }
+.imp-card--purple { --glow: var(--imp-purple); }
+.imp-card--gold { --glow: var(--imp-gold); box-shadow: 0 0 60px var(--glow), 0 0 120px rgba(255, 210, 63, 0.4); }
+.imp-card--class { --glow: #b48cff; box-shadow: 0 0 60px #b48cff, 0 0 120px rgba(255, 43, 214, 0.4); animation: imp-pop 0.35s ease-out, imp-hue 5s linear infinite; }
+@keyframes imp-pop { from { transform: scale(0.8); opacity: 0; } }
+@keyframes imp-hue { to { filter: hue-rotate(360deg); } }
+.imp-card__glyph { width: 84px; height: 84px; padding: 10px; border-radius: 16px; display: inline-flex; }
+.imp-card__color { font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 13px; }
+.imp-card__name { margin: 0; font-family: var(--font-display); font-size: 22px; }
+.imp-card__desc { margin: 0; }
+.imp-card__cond { margin: 0; display: flex; gap: 6px; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
+.imp-card.is-flying { animation: imp-fly 0.42s ease-in forwards; pointer-events: none; }
+@keyframes imp-fly { to { transform: translate(40vw, -48vh) scale(0.05); opacity: 0; } }
+
+/* Меню */
+.imp-menu { padding: 12px; overflow-y: auto; }
+.imp-menu__chance { margin: 0 0 10px; padding: 6px 10px; border-radius: 8px; background: rgba(180, 140, 255, 0.12); color: var(--violet); font-weight: 600; }
+.imp-menu__red { color: var(--imp-red); margin-top: 14px; }
+.imp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.imp-row { width: 100%; display: flex; gap: 10px; align-items: flex-start; padding: 8px; text-align: left; color: var(--text); background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line-2); border-radius: 10px; cursor: pointer; font: inherit; }
+.imp-row__body { display: grid; gap: 2px; min-width: 0; }
+.imp-row small { color: var(--text-dim); }
+.imp-row .imp-row__cond { color: var(--cyan); }
+
+/* Экран узла, магазин */
+.imp-node__opts { display: grid; gap: 10px; }
+.imp-node__opts .choice[disabled] { opacity: 0.5; }
+.shop-relic.imp-shop { border-color: var(--ic); }
+.imp-shop__color { font-size: 11px; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .imp--class, .imp-text--class, .imp-card, .imp-card--class, .imp-card.is-flying, .imp-overlay { animation: none; }
+}
+@media (max-width: 400px) { .imp-card { padding: 16px 12px; } .imp-card__name { font-size: 19px; } }
