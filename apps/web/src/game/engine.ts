@@ -69,6 +69,8 @@ export {
   HEAT_VENT_DMG_PER_HEAT,
   heatBlastDamage,
   upgradableFirmwares,
+  IMPLANT_COLOR_NAMES,
+  IMPLANT_LADDER,
 } from '@cyberhack/engine';
 
 const mocked = new Set<string>();

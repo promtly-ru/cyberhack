@@ -199,7 +199,8 @@
 .cs-foot { position: sticky; bottom: var(--plaque-h, 0px); z-index: 15; padding: 10px 0; background: linear-gradient(to top, rgba(5, 6, 15, 0.97) 70%, transparent); }
 
 /* ---------- Новые узлы карты, метки наград, магазин ---------- */
-.map-legend .kind-lab { color: #7df9c2; } .map-legend .kind-blackbox { color: #ffd23f; } .map-legend .kind-relay { color: #5ec8ff; } .map-legend .kind-ambush { color: #ff5470; }
+.map-legend .kind-lab { color: #7df9c2; } .map-legend .kind-blackbox { color: #ffd23f; } .map-legend .kind-signal { color: #5ec8ff; } .map-legend .kind-synth { color: #3dff8a; } .map-legend .kind-ripperdoc { color: #b86bff; } .map-legend .kind-quarantine { color: #ff3b5c; } .map-legend .kind-beacon { color: #ffd23f; }
+.map-legend .kind-relay { color: #5ec8ff; } .map-legend .kind-ambush { color: #ff5470; }
 .map-result { margin: 6px 0 0; padding: 6px 10px; border-left: 3px solid var(--cyan, #00f0ff); background: var(--panel); border-radius: 6px; font-size: 13px; }
 .sale-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; font-size: 11px; font-weight: 700; color: #0a0d1f; background: var(--acid, #d8ff3e); border-radius: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
 .shop-item.is-sale { position: relative; filter: drop-shadow(0 0 10px rgba(216, 255, 62, 0.55)); }

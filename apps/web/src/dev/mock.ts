@@ -235,7 +235,16 @@ export const MOCK_EVENTS: EventDef[] = [
 const byId = <T extends { id: string }>(list: T[]) => new Map(list.map((x) => [x.id, x]));
 const CARD_MAP = byId(MOCK_CARDS);
 const ENEMY_MAP = byId(MOCK_ENEMIES);
-const RELIC_MAP = byId(MOCK_RELICS);
+export const MOCK_IMPLANTS: RelicDef[] = [
+  { id: 'imp_red_lag', name: 'Лаг-вирус', rarity: 'common', classId: 'neutral', trigger: 'combat_start', effects: [{ type: 'lose_hp', amount: 2 }], description: 'В начале боя теряешь 2 HP.', color: 'red', kind: 'debuff', duration: { kind: 'task', task: { kind: 'win_no_damage' } } },
+  { id: 'imp_gray_patch', name: 'Серый патч', rarity: 'common', classId: 'neutral', trigger: 'combat_start', effects: [{ type: 'block', amount: 3 }], description: 'В начале боя 3 блока.', color: 'gray', kind: 'buff', duration: { kind: 'combats', n: 3 } },
+  { id: 'imp_green_cache', name: 'Кэш-ускоритель', rarity: 'uncommon', classId: 'neutral', trigger: 'combat_start', effects: [{ type: 'draw', amount: 1 }], description: 'В начале боя +1 карта.', color: 'green', kind: 'buff', duration: { kind: 'until', event: 'boss' } },
+  { id: 'imp_blue_core', name: 'Синее ядро', rarity: 'rare', classId: 'neutral', trigger: 'combat_start', effects: [{ type: 'gain_energy', amount: 1 }], description: 'В начале боя +1 энергия.', color: 'blue', kind: 'buff', duration: { kind: 'task', task: { kind: 'play_attacks', n: 10 } } },
+  { id: 'imp_purple_ghost', name: 'Призрачный шунт', rarity: 'boss', classId: 'neutral', trigger: 'combat_start', effects: [{ type: 'block', amount: 12 }], description: 'В начале боя 12 блока.', color: 'purple', kind: 'buff', duration: { kind: 'until', event: 'act_end' } },
+  { id: 'imp_gold_sun', name: 'Золотой реактор', rarity: 'boss', classId: 'neutral', trigger: 'combat_start', effects: [{ type: 'gain_energy', amount: 2 }], description: 'В начале боя +2 энергии.', color: 'gold', kind: 'buff' },
+  { id: 'imp_class_weak', name: 'Ослабленное ядро', rarity: 'starter', classId: 'netrunner', trigger: 'combat_end', effects: [{ type: 'heal', amount: 3 }], description: 'В конце боя восстанавливает 3 HP.', color: 'class', kind: 'buff', fullId: 'neural_link' },
+];
+const RELIC_MAP = byId([...MOCK_RELICS, ...MOCK_IMPLANTS]);
 const STATUS_MAP = byId(MOCK_STATUSES);
 const EVENT_MAP = byId(MOCK_EVENTS);
 const CLASS_MAP = byId(MOCK_CLASSES);
@@ -986,6 +995,10 @@ export function getLegalActions(s: RunState): Action[] {
       });
       out.push({ type: 'leave_shop' });
       break;
+    case 'implant_node':
+      sc.options.forEach((o, i) => { if (!o.disabled) out.push({ type: 'node_choice', index: i }); });
+      out.push({ type: 'leave_node' });
+      break;
     case 'rest':
       out.push({ type: 'rest_heal' }, { type: 'rest_upgrade' });
       break;
@@ -1012,7 +1025,7 @@ export function replay(opts: NewRunOptions, actions: Action[]): RunState {
 // Dev-сценарии: готовые состояния для скриншотов и ручной проверки (?dev=combat и т.п.)
 // ---------------------------------------------------------------------------
 
-export type DevScenario = 'map' | 'combat' | 'reward' | 'card_pick' | 'shop' | 'rest' | 'event' | 'deck' | 'defeat' | 'victory';
+export type DevScenario = 'map' | 'combat' | 'reward' | 'card_pick' | 'shop' | 'rest' | 'event' | 'deck' | 'defeat' | 'victory' | 'implants' | 'implant_node';
 
 /** Реалистичный забег в середине первого акта: бой с 2 врагами, рука 5 карт, статусы, намерения. */
 export function mockCombatRun(): RunState {
@@ -1084,6 +1097,17 @@ export function mockScenario(kind: DevScenario): RunState {
       break;
     case 'deck':
       s.screen = { kind: 'select_deck_card', purpose: 'upgrade', returnTo: 'map' };
+      break;
+    case 'implants':
+      s.relics = MOCK_IMPLANTS.map((r) => r.id);
+      s.implantState = { imp_gray_patch: { combatsLeft: 2 }, imp_red_lag: { progress: 0 }, imp_blue_core: { progress: 4 } };
+      s.classFullChance = 0.03;
+      s.implantQueue = ['imp_gold_sun', 'imp_class_weak'];
+      s.screen = { kind: 'map' };
+      break;
+    case 'implant_node':
+      s.relics = MOCK_IMPLANTS.map((r) => r.id);
+      s.screen = { kind: 'implant_node', node: 'synth', options: [{ label: 'Слить Серый + Серый', hint: 'Получишь Зелёный', relicIds: ['imp_gray_patch'] }, { label: 'Слить Зелёный + Зелёный', hint: 'Нет пары', disabled: true }] };
       break;
     case 'defeat':
       s.hp = 0;

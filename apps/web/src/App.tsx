@@ -10,7 +10,7 @@ import { DownloadScreen } from './download/DownloadScreen';
 import { TutorialLayer } from './tutorial/Tutorial';
 import { MapScreen } from './screens/MapScreen';
 import { CombatScreen } from './screens/CombatScreen';
-import { RewardScreen, CardPickScreen, ShopScreen, RestScreen, NodeScreen, EventScreen, DeckSelectScreen, GameOverScreen } from './screens/RunScreens';
+import { RewardScreen, CardPickScreen, ShopScreen, RestScreen, NodeScreen, ImplantNodeScreen, EventScreen, DeckSelectScreen, GameOverScreen } from './screens/RunScreens';
 import { SettingsModal } from './screens/SettingsModal';
 import { useHistoryNav } from './game/historyNav';
 import { useUi } from './ui/uiStore';
@@ -41,6 +41,8 @@ function RunView() {
     case 'blackbox':
     case 'relay':
       return <NodeScreen run={run} kind={sc.kind} />;
+    case 'implant_node':
+      return <ImplantNodeScreen run={run} screen={sc} />;
     case 'event':
       return <EventScreen run={run} screen={sc} />;
     case 'select_deck_card':
