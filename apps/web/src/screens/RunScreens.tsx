@@ -202,7 +202,7 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
   const canUpgrade = run.deck.some((c) => !c.upgraded) || upgradableFirmwares(run).length > 0;
   const quote = TRADER_QUOTES[Math.min(run.act, 4) - 1] ?? TRADER_QUOTES[0]!;
   return (
-    <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты, импланты и расходники за кредиты или удали лишнюю карту из колоды. Импланты — бонусы на весь забег, расходники — разовые.">
+    <Shell run={run} className="shop-screen" eyebrow="Даркнет-узел" title="Чёрный рынок" hint="Покупай карты, импланты и расходники за кредиты или удали лишнюю карту из колоды. Цвет импланта виден до покупки; красный имплант здесь можно снять за кредиты. Расходники — разовые.">
       <p className="flavor" data-testid="trader-quote">{quote}</p>
       <section>
         <h2 className="section-title">Карты</h2>

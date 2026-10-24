@@ -226,7 +226,7 @@ function ClassCard({ c, selected, locked, onSelect, hint }: { c: ClassDef; selec
           </span>
         </span>
         {relic ? (
-          <span className="class-card__relic" {...tip(relic.name, `Стартовый имплант — бонус на весь забег. ${relic.description}`)}>
+          <span className="class-card__relic" {...tip(relic.name, `Классовый имплант (ослабленный) — бонус на весь забег; полный можно найти в забеге. ${relic.description}`)}>
             Стартовый имплант: {relic.name}
           </span>
         ) : null}

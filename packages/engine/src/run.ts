@@ -854,6 +854,7 @@ function implantChoice(s: RunState, screen: Extract<Screen, { kind: 'implant_nod
       const [color, ids] = group;
       const two = rng.shuffle([...ids]).slice(0, 2);
       for (const id of two) removeImplant(s, id, 'synth', ev);
+      s.stats.implantSynths = (s.stats.implantSynths ?? 0) + 1;
       give(rollImplantOfColor(s, rng, shiftColor(color, 1), two));
       break;
     }

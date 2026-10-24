@@ -648,5 +648,96 @@
       "kind": "cosmetic",
       "id": "theme_neon_gold"
     }
+  },
+  {
+    "id": "ach_implants_1",
+    "title": "Модификант",
+    "desc": "Получить 25 имплантов",
+    "category": "implants",
+    "tier": "bronze",
+    "goal": 25,
+    "metric": "implantsObtained",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_implants_2",
+    "title": "Полный апгрейд",
+    "desc": "Получить 150 имплантов",
+    "category": "implants",
+    "tier": "silver",
+    "goal": 150,
+    "metric": "implantsObtained",
+    "reward": {
+      "kind": "currency",
+      "amount": 100
+    }
+  },
+  {
+    "id": "ach_reds_1",
+    "title": "Антивирус",
+    "desc": "Снять 10 красных имплантов",
+    "category": "implants",
+    "tier": "bronze",
+    "goal": 10,
+    "metric": "redsCleared",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_reds_2",
+    "title": "Чистая система",
+    "desc": "Снять 50 красных имплантов",
+    "category": "implants",
+    "tier": "silver",
+    "goal": 50,
+    "metric": "redsCleared",
+    "reward": {
+      "kind": "currency",
+      "amount": 100
+    }
+  },
+  {
+    "id": "ach_synth_1",
+    "title": "Синтезатор",
+    "desc": "Провести 5 синтезов",
+    "category": "implants",
+    "tier": "bronze",
+    "goal": 5,
+    "metric": "implantSynths",
+    "reward": {
+      "kind": "currency",
+      "amount": 50
+    }
+  },
+  {
+    "id": "ach_gold_impl",
+    "title": "Золотая жила",
+    "desc": "Получить 5 золотых имплантов",
+    "category": "implants",
+    "tier": "silver",
+    "goal": 5,
+    "metric": "goldImplants",
+    "reward": {
+      "kind": "currency",
+      "amount": 100
+    }
+  },
+  {
+    "id": "ach_class_full",
+    "title": "Истинная форма",
+    "desc": "Найти полный Классовый имплант",
+    "category": "implants",
+    "tier": "gold",
+    "goal": 1,
+    "metric": "classFullFound",
+    "reward": {
+      "kind": "currency",
+      "amount": 250
+    }
   }
 ]

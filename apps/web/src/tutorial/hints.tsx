@@ -18,7 +18,7 @@ type HintKind = 'shop' | 'rest' | 'event' | 'card_pick' | 'select_deck_card';
 function hintFor(screen: Screen): { title: string; text: string } | null {
   switch (screen.kind) {
     case 'shop':
-      return { title: 'Совет', text: 'Удалить слабую карту — одна из лучших покупок: сильные карты станут приходить чаще. Импланты работают до конца забега.' };
+      return { title: 'Совет', text: 'Удалить слабую карту — одна из лучших покупок: сильные карты станут приходить чаще. У каждого импланта своё условие — смотри меню имплантов.' };
     case 'rest':
       return { title: 'Совет', text: 'Если здоровья больше половины, обычно выгоднее улучшить карту. Если мало — лечись.' };
     case 'event':

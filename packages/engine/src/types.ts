@@ -480,6 +480,14 @@ export interface RunStats {
   maxGold?: number;
   /** Максимум карт, сыгранных за один ход */
   maxCardsInTurn?: number;
+  /** Импланты v2: получено имплантов / золотых / полный Классовый найден (0|1) */
+  implantsObtained?: number;
+  goldImplants?: number;
+  classFullFound?: number;
+  /** Красных снято (задача, магазин, привал, карантин) */
+  redsCleared?: number;
+  /** Синтезов на Синтезаторе */
+  implantSynths?: number;
 }
 
 export interface RunState {

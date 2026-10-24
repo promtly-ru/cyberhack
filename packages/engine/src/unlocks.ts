@@ -43,6 +43,12 @@ export interface LifetimeStats {
   firmwareUpgrades?: number;
   legendaryFirmwares?: number;
   bestFirmwaresInRun?: number;
+  /** Импланты v2 (всего за все забеги) */
+  implantsObtained?: number;
+  goldImplants?: number;
+  classFullFound?: number;
+  redsCleared?: number;
+  implantSynths?: number;
 }
 
 /** Структурное подмножество web-профиля (net/types.ts → Profile), которое нужно движку. */
@@ -551,6 +557,11 @@ function mergeRunIntoLifetime(prev: LifetimeStats | undefined, s: RunState, vict
   add('firmwareUpgrades', (s.upgradedFirmwares ?? []).length);
   add('legendaryFirmwares', fws.filter((id) => getFirmware(id)?.rarity === 'legendary').length);
   best('bestFirmwaresInRun', fws.length);
+  add('implantsObtained', st.implantsObtained ?? 0);
+  add('goldImplants', st.goldImplants ?? 0);
+  add('classFullFound', st.classFullFound ?? 0);
+  add('redsCleared', st.redsCleared ?? 0);
+  add('implantSynths', st.implantSynths ?? 0);
   return l;
 }
 

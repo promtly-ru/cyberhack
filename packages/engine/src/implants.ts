@@ -170,6 +170,10 @@ type ExpireReason = Extract<GameEvent, { type: 'implant_expired' }>['reason'];
 export function registerImplant(s: RunState, id: string, ev: GameEvent[]): void {
   const def = getContent().relics.get(id);
   if (def?.weakId && s.relics.includes(def.weakId)) removeImplant(s, def.weakId, 'swap', ev);
+  const st0 = s.stats;
+  st0.implantsObtained = (st0.implantsObtained ?? 0) + 1;
+  if (def?.color === 'gold') st0.goldImplants = (st0.goldImplants ?? 0) + 1;
+  if (def?.weakId) st0.classFullFound = 1;
   // Красный: компенсация кредитами (их можно потратить на снятие в магазине)
   if (def?.kind === 'debuff') {
     s.gold += RED_PICKUP_GOLD;
@@ -187,6 +191,9 @@ export function removeImplant(s: RunState, id: string, reason: ExpireReason, ev:
   if (i < 0) return;
   s.relics.splice(i, 1);
   if (s.implantState) delete s.implantState[id];
+  if ((reason === 'task' || reason === 'removed') && getContent().relics.get(id)?.kind === 'debuff') {
+    s.stats.redsCleared = (s.stats.redsCleared ?? 0) + 1;
+  }
   ev.push({ type: 'implant_expired', relicId: id, reason });
 }
 

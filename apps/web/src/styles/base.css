@@ -173,6 +173,11 @@ kbd { font-family: var(--font-mono); font-size: 11px; padding: 1px 5px; border: 
   .stat--weekly { display: none; }
   .icon-btn { min-width: 40px; height: 40px; }
 }
+/* Узкий телефон: 4 кнопки справа не влезают рядом с тремя показателями — этаж виден на карте («Шаг N из 16») */
+@media (max-width: 420px) {
+  .stat--floor { display: none; }
+  .topbar__stats { overflow: hidden; }
+}
 
 /* ---------- Реликвии ---------- */
 .relic { display: inline-flex; flex: none; width: 34px; height: 34px; padding: 3px; border-radius: 8px; color: var(--cyan); background: rgba(0, 240, 255, 0.06); border: 1px solid var(--line-2); cursor: help; }
