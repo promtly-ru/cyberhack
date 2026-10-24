@@ -66,10 +66,10 @@ export function TopBar({ run }: { run: RunState }) {
         ) : null}
       </div>
       <div className="topbar__row2">
-        <ImplantRow run={run} />
         <PotionBar run={run} />
       </div>
       <div className="topbar__actions">
+        <ImplantRow run={run} />
         <FirmwareButton mode="run" />
         <button
           className="icon-btn icon-btn--count"

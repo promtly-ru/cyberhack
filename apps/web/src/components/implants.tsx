@@ -129,40 +129,26 @@ export function ImplantQueueOverlay({ run }: { run: RunState }) {
 export function ImplantRow({ run }: { run: RunState }) {
   const [open, setOpen] = useState(false);
   const n = run.relics.length;
+  const reds = run.relics.filter((id) => implantColor(tryRelicDef(id) ?? null) === 'red').length;
   const show = () => {
     sfx('click');
     setOpen(true);
   };
   return (
     <>
-      <div
-        className={`topbar__relics${n ? '' : ' is-empty'}`}
-        role="button"
-        tabIndex={0}
+      <button
+        className="icon-btn icon-btn--count implant-btn"
         data-fx-target="implant-menu"
         data-testid="implant-menu-btn"
-        data-tip-touch="off"
-        aria-label={`Импланты: ${n}. Открыть меню имплантов`}
+        aria-label={`Импланты: ${n}${reds ? `, красных: ${reds}` : ''}. Открыть меню имплантов`}
         onClick={show}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            show();
-          }
-        }}
+        {...tip(`Импланты: ${n}`, 'Все твои импланты: цвет, описание и сколько ещё действует.')}
       >
-        <span className="topbar__relics-label" aria-hidden="true">
-          Импланты
-        </span>
-        <span className="topbar__relics-list">
-          {run.relics.map((id) => (
-            <ImplantIcon key={id} id={id} run={run} size="sm" focusable={false} />
-          ))}
-        </span>
-        <span className="topbar__relics-count mono" aria-hidden="true">
-          {n}
-        </span>
-      </div>
+        <Icon name="crown" />
+        <span className="stat__label">Импланты</span>
+        <span className="count mono">{n}</span>
+        {reds ? <span className="implant-btn__red mono" aria-hidden="true">{reds}</span> : null}
+      </button>
       {open ? <ImplantMenu run={run} onClose={() => setOpen(false)} /> : null}
     </>
   );

@@ -219,21 +219,57 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
       <section className="shop-lower">
         <div>
           <h2 className="section-title">Импланты</h2>
-          <div className="shop-relics">
+          <div className="shop-potions shop-implants">
             {relics.map(({ it, i }) => {
               const d = it.id ? tryRelicDef(it.id) : null;
+              const color = implantColor(d);
               return (
-                <button key={i} className={`shop-relic imp-shop imp--${implantColor(d)}${it.sold ? ' is-sold' : ''}${it.sale ? ' is-sale' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}, ${IMPLANT_COLOR_NAMES[implantColor(d)]}${it.sold ? ' — продано' : `, цена ${it.price}`}`} {...tip(d?.name ?? '', `${IMPLANT_COLOR_NAMES[implantColor(d)]} · ${d?.description ?? ''} ${implantCondition(d)}`)}>
-                  <span className="shop-relic__icon">{it.id ? <RelicGlyph id={it.id} /> : null}</span>
-                  <span className={`shop-relic__name imp-text--${implantColor(d)}`}>{d?.name ?? it.id}</span>
-                  <small className="imp-shop__color">{IMPLANT_COLOR_NAMES[implantColor(d)]}</small>
-                  {saleTag(it)}
+                <button key={i} className={`shop-potion shop-implant imp--${color}${it.sold ? ' is-sold' : ''}${it.sale ? ' is-sale' : ''}`} onClick={() => buy(i, it)} disabled={it.sold} aria-label={`${d?.name ?? it.id ?? 'Имплант'}, ${IMPLANT_COLOR_NAMES[color]}${it.sold ? ' — продано' : `, цена ${it.price}`}`}>
+                  <span className="shop-implant__icon">{it.id ? <RelicGlyph id={it.id} /> : null}</span>
+                  <span className="shop-potion__text">
+                    <b className={`imp-text--${color}`}>
+                      {d?.name ?? it.id} {saleTag(it)}
+                    </b>
+                    <small>
+                      {IMPLANT_COLOR_NAMES[color]} · {d?.description ?? ''}
+                    </small>
+                    <small className="shop-implant__cond">{implantCondition(d)}</small>
+                  </span>
                   {price(it)}
                 </button>
               );
             })}
             {!relics.length ? <p className="muted">Пусто</p> : null}
           </div>
+          {potionItems.length ? (
+            <>
+              <h2 className="section-title shop-potions__title">Расходники</h2>
+              <div className="shop-potions">
+                {potionItems.map(({ it, i }) => {
+                  const p = it.id ? getPotion(it.id) : undefined;
+                  const blocked = !it.sold && potionsFull;
+                  return (
+                    <button
+                      key={i}
+                      className={`shop-potion${it.sold ? ' is-sold' : ''}${blocked ? ' is-blocked' : ''}${it.sale ? ' is-sale' : ''}`}
+                      data-testid="shop-potion"
+                      onClick={() => buy(i, it)}
+                      disabled={it.sold || blocked}
+                      aria-label={`${p?.name ?? 'Расходник'}${it.sold ? ' — продано' : blocked ? ' — нет свободного слота' : `, цена ${it.price}`}`}
+                      {...tip(p?.name ?? '', `${p?.description ?? ''}${blocked ? ' Слоты заняты.' : ''}`)}
+                    >
+                      {it.id ? <PotionGlyph id={it.id} size={24} /> : null}
+                      <span className="shop-potion__text">
+                        <b>{p?.name ?? it.id} {saleTag(it)}</b>
+                        <small>{p?.description ?? ''}</small>
+                      </span>
+                      {price(it)}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
         </div>
         <div>
           <h2 className="section-title">Услуги</h2>
@@ -280,35 +316,6 @@ export function ShopScreen({ run, screen }: { run: RunState; screen: Extract<Scr
               </span>
             </button>
           ))}
-          {potionItems.length ? (
-            <>
-              <h2 className="section-title shop-potions__title">Расходники</h2>
-              <div className="shop-potions">
-                {potionItems.map(({ it, i }) => {
-                  const p = it.id ? getPotion(it.id) : undefined;
-                  const blocked = !it.sold && potionsFull;
-                  return (
-                    <button
-                      key={i}
-                      className={`shop-potion${it.sold ? ' is-sold' : ''}${blocked ? ' is-blocked' : ''}${it.sale ? ' is-sale' : ''}`}
-                      data-testid="shop-potion"
-                      onClick={() => buy(i, it)}
-                      disabled={it.sold || blocked}
-                      aria-label={`${p?.name ?? 'Расходник'}${it.sold ? ' — продано' : blocked ? ' — нет свободного слота' : `, цена ${it.price}`}`}
-                      {...tip(p?.name ?? '', `${p?.description ?? ''}${blocked ? ' Слоты заняты.' : ''}`)}
-                    >
-                      {it.id ? <PotionGlyph id={it.id} size={24} /> : null}
-                      <span className="shop-potion__text">
-                        <b>{p?.name ?? it.id} {saleTag(it)}</b>
-                        <small>{p?.description ?? ''}</small>
-                      </span>
-                      {price(it)}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          ) : null}
         </div>
       </section>
       <div className="actions">

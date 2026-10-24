@@ -188,3 +188,43 @@
   .tut-plaque--hint { width: min(520px, calc(100vw - 20px)); font-size: 12px; padding: 4px 4px 4px 10px; max-height: 30dvh; bottom: max(6px, env(safe-area-inset-bottom)); }
   .tut-plaque--hint .tut-plaque__close { min-width: 36px; height: 36px; }
 }
+
+/* Прокрутка к элементу (фокус с клавиатуры, scrollIntoView) не прячет его под закреплённый топбар */
+html { scroll-padding-top: 116px; scroll-padding-bottom: 96px; }
+@media (min-width: 768px), (max-height: 520px) and (min-aspect-ratio: 5/4) { html { scroll-padding-top: 72px; } }
+
+/* ---------- Экраны с 1–3 вариантами (узлы имплантов, привал, лаборатория, ретранслятор) ----------
+   Варианты по центру с переносом (раньше — жёсткие 2 колонки: одиночный вариант прижимался влево),
+   крупнее на широком экране; блок заголовка и вариантов — по центру экрана по вертикали. */
+.rest-options { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+.rest-options > .choice { flex: 0 1 320px; min-height: 170px; justify-content: center; padding: 28px 20px; }
+.rest-options > .choice .icon { width: 30px; height: 30px; }
+@media (min-width: 1280px) {
+  .rest-options > .choice { flex-basis: 360px; min-height: 200px; font-size: 16px; }
+}
+@media (max-width: 640px) {
+  .rest-options > .choice { flex: 1 1 100%; min-height: 0; padding: 18px 14px; }
+}
+.imp-node .run-screen__body > .panel-head,
+.rest-screen .run-screen__body > .panel-head,
+.lab-screen .run-screen__body > .panel-head,
+.relay-screen .run-screen__body > .panel-head { margin-top: auto; }
+.imp-node .run-screen__body,
+.rest-screen .run-screen__body,
+.lab-screen .run-screen__body,
+.relay-screen .run-screen__body { gap: 24px; }
+.imp-node__empty { margin-left: auto; margin-right: auto; max-width: 560px; }
+@media (min-width: 768px), (max-height: 520px) and (min-aspect-ratio: 5/4) { .topbar__actions { margin-left: auto; } }
+
+/* ---------- Магазин: шире на больших экранах, карты ровными рядами по центру,
+   импланты — строками с описанием (как расходники); слева импланты и расходники, справа услуги ---------- */
+.shop-screen .run-screen__body { width: min(1360px, 100%); }
+.shop-implant__icon { flex: none; width: 34px; height: 34px; display: grid; place-items: center; }
+.shop-implant__cond { color: var(--cyan); }
+.shop-implant .shop-potion__text b { font-size: 14px; }
+.shop-implants + .shop-potions__title { margin-top: 18px; }
+@media (min-width: 768px) {
+  .shop-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+  .shop-cards > .shop-item { flex: 0 0 168px; max-width: 168px; }
+  .shop-lower { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+}

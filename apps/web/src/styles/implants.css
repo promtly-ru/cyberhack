@@ -63,3 +63,11 @@
   .imp--class, .imp-text--class, .imp-card, .imp-card--class, .imp-card.is-flying, .imp-overlay { animation: none; }
 }
 @media (max-width: 400px) { .imp-card { padding: 16px 12px; } .imp-card__name { font-size: 19px; } }
+
+/* Кнопка имплантов в топбаре (единственная точка входа в меню имплантов) */
+.implant-btn { position: relative; }
+.implant-btn__red {
+  position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 9px; background: var(--imp-red, #ff3b5c); color: #fff; font-size: 11px; line-height: 17px; text-align: center;
+  box-shadow: 0 0 8px rgba(255, 59, 92, 0.7);
+}
