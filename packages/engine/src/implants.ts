@@ -31,6 +31,8 @@ export const IMPLANT_COLOR_NAMES: Record<ImplantColor, string> = {
 export const CLASS_FULL_BASE = 0.01;
 export const BEACON_BONUS = 0.01;
 /** Снятие красного в магазине: BASE + STEP × redRemovals */
+/** Кредиты за получение красного импланта */
+export const RED_PICKUP_GOLD = 40;
 export const RED_REMOVE_BASE_PRICE = 90;
 export const RED_REMOVE_PRICE_STEP = 30;
 
@@ -168,6 +170,11 @@ type ExpireReason = Extract<GameEvent, { type: 'implant_expired' }>['reason'];
 export function registerImplant(s: RunState, id: string, ev: GameEvent[]): void {
   const def = getContent().relics.get(id);
   if (def?.weakId && s.relics.includes(def.weakId)) removeImplant(s, def.weakId, 'swap', ev);
+  // Красный: компенсация кредитами (их можно потратить на снятие в магазине)
+  if (def?.kind === 'debuff') {
+    s.gold += RED_PICKUP_GOLD;
+    ev.push({ type: 'gold_changed', amount: RED_PICKUP_GOLD });
+  }
   const d = durationOf(id);
   const st = (s.implantState ??= {});
   if (d.kind === 'combats') st[id] = { combatsLeft: d.n };

@@ -4,12 +4,12 @@
     "name": "Нейрошунт (ослаблен)",
     "rarity": "starter",
     "classId": "netrunner",
-    "description": "В конце боя восстанавливает 4 HP.",
+    "description": "В конце боя восстанавливает 5 HP.",
     "trigger": "combat_end",
     "effects": [
       {
         "type": "heal",
-        "amount": 4
+        "amount": 5
       }
     ],
     "color": "class",
@@ -24,12 +24,16 @@
     "name": "Нейрошунт",
     "rarity": "starter",
     "classId": "netrunner",
-    "description": "В конце боя восстанавливает 9 HP.",
+    "description": "В конце боя восстанавливает 14 HP и даёт +2 к макс. HP.",
     "trigger": "combat_end",
     "effects": [
       {
         "type": "heal",
-        "amount": 9
+        "amount": 14
+      },
+      {
+        "type": "gain_max_hp",
+        "amount": 2
       }
     ],
     "color": "class",
@@ -44,13 +48,13 @@
     "name": "Заражённая флешка (ослаблен)",
     "rarity": "starter",
     "classId": "phreaker",
-    "description": "В начале боя накладывает 2 Вируса на всех врагов.",
+    "description": "В начале боя накладывает 3 Вируса на всех врагов.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 2,
+        "amount": 3,
         "target": "all_enemies"
       }
     ],
@@ -66,13 +70,19 @@
     "name": "Заражённая флешка",
     "rarity": "starter",
     "classId": "phreaker",
-    "description": "В начале боя накладывает 6 Вируса на всех врагов.",
+    "description": "В начале боя накладывает 9 Вируса и 1 Лаг на всех врагов.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 6,
+        "amount": 9,
+        "target": "all_enemies"
+      },
+      {
+        "type": "apply_status",
+        "status": "weak",
+        "amount": 1,
         "target": "all_enemies"
       }
     ],
@@ -88,7 +98,7 @@
     "name": "Маскировочный модуль (ослаблен)",
     "rarity": "starter",
     "classId": "ghost",
-    "description": "В начале боя возьми 1 дополнительную карту и получи 2 блока.",
+    "description": "В начале боя возьми 1 дополнительную карту и получи 3 блока.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -97,7 +107,7 @@
       },
       {
         "type": "block",
-        "amount": 2
+        "amount": 3
       }
     ],
     "color": "class",
@@ -112,7 +122,7 @@
     "name": "Маскировочный модуль",
     "rarity": "starter",
     "classId": "ghost",
-    "description": "В начале боя возьми 2 дополнительные карты и получи 6 блока.",
+    "description": "В начале боя возьми 2 дополнительные карты, получи 10 блока и 1 энергию.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -121,7 +131,11 @@
       },
       {
         "type": "block",
-        "amount": 6
+        "amount": 10
+      },
+      {
+        "type": "gain_energy",
+        "amount": 1
       }
     ],
     "color": "class",
@@ -297,7 +311,7 @@
     "name": "Скрипт-сюрикен",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждая 3-я сыгранная атака даёт 1 Разгон. Действует 3 боёв.",
+    "description": "Каждая 3-я сыгранная атака даёт 1 Разгон. Действует 3 боя.",
     "trigger": "attack_played",
     "effects": [
       {
@@ -312,7 +326,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 3
+      "n": 6
     }
   },
   {
@@ -425,7 +439,7 @@
     "name": "Генератор эксплойтов",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "В начале хода наносит 2 урона всем врагам. До босса.",
+    "description": "В начале хода наносит 2 урона всем врагам. До конца акта.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -438,7 +452,7 @@
     "kind": "buff",
     "duration": {
       "kind": "until",
-      "event": "boss"
+      "event": "act_end"
     }
   },
   {
@@ -459,7 +473,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 5
+      "n": 10
     }
   },
   {
@@ -581,7 +595,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 8
+      "n": 16
     }
   },
   {
@@ -1095,7 +1109,7 @@
     "name": "Турбокулер",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждый 3-й ход получи 1 энергию. Действует 4 боёв.",
+    "description": "Каждый 3-й ход получи 1 энергию. Действует 4 боя.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1108,7 +1122,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 4
+      "n": 8
     }
   },
   {
@@ -1227,7 +1241,7 @@
     "name": "Нейроускоритель",
     "rarity": "rare",
     "classId": "neutral",
-    "description": "Каждый 2-й ход возьми 1 дополнительную карту. Действует 3 боёв.",
+    "description": "Каждый 2-й ход возьми 1 дополнительную карту. Действует 3 боя.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -1240,7 +1254,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 3
+      "n": 6
     }
   },
   {
@@ -1342,7 +1356,7 @@
     "name": "Ядро сингулярности",
     "rarity": "boss",
     "classId": "neutral",
-    "description": "В начале боя получи 2 Разгона и 2 Шифрования, но потеряй 5 HP. До босса.",
+    "description": "В начале боя получи 2 Разгона и 2 Шифрования, но потеряй 5 HP. До конца акта.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -1366,7 +1380,7 @@
     "kind": "buff",
     "duration": {
       "kind": "until",
-      "event": "boss"
+      "event": "act_end"
     }
   },
   {
@@ -1441,13 +1455,13 @@
     "name": "Чип катаны (ослаблен)",
     "rarity": "starter",
     "classId": "samurai",
-    "description": "В начале боя получи 1 Контрудар и 2 блока.",
+    "description": "В начале боя получи 2 Контрудара и 2 блока.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "thorns",
-        "amount": 1,
+        "amount": 2,
         "target": "self"
       },
       {
@@ -1467,18 +1481,24 @@
     "name": "Чип катаны",
     "rarity": "starter",
     "classId": "samurai",
-    "description": "В начале боя получи 3 Контрудара и 6 блока.",
+    "description": "В начале боя получи 5 Контрудара, 10 блока и 1 Разгон.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "thorns",
-        "amount": 3,
+        "amount": 5,
         "target": "self"
       },
       {
         "type": "block",
-        "amount": 6
+        "amount": 10
+      },
+      {
+        "type": "apply_status",
+        "status": "strength",
+        "amount": 1,
+        "target": "self"
       }
     ],
     "color": "class",
@@ -1493,7 +1513,7 @@
     "name": "Набор инженера (ослаблен)",
     "rarity": "starter",
     "classId": "engineer",
-    "description": "В начале боя получи 1 Броня-патч.",
+    "description": "В начале боя получи 1 Броня-патч и 4 блока.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -1501,6 +1521,10 @@
         "status": "plating",
         "amount": 1,
         "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 4
       }
     ],
     "color": "class",
@@ -1515,13 +1539,13 @@
     "name": "Набор инженера",
     "rarity": "starter",
     "classId": "engineer",
-    "description": "В начале боя получи 3 Броня-патча.",
+    "description": "В начале боя получи 6 Броня-патчей.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "plating",
-        "amount": 3,
+        "amount": 6,
         "target": "self"
       }
     ],
@@ -1537,7 +1561,7 @@
     "name": "Биолаборатория (ослаблен)",
     "rarity": "starter",
     "classId": "biohacker",
-    "description": "В начале боя получи 1 Самовосстановление.",
+    "description": "В начале боя получи 1 Самовосстановление и 3 блока.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -1545,6 +1569,10 @@
         "status": "regen",
         "amount": 1,
         "target": "self"
+      },
+      {
+        "type": "block",
+        "amount": 3
       }
     ],
     "color": "class",
@@ -1559,13 +1587,13 @@
     "name": "Биолаборатория",
     "rarity": "starter",
     "classId": "biohacker",
-    "description": "В начале боя получи 3 Самовосстановления.",
+    "description": "В начале боя получи 6 Самовосстановления.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "regen",
-        "amount": 3,
+        "amount": 6,
         "target": "self"
       }
     ],
@@ -1742,7 +1770,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 5
+      "n": 10
     }
   },
   {
@@ -2060,17 +2088,16 @@
     "name": "Пульт оператора",
     "rarity": "starter",
     "classId": "droneop",
-    "description": "Каждый 2-й ход добавляет в руку 2 Дронов-стрелков.",
+    "description": "Каждый ход добавляет в руку Дрона-стрелка.",
     "trigger": "turn_start",
     "effects": [
       {
         "type": "add_card",
         "cardId": "dr_t_gun",
         "to": "hand",
-        "count": 2
+        "count": 1
       }
     ],
-    "every": 2,
     "color": "class",
     "kind": "buff",
     "duration": {
@@ -2129,19 +2156,15 @@
     "name": "Хронометр (ослаблен)",
     "rarity": "starter",
     "classId": "chrono",
-    "description": "Каждый 3-й ход получи 1 энергию и возьми 1 карту.",
+    "description": "Каждый 2-й ход получи 1 энергию.",
     "trigger": "turn_start",
     "effects": [
       {
         "type": "gain_energy",
         "amount": 1
-      },
-      {
-        "type": "draw",
-        "amount": 1
       }
     ],
-    "every": 3,
+    "every": 2,
     "color": "class",
     "kind": "buff",
     "duration": {
@@ -2154,7 +2177,7 @@
     "name": "Хронометр",
     "rarity": "starter",
     "classId": "chrono",
-    "description": "Каждый 2-й ход получи 1 энергию и возьми 2 карты.",
+    "description": "Каждый ход получи 1 энергию и возьми 1 карту.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -2163,10 +2186,9 @@
       },
       {
         "type": "draw",
-        "amount": 2
+        "amount": 1
       }
     ],
-    "every": 2,
     "color": "class",
     "kind": "buff",
     "duration": {
@@ -2228,12 +2250,12 @@
     "name": "Счастливая фишка (ослаблен)",
     "rarity": "starter",
     "classId": "vabanker",
-    "description": "В начале хода 40%: получи 1 энергию. Иначе получи 2 блока.",
+    "description": "В начале хода 50%: получи 1 энергию. Иначе получи 4 блока.",
     "trigger": "turn_start",
     "effects": [
       {
         "type": "gamble",
-        "amount": 40,
+        "amount": 50,
         "win": [
           {
             "type": "gain_energy",
@@ -2243,7 +2265,7 @@
         "lose": [
           {
             "type": "block",
-            "amount": 2
+            "amount": 4
           }
         ]
       }
@@ -2260,12 +2282,12 @@
     "name": "Счастливая фишка",
     "rarity": "starter",
     "classId": "vabanker",
-    "description": "В начале хода 60%: получи 1 энергию и возьми 2 карты. Иначе получи 6 блока.",
+    "description": "В начале хода 75%: получи 1 энергию и возьми 2 карты. Иначе получи 8 блока.",
     "trigger": "turn_start",
     "effects": [
       {
         "type": "gamble",
-        "amount": 60,
+        "amount": 75,
         "win": [
           {
             "type": "gain_energy",
@@ -2279,7 +2301,7 @@
         "lose": [
           {
             "type": "block",
-            "amount": 6
+            "amount": 8
           }
         ]
       }
@@ -2355,7 +2377,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 8
+      "n": 16
     }
   },
   {
@@ -2448,7 +2470,7 @@
     "name": "Ядро ярости",
     "rarity": "uncommon",
     "classId": "neutral",
-    "description": "Каждая 4-я сыгранная атака наносит 5 урона всем врагам. Действует 4 боёв.",
+    "description": "Каждая 4-я сыгранная атака наносит 5 урона всем врагам. Действует 4 боя.",
     "trigger": "attack_played",
     "effects": [
       {
@@ -2462,7 +2484,7 @@
     "kind": "buff",
     "duration": {
       "kind": "combats",
-      "n": 4
+      "n": 8
     }
   },
   {
@@ -2596,7 +2618,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя подсовывает Глитч в колоду. Снимается: выиграй бой без урона.",
+    "description": "В начале боя подсовывает Глитч в колоду. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -2609,7 +2631,8 @@
     "duration": {
       "kind": "task",
       "task": {
-        "kind": "win_no_damage"
+        "kind": "win_combats",
+        "n": 2
       }
     }
   },
@@ -2620,7 +2643,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале хода ты теряешь 1 HP. Снимается: сыграй 15 атак.",
+    "description": "В начале хода ты теряешь 1 HP. Снимается: сыграй 10 атак. +40 кредитов при получении.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -2632,7 +2655,7 @@
       "kind": "task",
       "task": {
         "kind": "play_attacks",
-        "n": 15
+        "n": 10
       }
     }
   },
@@ -2643,19 +2666,19 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя добавляет 2 Спама в колоду. Пропадает через 3 боёв.",
+    "description": "В начале боя добавляет Спам в колоду. Пропадает через 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "add_card",
         "cardId": "spam",
         "to": "draw",
-        "count": 2
+        "count": 1
       }
     ],
     "duration": {
       "kind": "combats",
-      "n": 3
+      "n": 2
     }
   },
   {
@@ -2665,7 +2688,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя добавляет Корпоративный жучок в колоду. Снимается: убей 6 врагов.",
+    "description": "В начале боя добавляет Корпоративный жучок в колоду. Снимается: убей 4 врагов. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -2679,7 +2702,7 @@
       "kind": "task",
       "task": {
         "kind": "kill_enemies",
-        "n": 6
+        "n": 4
       }
     }
   },
@@ -2690,7 +2713,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя кладёт Бэкдор в сброс. Снимается: выиграй 3 боёв.",
+    "description": "В начале боя кладёт Бэкдор в сброс. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -2704,7 +2727,7 @@
       "kind": "task",
       "task": {
         "kind": "win_combats",
-        "n": 3
+        "n": 2
       }
     }
   },
@@ -2715,13 +2738,13 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя ты получаешь 2 Лага. Пропадает через 3 боёв.",
+    "description": "В начале боя ты получаешь 1 Лаг. Пропадает через 3 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "weak",
-        "amount": 2,
+        "amount": 1,
         "target": "self"
       }
     ],
@@ -2737,20 +2760,21 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя ты получаешь 2 Бреши. Снимается: победи элиту.",
+    "description": "В начале боя ты получаешь 1 Брешь. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "vulnerable",
-        "amount": 2,
+        "amount": 1,
         "target": "self"
       }
     ],
     "duration": {
       "kind": "task",
       "task": {
-        "kind": "win_elite"
+        "kind": "win_combats",
+        "n": 2
       }
     }
   },
@@ -2761,19 +2785,19 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя ты получаешь 2 Фрагментации. Пропадает через 4 боёв.",
+    "description": "В начале боя ты получаешь 1 Фрагментацию. Пропадает через 3 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "frail",
-        "amount": 2,
+        "amount": 1,
         "target": "self"
       }
     ],
     "duration": {
       "kind": "combats",
-      "n": 4
+      "n": 3
     }
   },
   {
@@ -2783,7 +2807,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя списывает 8 кредитов. Пропадает через 5 боёв.",
+    "description": "В начале боя списывает 8 кредитов. Пропадает через 4 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -2793,7 +2817,7 @@
     ],
     "duration": {
       "kind": "combats",
-      "n": 5
+      "n": 4
     }
   },
   {
@@ -2803,7 +2827,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "После каждого боя списывает 10 кредитов. Снимается: выиграй 4 боёв.",
+    "description": "После каждого боя списывает 10 кредитов. Снимается: выиграй 3 боя. +40 кредитов при получении.",
     "trigger": "combat_end",
     "effects": [
       {
@@ -2815,7 +2839,7 @@
       "kind": "task",
       "task": {
         "kind": "win_combats",
-        "n": 4
+        "n": 3
       }
     }
   },
@@ -2826,7 +2850,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В конце хода ты теряешь 1 HP. Снимается: закончи бой с HP не ниже 70%.",
+    "description": "В конце хода ты теряешь 1 HP. Снимается: закончи бой с HP не ниже 60%. +40 кредитов при получении.",
     "trigger": "turn_end",
     "effects": [
       {
@@ -2838,7 +2862,7 @@
       "kind": "task",
       "task": {
         "kind": "end_combat_hp_above",
-        "pct": 70
+        "pct": 60
       }
     }
   },
@@ -2849,7 +2873,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя ты получаешь 3 Кровотечения. Пропадает через 2 боёв.",
+    "description": "В начале боя ты получаешь 3 Кровотечения. Пропадает через 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -2871,20 +2895,21 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя ты получаешь 3 Вируса. Снимается: выиграй бой без урона.",
+    "description": "В начале боя ты получаешь 2 Вируса. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "virus",
-        "amount": 3,
+        "amount": 2,
         "target": "self"
       }
     ],
     "duration": {
       "kind": "task",
       "task": {
-        "kind": "win_no_damage"
+        "kind": "win_combats",
+        "n": 2
       }
     }
   },
@@ -2895,7 +2920,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя все враги получают 1 Разгон. Пропадает через 4 боёв.",
+    "description": "В начале боя все враги получают 1 Разгон. Пропадает через 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -2907,7 +2932,7 @@
     ],
     "duration": {
       "kind": "combats",
-      "n": 4
+      "n": 2
     }
   },
   {
@@ -2917,12 +2942,12 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя все враги получают 1 Ритуал. Снимается: убей 8 врагов.",
+    "description": "В начале боя все враги получают 1 Разгон. Снимается: убей 4 врагов. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
-        "status": "ritual",
+        "status": "strength",
         "amount": 1,
         "target": "all_enemies"
       }
@@ -2931,7 +2956,7 @@
       "kind": "task",
       "task": {
         "kind": "kill_enemies",
-        "n": 8
+        "n": 4
       }
     }
   },
@@ -2942,13 +2967,13 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя все враги получают 3 Броня-патча. Снимается: выиграй 3 боёв.",
+    "description": "В начале боя все враги получают 1 Броня-патч. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "plating",
-        "amount": 3,
+        "amount": 1,
         "target": "all_enemies"
       }
     ],
@@ -2956,7 +2981,7 @@
       "kind": "task",
       "task": {
         "kind": "win_combats",
-        "n": 3
+        "n": 2
       }
     }
   },
@@ -2967,13 +2992,13 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя все враги получают 2 Контрудара. Снимается: сыграй 12 атак.",
+    "description": "В начале боя все враги получают 1 Контрудар. Снимается: сыграй 8 атак. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "thorns",
-        "amount": 2,
+        "amount": 1,
         "target": "all_enemies"
       }
     ],
@@ -2981,7 +3006,7 @@
       "kind": "task",
       "task": {
         "kind": "play_attacks",
-        "n": 12
+        "n": 8
       }
     }
   },
@@ -2992,7 +3017,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя все враги получают 1 Барьер. Пропадает через 3 боёв.",
+    "description": "В начале боя все враги получают 1 Барьер. Пропадает через 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -3004,7 +3029,7 @@
     ],
     "duration": {
       "kind": "combats",
-      "n": 3
+      "n": 2
     }
   },
   {
@@ -3014,7 +3039,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "Каждая 5-я сыгранная карта отнимает 1 HP. Снимается: убей 5 врагов.",
+    "description": "Каждая 5-я сыгранная карта отнимает 1 HP. Снимается: убей 4 врагов. +40 кредитов при получении.",
     "trigger": "card_played",
     "effects": [
       {
@@ -3026,7 +3051,7 @@
       "kind": "task",
       "task": {
         "kind": "kill_enemies",
-        "n": 5
+        "n": 4
       }
     },
     "every": 5
@@ -3038,7 +3063,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале хода случайная карта в руке сгорает. Снимается: сыграй 12 навыков.",
+    "description": "Каждый 3-й ход случайная карта в руке сгорает. Снимается: сыграй 8 навыков. +40 кредитов при получении.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -3050,9 +3075,10 @@
       "kind": "task",
       "task": {
         "kind": "play_skills",
-        "n": 12
+        "n": 8
       }
-    }
+    },
+    "every": 3
   },
   {
     "id": "r_red_glitch_pack",
@@ -3061,20 +3087,21 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя кладёт 2 Глитча в сброс. Снимается: победи элиту.",
+    "description": "В начале боя кладёт Глитч в сброс. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "add_card",
         "cardId": "glitch",
         "to": "discard",
-        "count": 2
+        "count": 1
       }
     ],
     "duration": {
       "kind": "task",
       "task": {
-        "kind": "win_elite"
+        "kind": "win_combats",
+        "n": 2
       }
     }
   },
@@ -3085,7 +3112,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "Каждый 2-й ход ты теряешь 1 HP. Действует весь забег.",
+    "description": "Каждый 2-й ход ты теряешь 1 HP. Действует весь забег. +40 кредитов при получении.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -3105,7 +3132,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "После каждого боя списывает 5 кредитов. Действует весь забег.",
+    "description": "После каждого боя списывает 5 кредитов. Действует весь забег. +40 кредитов при получении.",
     "trigger": "combat_end",
     "effects": [
       {
@@ -3124,7 +3151,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя добавляет Спам в колоду. Действует весь забег.",
+    "description": "В начале боя добавляет Спам в колоду. Пропадает через 4 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -3135,7 +3162,8 @@
       }
     ],
     "duration": {
-      "kind": "run"
+      "kind": "combats",
+      "n": 4
     }
   },
   {
@@ -3145,19 +3173,19 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "Каждая 4-я атака отнимает у тебя 2 HP. Снимается: сыграй 20 атак.",
+    "description": "Каждая 4-я атака отнимает у тебя 1 HP. Снимается: сыграй 10 атак. +40 кредитов при получении.",
     "trigger": "attack_played",
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 2
+        "amount": 1
       }
     ],
     "duration": {
       "kind": "task",
       "task": {
         "kind": "play_attacks",
-        "n": 20
+        "n": 10
       }
     },
     "every": 4
@@ -3169,12 +3197,12 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "На привале ты теряешь 5 HP. До конца акта.",
+    "description": "На привале ты теряешь 3 HP. До конца акта. +40 кредитов при получении.",
     "trigger": "rest",
     "effects": [
       {
         "type": "lose_hp",
-        "amount": 5
+        "amount": 3
       }
     ],
     "duration": {
@@ -3189,7 +3217,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя ты получаешь 1 Лаг и 1 Брешь. Снимается: выиграй 2 боёв.",
+    "description": "В начале боя ты получаешь 1 Лаг и 1 Брешь. Снимается: выиграй 2 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
@@ -3220,18 +3248,12 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя списывает 12 кредитов и кладёт Спам в сброс. Снимается: закончи бой с HP не ниже 50%.",
+    "description": "В начале боя списывает 12 кредитов. Снимается: закончи бой с HP не ниже 50%. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "gain_gold",
         "amount": -12
-      },
-      {
-        "type": "add_card",
-        "cardId": "spam",
-        "to": "discard",
-        "count": 1
       }
     ],
     "duration": {
@@ -3249,7 +3271,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "Каждый 3-й ход ты получаешь 1 Лаг. Пропадает через 5 боёв.",
+    "description": "Каждый 3-й ход ты получаешь 1 Лаг. Пропадает через 5 боёв. +40 кредитов при получении.",
     "trigger": "turn_start",
     "effects": [
       {
@@ -3272,7 +3294,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "Каждый 2-й ход в конце ты получаешь 1 Брешь. До босса.",
+    "description": "Каждый 2-й ход в конце ты получаешь 1 Брешь. До босса. +40 кредитов при получении.",
     "trigger": "turn_end",
     "effects": [
       {
@@ -3295,25 +3317,22 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "В начале боя враги получают 2 Разгона, а ты 1 Фрагментацию. До босса.",
+    "description": "В начале боя все враги получают 1 Разгон. Снимается: выиграй 3 боя. +40 кредитов при получении.",
     "trigger": "combat_start",
     "effects": [
       {
         "type": "apply_status",
         "status": "strength",
-        "amount": 2,
-        "target": "all_enemies"
-      },
-      {
-        "type": "apply_status",
-        "status": "frail",
         "amount": 1,
-        "target": "self"
+        "target": "all_enemies"
       }
     ],
     "duration": {
-      "kind": "until",
-      "event": "boss"
+      "kind": "task",
+      "task": {
+        "kind": "win_combats",
+        "n": 3
+      }
     }
   },
   {
@@ -3323,7 +3342,7 @@
     "classId": "neutral",
     "color": "red",
     "kind": "debuff",
-    "description": "Каждая 6-я сыгранная карта кладёт Глитч в сброс. Пропадает через 4 боёв.",
+    "description": "Каждая 6-я сыгранная карта кладёт Глитч в сброс. Пропадает через 2 боя. +40 кредитов при получении.",
     "trigger": "card_played",
     "effects": [
       {
@@ -3335,7 +3354,7 @@
     ],
     "duration": {
       "kind": "combats",
-      "n": 4
+      "n": 2
     },
     "every": 6
   }

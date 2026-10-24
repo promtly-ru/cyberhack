@@ -151,6 +151,11 @@ export function buildCombatRewards(s: RunState, tier: CombatTier, mods: Ascensio
   if (cards.length > 0) items.push({ kind: 'card_choice', cardIds: cards });
   const relicId = tier === 'boss' ? rollBossRelic(s, rng) : tier === 'elite' ? rollRelic(s, rng) : undefined;
   if (relicId) items.push({ kind: 'relic', relicId });
+  // Босс и элита — второй имплант (те же веса цвета; компенсирует красные и временные баффы)
+  if (tier === 'boss' || tier === 'elite') {
+    const second = rollImplant(s, rng, { avoid: relicId ? [relicId] : [] });
+    if (second) items.push({ kind: 'relic', relicId: second });
+  }
   // Прошивки: всегда с элит и боссов, иногда с обычных боёв
   const fwPool = rollableFirmwares(s);
   const fwChance = tier === 'normal' ? 0.12 : 1;

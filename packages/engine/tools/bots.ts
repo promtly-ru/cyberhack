@@ -77,6 +77,15 @@ function isStarterBasic(defId: string): boolean {
   return /_(ping|firewall)$/.test(defId);
 }
 
+/** Красный имплант, который сам не скоро уйдёт (весь забег, до события или задача) */
+function longRed(s: RunState): string | undefined {
+  const relics = getContent().relics;
+  return s.relics.find((id) => {
+    const r = relics.get(id);
+    return r?.kind === 'debuff' && r.duration?.kind !== 'combats';
+  });
+}
+
 function isJunk(defId: string): boolean {
   const t = getContent().cards.get(defId)?.type;
   return t === 'curse' || t === 'status';
@@ -492,6 +501,9 @@ class ExpertBot implements Bot {
     const legal = new Set(
       getLegalActions(s).flatMap((a) => (a.type === 'shop_buy' ? [a.index] : [])),
     );
+    // 0) снять красный имплант, если он надолго
+    const redIdx = items.findIndex((it, i) => it.kind === 'remove_red' && legal.has(i));
+    if (redIdx >= 0 && longRed(s)) return { type: 'shop_buy', index: redIdx };
     // 1) удаление стартовой карты/проклятия
     const removeIdx = items.findIndex((it, i) => it.kind === 'remove' && legal.has(i));
     if (removeIdx >= 0) {
@@ -532,6 +544,8 @@ class ExpertBot implements Bot {
     const beforeBoss = node?.row === 14;
     const ratio = s.hp / s.maxHp;
     if (!canUp || ratio < 0.5 || (beforeBoss && ratio < 0.72)) return { type: 'rest_heal' };
+    const red = longRed(s);
+    if (red && ratio >= 0.65 && legal.some((a) => a.type === 'rest_burn_red')) return { type: 'rest_burn_red', relicId: red };
     return { type: 'rest_upgrade' };
   }
 
