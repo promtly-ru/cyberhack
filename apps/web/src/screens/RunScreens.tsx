@@ -778,6 +778,13 @@ export function GameOverScreen({ run, victory }: { run: RunState; victory: boole
 
 // ---------------- Импланты v2: Перехват / Синтезатор / Рипердок / Карантин / Маяк ----------------
 
+/** Почему у узла нет вариантов (пустой экран — непонятно, что делать) */
+const NODE_EMPTY: Partial<Record<Extract<Screen, { kind: 'implant_node' }>['node'], string>> = {
+  synth: 'Нужно 2 импланта одного цвета. Собери пару и возвращайся — а пока можно уйти.',
+  ripperdoc: 'Нечего отдать: нужен имплант, кроме красного и Классового.',
+  quarantine: 'Красных имплантов нет — снимать нечего.',
+};
+
 export function ImplantNodeScreen({ run, screen }: { run: RunState; screen: Extract<Screen, { kind: 'implant_node' }> }) {
   const dispatch = useGame((s) => s.dispatch);
   const label = NODE_LABEL[screen.node];
@@ -800,6 +807,12 @@ export function ImplantNodeScreen({ run, screen }: { run: RunState; screen: Extr
             {o.hint ? <small>{o.hint}</small> : null}
           </button>
         ))}
+        {!screen.options.length ? (
+          <p className="imp-node__empty" data-testid="node-empty">
+            <Icon name={screen.node} size={26} />
+            <span>{NODE_EMPTY[screen.node] ?? 'Здесь сейчас нечего делать.'}</span>
+          </p>
+        ) : null}
       </div>
       <div className="actions">
         <button className="btn btn--ghost" data-testid="leave-node" onClick={() => { sfx('click'); dispatch({ type: 'leave_node' }); }}>

@@ -1025,7 +1025,8 @@ export function replay(opts: NewRunOptions, actions: Action[]): RunState {
 // Dev-сценарии: готовые состояния для скриншотов и ручной проверки (?dev=combat и т.п.)
 // ---------------------------------------------------------------------------
 
-export type DevScenario = 'map' | 'combat' | 'reward' | 'card_pick' | 'shop' | 'rest' | 'event' | 'deck' | 'defeat' | 'victory' | 'implants' | 'implant_node';
+export type DevScenario = 'map' | 'combat' | 'reward' | 'card_pick' | 'shop' | 'rest' | 'event' | 'deck' | 'defeat' | 'victory' | 'implants' | 'implant_node'
+  | 'shop_none' | 'shop_one' | 'shop_red' | 'synth_empty' | 'ripperdoc' | 'quarantine' | 'beacon' | 'signal';
 
 /** Реалистичный забег в середине первого акта: бой с 2 врагами, рука 5 карт, статусы, намерения. */
 export function mockCombatRun(): RunState {
@@ -1108,6 +1109,41 @@ export function mockScenario(kind: DevScenario): RunState {
     case 'implant_node':
       s.relics = MOCK_IMPLANTS.map((r) => r.id);
       s.screen = { kind: 'implant_node', node: 'synth', options: [{ label: 'Слить Серый + Серый', hint: 'Получишь Зелёный', relicIds: ['imp_gray_patch'] }, { label: 'Слить Зелёный + Зелёный', hint: 'Нет пары', disabled: true }] };
+      break;
+    // Магазин: 0 / 1 / много имплантов (с красным — есть «Снять красный имплант», распроданные позиции)
+    case 'shop_none':
+    case 'shop_one':
+    case 'shop_red': {
+      s.relics = kind === 'shop_none' ? [] : kind === 'shop_one' ? ['imp_gray_patch'] : MOCK_IMPLANTS.map((r) => r.id);
+      const items = makeShop(s);
+      if (kind === 'shop_red') {
+        items.push({ kind: 'remove_red', price: 120, sold: false });
+        const c = items.find((it) => it.kind === 'card');
+        if (c) c.sold = true;
+        s.gold = 60;
+      }
+      s.screen = { kind: 'shop', items };
+      break;
+    }
+    // Узлы имплантов: пустой Синтезатор, Рипердок, Карантин, Маяк, Сигнал
+    case 'synth_empty':
+      s.relics = ['imp_gray_patch', 'imp_green_cache'];
+      s.screen = { kind: 'implant_node', node: 'synth', options: [] };
+      break;
+    case 'ripperdoc':
+      s.relics = MOCK_IMPLANTS.map((r) => r.id);
+      s.screen = { kind: 'implant_node', node: 'ripperdoc', options: MOCK_IMPLANTS.filter((r) => r.color !== 'red' && r.color !== 'class').map((r) => ({ label: `Отдать: ${r.name}`, hint: '50/50: цвет выше или ниже', relicIds: [r.id] })) };
+      break;
+    case 'quarantine':
+      s.relics = MOCK_IMPLANTS.map((r) => r.id);
+      s.screen = { kind: 'implant_node', node: 'quarantine', options: [{ label: 'Снять: Лаг-вирус', hint: 'Красный имплант удаляется', relicIds: ['imp_red_lag'] }, { label: '+38 кредитов', gold: 38 }] };
+      break;
+    case 'beacon':
+      s.screen = { kind: 'implant_node', node: 'beacon', options: [{ label: '+5% к шансу Классового', hint: 'До конца забега', disabled: true }] };
+      break;
+    case 'signal':
+      s.relics = [];
+      s.screen = { kind: 'implant_node', node: 'signal', options: [{ label: 'Получить имплант', hint: 'Случайный имплант любого цвета' }] };
       break;
     case 'defeat':
       s.hp = 0;
