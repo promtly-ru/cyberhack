@@ -1026,7 +1026,7 @@ export function replay(opts: NewRunOptions, actions: Action[]): RunState {
 // ---------------------------------------------------------------------------
 
 export type DevScenario = 'map' | 'combat' | 'reward' | 'card_pick' | 'shop' | 'rest' | 'event' | 'deck' | 'defeat' | 'victory' | 'implants' | 'implant_node'
-  | 'shop_none' | 'shop_one' | 'shop_red' | 'synth_empty' | 'ripperdoc' | 'quarantine' | 'beacon' | 'signal' | 'combat_dead' | 'upgrade';
+  | 'shop_none' | 'shop_one' | 'shop_red' | 'synth_empty' | 'ripperdoc' | 'quarantine' | 'beacon' | 'signal' | 'combat_dead' | 'upgrade' | 'combat_boss';
 
 /** Реалистичный забег в середине первого акта: бой с 2 врагами, рука 5 карт, статусы, намерения. */
 export function mockCombatRun(): RunState {

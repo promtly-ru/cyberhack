@@ -443,7 +443,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
   // На низких экранах (телефон горизонтально) карты не должны съедать поле боя
   const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
   const maxByH = vh <= 520 ? Math.max(72, (vh - 250) / 1.4) : Math.max(84, (vh - 280) / 1.4);
-  const cardW = Math.min(maxByH, strip ? Math.min(136, Math.max(112, (handW - 12) / 2.75)) : compact ? Math.min(112, Math.max(88, handW / 3.25)) : Math.min(164, Math.max(120, handW / 5.6)));
+  const cardW = Math.min(maxByH, strip ? Math.min(136, Math.max(96, Math.floor((handW - 16 - 28) / 3))) : compact ? Math.min(112, Math.max(88, handW / 3.25)) : Math.min(164, Math.max(120, handW / 5.6)));
   const cardH = cardW * 1.4;
   const fanAngle = n > 1 && !strip ? Math.min(5, 28 / n) : 0;
   const maxRot = ((fanAngle * (n - 1)) / 2) * (Math.PI / 180);
@@ -470,7 +470,7 @@ export function CombatScreen({ run, combat, frozen }: { run: RunState; combat: C
       hintText = combat.energy === 0 ? 'Энергия кончилась — нажми «Конец хода»' : 'Играть нечем — нажми «Конец хода»';
       hintKind = 'end';
     } else {
-      hintText = coarse ? 'Выбери карту · удерживай — подробнее' : 'Выбери карту · правый клик — подробнее';
+      hintText = coarse ? (strip && n > 3 ? 'Выбери карту ↔ · удерживай — подробнее' : 'Выбери карту · удерживай — подробнее') : 'Выбери карту · правый клик — подробнее';
     }
   }
 
@@ -725,7 +725,7 @@ function HeatBar({ heat, canCool: can, onCool, canVent: ventOk, onVent }: { heat
           <span key={t.at} className={`heat__mark${lvl > i ? ' is-active' : ''}${lvl === i + 1 ? ' is-current' : ''}`} style={{ left: `${t.at}%` }} {...tip(t.name, t.text)} />
         ))}
       </div>
-      <div className="heat__label">
+      <div className="heat__label" {...(active ? tip(active.name, active.text) : {})}>
         <b>Heat {heat}</b>
         <span>{active ? `${active.name}: ${active.text}` : 'Остыл — порогов нет'}</span>
       </div>

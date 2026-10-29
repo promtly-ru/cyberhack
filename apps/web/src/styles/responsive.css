@@ -82,3 +82,22 @@ html[data-motion='reduced'] [class*='art-'], html[data-motion='reduced'] .glitch
 /* Длинные слова («Самовосстановления») переносятся внутри карты, а не вылезают за край */
 .card__text { overflow-wrap: anywhere; hyphens: auto; }
 .card__name { overflow-wrap: anywhere; }
+
+/* ---------- Телефон: бой помещается в высоту экрана (юниты считаются от высоты поля боя), без наезда панелей ---------- */
+@media (max-width: 767px) {
+  .battlefield { container-type: size; padding: 8px 10px 10px; }
+  .unit { --unit-size: clamp(52px, min(25vw, 120px, calc(100cqh - 150px)), 120px); }
+  .unit--player { --unit-size: clamp(48px, min(24vw, 120px, calc((100cqh - 150px) / 1.25)), 120px); }
+  .enemy-zone.n-3 .unit:not(.tier-boss) { --unit-size: clamp(48px, min(21vw, 110px, calc(100cqh - 150px)), 110px); }
+  .tier-boss { --unit-size: clamp(64px, min(38vw, 200px, calc(100cqh - 150px)), 200px); }
+  /* Статусы: иконка и число, полное название — по нажатию (подсказка) */
+  .status-row--labeled .status__name { display: none; }
+  .status-row--labeled .status { min-height: 22px; padding: 2px 5px; gap: 3px; }
+  .status-row--labeled .status__n { margin-left: 0; font-size: 12px; }
+  .unit--player .status-row--labeled { width: calc(100% + 28px); margin-inline: -14px; }
+  /* Панель перегрева: одна строка подписи */
+  .heat { padding: 2px 8px; gap: 6px; }
+  .heat__label { flex-direction: row; gap: 6px; white-space: nowrap; overflow: hidden; font-size: 11px; }
+  .heat__label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .heat__cool, .heat__vent { min-height: 34px; padding: 0 10px; font-size: 13px; }
+}

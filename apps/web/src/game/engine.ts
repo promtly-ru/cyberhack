@@ -203,6 +203,24 @@ export function devScenario(kind: mock.DevScenario): real.RunState | null {
     }
     return first ?? s;
   }
+  if (kind === 'combat_boss') {
+    // Босс с перегревом, 8 карт в руке и много статусов у игрока — вёрстка боя на телефоне
+    const st = devScenario('combat');
+    const c = st?.combat;
+    if (!st || !c) return st;
+    const e = c.enemies[0];
+    if (!e) return st;
+    c.enemies = [{ ...e, uid: 'e-boss', defId: 'boss_taskmaster', hp: 102, maxHp: 142, block: 0, statuses: {}, intent: { kind: 'attack', moveId: 'baton', damage: 18 }, moveHistory: [] }];
+    c.heat = 78;
+    c.energy = 0;
+    c.player.block = 9;
+    c.player.statuses = { strength: 5, dexterity: 1, thorns: 1, plating: 10, regen: 3 };
+    const pool = [...c.hand, ...c.drawPile, ...c.discardPile];
+    c.hand = pool.slice(0, 8);
+    c.drawPile = pool.slice(8);
+    c.discardPile = [];
+    return st;
+  }
   return mock.mockScenario(kind);
 }
 export type DevScenario = mock.DevScenario;

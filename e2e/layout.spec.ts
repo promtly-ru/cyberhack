@@ -34,7 +34,7 @@ test('рука: карты не уходят под HUD и за край экр�
       expect(boxes[0]!.x).toBeGreaterThanOrEqual(hand.x - 2);
     } else {
       // Телефон: лента без перекрытия, карты читаемого размера
-      for (const b of boxes) expect(b.width).toBeGreaterThanOrEqual(110);
+      for (const b of boxes) expect(b.width).toBeGreaterThanOrEqual(100);
       for (let i = 1; i < boxes.length; i++) expect(boxes[i]!.x).toBeGreaterThanOrEqual(boxes[i - 1]!.x + boxes[i - 1]!.width - 0.5);
     }
   }

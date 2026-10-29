@@ -253,9 +253,9 @@
 
 /* ---------- Рука-лента (телефон): крупные карты, горизонтальный свайп ---------- */
 .hand.is-strip {
-  display: flex; gap: 6px; align-items: flex-end;
+  display: flex; gap: 14px; align-items: flex-end;
   overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity; scrollbar-width: none;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
   padding: 18px 8px 4px; margin: 0 -8px; scroll-padding-inline: 8px;
 }
 .hand.is-strip::-webkit-scrollbar { display: none; }
@@ -369,3 +369,7 @@
 .hand.is-strip .rarity--uncommon { filter: none; box-shadow: 0 0 6px rgba(0, 240, 255, 0.4); }
 .hand.is-strip .rarity--rare { filter: none; box-shadow: 0 0 9px rgba(232, 255, 58, 0.5); }
 .hand.is-strip .card.is-doomed { filter: none; box-shadow: 0 0 8px rgba(255, 59, 92, 0.6); }
+
+/* Лента на телефоне: без clip-path и наложений поверх арта — на Android они дают графический мусор на карте */
+.hand.is-strip .card__frame { clip-path: none; border-radius: 6cqw; }
+.hand.is-strip .card__glow, .hand.is-strip .rarity--rare .card__frame::before { display: none; }
